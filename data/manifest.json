@@ -1,1 +1,233 @@
-[]
+[
+  {
+    "label": "scene01_dark_before_a",
+    "original": "20261009_175146.mp4",
+    "scene": "scene01",
+    "lighting": "dark",
+    "state": "before",
+    "take": "a",
+    "file": "scene01_dark_before_a.mp4",
+    "release": null,
+    "bytes": 380237073,
+    "sha256": "43423c903140e75461aec4292eeedab6f33b59caaae51f54360caf05f1c655ab",
+    "video": {
+      "duration_s": 63.5871,
+      "width": 2160,
+      "height": 3840,
+      "fps": 29.990359679872174,
+      "codec": "h264",
+      "rotation": 270,
+      "creation_time": "2026-10-09T16:52:50.000000Z",
+      "bit_rate": 47838265
+    },
+    "frames": {
+      "dir": "data/frames/scene01_dark_before_a",
+      "count": 191,
+      "fps": 3.0,
+      "long_side": 1024,
+      "bytes": 20176471,
+      "median_sharpness": 724.9,
+      "mean_brightness": 96.6
+    },
+    "preview": "data/previews/scene01_dark_before_a.jpg",
+    "uploaded": false
+  },
+  {
+    "label": "scene01_dark_before_b",
+    "original": "20261009_175253.mp4",
+    "scene": "scene01",
+    "lighting": "dark",
+    "state": "before",
+    "take": "b",
+    "file": "scene01_dark_before_b.mp4",
+    "release": null,
+    "bytes": 360795429,
+    "sha256": "188a72a0160df3eccd6252f1242dd6ab70934441226e1a916f1e9e0861816169",
+    "video": {
+      "duration_s": 60.306067,
+      "width": 2160,
+      "height": 3840,
+      "fps": 29.98039445812261,
+      "codec": "h264",
+      "rotation": 270,
+      "creation_time": "2026-10-09T16:53:54.000000Z",
+      "bit_rate": 47861908
+    },
+    "frames": {
+      "dir": "data/frames/scene01_dark_before_b",
+      "count": 181,
+      "fps": 3.0,
+      "long_side": 1024,
+      "bytes": 17573740,
+      "median_sharpness": 456.7,
+      "mean_brightness": 92.5
+    },
+    "preview": "data/previews/scene01_dark_before_b.jpg",
+    "uploaded": false
+  },
+  {
+    "label": "scene01_dark_before_c",
+    "original": "20261009_175355.mp4",
+    "scene": "scene01",
+    "lighting": "dark",
+    "state": "before",
+    "take": "c",
+    "file": "scene01_dark_before_c.mp4",
+    "release": null,
+    "bytes": 362770150,
+    "sha256": "04652234fd684bce15ba94a2468d85dd7ec41017eae0615f7a0dc913c0e2402e",
+    "video": {
+      "duration_s": 60.741467,
+      "width": 2160,
+      "height": 3840,
+      "fps": 29.979514272967055,
+      "codec": "h264",
+      "rotation": 270,
+      "creation_time": "2026-10-09T16:54:57.000000Z",
+      "bit_rate": 47778911
+    },
+    "frames": {
+      "dir": "data/frames/scene01_dark_before_c",
+      "count": 183,
+      "fps": 3.0,
+      "long_side": 1024,
+      "bytes": 17989806,
+      "median_sharpness": 540.0,
+      "mean_brightness": 94.5
+    },
+    "preview": "data/previews/scene01_dark_before_c.jpg",
+    "uploaded": false
+  },
+  {
+    "label": "scene01_light_after_a",
+    "original": "20261009_175851.mp4",
+    "scene": "scene01",
+    "lighting": "light",
+    "state": "after",
+    "take": "a",
+    "file": "scene01_light_after_a.mp4",
+    "release": null,
+    "bytes": 373221606,
+    "sha256": "23846f01f6e20956078cba53e3da51c49014a60b914f9f4b488729ee3ddfcd85",
+    "video": {
+      "duration_s": 61.8499,
+      "width": 2160,
+      "height": 3840,
+      "fps": 30.00813259196862,
+      "codec": "h264",
+      "rotation": 270,
+      "creation_time": "2026-10-09T16:59:54.000000Z",
+      "bit_rate": 48274497
+    },
+    "frames": {
+      "dir": "data/frames/scene01_light_after_a",
+      "count": 186,
+      "fps": 3.0,
+      "long_side": 1024,
+      "bytes": 20633568,
+      "median_sharpness": 583.5,
+      "mean_brightness": 104.9
+    },
+    "preview": "data/previews/scene01_light_after_a.jpg",
+    "uploaded": false
+  },
+  {
+    "label": "scene01_light_after_b",
+    "original": "20261009_175956.mp4",
+    "scene": "scene01",
+    "lighting": "light",
+    "state": "after",
+    "take": "b",
+    "file": "scene01_light_after_b.mp4",
+    "release": null,
+    "bytes": 373831722,
+    "sha256": "56c8e531d3277de371487f46bc9fbd304964949b64d1aab982d0eecd065c8586",
+    "video": {
+      "duration_s": 61.959333,
+      "width": 2160,
+      "height": 3840,
+      "fps": 30.00355071606107,
+      "codec": "h264",
+      "rotation": 270,
+      "creation_time": "2026-10-09T17:00:59.000000Z",
+      "bit_rate": 48268011
+    },
+    "frames": {
+      "dir": "data/frames/scene01_light_after_b",
+      "count": 186,
+      "fps": 3.0,
+      "long_side": 1024,
+      "bytes": 21264455,
+      "median_sharpness": 547.0,
+      "mean_brightness": 103.4
+    },
+    "preview": "data/previews/scene01_light_after_b.jpg",
+    "uploaded": false
+  },
+  {
+    "label": "scene01_light_before_a",
+    "original": "20261009_175526.mp4",
+    "scene": "scene01",
+    "lighting": "light",
+    "state": "before",
+    "take": "a",
+    "file": "scene01_light_before_a.mp4",
+    "release": null,
+    "bytes": 362595845,
+    "sha256": "d4666ad191aba42870dce74db7c3e7436b9d956bd944375aa094e7edad0afd36",
+    "video": {
+      "duration_s": 60.549567,
+      "width": 2160,
+      "height": 3840,
+      "fps": 29.991957002720085,
+      "codec": "h264",
+      "rotation": 270,
+      "creation_time": "2026-10-09T16:56:27.000000Z",
+      "bit_rate": 47907308
+    },
+    "frames": {
+      "dir": "data/frames/scene01_light_before_a",
+      "count": 182,
+      "fps": 3.0,
+      "long_side": 1024,
+      "bytes": 20349857,
+      "median_sharpness": 587.1,
+      "mean_brightness": 105.3
+    },
+    "preview": "data/previews/scene01_light_before_a.jpg",
+    "uploaded": false
+  },
+  {
+    "label": "scene01_light_before_b",
+    "original": "20261009_175631.mp4",
+    "scene": "scene01",
+    "lighting": "light",
+    "state": "before",
+    "take": "b",
+    "file": "scene01_light_before_b.mp4",
+    "release": null,
+    "bytes": 374370476,
+    "sha256": "48ffaeac81bdc20e4ffdece496b05ea39a6efc45ec068060d5d38bb0e06ab2e9",
+    "video": {
+      "duration_s": 62.020378,
+      "width": 2160,
+      "height": 3840,
+      "fps": 30.006266757485086,
+      "codec": "h264",
+      "rotation": 270,
+      "creation_time": "2026-10-09T16:57:34.000000Z",
+      "bit_rate": 48289996
+    },
+    "frames": {
+      "dir": "data/frames/scene01_light_before_b",
+      "count": 186,
+      "fps": 3.0,
+      "long_side": 1024,
+      "bytes": 20773665,
+      "median_sharpness": 693.3,
+      "mean_brightness": 107.0
+    },
+    "preview": "data/previews/scene01_light_before_b.jpg",
+    "uploaded": false
+  }
+]

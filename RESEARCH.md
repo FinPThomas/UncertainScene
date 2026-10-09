@@ -81,7 +81,11 @@ path, scene contents, what stays the same, ground truth, checklist).
   plus lighting change and a swap of similar objects) are the minimum; `pair03` to `pair07`
   cover small displacements, deformables, occlusion, lighting-only and floor obstacles.
 - Ground truth is measured and written before each "after" recording, for **scoring only**.
-- Storage: GitHub release `data`, manifest in `data/manifest.json` ([data/README.md](data/README.md)).
+- Storage: frames committed under `data/frames/`, originals on the laptop, manifest in
+  `data/manifest.json` ([data/README.md](data/README.md)).
+- Recorded so far (2026-10-09): scene01 (living-room sofa), dark and light lighting, before and
+  after. Missing: the dark "after" sweep (not yet copied off the phone). Ground truth of what
+  moved still to be written.
 
 ### P1 Shared 3D reconstruction
 
@@ -155,7 +159,7 @@ nothing-changed pairs.
 | # | Milestone | Needs | Status |
 |---|---|---|---|
 | M0 | Repo, branching, Colab publishing and guardrails in place | none | done (2026-10-09) |
-| M1 | First scene pair recorded with ground truth notes | P0 | not started |
+| M1 | First scene pair recorded with ground truth notes | P0 | recorded; ground truth pending |
 | M2 | Both recordings in one 3D frame, registration error measured | P1 | not started |
 | M3 | Moved/added/removed changes visualised with labels (minimum deliverables) | P2 | not started |
 | M4 | Moved objects re-identified, displacement and size with uncertainty | P3 | not started |
@@ -177,6 +181,7 @@ Newest first. One line per meaningful step: date, path, what was done, link to t
 
 | Date | Path | What happened | Result |
 |---|---|---|---|
+| 2026-10-09 | capture | First recordings: scene01 (sofa), 7 sweeps labelled (3 dark before, 2 light before, 2 light after); frames extracted (3 fps, 1024 px) | [data/recordings.json](data/recordings.json), [data/previews/](data/previews/) |
 | 2026-10-09 | capture | Capture protocol and recording test matrix written | [docs/CAPTURE.md](docs/CAPTURE.md) |
 | 2026-10-09 | infra | Repo scaffold: outline, commit and branching guides, Colab publishing with resource guardrails | this commit |
 

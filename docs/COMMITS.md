@@ -50,7 +50,7 @@ data(capture): add ground truth for pair02 (mug moved 30 cm)
 
 ## Rules
 
-1. **Never commit raw data or large binaries.** Videos, point clouds, splats, checkpoints and
+1. **Never commit raw data or large binaries.** Original videos, point clouds, splats, checkpoints and
    weights go to the artifact store (`uncertainscene.infra.store`, GitHub release assets). Git holds
    only a manifest pointing at them. The pre-commit hook and CI reject any file over 5 MB.
 2. **Update RESEARCH.md with the work.** A commit that finishes a step also adds its line to

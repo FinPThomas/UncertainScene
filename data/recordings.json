@@ -1,0 +1,26 @@
+{
+  "note": "Original phone file name -> label. Labels: <scene>_<lighting>_<before|after>_<take>. Lighting checked from colour balance (dark R/B ~1.07, light ~1.35) and state from frames.",
+  "scenes": {
+    "scene01": "Living-room sofa: leather sofa, cushions (table-tennis-bat cushion, grey cushion), neck pillow, cap, books on the arm, coaster, glass vase, guitar, mug, rug. Recorded 2026-10-09 ~17:51-18:00 BST, phone held portrait (2160x3840, 30 fps, ~60 s each)."
+  },
+  "recordings": [
+    {"original": "20261009_175146.mp4", "label": "scene01_dark_before_a", "scene": "scene01", "lighting": "dark", "state": "before", "take": "a"},
+    {"original": "20261009_175253.mp4", "label": "scene01_dark_before_b", "scene": "scene01", "lighting": "dark", "state": "before", "take": "b"},
+    {"original": "20261009_175355.mp4", "label": "scene01_dark_before_c", "scene": "scene01", "lighting": "dark", "state": "before", "take": "c"},
+    {"original": "20261009_175526.mp4", "label": "scene01_light_before_a", "scene": "scene01", "lighting": "light", "state": "before", "take": "a"},
+    {"original": "20261009_175631.mp4", "label": "scene01_light_before_b", "scene": "scene01", "lighting": "light", "state": "before", "take": "b"},
+    {"original": "20261009_175851.mp4", "label": "scene01_light_after_a", "scene": "scene01", "lighting": "light", "state": "after", "take": "a"},
+    {"original": "20261009_175956.mp4", "label": "scene01_light_after_b", "scene": "scene01", "lighting": "light", "state": "after", "take": "b"},
+    {"original": "(not yet copied to the laptop)", "label": "scene01_dark_after_a", "scene": "scene01", "lighting": "dark", "state": "after", "take": "a", "missing": true},
+    {"original": "20261009_170354.mp4", "label": "ignore_170354", "ignore": true},
+    {"original": "20261009_170500.mp4", "label": "ignore_170500", "ignore": true}
+  ],
+  "pairs": [
+    {"pair": "pair00_static_light", "a": "scene01_light_before_a", "b": "scene01_light_before_b", "tests": "false changes from viewpoint alone"},
+    {"pair": "pair00_static_dark", "a": "scene01_dark_before_a", "b": "scene01_dark_before_b", "tests": "false changes from viewpoint alone, dim light"},
+    {"pair": "pair01", "a": "scene01_light_before_a", "b": "scene01_light_after_a", "tests": "changes, same lighting"},
+    {"pair": "pair02", "a": "scene01_dark_before_a", "b": "scene01_light_after_a", "tests": "changes plus lighting change"},
+    {"pair": "pair06_light", "a": "scene01_dark_before_a", "b": "scene01_light_before_a", "tests": "lighting change only, nothing moved"},
+    {"pair": "pair02b", "a": "scene01_dark_before_a", "b": "scene01_dark_after_a", "tests": "changes, dim light (needs the missing dark-after video)"}
+  ]
+}
