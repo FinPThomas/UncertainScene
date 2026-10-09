@@ -1,0 +1,171 @@
+[
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 1132,
+    "centroid": [
+      0.25690001249313354,
+      -0.4068000018596649,
+      1.0217000246047974
+    ],
+    "centroid_std": 0.027243638411164284,
+    "extent": [
+      0.15839999914169312,
+      0.05979999899864197,
+      0.022600000724196434
+    ],
+    "extent_ci": [
+      [
+        0.1544,
+        0.1653
+      ],
+      [
+        0.0571,
+        0.062
+      ],
+      [
+        0.0219,
+        0.023
+      ]
+    ],
+    "frame_votes": {
+      "15": 467,
+      "14": 352,
+      "13": 208,
+      "12": 105
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "hat",
+    "label_prob": 0.42,
+    "description": "The hat looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        38.9,
+        14.7,
+        5.6
+      ],
+      "size_cm_ci": [
+        [
+          38.0,
+          40.6
+        ],
+        [
+          14.0,
+          15.2
+        ],
+        [
+          5.4,
+          5.7
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          31.7,
+          12.0,
+          4.5
+        ],
+        [
+          46.2,
+          17.4,
+          6.6
+        ]
+      ],
+      "position_sd_cm": 6.7,
+      "boundary_uncertainty_cm": 5.83,
+      "mean_abs_shift_cm": 7.2,
+      "reach": 0.0,
+      "approach": 0.28,
+      "height_m": 1.35
+    }
+  },
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 910,
+    "centroid": [
+      0.301800012588501,
+      0.18199999630451202,
+      0.833899974822998
+    ],
+    "centroid_std": 0.027241861447691917,
+    "extent": [
+      0.121799997985363,
+      0.06440000236034393,
+      0.00989999994635582
+    ],
+    "extent_ci": [
+      [
+        0.1196,
+        0.1262
+      ],
+      [
+        0.0622,
+        0.0672
+      ],
+      [
+        0.0088,
+        0.0103
+      ]
+    ],
+    "frame_votes": {
+      "9": 583,
+      "16": 170,
+      "8": 76,
+      "26": 60,
+      "0": 11
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "guitar",
+    "label_prob": 0.991,
+    "description": "A guitar that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        29.9,
+        15.8,
+        2.4
+      ],
+      "size_cm_ci": [
+        [
+          29.4,
+          31.0
+        ],
+        [
+          15.3,
+          16.5
+        ],
+        [
+          2.2,
+          2.5
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          24.4,
+          12.9,
+          2.0
+        ],
+        [
+          35.5,
+          18.8,
+          2.9
+        ]
+      ],
+      "position_sd_cm": 6.7,
+      "boundary_uncertainty_cm": 3.45,
+      "mean_abs_shift_cm": 30.9,
+      "reach": 1.0,
+      "approach": 0.86,
+      "height_m": 0.18
+    }
+  }
+]
