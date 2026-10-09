@@ -21,7 +21,8 @@ disposable; any account can pick up where another stopped.
 
 ## Per Colab account (once)
 
-1. Open `notebooks/test_github_push.ipynb` from GitHub in Colab (File → Open notebook → GitHub tab).
+1. Open the experiment notebook from GitHub in Colab (File → Open notebook → GitHub tab, pick its
+   branch), e.g. [scene01_change_heatmaps.ipynb](https://colab.research.google.com/github/FinPThomas/UncertainScene/blob/exp/change/scene01-heatmaps/notebooks/scene01_change_heatmaps.ipynb).
 2. Left sidebar → key icon (Secrets) → add `GITHUB_TOKEN` with the token, and turn on
    **Notebook access** for it.
 3. Optional: add a secret `UNCERTAINSCENE_ACCOUNT` with a short label (`fin-1`, `fin-2`) so the
