@@ -1,0 +1,17 @@
+{
+  "branch": "exp/change/scene01-heatmaps",
+  "path": "change",
+  "run_id": "2026-10-10_scene01-heatmaps",
+  "steps": {
+    "p1_lightBa_vs_lightAa": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "47443b6",
+      "expires": 1791592711.6514046,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-09 23:48:07 UTC",
+      "status": "running"
+    }
+  }
+}
