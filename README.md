@@ -6,6 +6,17 @@ that tells a simulator what to randomise (and over what range) to narrow the sim
 
 **Start here:** [RESEARCH.md](RESEARCH.md) (outline, research paths, milestones, progress log).
 
+## Which notebook do I run?
+
+| I want to... | Branch | Notebook | Open |
+|---|---|---|---|
+| Run the scene01 experiments (changes, uncertainty and robot heat maps, lighting comparison) | `exp/change/poc-lowcompute` | `notebooks/poc_lowcompute.ipynb` | [Open in Colab](https://colab.research.google.com/github/FinPThomas/UncertainScene/blob/exp/change/poc-lowcompute/notebooks/poc_lowcompute.ipynb) |
+| Only test that Colab can push to GitHub (infrastructure smoke test) | `main` | `notebooks/colab_run.ipynb` | [Open in Colab](https://colab.research.google.com/github/FinPThomas/UncertainScene/blob/main/notebooks/colab_run.ipynb) |
+
+Experiment notebooks live on their experiment branch (docs/BRANCHING.md), so they do not appear
+when Colab's GitHub picker is set to `main`: pick the branch first, or use the links above.
+`path/change` is the research-path branch the experiment merges back into; nothing runs from it.
+
 | Doc | What it covers |
 |---|---|
 | [RESEARCH.md](RESEARCH.md) | Research outline and progress, updated with every step |
@@ -24,7 +35,7 @@ RESEARCH.md              living outline + progress log
 configs/                 colab_budget.toml (guardrails); per-experiment configs later
 data/                    README, manifest.json, ground_truth/ (raw video is NOT in git)
 docs/                    guides, decisions, templates
-notebooks/colab_run.ipynb  the one notebook every Colab/Kaggle session runs
+notebooks/colab_run.ipynb  template + smoke test; experiment notebooks live on their exp/ branch
 results/<path>/<run_id>/ small outputs, committed by the runner
 runs/<run_id>/state.json resumable run state (which steps are done, claimed, failed)
 scripts/                 commit and size checks used by hooks and CI
@@ -42,4 +53,4 @@ git config core.hooksPath .githooks
 python -m pytest
 ```
 
-No experiment code yet: research paths start from RESEARCH.md section 3.
+Experiment code lives on research-path and experiment branches until a milestone merges it to main.
