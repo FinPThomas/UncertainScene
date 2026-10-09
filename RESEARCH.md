@@ -64,7 +64,7 @@ Status values: `not started`, `exploring`, `working`, `done`, `parked`.
 
 | Path | Branch | Question | Status |
 |---|---|---|---|
-| P0 Capture protocol | `path/capture` | How to record so the rest works | not started |
+| P0 Capture protocol | `path/capture` | How to record so the rest works | exploring |
 | P1 Shared 3D reconstruction | `path/recon` | RQ1 | not started |
 | P2 Change detection | `path/change` | RQ2 | not started |
 | P3 Re-identification and uncertainty | `path/reid` | RQ3, RQ4 | not started |
@@ -74,14 +74,14 @@ Status values: `not started`, `exploring`, `working`, `done`, `parked`.
 
 ### P0 Capture protocol
 
-- Two or more short phone videos per scene state, slow sweep, 60 to 90 % overlap between
-  recordings, include static background (walls, floor, shelf frame) as anchors.
-- Record a second "before" pass where nothing changes, to measure the false-change rate.
-- Vary lighting deliberately on some pairs (lamp on/off, daylight) for S1.
-- Put an object of known size (A4 sheet, ruler) in frame for metric scale.
-- Write down the true changes for every pair in `data/ground_truth/<pair>.json` at capture
-  time (object, change type, rough displacement in cm). This is for **scoring only**.
-- Naming and storage: see [data/README.md](data/README.md).
+Full protocol: [docs/CAPTURE.md](docs/CAPTURE.md) (phone settings, 60 to 90 s sweeps, camera
+path, scene contents, what stays the same, ground truth, checklist).
+
+- Test matrix: `pair00_static` (nothing changes), `pair01` (mixed changes), `pair02` (changes
+  plus lighting change and a swap of similar objects) are the minimum; `pair03` to `pair07`
+  cover small displacements, deformables, occlusion, lighting-only and floor obstacles.
+- Ground truth is measured and written before each "after" recording, for **scoring only**.
+- Storage: GitHub release `data`, manifest in `data/manifest.json` ([data/README.md](data/README.md)).
 
 ### P1 Shared 3D reconstruction
 
@@ -177,6 +177,7 @@ Newest first. One line per meaningful step: date, path, what was done, link to t
 
 | Date | Path | What happened | Result |
 |---|---|---|---|
+| 2026-10-09 | capture | Capture protocol and recording test matrix written | [docs/CAPTURE.md](docs/CAPTURE.md) |
 | 2026-10-09 | infra | Repo scaffold: outline, commit and branching guides, Colab publishing with resource guardrails | this commit |
 
 ## 7. Open questions

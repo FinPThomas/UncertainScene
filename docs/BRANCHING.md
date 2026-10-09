@@ -16,7 +16,7 @@ main ─────────────────────────
 | `main` | forever | none | none | Working, documented state. RESEARCH.md here is the truth. |
 | `path/<name>` | for the life of a research path | `main` | `main` (via PR, at milestones) | One research path from RESEARCH.md section 3 |
 | `exp/<path>/<idea>` | days | its `path/<name>` | its `path/<name>`, or abandoned | One idea or comparison |
-| `infra/<topic>`, `docs/<topic>` | hours to days | `main` | `main` (via PR) | Tooling, CI, guides |
+| `infra/<topic>`, `docs/<topic>` | hours to days | `main` | `main` (via PR) | Tooling, CI, larger guide changes. A single self-contained docs commit may go straight to `main`. |
 | `results/<run_id>` | rare | any | its parent | Only if a publish push keeps conflicting (the publisher falls back to this) |
 
 Path names: `capture`, `recon`, `change`, `reid`, `deform`, `reach`, `report`.

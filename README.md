@@ -14,6 +14,7 @@ that tells a simulator what to randomise (and over what range) to narrow the sim
 | [docs/COLAB.md](docs/COLAB.md) | Running on Colab from several accounts, publishing to GitHub, resource guardrails |
 | [docs/templates/scene_report.md](docs/templates/scene_report.md) | The per-scene output report |
 | [docs/decisions/](docs/decisions/) | Short notes on decisions with lasting consequences |
+| [docs/CAPTURE.md](docs/CAPTURE.md) | How to record the videos: settings, length, path, scene, test pairs |
 | [data/README.md](data/README.md) | Capture protocol, naming, where raw video lives |
 
 ## Layout
