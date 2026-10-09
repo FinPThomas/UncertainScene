@@ -1,0 +1,30 @@
+# Resource guardrails for Colab (free tier defaults). Kaggle and local runs use the same file;
+# values are checked against what the machine actually reports, so the tighter limit wins.
+# Free Colab (2026): ~12.7 GB RAM, ~100 GB disk on /content, T4 with 15 GB VRAM, sessions
+# end after at most ~12 h or ~90 min idle.
+
+[ram]
+soft_frac = 0.80   # warn, run soft callbacks (free caches), publish state
+hard_frac = 0.92   # stop the step cleanly before the kernel is killed
+
+[disk]
+soft_free_gb = 12  # warn and clean temp files
+hard_free_gb = 5   # stop the step cleanly (a full disk corrupts git and checkpoints)
+
+[gpu]
+soft_frac = 0.90   # warn only; CUDA OOM is raised by torch itself
+
+[time]
+session_hours = 11.0     # plan steps to finish inside this, measured from session start
+safety_minutes = 20      # never start a step expected to end later than session end minus this
+
+[monitor]
+interval_s = 15          # background check period
+
+[git]
+max_file_mb = 5          # larger files go to the artifact store, never git
+max_run_mb = 50          # total committed size of one run's results folder
+
+[paths]
+work_dir = "/content/work"        # temporary working files, local disk (not Drive)
+repo_dir = "/content/UncertainScene"  # clone of this repo

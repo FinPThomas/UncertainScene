@@ -1,0 +1,3 @@
+#!/bin/sh
+# Block big files and raw data. Enable with: git config core.hooksPath .githooks
+python3 "$(git rev-parse --show-toplevel)/scripts/check_staged.py"

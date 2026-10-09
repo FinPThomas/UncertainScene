@@ -1,0 +1,26 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - name: No big files or raw data
+        run: python scripts/check_staged.py --all
+      - name: Commit messages follow docs/COMMITS.md
+        if: github.event_name == 'pull_request'
+        run: |
+          for sha in $(git rev-list ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}); do
+            git log -1 --format=%B "$sha" > /tmp/msg
+            python scripts/check_commit_msg.py /tmp/msg || { echo "bad message on $sha"; exit 1; }
+          done
+      - run: python -m pytest -q

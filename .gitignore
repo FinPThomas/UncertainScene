@@ -1,0 +1,31 @@
+# Data and big outputs never go in git (see docs/COMMITS.md rule 1)
+data/raw/
+data/cache/
+outputs/
+*.mp4
+*.mov
+*.MOV
+*.ply
+*.splat
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.npz
+
+# Python
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.venv/
+build/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+.ipynb_checkpoints/
+
+# Secrets
+.env
+*.token

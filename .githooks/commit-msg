@@ -1,0 +1,3 @@
+#!/bin/sh
+# Enforce docs/COMMITS.md format. Enable with: git config core.hooksPath .githooks
+python3 "$(git rev-parse --show-toplevel)/scripts/check_commit_msg.py" "$1"
