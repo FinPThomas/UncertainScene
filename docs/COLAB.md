@@ -21,7 +21,7 @@ disposable; any account can pick up where another stopped.
 
 ## Per Colab account (once)
 
-1. Open `notebooks/colab_run.ipynb` from GitHub in Colab (File → Open notebook → GitHub tab).
+1. Open `notebooks/test_github_push.ipynb` from GitHub in Colab (File → Open notebook → GitHub tab).
 2. Left sidebar → key icon (Secrets) → add `GITHUB_TOKEN` with the token, and turn on
    **Notebook access** for it.
 3. Optional: add a secret `UNCERTAINSCENE_ACCOUNT` with a short label (`fin-1`, `fin-2`) so the
