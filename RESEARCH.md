@@ -66,7 +66,7 @@ Status values: `not started`, `exploring`, `working`, `done`, `parked`.
 |---|---|---|---|
 | P0 Capture protocol | `path/capture` | How to record so the rest works | exploring |
 | P1 Shared 3D reconstruction | `path/recon` | RQ1 | exploring (VGGT-1B joint, in the P2 proof of concept) |
-| P2 Change detection | `path/change` | RQ2 | exploring (`exp/change/poc-lowcompute`) |
+| P2 Change detection | `path/change` | RQ2 | exploring (`exp/change/scene01-heatmaps`) |
 | P3 Re-identification and uncertainty | `path/reid` | RQ3, RQ4 | not started |
 | P4 Deformable objects | `path/deform` | RQ5 | not started |
 | P5 Robot interactability and reach | `path/reach` | RQ6 | not started |
@@ -181,7 +181,7 @@ Newest first. One line per meaningful step: date, path, what was done, link to t
 
 | Date | Path | What happened | Result |
 |---|---|---|---|
-| 2026-10-09 | change | Low-compute proof of concept ready to run on Colab (not yet run): VGGT-1B joint reconstruction of both recordings, visibility-aware change detection with label-free thresholds, DINOv2 re-ID, CLIP labels; heat maps (surface uncertainty, deformation/shift, height, reach, approach, interactability), robot base-placement map, scene report with sim randomisation ranges, 3D viewer; ~167-step queue (creative outputs first, light vs dark contrasts and lighting report, 2 sanity ablations) that fills a 12 h session; logged token/setup checks, GPU frame cap with out-of-memory retry, RAM/disk guard between stages | [notebooks/poc_lowcompute.ipynb](notebooks/poc_lowcompute.ipynb), [src/uncertainscene/experiments/poc.py](src/uncertainscene/experiments/poc.py) |
+| 2026-10-09 | change | Low-compute proof of concept ready to run on Colab (not yet run): VGGT-1B joint reconstruction of both recordings, visibility-aware change detection with label-free thresholds, DINOv2 re-ID, CLIP labels; heat maps (surface uncertainty, deformation/shift, height, reach, approach, interactability), robot base-placement map, scene report with sim randomisation ranges, 3D viewer; ~167-step queue (creative outputs first, light vs dark contrasts and lighting report, 2 sanity ablations) that fills a 12 h session; logged token/setup checks, GPU frame cap with out-of-memory retry, RAM/disk guard between stages | [notebooks/scene01_change_heatmaps.ipynb](notebooks/scene01_change_heatmaps.ipynb), [src/uncertainscene/experiments/poc.py](src/uncertainscene/experiments/poc.py) |
 | 2026-10-09 | capture | First recordings: scene01 (sofa), 7 sweeps labelled (3 dark before, 2 light before, 2 light after); frames extracted (3 fps, 1024 px) | [data/recordings.json](data/recordings.json), [data/previews/](data/previews/) |
 | 2026-10-09 | capture | Capture protocol and recording test matrix written | [docs/CAPTURE.md](docs/CAPTURE.md) |
 | 2026-10-09 | infra | Repo scaffold: outline, commit and branching guides, Colab publishing with resource guardrails | this commit |
