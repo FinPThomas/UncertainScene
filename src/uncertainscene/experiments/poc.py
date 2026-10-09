@@ -13,6 +13,7 @@ to keep a 12-hour session busy with useful, non-overlapping work.
 from __future__ import annotations
 
 import json
+import logging
 import time
 from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
@@ -22,6 +23,8 @@ import numpy as np
 from ..change.detect import DetectConfig, detect
 from ..change.objects import find_objects, summarise
 from ..eval import metrics as M
+
+log = logging.getLogger("uncertainscene.poc")
 
 REC = {  # label -> (lighting, state)
     "scene01_dark_before_a": ("dark", "before"), "scene01_dark_before_b": ("dark", "before"),
@@ -47,7 +50,7 @@ class Spec:
     name: str
     a: str
     b: str
-    n_per_video: int = 32
+    n_per_video: int = 28          # 56 frames: fits a T4 (VGGT ~0.2 GB per frame); capped per GPU anyway
     offset: int = 0
     variant: str = "base"
     detect: dict = field(default_factory=dict)
@@ -60,7 +63,8 @@ class Spec:
     @property
     def needs(self) -> dict:
         frames = 2 * self.n_per_video
-        return {"disk_gb": 8 if self.gpu else 1, "ram_gb": 6, "minutes": 8 + frames / 10 if self.gpu else 5}
+        ram = 7 if self.detect.get("stride") == 1 else 6
+        return {"disk_gb": 8 if self.gpu else 1, "ram_gb": ram, "minutes": 8 + frames / 10 if self.gpu else 5}
 
 
 def queue() -> list:
@@ -78,12 +82,20 @@ def queue() -> list:
     # Phase 1: proof of concept with every heat map and a scene report per pair
     for a, b in core:
         q.append(Spec(f"p1_{short(a)}_vs_{short(b)}", a, b))
+
+    # Phase 1b: lighting (Fin, 2026-10-09): every light/dark contrast with other takes, so the
+    # lighting report has repeats: lighting only, real changes through a lighting change, and
+    # a nothing-changed pair in each lighting
+    light = [(DBb, LAb), (DBc, LA), (DBb, LBb), (DBc, LB), (DBb, DBc), (LA, LAb), (LBb, LA)]
+    for a, b in light:
+        q.append(Spec(f"p1b_{short(a)}_vs_{short(b)}", a, b, variant="base", outputs="standard"))
     q.append("summary_p1")
 
-    # Phase 2: dense reconstructions of the main pairs (the best-looking heat maps and viewers)
+    # Phase 2: dense versions of the main pairs (every pixel, as many frames as the GPU fits):
+    # the best-looking heat maps and viewers
     for a, b in core[:4]:
-        q.append(Spec(f"p2_dense_{short(a)}_vs_{short(b)}", a, b, n_per_video=56, variant="dense56",
-                      voxel_m=0.007))
+        q.append(Spec(f"p2_dense_{short(a)}_vs_{short(b)}", a, b, n_per_video=48, variant="dense",
+                      detect={"stride": 1, "max_points": 800000}, voxel_m=0.007))
     q.append("summary_p2")
 
     # Phase 3: robot scenarios on the change pairs (cheap: reuses cached reconstructions)
@@ -106,7 +118,7 @@ def queue() -> list:
     q.append("summary_p4")
 
     # Phase 5: every remaining take combination, with heat maps (more evidence per pair type)
-    done = {(a, b) for a, b in core}
+    done = {(a, b) for a, b in core + light}
     combos = ([(x, y) for x in (LB, LBb) for y in (LA, LAb)] + [(x, y) for x in (DB, DBb, DBc) for y in (LA, LAb)]
               + [(DB, DBc), (DBb, DBc)] + [(x, y) for x in (DB, DBb, DBc) for y in (LB, LBb)] + [(LA, LAb)])
     combos = [c for c in combos if c not in done]
@@ -139,10 +151,16 @@ def _recon(spec: Spec, cache: Path):
     cache.mkdir(parents=True, exist_ok=True)
     f = cache / f"recon_{spec.a}_{spec.b}_n{spec.n_per_video}_o{spec.offset}.npz"
     info_f = f.with_suffix(".json")
-    if f.exists():
-        return Recon.load(f), json.loads(info_f.read_text()) | {"cached": True}
+    if f.exists() and info_f.exists():
+        try:
+            log.info("reusing cached reconstruction %s", f.name)
+            return Recon.load(f), json.loads(info_f.read_text()) | {"cached": True}
+        except Exception as e:  # noqa: BLE001 - a broken cache file is rebuilt
+            log.warning("cache %s unreadable (%s); rebuilding", f.name, e)
     rec, info = reconstruct(spec.a, spec.b, spec.n_per_video, spec.offset)
-    rec.save(f)
+    tmp = f.with_name(f.stem + "_tmp.npz")
+    rec.save(tmp)
+    tmp.replace(f)                     # never leave a half-written cache file
     info_f.write_text(json.dumps(info))
     return rec, info
 
@@ -164,27 +182,91 @@ def _feats(rec, key: str, cache: Path):
 
     f = cache / f"dino_{key}.npy"
     if f.exists():
-        return np.load(f)
+        try:
+            return np.load(f)
+        except Exception:  # noqa: BLE001
+            pass
     feats = dino_features(rec.images)
-    np.save(f, feats)
+    np.save(f.with_name(f.stem + "_tmp.npy"), feats)
+    f.with_name(f.stem + "_tmp.npy").replace(f)
     return feats
 
 
-def analyse(spec: Spec, out: Path, cache: Path, store=None) -> str:
-    """One step. Returns a one-line note for the run state."""
+class _Stage:
+    """Logs each stage with its duration and machine usage, and runs the guard check (RAM,
+    disk) between stages so a step stops cleanly before Colab would kill the kernel."""
+
+    def __init__(self, name: str, check=None):
+        self.name, self.check, self.t = name, check, time.time()
+
+    def __call__(self, what: str) -> None:
+        import gc
+
+        gc.collect()
+        u = self.check() if self.check else None
+        log.info("[%s] %s done in %.0f s%s", self.name, what, time.time() - self.t, f" | {u.line()}" if u else "")
+        self.t = time.time()
+
+
+def step_fn(spec: Spec, cache: Path, store=None, check=None):
+    """The function `Run.step` calls: runs `analyse` with a per-step log file (step_log.txt in
+    the results folder, pushed with them, also when the step fails)."""
+    def fn(out: Path, work: Path) -> str:
+        h = logging.FileHandler(out / "step_log.txt")
+        h.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
+        h.setLevel(logging.INFO)
+        root = logging.getLogger()
+        root.addHandler(h)
+        if logging.getLogger("uncertainscene").getEffectiveLevel() > logging.INFO:
+            logging.getLogger("uncertainscene").setLevel(logging.INFO)
+        try:
+            log.info("step %s: %s vs %s, %d frames/video, variant %s, outputs %s", spec.name, spec.a, spec.b,
+                     spec.n_per_video, spec.variant, spec.outputs)
+            return analyse(spec, out, cache, store, check)
+        except Exception:
+            log.exception("step %s failed", spec.name)
+            raise
+        finally:
+            root.removeHandler(h)
+            h.close()
+    return fn
+
+
+def enforce_size(out: Path, max_mb: float = 4.8) -> list[str]:
+    """Last line of defence for the 5 MB git limit: drop any oversized file and say so."""
+    dropped = []
+    for f in out.rglob("*"):
+        if f.is_file() and f.stat().st_size > max_mb * 1024**2:
+            log.warning("dropping %s (%.1f MB > %.1f MB git limit)", f.name, f.stat().st_size / 1024**2, max_mb)
+            dropped.append(f.name)
+            f.unlink()
+    if dropped:
+        (out / "dropped_files.txt").write_text("Too big for git, not saved:\n" + "\n".join(dropped) + "\n")
+    return dropped
+
+
+def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
+    """One step. Returns a one-line note for the run state. `check` is the guard check
+    (Run.guard.check), called between stages."""
     from ..change import scene_report
     from ..change.describe import label_objects
     from ..change.fields import RobotModel, base_placement, compute_fields, field_stats, object_fields
     from ..viz import plots, viewer
 
     t0 = time.time()
+    stage = _Stage(spec.name, check)
+    stage("start")
     rec, rinfo = _recon(spec, cache)
+    stage(f"reconstruction ({len(rec.images)} frames)")
     feats = _feats(rec, f"{spec.a}_{spec.b}_n{spec.n_per_video}_o{spec.offset}", cache)
+    stage("DINOv2 features")
     cfg = replace(DetectConfig(), **spec.detect)
     if spec.outputs == "light":
         cfg = replace(cfg, stride=max(cfg.stride, 3))
     res = detect(rec, feats, cfg)
+    stage(f"change detection ({len(res.A.X) + len(res.B.X)} points, tau {res.thresholds['tau_rel_depth']:.3f})")
     objs = find_objects(res)
+    stage(f"objects ({len(objs)} clusters)")
 
     # heat maps (metric scale from the floor) before labelling, so descriptions use centimetres
     f = fstats = None
@@ -204,10 +286,15 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None) -> str:
                            else round(float(np.linalg.norm(bm["best_m"] - bm["base_now_m"])), 2)})
         object_fields(objs, res, f)
         unit, scale = "cm", f["floor"]["scale_m_per_unit"] * 100
+        stage(f"heat maps ({len(f['X'])} points, scale {scale / 100:.3f} m/unit)")
     except Exception as e:  # noqa: BLE001 - a failed floor fit must not lose the change results
+        if type(e).__name__ == "ResourceLimit":
+            raise
+        log.exception("heat maps failed; continuing without them")
         (out / "fields_error.txt").write_text(f"{type(e).__name__}: {e}\n")
     label_objects(objs, res, rec, crop_dir=out / "crops" if spec.outputs != "light" else None, unit=unit, scale=scale)
     changes = summarise(objs)
+    stage(f"labels ({', '.join(str(c.get('label')) for c in changes[:6])})")
     by_id = {o.id: o for o in objs}
     for c in changes:
         if "metric" in by_id[c["id"]].extra:
@@ -220,6 +307,11 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None) -> str:
          "recon_seconds": rinfo.get("seconds"), "gpu_peak_gb": rinfo.get("gpu_peak_gb"),
          "recon_cached": rinfo.get("cached", False), "image_size_hw": rinfo.get("size_hw")}
     m.update(M.label_free(res, objs))
+    if rinfo.get("used_per_video") is not None:
+        m["used_per_video"], m["oom_retries"] = rinfo["used_per_video"], rinfo.get("oom_retries", 0)
+    for side, ps in (("A", res.A), ("B", res.B)):   # reconstruction noise per recording (lighting report)
+        u = ps.unc[np.isfinite(ps.unc)] * (scale if unit == "cm" else 1.0)
+        m[f"unc_{'cm' if unit == 'cm' else 'units'}_{side}_median"] = round(float(np.median(u)), 3) if len(u) else None
     if fstats:
         m.update({f"field_{k}": v for k, v in fstats.items()})
     gt = M.load_ground_truth("scene01")
@@ -254,7 +346,9 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None) -> str:
                 (out / "artifacts.json").write_text(json.dumps([entry], indent=2) + "\n")
             except Exception as e:  # noqa: BLE001 - optional extra
                 (out / "artifacts.json").write_text(json.dumps({"error": str(e)[:300]}) + "\n")
+    stage("figures, viewer and reports")
     write_report(spec, m, changes, out)
+    enforce_size(out)
     extra = f", interactable {fstats['interactable_frac']:.0%}" if fstats else ""
     return (f"{ptype}: {m['changed_frac'] * 100:.2f}% changed, {m['n_changes']} changes "
             f"({m['n_moved']} moved){extra}, {m['step_seconds']:.0f}s")

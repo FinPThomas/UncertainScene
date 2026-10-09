@@ -136,6 +136,10 @@ def write(run_dir: Path, out_dir: Path | None = None) -> Path:
         for r in rows:
             if "gt_recall" in r:
                 lines.append(f"| {r['step']} | {r['gt_recall']} | {r['gt_precision']} |")
+    from . import lighting
+
+    lighting.write(run_dir, out_dir)
+    lines[3:3] = ["Lighting (dark vs light) comparison: [lighting.md](lighting.md)", ""]
     (out_dir / "summary.md").write_text("\n".join(lines) + "\n")
     return out_dir / "summary.md"
 

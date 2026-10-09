@@ -8,13 +8,29 @@ minute on a T4 for ~80 frames. Install: pip install git+https://github.com/faceb
 
 from __future__ import annotations
 
+import logging
 import time
 
 import numpy as np
 
 from .frames import Recon, load_images, select_frames
 
+log = logging.getLogger(__name__)
 _MODEL = {}
+
+# Measured VGGT-1B memory (authors' table, 518 px): ~1.7 GB + ~0.2 GB per frame.
+GB_BASE, GB_PER_FRAME = 2.0, 0.2
+
+
+def max_frames_for_gpu(total_gb: float | None = None, frac: float = 0.88) -> int:
+    """Largest frame count that should fit in GPU memory (both recordings together)."""
+    import torch
+
+    if total_gb is None:
+        if not torch.cuda.is_available():
+            return 400
+        total_gb = torch.cuda.get_device_properties(0).total_memory / 1024**3
+    return max(8, int((total_gb * frac - GB_BASE) / GB_PER_FRAME))
 
 
 def load_model(name: str = "facebook/VGGT-1B"):
@@ -23,12 +39,41 @@ def load_model(name: str = "facebook/VGGT-1B"):
 
     if name not in _MODEL:
         dev = "cuda" if torch.cuda.is_available() else "cpu"
-        _MODEL[name] = VGGT.from_pretrained(name).to(dev).eval()
+        t0 = time.time()
+        model = VGGT.from_pretrained(name)
+        for head in ("point_head", "track_head"):   # not used: depth + cameras give the points
+            if getattr(model, head, None) is not None:
+                setattr(model, head, None)
+        _MODEL[name] = model.to(dev).eval()
+        log.info("loaded %s on %s in %.0f s", name, dev, time.time() - t0)
     return _MODEL[name]
 
 
 def reconstruct(label_a: str, label_b: str, n_per_video: int = 40, offset: int = 0,
                 long_side: int = 518, model_name: str = "facebook/VGGT-1B") -> tuple[Recon, dict]:
+    """Caps the frame count to what fits the GPU, and on CUDA out-of-memory retries with 20%
+    fewer frames (up to 3 times). info records requested and used frame counts."""
+    import torch
+
+    cap = max_frames_for_gpu() // 2
+    n = min(n_per_video, cap)
+    if n < n_per_video:
+        log.warning("GPU fits ~%d frames per recording; using %d instead of %d", cap, n, n_per_video)
+    for attempt in range(4):
+        try:
+            rec, info = _reconstruct(label_a, label_b, n, offset, long_side, model_name)
+            info.update(requested_per_video=n_per_video, used_per_video=n, oom_retries=attempt)
+            return rec, info
+        except torch.cuda.OutOfMemoryError:
+            torch.cuda.empty_cache()
+            if attempt == 3:
+                raise
+            n = max(8, int(n * 0.8))
+            log.warning("CUDA out of memory; retrying with %d frames per recording", n)
+    raise RuntimeError("unreachable")
+
+
+def _reconstruct(label_a, label_b, n_per_video, offset, long_side, model_name):
     import torch
     from vggt.utils.pose_enc import pose_encoding_to_extri_intri
 
@@ -45,6 +90,9 @@ def reconstruct(label_a: str, label_b: str, n_per_video: int = 40, offset: int =
     dtype = torch.bfloat16 if use_bf16 else torch.float16
     if dev.type == "cuda":
         torch.cuda.reset_peak_memory_stats()
+        free, total = torch.cuda.mem_get_info()
+        log.info("VGGT on %d frames %s; GPU free %.1f/%.1f GB", len(files), imgs.shape[1:3], free / 1024**3,
+                 total / 1024**3)
     t0 = time.time()
     with torch.no_grad(), torch.autocast(device_type=dev.type, dtype=dtype, enabled=dev.type == "cuda"):
         pred = model(x)
@@ -66,4 +114,5 @@ def reconstruct(label_a: str, label_b: str, n_per_video: int = 40, offset: int =
     del pred, x
     if dev.type == "cuda":
         torch.cuda.empty_cache()
+    log.info("reconstructed %d frames in %.0f s (GPU peak %s GB)", len(files), secs, info["gpu_peak_gb"])
     return rec, info

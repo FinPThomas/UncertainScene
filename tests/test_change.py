@@ -177,3 +177,55 @@ def test_queue_names_unique_and_creative_first():
     assert all(s.outputs == "full" for s in specs[:6])
     assert sum(s.needs["minutes"] for s in specs) > 12 * 60 * 0.6   # enough work to fill a session
     assert sum(1 for s in specs if s.variant in ("naive_nn", "no_appearance")) <= 6
+
+
+def test_summary_and_lighting_reports(tmp_path):
+    from uncertainscene.eval import lighting, summarize
+
+    rng = np.random.default_rng(0)
+    pairs = [("scene01_light_before_a", "scene01_light_before_b", "static"),
+             ("scene01_dark_before_a", "scene01_dark_before_b", "static"),
+             ("scene01_dark_before_a", "scene01_light_before_a", "lighting"),
+             ("scene01_light_before_a", "scene01_light_after_a", "change"),
+             ("scene01_dark_before_a", "scene01_light_after_a", "change+lighting")]
+    for i, (a, b, t) in enumerate(pairs):
+        for off in range(3):
+            d = tmp_path / f"s{i}_{off}"
+            d.mkdir()
+            m = {"pair_type": t, "a": a, "b": b, "pair": f"{a}_{b}", "variant": "base" if off == 0 else f"offset{off}",
+                 "offset": off, "n_per_video": 28, "changed_frac": float(rng.uniform(0, 0.05)), "n_changes": 2,
+                 "n_moved": 1, "n_removed": 0, "n_added": 0, "n_appearance": 1, "A_observed_frac": 0.7,
+                 "B_observed_frac": 0.7, "A_appearance_frac": 0.01, "B_appearance_frac": 0.02,
+                 "alignment_residual_cross": 0.02, "alignment_residual_within": 0.01, "field_uncertainty_cm_median": 1.2,
+                 "field_reachable_frac": 0.3, "field_approachable_frac": 0.8, "field_interactable_frac": 0.2,
+                 "field_scale_m_per_unit": 1.0, "field_uncertainty_cm_p90": 3.0, "field_shift_cm_p99_abs": 9.0,
+                 "unc_cm_A_median": 1.5, "unc_cm_B_median": 1.0, "robot": {"reach_m": 0.85}}
+            (d / "metrics.json").write_text(json.dumps(m))
+            (d / "changes.json").write_text(json.dumps([{"id": 0, "kind": "moved", "label": "vase",
+                                                         "description": "The vase moved."}]))
+    out = tmp_path / "summary"
+    summarize.write(tmp_path, out)
+    lt = (out / "lighting.md").read_text()
+    assert "static-dark" in lt and "change+lighting" in lt
+    assert "vase" in lt and "dark" in lt
+    assert (out / "lighting.png").stat().st_size > 1000
+    assert "lighting.md" in (out / "summary.md").read_text()
+    assert lighting.group({"pair_type": "static", "a": "scene01_dark_before_a", "b": "x_dark_y"}) == "static-dark"
+
+
+def test_step_log_and_size_guard(tmp_path):
+    import logging
+
+    from uncertainscene.experiments import poc
+
+    big = tmp_path / "big.bin"
+    big.write_bytes(b"0" * int(5.1 * 1024**2))
+    assert poc.enforce_size(tmp_path) == ["big.bin"] and not big.exists()
+    spec = poc.Spec("t", "scene01_light_before_a", "scene01_light_after_a")
+    orig = poc.analyse
+    poc.analyse = lambda *a, **k: (logging.getLogger("uncertainscene.poc").info("inside"), "ok")[1]
+    try:
+        assert poc.step_fn(spec, tmp_path)(tmp_path, tmp_path) == "ok"
+    finally:
+        poc.analyse = orig
+    assert "inside" in (tmp_path / "step_log.txt").read_text()

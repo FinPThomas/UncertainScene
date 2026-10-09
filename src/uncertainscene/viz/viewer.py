@@ -45,7 +45,8 @@ def write_ply(res: ChangeResult, out: Path, max_points: int = 260000, seed: int 
 
 
 def write_html(res: ChangeResult, objs: list, out: Path, title: str = "", n_bg: int = 45000,
-               n_change: int = 15000, seed: int = 0, fields: dict | None = None, n_field: int = 25000) -> Path:
+               n_change: int = 15000, seed: int = 0, fields: dict | None = None, n_field: int = 12000,
+               max_mb: float = 4.5) -> Path:
     import plotly.graph_objects as go
 
     rng = np.random.default_rng(seed)
@@ -99,12 +100,20 @@ def write_html(res: ChangeResult, objs: list, out: Path, title: str = "", n_bg: 
                                               xaxis_visible=False, yaxis_visible=False, zaxis_visible=False),
                       margin=dict(l=0, r=0, t=40, b=0), legend=dict(itemsizing="constant"))
     fig.write_html(out, include_plotlyjs="cdn", full_html=True)
+    if Path(out).stat().st_size > max_mb * 1024**2 and n_bg > 2000:   # keep under the git file limit
+        return write_html(res, objs, out, title, int(n_bg * 0.6), int(n_change * 0.6), seed, fields,
+                          int(n_field * 0.6), max_mb)
     return out
 
 
-def write_fields_ply(f: dict, out: Path) -> Path:
-    """Voxelised cloud of recording B with every heat-map field as a float property."""
+def write_fields_ply(f: dict, out: Path, max_mb: float = 4.5) -> Path:
+    """Voxelised cloud of recording B with every heat-map field as a float property
+    (subsampled to stay under max_mb)."""
     names = ["uncertainty_cm", "shift_cm", "height_m", "reach", "approach", "interact"]
+    cap = int(max_mb * 1024**2 / (15 + 4 * len(names)))
+    if len(f["X"]) > cap:
+        sel = np.sort(np.random.default_rng(0).choice(len(f["X"]), cap, replace=False))
+        f = {k: (f[k][sel] if k in names + ["X", "rgb"] else f[k]) for k in f}
     dt = np.dtype([("x", "<f4"), ("y", "<f4"), ("z", "<f4"), ("red", "u1"), ("green", "u1"), ("blue", "u1")]
                   + [(n, "<f4") for n in names])
     arr = np.empty(len(f["X"]), dt)
