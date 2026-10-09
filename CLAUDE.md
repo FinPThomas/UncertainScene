@@ -14,8 +14,8 @@ Read RESEARCH.md first. It is the single source of truth for what has been done 
    same commit.
 5. Never commit raw data or any file over 5 MB. Big files go through
    `uncertainscene.infra.store` (GitHub release assets) with a manifest committed.
-6. Compute runs on Colab through notebooks built from `notebooks/test_github_push.ipynb` (named
-   after what they run, kept on their experiment branch) and `uncertainscene.infra.Run`.
+6. Compute runs on Colab through one notebook per experiment branch (named after what it runs;
+   its first cell checks GitHub with a real test push) and `uncertainscene.infra.Run`.
    Every experiment is a `run.step(...)` with honest `needs` (disk_gb, ram_gb, minutes).
 7. Ground truth in `data/ground_truth/` is for scoring only; never tune a threshold on the
    pair it is scored on (RESEARCH.md section 5).
