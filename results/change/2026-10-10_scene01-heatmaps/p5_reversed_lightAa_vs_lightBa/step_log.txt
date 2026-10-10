@@ -1,0 +1,12 @@
+2026-10-10 01:09:16,583 INFO uncertainscene.poc: step p5_reversed_lightAa_vs_lightBa: scene01_light_after_a vs scene01_light_before_a, 28 frames/video, variant reversed, outputs standard
+2026-10-10 01:09:16,900 INFO uncertainscene.poc: [p5_reversed_lightAa_vs_lightBa] start done in 0 s | RAM 4.6/12.7 GB, disk free 62.1 GB, GPU 5.2/15.0 GB
+2026-10-10 01:09:16,903 WARNING uncertainscene.recon.vggt: GPU fits ~27 frames per recording; using 27 instead of 28
+2026-10-10 01:09:18,094 INFO uncertainscene.recon.vggt: VGGT on 54 frames (518, 294); GPU free 9.3/14.6 GB
+2026-10-10 01:09:48,521 INFO uncertainscene.recon.vggt: reconstructed 54 frames in 28 s (GPU peak 9.57 GB)
+2026-10-10 01:09:51,504 INFO uncertainscene.poc: [p5_reversed_lightAa_vs_lightBa] reconstruction (54 frames) done in 35 s | RAM 4.6/12.7 GB, disk free 62.1 GB, GPU 5.2/15.0 GB
+2026-10-10 01:09:53,004 INFO uncertainscene.poc: [p5_reversed_lightAa_vs_lightBa] DINOv2 features done in 1 s | RAM 4.6/12.7 GB, disk free 62.0 GB, GPU 5.3/15.0 GB
+2026-10-10 01:10:46,789 INFO uncertainscene.poc: [p5_reversed_lightAa_vs_lightBa] change detection (800000 points, tau 0.086) done in 54 s | RAM 5.1/12.7 GB, disk free 62.0 GB, GPU 5.3/15.0 GB
+2026-10-10 01:10:47,379 INFO uncertainscene.poc: [p5_reversed_lightAa_vs_lightBa] objects (2 clusters) done in 1 s | RAM 5.1/12.7 GB, disk free 62.0 GB, GPU 5.3/15.0 GB
+2026-10-10 01:11:04,590 INFO uncertainscene.poc: [p5_reversed_lightAa_vs_lightBa] heat maps (120000 points, scale 2.375 m/unit) done in 17 s | RAM 5.2/12.7 GB, disk free 62.0 GB, GPU 5.3/15.0 GB
+2026-10-10 01:11:05,027 INFO uncertainscene.poc: [p5_reversed_lightAa_vs_lightBa] labels (baseball cap, cup) done in 0 s | RAM 5.2/12.7 GB, disk free 62.0 GB, GPU 5.3/15.0 GB
+2026-10-10 01:11:21,770 INFO uncertainscene.poc: [p5_reversed_lightAa_vs_lightBa] figures, viewer and reports done in 17 s | RAM 5.2/12.7 GB, disk free 62.0 GB, GPU 5.3/15.0 GB
