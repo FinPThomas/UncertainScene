@@ -1,0 +1,10 @@
+2026-10-10 00:51:09,273 INFO uncertainscene.poc: step p4_no_appearance_lightBa_vs_lightBb: scene01_light_before_a vs scene01_light_before_b, 28 frames/video, variant no_appearance, outputs light
+2026-10-10 00:51:09,709 INFO uncertainscene.poc: [p4_no_appearance_lightBa_vs_lightBb] start done in 0 s | RAM 4.7/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:51:09,710 INFO uncertainscene.poc: reusing cached reconstruction recon_scene01_light_before_a_scene01_light_before_b_n28_o0.npz
+2026-10-10 00:51:10,775 INFO uncertainscene.poc: [p4_no_appearance_lightBa_vs_lightBb] reconstruction (54 frames) done in 1 s | RAM 4.7/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:51:11,243 INFO uncertainscene.poc: [p4_no_appearance_lightBa_vs_lightBb] DINOv2 features done in 0 s | RAM 4.7/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:51:20,766 INFO uncertainscene.poc: [p4_no_appearance_lightBa_vs_lightBb] change detection (596308 points, tau 0.102) done in 10 s | RAM 4.7/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:51:21,230 INFO uncertainscene.poc: [p4_no_appearance_lightBa_vs_lightBb] objects (1 clusters) done in 0 s | RAM 4.7/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:51:36,047 INFO uncertainscene.poc: [p4_no_appearance_lightBa_vs_lightBb] heat maps (107375 points, scale 2.347 m/unit) done in 15 s | RAM 4.7/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:51:36,564 INFO uncertainscene.poc: [p4_no_appearance_lightBa_vs_lightBb] labels (guitar) done in 1 s | RAM 4.7/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:51:46,085 INFO uncertainscene.poc: [p4_no_appearance_lightBa_vs_lightBb] figures, viewer and reports done in 10 s | RAM 4.7/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
