@@ -133,6 +133,16 @@
       "started": "2026-10-10 00:18:54 UTC",
       "status": "done"
     },
+    "p3_short_arm_darkBa_vs_lightAa": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "eb3ba9d",
+      "expires": 1791594790.380015,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 00:22:46 UTC",
+      "status": "running"
+    },
     "p3_short_arm_lightBa_vs_lightAa": {
       "account": "colab-dbb8",
       "attempts": 1,
