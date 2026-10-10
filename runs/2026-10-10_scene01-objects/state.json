@@ -17,11 +17,11 @@
       "account": "colab-9ce8",
       "attempts": 1,
       "commit": "ebe84ef",
-      "expires": 1791651419.7320325,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 16:01:12 UTC",
+      "note": "lighting: 0 changed objects of 546 (0%); labels: ; scale 3.362 m/unit; 2097s",
       "started": "2026-10-10 15:25:29 UTC",
-      "status": "running"
+      "status": "done"
     },
     "1-main_no-change_light-before-a_vs_light-before-b": {
       "account": "colab-9ce8",
