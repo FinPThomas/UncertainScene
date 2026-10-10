@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-10_scene01-objects",
+  "step": "3-allpairs_no-change-light-vs-dark_dark-before-a_vs_light-before-b",
+  "status": "done",
+  "account": "colab-9ce8",
+  "commit": "d8424f1",
+  "minutes": 37.0,
+  "usage_at_end": "RAM 5.7/12.7 GB, disk free 51.7 GB, GPU 6.6/15.0 GB",
+  "note": "lighting: 0 changed objects of 581 (0%); labels: ; scale 2.731 m/unit; 2175s"
+}
