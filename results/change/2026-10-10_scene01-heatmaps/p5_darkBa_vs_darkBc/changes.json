@@ -1,0 +1,333 @@
+[
+  {
+    "id": 1,
+    "kind": "added",
+    "n_points": 3417,
+    "centroid": [
+      -0.09009999781847,
+      -0.2533999979496002,
+      1.0649000406265259
+    ],
+    "centroid_std": 0.026140432804822922,
+    "extent": [
+      0.193900004029274,
+      0.10790000110864639,
+      0.03530000150203705
+    ],
+    "extent_ci": [
+      [
+        0.191,
+        0.1961
+      ],
+      [
+        0.105,
+        0.1113
+      ],
+      [
+        0.0344,
+        0.0361
+      ]
+    ],
+    "frame_votes": {
+      "37": 1123,
+      "38": 989,
+      "39": 698,
+      "46": 316,
+      "42": 179
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "throw",
+    "label_prob": 0.162,
+    "description": "A throw appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        107.3,
+        59.7,
+        19.5
+      ],
+      "size_cm_ci": [
+        [
+          105.7,
+          108.5
+        ],
+        [
+          58.1,
+          61.6
+        ],
+        [
+          19.0,
+          20.0
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          87.4,
+          48.6,
+          15.9
+        ],
+        [
+          127.1,
+          70.8,
+          23.1
+        ]
+      ],
+      "position_sd_cm": 14.5,
+      "boundary_uncertainty_cm": 6.61,
+      "mean_abs_shift_cm": 64.8,
+      "reach": 0.0,
+      "approach": 0.59,
+      "height_m": 1.19
+    }
+  },
+  {
+    "id": 3,
+    "kind": "appearance",
+    "n_points": 1632,
+    "centroid": [
+      0.04600000008940697,
+      -0.09849999845027924,
+      1.0058000087738037
+    ],
+    "centroid_std": 0.02613239735364914,
+    "extent": [
+      0.05950000137090683,
+      0.03240000084042549,
+      0.03020000085234642
+    ],
+    "extent_ci": [
+      [
+        0.0586,
+        0.0603
+      ],
+      [
+        0.0312,
+        0.0344
+      ],
+      [
+        0.0294,
+        0.0321
+      ]
+    ],
+    "frame_votes": {
+      "44": 1632
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "mug",
+    "label_prob": 0.593,
+    "description": "The mug looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        32.9,
+        17.9,
+        16.7
+      ],
+      "size_cm_ci": [
+        [
+          32.4,
+          33.4
+        ],
+        [
+          17.3,
+          19.0
+        ],
+        [
+          16.3,
+          17.8
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          26.8,
+          14.6,
+          13.6
+        ],
+        [
+          39.0,
+          21.2,
+          19.8
+        ]
+      ],
+      "position_sd_cm": 14.5,
+      "boundary_uncertainty_cm": 3.23,
+      "mean_abs_shift_cm": 6.0,
+      "reach": 0.0,
+      "approach": 0.14,
+      "height_m": 0.15
+    }
+  },
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 1594,
+    "centroid": [
+      -0.49149999022483826,
+      -0.002199999988079071,
+      0.6894000172615051
+    ],
+    "centroid_std": 0.02614751271903515,
+    "extent": [
+      0.20250000059604645,
+      0.07289999723434448,
+      0.03660000115633011
+    ],
+    "extent_ci": [
+      [
+        0.199,
+        0.2057
+      ],
+      [
+        0.0711,
+        0.0746
+      ],
+      [
+        0.0352,
+        0.0377
+      ]
+    ],
+    "frame_votes": {
+      "1": 1594
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "bag",
+    "label_prob": 0.465,
+    "description": "A bag that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        112.0,
+        40.3,
+        20.2
+      ],
+      "size_cm_ci": [
+        [
+          110.1,
+          113.8
+        ],
+        [
+          39.3,
+          41.3
+        ],
+        [
+          19.5,
+          20.9
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          91.3,
+          32.9,
+          16.5
+        ],
+        [
+          132.8,
+          47.8,
+          24.0
+        ]
+      ],
+      "position_sd_cm": 14.5,
+      "boundary_uncertainty_cm": 25.2,
+      "mean_abs_shift_cm": 57.3,
+      "reach": 0.0,
+      "approach": 0.94,
+      "height_m": 0.74
+    }
+  },
+  {
+    "id": 2,
+    "kind": "appearance",
+    "n_points": 1429,
+    "centroid": [
+      -0.04780000075697899,
+      -0.13169999420642853,
+      1.0458999872207642
+    ],
+    "centroid_std": 0.026135597378015518,
+    "extent": [
+      0.11739999800920486,
+      0.07479999959468842,
+      0.01640000008046627
+    ],
+    "extent_ci": [
+      [
+        0.1153,
+        0.1202
+      ],
+      [
+        0.0726,
+        0.077
+      ],
+      [
+        0.0158,
+        0.0169
+      ]
+    ],
+    "frame_votes": {
+      "37": 701,
+      "38": 695,
+      "44": 25,
+      "43": 8
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "towel",
+    "label_prob": 0.517,
+    "description": "The towel looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        65.0,
+        41.4,
+        9.1
+      ],
+      "size_cm_ci": [
+        [
+          63.8,
+          66.5
+        ],
+        [
+          40.2,
+          42.6
+        ],
+        [
+          8.7,
+          9.4
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          52.9,
+          33.7,
+          7.4
+        ],
+        [
+          77.0,
+          49.0,
+          10.8
+        ]
+      ],
+      "position_sd_cm": 14.5,
+      "boundary_uncertainty_cm": 25.31,
+      "mean_abs_shift_cm": 22.3,
+      "reach": 0.0,
+      "approach": 0.14,
+      "height_m": 0.5
+    }
+  }
+]
