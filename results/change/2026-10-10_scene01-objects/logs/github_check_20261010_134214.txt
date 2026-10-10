@@ -1,0 +1,7 @@
+2026-10-10 13:38:09Z INFO  [1/8] Python 3.13.15, platform: Colab
+2026-10-10 13:38:10Z INFO  [2/8] GITHUB_TOKEN found in Colab secrets: fine-grained (github_pat_), 93 characters (value never printed)
+2026-10-10 13:38:11Z INFO  [3/8] token valid for GitHub user 'FinPThomas'; expires: 2026-11-09 14:37:14 UTC; API calls left this hour: 4999
+2026-10-10 13:38:11Z INFO  [4/8] repository FinPThomas/UncertainScene visible (private: False)
+2026-10-10 13:38:11Z INFO        branch exp/change/scene01-heatmaps at d8b0951
+2026-10-10 13:38:50Z INFO  [5/8] code at d8b0951 (feat(recon): add Gaussian splats of the pilot pair, same-view compare) in 39 s
+2026-10-10 13:42:14Z INFO  [6/8] dependencies installed in 204 s (torch 2.11.0+cu130, SAM 2 ok)
