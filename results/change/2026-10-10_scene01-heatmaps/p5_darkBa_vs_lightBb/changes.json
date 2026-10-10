@@ -1,0 +1,85 @@
+[
+  {
+    "id": 0,
+    "kind": "added",
+    "n_points": 1214,
+    "centroid": [
+      -0.06599999964237213,
+      -0.2224999964237213,
+      1.0650999546051025
+    ],
+    "centroid_std": 0.030201250687241554,
+    "extent": [
+      0.11879999935626984,
+      0.04280000180006027,
+      0.0203000009059906
+    ],
+    "extent_ci": [
+      [
+        0.1176,
+        0.121
+      ],
+      [
+        0.0419,
+        0.0439
+      ],
+      [
+        0.0193,
+        0.0215
+      ]
+    ],
+    "frame_votes": {
+      "46": 659,
+      "47": 554,
+      "43": 1
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "blanket",
+    "label_prob": 0.185,
+    "description": "A blanket appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        48.6,
+        17.5,
+        8.3
+      ],
+      "size_cm_ci": [
+        [
+          48.1,
+          49.5
+        ],
+        [
+          17.1,
+          17.9
+        ],
+        [
+          7.9,
+          8.8
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          39.6,
+          14.3,
+          6.8
+        ],
+        [
+          57.6,
+          20.7,
+          9.8
+        ]
+      ],
+      "position_sd_cm": 12.3,
+      "boundary_uncertainty_cm": 18.58,
+      "mean_abs_shift_cm": 46.7,
+      "reach": 0.0,
+      "approach": 0.67,
+      "height_m": 0.81
+    }
+  }
+]
