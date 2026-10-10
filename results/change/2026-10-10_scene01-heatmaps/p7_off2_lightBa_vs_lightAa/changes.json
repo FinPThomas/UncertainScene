@@ -1,0 +1,87 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 1324,
+    "centroid": [
+      0.47369998693466187,
+      -0.06469999998807907,
+      0.867900013923645
+    ],
+    "centroid_std": 0.02519453503191471,
+    "extent": [
+      0.08560000360012054,
+      0.08089999854564667,
+      0.025599999353289604
+    ],
+    "extent_ci": [
+      [
+        0.0822,
+        0.0877
+      ],
+      [
+        0.0792,
+        0.0868
+      ],
+      [
+        0.0247,
+        0.0268
+      ]
+    ],
+    "frame_votes": {
+      "10": 822,
+      "11": 351,
+      "12": 127,
+      "13": 23,
+      "15": 1
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "cup",
+    "label_prob": 0.581,
+    "description": "The cup looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        21.3,
+        20.2,
+        6.4
+      ],
+      "size_cm_ci": [
+        [
+          20.5,
+          21.8
+        ],
+        [
+          19.7,
+          21.6
+        ],
+        [
+          6.2,
+          6.7
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          17.4,
+          16.4,
+          5.2
+        ],
+        [
+          25.3,
+          23.9,
+          7.6
+        ]
+      ],
+      "position_sd_cm": 6.3,
+      "boundary_uncertainty_cm": 2.74,
+      "mean_abs_shift_cm": 4.7,
+      "reach": 0.0,
+      "approach": 0.11,
+      "height_m": 0.78
+    }
+  }
+]
