@@ -57,15 +57,15 @@ class SceneObject:
 _SAM = {}
 
 
-def load_sam(model_id: str = "facebook/sam2.1-hiera-small", points_per_side: int = 24):
+def load_sam(model_id: str = "facebook/sam2.1-hiera-small", points_per_side: int = 32):
     """SAM 2 automatic mask generator (pip install git+https://github.com/facebookresearch/sam2)."""
     from sam2.automatic_mask_generator import SAM2AutomaticMaskGenerator
 
     key = (model_id, points_per_side)
     if key not in _SAM:
         _SAM[key] = SAM2AutomaticMaskGenerator.from_pretrained(
-            model_id, points_per_side=points_per_side, points_per_batch=64, pred_iou_thresh=0.75,
-            stability_score_thresh=0.88, min_mask_region_area=150, multimask_output=True)
+            model_id, points_per_side=points_per_side, points_per_batch=64, pred_iou_thresh=0.7,
+            stability_score_thresh=0.85, min_mask_region_area=80, multimask_output=True)
     return _SAM[key]
 
 
@@ -102,7 +102,7 @@ def mask_wobble(predictor, img: np.ndarray, ms: list[dict]) -> list:
 
 
 def sam_masks(files: list[str], frames: list[int], size_hw: tuple[int, int], model_id: str = "facebook/sam2.1-hiera-small",
-              points_per_side: int = 24, min_area: float = 0.001, max_area: float = 0.5, wobble: bool = True) -> dict:
+              points_per_side: int = 32, min_area: float = 0.0005, max_area: float = 0.5, wobble: bool = True) -> dict:
     """{frame: [dict(mask=bool[H, W] at reconstruction size, full_bbox=(x0, y0, x1, y1), score,
     wobble_px=(du, dv) or None)]}."""
     import torch
@@ -267,7 +267,7 @@ def effective_voxel(rec: Recon, masks: dict, voxel: float) -> float:
 
 
 def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structure_units: float,
-                  max_points: int = 3000, min_frames: int = 1, min_voxels: int = 8, seed: int = 0,
+                  max_points: int = 3000, min_frames: int = 1, min_voxels: int = 6, seed: int = 0,
                   adapt_voxel: bool = True) -> list[SceneObject]:
     rng = np.random.default_rng(seed)
     if adapt_voxel:

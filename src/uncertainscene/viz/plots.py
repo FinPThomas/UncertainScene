@@ -221,7 +221,8 @@ def field_maps(f: dict, rec: Recon, out: Path, title: str = "") -> Path:
             fig.colorbar(sc, ax=ax, fraction=0.035)
     fig.suptitle(title + f"\nscale {f['floor']['scale_m_per_unit']:.3f} m/unit (assumes phone at "
                  f"{f['robot']['phone_height_m']} m), reach {f['robot']['reach_m']} m from a "
-                 f"{f['robot']['shoulder_height_m']} m mount", fontsize=12)
+                 f"{f['robot']['shoulder_height_m']} m mount"
+                 + (", base drives to any free floor spot" if f['robot'].get('mobile') else ", base fixed"), fontsize=12)
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     fig.savefig(out, dpi=90)
     plt.close(fig)

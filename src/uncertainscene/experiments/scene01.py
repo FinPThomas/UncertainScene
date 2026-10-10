@@ -2,7 +2,7 @@
 
 The first run (experiments/poc.py, 56 frames per pair, per-point change detection) could not
 separate real changes from noise. This version:
-- reconstructs every extracted frame of both recordings (~185 each) in GPU-sized chunks
+- reconstructs every extracted frame of both recordings (~370 each at 6 fps) in GPU-sized chunks
   aligned through shared anchor frames (recon.chunked);
 - fits gravity and the floor from horizontal surfaces and combines two scale cues (phone
   height, sizes of recognised objects) (change.floor);
@@ -41,10 +41,10 @@ class Spec:
     name: str
     a: str
     b: str
-    n_per_video: int | None = None     # None = every extracted frame (~185 per recording)
+    n_per_video: int | None = None     # None = every extracted frame (~370 per recording at 6 fps)
     offset: int = 0
-    n_key: int = 36                    # SAM 2 key frames per recording
-    sam_points: int = 24               # SAM 2 points per side
+    n_key: int = 44                    # SAM 2 key frames per recording
+    sam_points: int = 32               # SAM 2 points per side (32x32 grid finds smaller objects than 24x24)
     variant: str = "base"
     detect: dict = field(default_factory=dict)
     robot: dict = field(default_factory=dict)
@@ -54,13 +54,13 @@ class Spec:
 
     @property
     def frames_est(self) -> int:
-        return 2 * (self.n_per_video or 185)
+        return 2 * (self.n_per_video or 370)
 
     @property
     def needs(self) -> dict:
         n = self.frames_est
-        minutes = 4 + n / 40 * 0.8 + 2 * self.n_key * 2.5 / 60 + n / 60 + 4
-        return {"disk_gb": 6, "ram_gb": 3.5, "minutes": round(minutes)}
+        minutes = 4 + n / 40 * 0.8 + 2 * self.n_key * 4 / 60 + n / 60 + 4
+        return {"disk_gb": 8, "ram_gb": 3.0 + 0.003 * n, "minutes": round(minutes)}
 
 
 @dataclass
@@ -71,9 +71,9 @@ class ClipsSpec:
     name: str
     clips: tuple
     groups: tuple
-    n_per_video: int | None = None
-    n_key: int = 36
-    sam_points: int = 24
+    n_per_video: int | None = 240      # per clip; 4 clips x every frame would not fit in Colab RAM
+    n_key: int = 44
+    sam_points: int = 32
     variant: str = "clips"
     outputs: str = "full"
     title: str = ""
@@ -81,8 +81,8 @@ class ClipsSpec:
 
     @property
     def needs(self) -> dict:
-        n = len(self.clips) * (self.n_per_video or 185)
-        minutes = 4 + n / 40 * 0.8 + len(self.clips) * self.n_key * 2.5 / 60 + 6
+        n = len(self.clips) * (self.n_per_video or 370)
+        minutes = 4 + n / 40 * 0.8 + len(self.clips) * self.n_key * 4 / 60 + 6
         return {"disk_gb": 8, "ram_gb": 2.0 + 0.006 * n, "minutes": round(minutes)}
 
 
@@ -121,7 +121,7 @@ def queue() -> list:
     q.append("3-allpairs_summary")
 
     for a, b in (core[0], core[1]):
-        for n in (28, 56, 100):
+        for n in (28, 100, 185):
             q.append(Spec(step_name("4-frames", a, b, f"{n}-frames"), a, b, n_per_video=n, variant=f"n{n}",
                           outputs="standard"))
     for k in (16, 72):
@@ -129,8 +129,8 @@ def queue() -> list:
                       outputs="standard"))
     q.append("4-frames_summary")
 
-    robots = {"short_arm": {"reach_m": 0.6}, "long_arm": {"reach_m": 1.1},
-              "table_mount": {"shoulder_height_m": 0.75}, "mobile_closer": {"base_offset_m": 0.6},
+    robots = {"short_arm": {"reach_m": 0.7}, "long_arm": {"reach_m": 1.3},
+              "low_mount": {"shoulder_height_m": 0.45}, "fixed_base": {"mobile": False},
               "big_gripper": {"gripper_clearance_m": 0.2, "gripper_radius_m": 0.05}}
     for v, r in robots.items():
         for a, b in (core[0], core[4]):
@@ -424,17 +424,18 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
             f"scale {s:.3f} m/unit; {m['step_seconds']:.0f}s")
 
 
-def _write_scene3d(res, objs_a, objs_b, f, out: Path, labels, max_mb: float = 4.5) -> None:
+def _write_scene3d(res, objs_a, objs_b, f, out: Path, labels, max_mb: float = 13.0) -> None:
+    """Dense 3D scene for the viewer, split into files under the git limit (scene3d.save)."""
     from ..viz import scene3d
 
-    n = 20000
+    n = 120000
     while True:
-        sc = scene3d.from_analysis(res, objs_a, objs_b, f, n_colour=n, n_heat=int(0.6 * n), labels=labels)
+        sc = scene3d.from_analysis(res, objs_a, objs_b, f, n_colour=n, n_heat=int(0.4 * n), labels=labels)
         txt = json.dumps(sc, separators=(",", ":"), default=float)
         if len(txt) < max_mb * 1024**2 or n < 3000:
             break
-        n = int(n * 0.7)
-    (out / "scene3d.json").write_text(txt)
+        n = int(n * 0.75)
+    scene3d.save(sc, out)
 
 
 def position_metrics(objs_a: list, objs_b: list, scale: float) -> dict:

@@ -199,8 +199,11 @@ def test_full_step_end_to_end(tmp_path, monkeypatch):
     assert m["obj_moved"] == 1 and m["version"] == 2 and m["sam_error"] is None
     assert m["title"].startswith("Objects moved, same lighting") and m["question"]
     assert m["pos_radius90_cm_median"] > 0 and m["pos_single_view_radius90_cm_median"] >= m["pos_radius90_cm_median"]
-    sc = json.loads((out / "scene3d.json").read_text())
-    assert {l["kind"] for l in sc["layers"]} >= {"colour", "heat"} and any("ring" in o for o in sc["objects"])
+    from uncertainscene.viz import scene3d
+
+    sc = scene3d.load(out)
+    assert {l["kind"] for l in sc["layers"]} >= {"colour", "heat", "objects"} and any("ring" in o for o in sc["objects"])
+    assert all(o.get("pal") for o in sc["objects"])
     assert "What this run tests" in (out / "report.md").read_text()
     rep = (out / "scene_report.md").read_text()
     assert "Every object in the scene" in rep and "box" in rep
@@ -331,3 +334,18 @@ def test_filter_shrinks_with_views_and_nis_flags_overconfidence():
     assert cover > 0.8
     over = pos.ekf(views(20, 0.06, 0.02))                     # true noise 3x the claimed noise
     assert np.mean(over["nis"]) > 15
+
+
+def test_viewer_point_encoding_round_trip():
+    """The viewer decodes x = lo + sc * (q + 32500); clouds must land where the objects are."""
+    import base64
+    from uncertainscene.viz.scene3d import Points
+
+    X = np.random.default_rng(0).uniform(-1, 3, (500, 3))
+    X[7] = np.nan
+    p = Points()
+    t = p.tables[p.add(X)]
+    q = np.frombuffer(base64.b64decode(t["q"]), np.int16).reshape(-1, 3)
+    dec = np.array(t["lo"]) + np.array(t["sc"]) * (q + 32500.0)
+    ok = np.isfinite(X).all(1)
+    assert np.abs(dec[ok] - X[ok]).max() < 1e-3 and (q[~ok] == -32768).all()

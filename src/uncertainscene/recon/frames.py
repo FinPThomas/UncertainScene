@@ -1,4 +1,4 @@
-"""Pick frames from data/frames/<label>/ and prepare them as model input."""
+"""Pick frames from data/frames_6fps/<label>/ (or data/frames/, 3 fps) and prepare them as model input."""
 
 from __future__ import annotations
 
@@ -11,14 +11,22 @@ from PIL import Image
 
 from ..infra.budget import REPO_ROOT
 
-FRAMES = REPO_ROOT / "data" / "frames"
+FRAMES_3FPS = REPO_ROOT / "data" / "frames"
+FRAMES_6FPS = REPO_ROOT / "data" / "frames_6fps"     # twice as many frames per recording (2026-10-10)
+FRAMES = FRAMES_6FPS
 
 
-def select_frames(label: str, n: int, offset: int = 0, root: Path = FRAMES) -> list[Path]:
+def frames_root(label: str) -> Path:
+    """6 fps frames when extracted for this recording, else the original 3 fps set."""
+    return FRAMES_6FPS if (FRAMES_6FPS / label / "frames.json").exists() else FRAMES_3FPS
+
+
+def select_frames(label: str, n: int, offset: int = 0, root: Path | None = None) -> list[Path]:
     """`n` frames spread evenly over the sweep, the sharpest in each of n bins.
 
     `offset` shifts which frame wins inside a bin (0 = sharpest, 1 = second sharpest, ...),
     giving a different but comparable selection for repeat runs."""
+    root = root or frames_root(label)
     meta = json.loads((root / label / "frames.json").read_text())["frames"]
     bins = np.array_split(np.arange(len(meta)), min(n, len(meta)))
     picked = []

@@ -209,7 +209,7 @@ def analyse_clips(spec, out: Path, cache: Path, check=None) -> str:
     layers = []
     for v, lab in enumerate(spec.clips):
         k = np.nonzero(V == v)[0]
-        k = k[rng.choice(len(k), min(15000, len(k)), replace=False)]
+        k = k[rng.choice(len(k), min(60000, len(k)), replace=False)]
         layers.append({"name": f"clip {v + 1}: {rec_name(lab)} (colour)", "kind": "colour", "rec": str(v + 1),
                        "visible": v == 0, "size": 2, "pts": pts.add(X[k]), "rgb": scene3d._b64(C[k].astype(np.uint8))})
     for kk in range(1, len(first) + 1):
@@ -219,6 +219,8 @@ def analyse_clips(spec, out: Path, cache: Path, check=None) -> str:
             layers.append({"name": f"90% regions, {kk} clip{'s' if kk > 1 else ''}", "kind": "line", "rec": None,
                            "visible": kk == 1, "pts": pts.add(np.concatenate(rings)),
                            "color": ["#d62728", "#ff7f0e", "#2ca02c", "#1f77b4"][min(kk - 1, 3)]})
+    first_objs = [max(g.values(), key=lambda o: o.label_prob) for g in groups_first]
+    layers += scene3d.object_layer(pts, first_objs, None, "all clips", 1500, rng)
     objects = []
     for g in groups_first:
         e = _est([g[i] for i in sorted(g)])
@@ -226,9 +228,9 @@ def analyse_clips(spec, out: Path, cache: Path, check=None) -> str:
         r = pos.radius90(e["cov"]) * s * 100
         objects.append({"center": np.round(e["mean"], 4).tolist(), "label": o.label or "object", "status": "matched",
                         "color": "#1f77b4", "rec": None, "corners": scene3d.box_corners(o.X),
-                        "hover": f"{o.label}: centre within {r:.1f} cm (90%) using {len(g)} clips"})
-    (out / "scene3d.json").write_text(json.dumps({"points": pts.tables, "layers": layers, "objects": objects},
-                                                 separators=(",", ":"), default=float))
+                        "hover": f"{o.label}: centre within {r:.1f} cm (90%) using {len(g)} clips",
+                        "pal": scene3d.object_colour(o)})
+    scene3d.save({"points": pts.tables, "layers": layers, "objects": objects}, out)
     write_report(spec, m, rows, out)
     stage("figures, 3D and report")
     enforce_size(out)

@@ -31,9 +31,11 @@ from .geometry import cam_centers, up_vector
 class RobotModel:
     phone_height_m: float = 1.35
     phone_height_range_m: tuple = (1.1, 1.6)
-    shoulder_height_m: float = 0.45      # arm mount height above floor
-    reach_m: float = 0.85                # arm reach from the mount
-    base_offset_m: float = 0.0           # base placed where the camera operator stood, + this towards the scene
+    shoulder_height_m: float = 0.75      # arm mount height above floor (mobile manipulator torso)
+    reach_m: float = 1.0                 # arm reach from the mount
+    mobile: bool = True                  # base can drive to any free floor spot (False: stays where the operator stood)
+    base_offset_m: float = 0.0           # fixed base only: moved this far from the operator towards the scene
+    footprint_m: float = 0.25            # free radius the base needs on the floor
     gripper_clearance_m: float = 0.12    # free length needed in front of a surface
     gripper_radius_m: float = 0.03
     uncertainty_ok_cm: float = 3.0       # uncertainty at which interactability is halved
@@ -96,6 +98,30 @@ def _voxel(X: np.ndarray, size: float) -> np.ndarray:
     return np.sort(first)
 
 
+def standable_floor(X: np.ndarray, height_m: np.ndarray, up: np.ndarray, floor_h: float, s: float,
+                    grid_m: float = 0.1, footprint_m: float = 0.25) -> np.ndarray:
+    """Floor positions (scene units, on the floor plane) where a robot base fits: observed floor
+    nearby and no obstacle 0.05-1.0 m high within the footprint radius."""
+    from scipy.spatial import cKDTree
+
+    e1 = np.cross(up, [1.0, 0, 0]) if abs(up[0]) < 0.9 else np.cross(up, [0, 1.0, 0])
+    e1 /= np.linalg.norm(e1)
+    e2 = np.cross(up, e1)
+    P = np.stack([X @ e1, X @ e2], 1) * s
+    fl = height_m < 0.03
+    obst = (height_m > 0.05) & (height_m < 1.0)
+    if fl.sum() < 50:
+        return np.zeros((0, 3))
+    lo, hi = P[fl].min(0), P[fl].max(0)
+    G = np.stack(np.meshgrid(np.arange(lo[0], hi[0] + grid_m, grid_m), np.arange(lo[1], hi[1] + grid_m, grid_m),
+                             indexing="ij"), -1).reshape(-1, 2)
+    ok = cKDTree(P[fl]).query(G, k=1)[0] < 1.5 * grid_m
+    if obst.any():
+        ok &= cKDTree(P[obst]).query(G, k=1)[0] > footprint_m
+    G = G[ok] / s
+    return G[:, :1] * e1 + G[:, 1:] * e2 + floor_h * up
+
+
 def compute_fields(res: ChangeResult, rec: Recon, robot: RobotModel | None = None, which: str = "B",
                    voxel_m: float = 0.01, max_points: int = 120000, floor: Floor | None = None) -> dict:
     """Fields for the points of recording `which` (B = the scene as it is now), on a voxel
@@ -122,7 +148,14 @@ def compute_fields(res: ChangeResult, rec: Recon, robot: RobotModel | None = Non
     to_scene /= np.linalg.norm(to_scene) + 1e-9
     base = base + robot.base_offset_m / s * to_scene
     shoulder = base + robot.shoulder_height_m / s * up
-    dist = np.linalg.norm(X - shoulder, axis=1) * s
+    bases = standable_floor(X, height, up, floor.height, s, footprint_m=robot.footprint_m) if robot.mobile else None
+    if bases is not None and len(bases):
+        # mobile robot: distance from each surface to the nearest shoulder position over free floor
+        from scipy.spatial import cKDTree
+
+        dist = cKDTree(bases + robot.shoulder_height_m / s * up).query(X, k=1)[0] * s
+    else:
+        dist = np.linalg.norm(X - shoulder, axis=1) * s
     reach = np.clip((robot.reach_m - dist) / 0.1 + 0.5, 0, 1) * (height > -0.05)
 
     normals = _normals(X, toward)
@@ -132,7 +165,7 @@ def compute_fields(res: ChangeResult, rec: Recon, robot: RobotModel | None = Non
     shift_cm = ps.disp[idx] * s * 100
 
     return {"which": which, "idx": idx, "X": X, "rgb": ps.rgb[idx], "floor": asdict(floor), "robot": asdict(robot),
-            "base": base, "shoulder": shoulder,
+            "base": base, "shoulder": shoulder, "bases": bases if bases is not None else np.zeros((0, 3)),
             "uncertainty_cm": unc_cm.astype(np.float32), "shift_cm": shift_cm.astype(np.float32),
             "height_m": height.astype(np.float32), "reach": reach.astype(np.float32),
             "approach": approach.astype(np.float32),

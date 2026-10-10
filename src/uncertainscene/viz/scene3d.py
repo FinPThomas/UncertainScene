@@ -2,20 +2,55 @@
 
 Format: {"points": [table], "layers": [layer], "objects": [object]}
 - table: {"n", "lo" [3], "sc" [3], "q": base64 int16 [n, 3]}; x = lo + sc * (q + 32500)
-- layer: {"name", "kind" colour|change|heat|line|ellipse, "rec" A|B|null, "visible", "size",
+- layer: {"name", "kind" colour|change|heat|line|ellipse|objects, "rec" A|B|null, "visible", "size",
           "pts" (table index), and "rgb" (base64 uint8 [n, 3]) or "color" (one hex), optional
           "legend" {"lo", "hi", "stops" [hex x 6]} for heat maps}
 - object: {"center", "label", "color", "status", "rec", "hover", "corners" [8][3], "ring" (table
-           index of its 90% position ellipsoid rings, NaN-separated)}
-Quantised coordinates keep a step under ~2 MB with ~20 000 points per recording.
+           index of its 90% position ellipsoid rings, NaN-separated), "pal" (its own colour in
+           the "objects" layer, where every object's points are painted one solid colour)}
+Quantised coordinates cost ~12 bytes per point; a step holds ~120 000 points per recording.
+Large scenes are split over scene3d.json, scene3d.1.json, ... (each under the 5 MB git limit);
+`save` and `load` handle that.
 """
 
 from __future__ import annotations
 
 import base64
+import json
 import re
+from pathlib import Path
 
 import numpy as np
+
+# distinct colours for painting each object (tab20 without the greys)
+PALETTE = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#bcbd22", "#17becf",
+           "#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5", "#c49c94", "#f7b6d2", "#dbdb8d", "#9edae5"]
+
+
+def save(scene: dict, out_dir: Path, part_mb: float = 4.5) -> list[Path]:
+    """Write scene3d.json (+ scene3d.1.json, ...) so no file passes the git size limit."""
+    txt = json.dumps(scene, separators=(",", ":"), default=float)
+    size = int(part_mb * 1024**2)
+    for old in Path(out_dir).glob("scene3d.*json"):
+        old.unlink()
+    paths = []
+    for k in range(0, max(len(txt), 1), size):
+        p = Path(out_dir) / ("scene3d.json" if k == 0 else f"scene3d.{k // size}.json")
+        p.write_text(txt[k:k + size])
+        paths.append(p)
+    return paths
+
+
+def load(d: Path) -> dict | None:
+    d = Path(d)
+    if not (d / "scene3d.json").exists():
+        return None
+    parts = [d / "scene3d.json"]
+    k = 1
+    while (d / f"scene3d.{k}.json").exists():
+        parts.append(d / f"scene3d.{k}.json")
+        k += 1
+    return json.loads("".join(p.read_text() for p in parts))
 
 
 def _b64(a: np.ndarray) -> str:
@@ -81,7 +116,7 @@ class Points:
         sc = (hi - lo) / 65000 + 1e-12
         q = np.full(X.shape, -32768, np.int16)           # -32768 = break (NaN) for line layers
         q[ok] = np.round((X[ok] - lo) / sc - 32500).astype(np.int16)
-        self.tables.append({"n": int(len(X)), "lo": (lo - 32500 * sc).tolist(), "sc": sc.tolist(), "q": _b64(q)})
+        self.tables.append({"n": int(len(X)), "lo": lo.tolist(), "sc": sc.tolist(), "q": _b64(q)})
         self._keys[key] = len(self.tables) - 1
         return self._keys[key]
 
@@ -106,8 +141,9 @@ def box_corners(X: np.ndarray) -> list:
     return out
 
 
-def from_analysis(res, objs_a: list, objs_b: list, fields: dict | None = None, n_colour: int = 20000,
-                  n_change: int = 6000, n_heat: int = 12000, labels=("before", "after"), seed: int = 0) -> dict:
+def from_analysis(res, objs_a: list, objs_b: list, fields: dict | None = None, n_colour: int = 120000,
+                  n_change: int = 20000, n_heat: int = 50000, labels=("before", "after"), seed: int = 0,
+                  n_per_object: int = 1500) -> dict:
     """Scene for one pair step: colour cloud of each recording, change classes, every heat map
     (sharing one point table) and every SAM 2 object with its box and 90% position region."""
     from ..change.detect import APPEARANCE, GONE
@@ -146,6 +182,8 @@ def from_analysis(res, objs_a: list, objs_b: list, fields: dict | None = None, n
             layers.append({"name": ttl, "kind": "heat", "rec": "A" if fields.get("which") == "A" else "B",
                            "visible": False, "size": 2, "pts": t, "rgb": _b64(rgb),
                            "legend": {"lo": round(float(vmin), 3), "hi": round(float(vmax), 3), "stops": stops}})
+    for rec, lab, objs in (("A", labels[0], objs_a), ("B", labels[1], objs_b)):
+        layers += object_layer(pts, [o for o in objs if not o.structure], rec, lab, n_per_object, rng)
     objects = []
     for o in objs_a + objs_b:
         if o.structure:
@@ -157,10 +195,32 @@ def from_analysis(res, objs_a: list, objs_b: list, fields: dict | None = None, n
         ob = {"center": np.round(pos["mean"] if pos else o.centroid, 4).tolist(),
               "label": f"{o.label or 'object'}", "id": f"{o.recording}{o.id}", "status": o.status,
               "color": _rgb_hex(STATUS_COLOR.get(o.status, (90, 90, 90))), "rec": o.recording,
-              "hover": hover, "corners": box_corners(o.X)}
+              "hover": hover, "corners": box_corners(o.X), "pal": object_colour(o)}
         if pos is not None:
             from ..change.position import ellipsoid_points
 
             ob["ring"] = pts.add(ellipsoid_points(pos["mean"], pos["cov"]))
         objects.append(ob)
     return {"points": pts.tables, "layers": layers, "objects": objects}
+
+
+def object_colour(o) -> str:
+    return PALETTE[int(o.id) % len(PALETTE)]
+
+
+def object_layer(pts: Points, objs: list, rec: str, lab: str, n_per_object: int, rng) -> list:
+    """Every object's own 3D points painted one solid colour per object, so objects stand out
+    as filled shapes rather than as a box around part of the room."""
+    X, C = [], []
+    for o in objs:
+        x = np.asarray(o.X)
+        if not len(x):
+            continue
+        if len(x) > n_per_object:
+            x = x[rng.choice(len(x), n_per_object, replace=False)]
+        X.append(x)
+        C.append(np.repeat(_hex_rgb(object_colour(o), 1), len(x), 0))
+    if not X:
+        return []
+    return [{"name": f"objects, one colour each ({lab})", "kind": "objects", "rec": rec, "visible": False, "size": 3,
+             "pts": pts.add(np.concatenate(X)), "rgb": _b64(np.concatenate(C))}]

@@ -126,10 +126,13 @@ def test_fields_scale_reach_and_object_metrics(moved):
     floor_pts = f["height_m"] < 0.02
     assert floor_pts.mean() > 0.2
     assert np.nanmedian(np.abs(f["shift_cm"][floor_pts])) < 3
-    near = np.linalg.norm(f["X"][:, :2] - f["base"][:2], axis=1) < 0.4
-    far = np.linalg.norm(f["X"][:, :2] - f["base"][:2], axis=1) > 2.0
+    fx = compute_fields(res, rec, RobotModel(mobile=False), voxel_m=0.02)   # base fixed at the operator
+    near = np.linalg.norm(fx["X"][:, :2] - fx["base"][:2], axis=1) < 0.4
+    far = np.linalg.norm(fx["X"][:, :2] - fx["base"][:2], axis=1) > 2.0
     if near.any() and far.any():
-        assert f["reach"][near].mean() > f["reach"][far].mean()
+        assert fx["reach"][near].mean() > fx["reach"][far].mean()
+    assert len(f["bases"]) > 0                                   # a mobile robot finds free floor to stand on
+    assert f["reach"].mean() >= fx["reach"].mean()               # and reaches at least as much as a fixed one
     s = field_stats(f)
     assert 0 <= s["interactable_frac"] <= 1
     object_fields(objs, res, f)

@@ -169,7 +169,9 @@ def load_step(d: Path, with_3d: bool = True) -> dict:
     st["notes"] = _md_to_html(rep.read_text()) if rep.exists() else ""
     if with_3d:
         if (d / "scene3d.json").exists():
-            st["scene"] = json.loads((d / "scene3d.json").read_text())
+            from .scene3d import load as load_scene
+
+            st["scene"] = load_scene(d)
         elif (d / "viewer.html").exists():
             try:
                 st["scene"] = from_viewer_html(d / "viewer.html", fields_on=m.get("fields_on", "B"))
@@ -214,9 +216,14 @@ def decimate(scene: dict, keep: float) -> dict:
 
 
 def build(run_dirs: list[Path], out: Path, prefixes: tuple = FEATURED, title: str = "Scene01 Change Viewer",
-          summary_md: str = "", max_mb: float = 15.5, standalone: bool = True) -> Path:
+          summary_md: str = "", max_mb: float = 15.5, standalone: bool = True, sidecar: bool = False,
+          scene_mb: float = 15.0) -> Path:
     """One page for the given runs (newest first). Steps are grouped by phase in the picker,
-    each with its plain title; the 3D view, figures and findings are embedded."""
+    each with its plain title; the 3D view, figures and findings are embedded.
+
+    sidecar=True writes each step's 3D scene at full density to scenes/<i>.js next to the page,
+    loaded only when that step is opened (for the published artifact, which can carry extra
+    files); otherwise every scene is embedded and thinned to fit max_mb."""
     steps = []
     for rd in run_dirs:
         for d in sorted(Path(rd).iterdir()):
@@ -224,6 +231,21 @@ def build(run_dirs: list[Path], out: Path, prefixes: tuple = FEATURED, title: st
                 st = load_step(d)
                 st["run"] = Path(rd).name
                 steps.append(st)
+    if sidecar:
+        sdir = out.parent / "scenes"
+        sdir.mkdir(parents=True, exist_ok=True)
+        for old in sdir.glob("*.js"):
+            old.unlink()
+        for i, st in enumerate(steps):
+            if st["scene"]:
+                sc, keep = st["scene"], 1.0
+                while True:
+                    txt = json.dumps(decimate(sc, keep), separators=(",", ":"))
+                    if len(txt) < scene_mb * 1024**2 or keep < 0.1:
+                        break
+                    keep *= 0.75
+                (sdir / f"{i}.js").write_text(f"window.__S({i},{txt});")
+                st["scene"], st["scene_src"] = None, f"scenes/{i}.js"
     keep = 1.0
     while True:
         st2 = [{**st, "scene": decimate(st["scene"], keep)} for st in steps]
@@ -300,7 +322,7 @@ figcaption{color:var(--muted);font-size:13px;margin:4px 0}
  <div class="layers" id="layers"></div>
  <div id="stage"><canvas id="cv" aria-label="3D point cloud"></canvas><div id="legend" hidden></div><div id="empty" hidden></div></div>
  <div class="ctrl"><label>Point size <input id="psize" type="range" min="1" max="7" step="1" value="3"></label>
-  <label><input id="labels" type="checkbox" checked> object names</label><label><input id="boxes" type="checkbox" checked> object boxes</label>
+  <label><input id="labels" type="checkbox" checked> object names</label><label><input id="boxes" type="checkbox" checked> object boxes</label><label><input id="fill" type="checkbox" checked> filled</label>
   <label><input id="rings" type="checkbox" checked> position ranges</label><button id="reset" type="button">Reset view</button></div>
  <p class="hint">Drag to rotate, scroll or pinch to zoom, right-drag or shift-drag to pan, double-click to reset.</p>
 </section>
@@ -336,7 +358,7 @@ function decode(sc){if(sc._dec)return sc._dec;
 // ---- renderer: z-buffered points in a canvas, no WebGL needed ----
 const cv=$('cv'),ctx=cv.getContext('2d');let W=0,H=0,dpr=1;
 // start from the first camera's viewpoint
-const cam={yaw:0,pitch:0,zoom:1,pan:[0,0]};let cur=null,vis={},opts={labels:true,boxes:true,rings:true,size:3};
+const cam={yaw:0,pitch:0,zoom:1,pan:[0,0]};let cur=null,vis={},opts={labels:true,boxes:true,fill:true,rings:true,size:3};
 function resize(){const r=$('stage').getBoundingClientRect();dpr=Math.min(window.devicePixelRatio||1,2);W=Math.max(1,Math.round(r.width*dpr));H=Math.max(1,Math.round(r.height*dpr));cv.width=W;cv.height=H;draw()}
 new ResizeObserver(resize).observe($('stage'));
 function proj(dec){const cy=Math.cos(cam.yaw),sy=Math.sin(cam.yaw),cp=Math.cos(cam.pitch),sp=Math.sin(cam.pitch);
@@ -344,7 +366,7 @@ function proj(dec){const cy=Math.cos(cam.yaw),sy=Math.sin(cam.yaw),cp=Math.cos(c
  return(x,y,z)=>{x-=c[0];y-=c[1];z-=c[2];const x1=x*cy-z*sy,z1=x*sy+z*cy;const y2=y*cp-z1*sp,z2=y*sp+z1*cp;const dz=z2+Dz;
   if(dz<=Dz*0.05)return null;return[W/2+px+f*x1/dz,H/2+py+f*y2/dz,dz]}}
 let raf=0;function draw(){if(!raf)raf=requestAnimationFrame(()=>{raf=0;render()})}
-function render(){const s=D.steps[cur];ctx.clearRect(0,0,W,H);if(!s||!s.scene){$('empty').hidden=false;$('empty').textContent=s&&s.scene_error?('3D data could not be read: '+s.scene_error):'No 3D data for this run.';$('legend').hidden=true;return}
+function render(){const s=D.steps[cur];ctx.clearRect(0,0,W,H);if(!s||!s.scene){$('empty').hidden=false;$('empty').textContent=s&&s._loading?'Loading the 3D scene…':s&&s.scene_error?('3D data could not be read: '+s.scene_error):'No 3D data for this run.';$('legend').hidden=true;return}
  $('empty').hidden=true;const dec=decode(s.scene),P=proj(dec);
  const img=ctx.createImageData(W,H),buf=new Uint32Array(img.data.buffer),zb=new Float32Array(W*H).fill(Infinity);
  const sz=Math.max(1,Math.round(opts.size*dpr*0.8));let any=false;
@@ -359,10 +381,15 @@ function render(){const s=D.steps[cur];ctx.clearRect(0,0,W,H);if(!s||!s.scene){$
   for(let i=0;i<l.n;i++){const x=l.P[i*3];const p=isNaN(x)?null:P(x,l.P[i*3+1],l.P[i*3+2]);if(!p){pen=false;continue}pen?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);pen=true}ctx.stroke()});
  if(vis.objects){const recOk=o=>!o.rec||vis.rec==null||vis.rec===o.rec;const E=[[0,1],[1,3],[3,2],[2,0],[4,5],[5,7],[7,6],[6,4],[0,4],[1,5],[2,6],[3,7]];
   const fg=css('--text'),bg=css('--panel');ctx.font=`${12*dpr}px system-ui,sans-serif`;ctx.lineJoin='round';
-  dec.O.forEach(o=>{if(!recOk(o))return;ctx.strokeStyle=o.color;
+  const own=dec.L.some((l,k)=>vis[k]&&l.kind==='objects'),colOf=o=>own&&o.pal?o.pal:o.color;
+  if(opts.boxes&&opts.fill){const F=[[0,1,3,2],[4,5,7,6],[0,1,5,4],[2,3,7,6],[0,2,6,4],[1,3,7,5]],faces=[];
+   dec.O.forEach(o=>{if(!recOk(o)||!o.corners)return;const c=o.corners.map(q=>P(q[0],q[1],q[2]));
+    F.forEach(f=>{if(f.every(i=>c[i]))faces.push([f.reduce((a,i)=>a+c[i][2],0)/4,f.map(i=>c[i]),colOf(o)])})});
+   faces.sort((a,b)=>b[0]-a[0]);ctx.globalAlpha=0.16;faces.forEach(([,q,col])=>{ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(q[0][0],q[0][1]);for(let i=1;i<4;i++)ctx.lineTo(q[i][0],q[i][1]);ctx.closePath();ctx.fill()});ctx.globalAlpha=1}
+  dec.O.forEach(o=>{if(!recOk(o))return;ctx.strokeStyle=colOf(o);
    if(opts.boxes&&o.corners){const c=o.corners.map(q=>P(q[0],q[1],q[2]));ctx.lineWidth=1.4*dpr;ctx.beginPath();E.forEach(([a,b])=>{if(c[a]&&c[b]){ctx.moveTo(c[a][0],c[a][1]);ctx.lineTo(c[b][0],c[b][1])}});ctx.stroke()}
    if(opts.rings&&o.ring){ctx.lineWidth=1.2*dpr;ctx.setLineDash([4*dpr,3*dpr]);ctx.beginPath();let pen=false;for(let i=0;i<o.ring.length/3;i++){const x=o.ring[i*3];const p=isNaN(x)?null:P(x,o.ring[i*3+1],o.ring[i*3+2]);if(!p){pen=false;continue}pen?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);pen=true}ctx.stroke();ctx.setLineDash([])}
-   const p=P(o.center[0],o.center[1],o.center[2]);if(!p)return;ctx.fillStyle=o.color;ctx.beginPath();ctx.arc(p[0],p[1],3.5*dpr,0,7);ctx.fill();
+   const p=P(o.center[0],o.center[1],o.center[2]);if(!p)return;ctx.fillStyle=colOf(o);ctx.beginPath();ctx.arc(p[0],p[1],3.5*dpr,0,7);ctx.fill();
    if(opts.labels){const t=o.label+(o.status&&o.status!=='unchanged'&&o.status!=='matched'?` (${o.status})`:'');ctx.lineWidth=3*dpr;ctx.strokeStyle=bg;ctx.strokeText(t,p[0]+6*dpr,p[1]-6*dpr);ctx.fillStyle=fg;ctx.fillText(t,p[0]+6*dpr,p[1]-6*dpr)}})}
  // legend for an active heat map
  const hl=dec.L.find((l,k)=>vis[k]&&l.legend);const lg=$('legend');
@@ -382,18 +409,22 @@ cv.addEventListener('wheel',e=>{e.preventDefault();cam.zoom=Math.max(0.2,Math.mi
 function resetCam(){cam.yaw=0;cam.pitch=0;cam.zoom=1;cam.pan=[0,0];draw()}
 cv.addEventListener('dblclick',resetCam);$('reset').onclick=resetCam;
 $('psize').oninput=e=>{opts.size=+e.target.value;draw()};
-['labels','boxes','rings'].forEach(k=>$(k).onchange=e=>{opts[k]=e.target.checked;draw()});
+['labels','boxes','fill','rings'].forEach(k=>$(k).onchange=e=>{opts[k]=e.target.checked;draw()});
 // ---- views: one recording alone, or the comparison ----
 function setView(v){const s=D.steps[cur];if(!s.scene)return;const L=s.scene.layers;vis={objects:true,rec:null};
  L.forEach((l,k)=>{if(l.kind==='line')vis[k]=v==='compare'||v==='all'?true:l.visible;
   else if(v.startsWith('rec:')){vis[k]=l.kind==='colour'&&l.rec===v.slice(4)}
+  else if(v.startsWith('obj:')){vis[k]=l.kind==='objects'&&(l.rec==null||l.rec===v.slice(4))}
   else if(v==='compare'){vis[k]=(l.kind==='colour'&&l.rec===(L.find(x=>x.kind==='colour')||{}).rec)||l.kind==='change'}
   else if(v.startsWith('heat:')){vis[k]=String(k)===v.slice(5)}});
- if(v.startsWith('rec:'))vis.rec=v.slice(4);
+ if(v.startsWith('rec:')||(v.startsWith('obj:')&&v.slice(4)!=='all'))vis.rec=v.slice(4);
  document.querySelectorAll('#views button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
  const hp=$('heatpick');if(hp){hp.value=v.startsWith('heat:')?v:'';hp.classList.toggle('on',v.startsWith('heat:'))}syncChips();draw()}
 function syncChips(){document.querySelectorAll('#layers input[data-k]').forEach(i=>{const k=i.dataset.k;i.checked=k==='objects'?!!vis.objects:!!vis[k]})}
-function show(i){cur=i;const s=D.steps[i];$('phase').textContent=`${s.phase_title} · ${s.run}`;$('ttl').textContent=s.title;
+window.__S=(i,sc)=>{D.steps[i].scene=sc;D.steps[i]._loading=false;if(cur===i)show(i)};
+function show(i){cur=i;const s=D.steps[i];
+ if(!s.scene&&s.scene_src&&!s._loading){s._loading=true;const el=document.createElement('script');el.src=s.scene_src;
+  el.onerror=()=>{s._loading=false;s.scene_src=null;s.scene_error='the 3D file did not load';if(cur===i)show(i)};document.head.appendChild(el)}$('phase').textContent=`${s.phase_title} · ${s.run}`;$('ttl').textContent=s.title;
  $('question').textContent=s.question?('What this run tests: '+s.question):'';
  $('recs').innerHTML=(s.recordings||[]).map((r,k)=>`<span>${s.type==='clips'?'clip '+(k+1):(k?'after':'before')}: ${r}</span>`).join('');
  const m=s.metrics,f=(v,d=0)=>v==null?'–':(+v).toFixed(d),chips=[];
@@ -407,6 +438,7 @@ function show(i){cur=i;const s=D.steps[i];$('phase').textContent=`${s.phase_titl
  const V=$('views'),Lc=$('layers');V.innerHTML='';Lc.innerHTML='';
  if(s.scene){const sc=s.scene,recs=sc.recs||{},L=sc.layers;const btn=(v,t)=>{const b=document.createElement('button');b.type='button';b.dataset.v=v;b.textContent=t;b.onclick=()=>setView(v);V.appendChild(b)};
   [...new Set(L.filter(l=>l.kind==='colour').map(l=>l.rec))].forEach(r=>btn('rec:'+r,`Only ${(recs[r]||r).replace(/ \(.*/,'')}`));
+  L.filter(l=>l.kind==='objects').forEach(l=>btn('obj:'+(l.rec==null?'all':l.rec),l.rec==null?'Objects, one colour each':`Objects only, ${(recs[l.rec]||l.rec).replace(/ \(.*/,'')}`));
   if(L.some(l=>l.kind==='change'))btn('compare','Changes between them');
   const heats=L.map((l,k)=>[l,k]).filter(([l])=>l.kind==='heat');
   if(heats.length){const sel=document.createElement('select');sel.id='heatpick';sel.setAttribute('aria-label','Heat map');sel.style.flex='0 1 auto';

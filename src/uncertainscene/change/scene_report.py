@@ -74,9 +74,9 @@ def write(path, spec_name: str, a: str, b: str, m: dict, objs: list, f: dict | N
     if f and fstats:
         r = f["robot"]
         L += ["", "## 3. Robot interactability", "",
-              f"- Assumed robot: base on the floor where the camera operator stood, arm mount at "
-              f"{r['shoulder_height_m']} m, reach {r['reach_m']} m, gripper needs {r['gripper_clearance_m'] * 100:.0f} cm "
-              f"of free space (radius {r['gripper_radius_m'] * 100:.0f} cm).",
+              f"- Assumed robot: {'mobile base that can drive to any free floor spot' if r.get('mobile') else 'base on the floor where the camera operator stood'}, "
+              f"arm mount at {r['shoulder_height_m']} m, reach {r['reach_m']} m, gripper needs "
+              f"{r['gripper_clearance_m'] * 100:.0f} cm of free space (radius {r['gripper_radius_m'] * 100:.0f} cm).",
               f"- Reachable surface: {fstats['reachable_frac']:.0%}; approachable: {fstats['approachable_frac']:.0%}; "
               f"interactable (both, with certain geometry): {fstats['interactable_frac']:.0%}.",
               "- Heat maps: `heatmaps.png`, layers in `viewer.html`, fields in `fields.ply`."]

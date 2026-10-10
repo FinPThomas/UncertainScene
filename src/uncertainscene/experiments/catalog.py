@@ -34,9 +34,9 @@ PHASES = {
     "3-allpairs": ("Every other pair",
                    "More pairs of each kind, so false alarms and real detections can be counted properly."),
     "4-frames": ("How many frames are enough",
-                 "Does the result change with 28, 56 or 100 frames per recording, or fewer or more SAM 2 views?"),
+                 "Does the result change with 28, 100 or 185 frames per recording instead of every frame (~370), or fewer or more SAM 2 views?"),
     "5-robot": ("Robot variants",
-                "How do reach and approach maps change with a shorter or longer arm, a table mount or a bigger gripper?"),
+                "How do reach and approach maps change with a shorter or longer arm, a lower mount, a robot that cannot drive, or a bigger gripper?"),
     "6-repeat": ("Repeatability",
                  "Same pairs with different frame picks, and the reversed direction: are results stable?"),
 }
@@ -56,7 +56,8 @@ PHASES_V1 = {
 
 VARIANT = {
     "base": "", "reversed": "reversed direction (after compared with before)",
-    "short_arm": "short arm (0.6 m reach)", "long_arm": "long arm (1.1 m reach)",
+    "short_arm": "short arm (0.7 m reach)", "long_arm": "long arm (1.3 m reach)",
+    "low_mount": "arm mounted low (0.45 m)", "fixed_base": "robot cannot drive (stays where the camera operator stood)",
     "table_mount": "arm mounted at table height", "mobile_closer": "robot base 0.6 m closer",
     "big_gripper": "bigger gripper", "fields_on_A": "heat maps of the scene before the change",
     "dense": "dense (more frames)", "no_visibility": "without the visibility test",
