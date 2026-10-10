@@ -333,6 +333,16 @@
       "started": "2026-10-10 00:50:23 UTC",
       "status": "done"
     },
+    "p4_no_appearance_lightBa_vs_lightBb": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "0271712",
+      "expires": 1791596492.326273,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 00:51:08 UTC",
+      "status": "running"
+    },
     "summary_p1": {
       "account": "colab-dbb8",
       "attempts": 1,
