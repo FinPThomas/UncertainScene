@@ -433,6 +433,16 @@
       "started": "2026-10-10 00:52:29 UTC",
       "status": "done"
     },
+    "p5_reversed_lightAa_vs_lightBa": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "c4586da",
+      "expires": 1791597579.585059,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 01:09:15 UTC",
+      "status": "running"
+    },
     "summary_p1": {
       "account": "colab-dbb8",
       "attempts": 1,
