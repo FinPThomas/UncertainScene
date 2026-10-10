@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-10_scene01-objects",
+  "step": "2-position_summary",
+  "status": "done",
+  "account": "colab-9ce8",
+  "commit": "893fb2b",
+  "minutes": 0.2,
+  "usage_at_end": "RAM 5.8/12.7 GB, disk free 53.4 GB, GPU 6.6/15.0 GB",
+  "note": "summary of 6 runs; RESULTS.md and viewer.html refreshed"
+}
