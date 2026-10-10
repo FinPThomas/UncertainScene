@@ -657,11 +657,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "ecc0424",
-      "expires": 1791599991.1037266,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 01:51:17 UTC",
+      "note": "change: 1.15% changed, 0 changes (0 moved), interactable 0%, 99s",
       "started": "2026-10-10 01:49:27 UTC",
-      "status": "running"
+      "status": "done"
     },
     "summary_p1": {
       "account": "colab-dbb8",
