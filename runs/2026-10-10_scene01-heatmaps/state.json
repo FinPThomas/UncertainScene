@@ -1777,11 +1777,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "15c8293",
-      "expires": 1791609198.5243046,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 04:40:21 UTC",
+      "note": "summary of 163 steps (summary.md, lighting.md)",
       "started": "2026-10-10 04:40:18 UTC",
-      "status": "running"
+      "status": "done"
     }
   }
 }
