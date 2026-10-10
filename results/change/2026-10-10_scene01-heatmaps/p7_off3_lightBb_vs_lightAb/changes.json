@@ -1,0 +1,424 @@
+[
+  {
+    "id": 4,
+    "kind": "appearance",
+    "n_points": 1772,
+    "centroid": [
+      0.002099999925121665,
+      0.06949999928474426,
+      0.6743000149726868
+    ],
+    "centroid_std": 0.05057995766401291,
+    "extent": [
+      0.11999999731779099,
+      0.11159999668598175,
+      0.05990000069141388
+    ],
+    "extent_ci": [
+      [
+        0.1125,
+        0.1306
+      ],
+      [
+        0.0989,
+        0.1162
+      ],
+      [
+        0.0584,
+        0.0614
+      ]
+    ],
+    "frame_votes": {
+      "33": 821,
+      "34": 481,
+      "49": 159,
+      "30": 134,
+      "32": 119
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "jacket",
+    "label_prob": 0.141,
+    "description": "The jacket looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        27.0,
+        25.1,
+        13.5
+      ],
+      "size_cm_ci": [
+        [
+          25.3,
+          29.4
+        ],
+        [
+          22.2,
+          26.1
+        ],
+        [
+          13.1,
+          13.8
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          22.0,
+          20.5,
+          11.0
+        ],
+        [
+          32.0,
+          29.7,
+          16.0
+        ]
+      ],
+      "position_sd_cm": 11.4,
+      "boundary_uncertainty_cm": 5.01,
+      "mean_abs_shift_cm": 11.5,
+      "reach": 0.0,
+      "approach": 0.02,
+      "height_m": 0.68
+    }
+  },
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 1727,
+    "centroid": [
+      -0.1988999992609024,
+      -0.12099999934434891,
+      0.6962000131607056
+    ],
+    "centroid_std": 0.05058925598859787,
+    "extent": [
+      0.3255999982357025,
+      0.11429999768733978,
+      0.054499998688697815
+    ],
+    "extent_ci": [
+      [
+        0.3106,
+        0.3362
+      ],
+      [
+        0.1095,
+        0.1181
+      ],
+      [
+        0.0527,
+        0.056
+      ]
+    ],
+    "frame_votes": {
+      "15": 698,
+      "0": 338,
+      "12": 269,
+      "13": 254,
+      "26": 110
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "baseball cap",
+    "label_prob": 0.539,
+    "description": "A baseball cap that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        73.2,
+        25.7,
+        12.3
+      ],
+      "size_cm_ci": [
+        [
+          69.9,
+          75.6
+        ],
+        [
+          24.6,
+          26.6
+        ],
+        [
+          11.9,
+          12.6
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          59.7,
+          20.9,
+          10.0
+        ],
+        [
+          86.8,
+          30.5,
+          14.5
+        ]
+      ],
+      "position_sd_cm": 11.4,
+      "boundary_uncertainty_cm": 9.65,
+      "mean_abs_shift_cm": 42.1,
+      "reach": 0.0,
+      "approach": 0.88,
+      "height_m": 1.0
+    }
+  },
+  {
+    "id": 2,
+    "kind": "appearance",
+    "n_points": 777,
+    "centroid": [
+      -0.6682999730110168,
+      -0.07649999856948853,
+      0.8468000292778015
+    ],
+    "centroid_std": 0.05057765543460846,
+    "extent": [
+      0.09510000050067902,
+      0.05719999969005585,
+      0.014700000174343586
+    ],
+    "extent_ci": [
+      [
+        0.0929,
+        0.0979
+      ],
+      [
+        0.0549,
+        0.0595
+      ],
+      [
+        0.0145,
+        0.015
+      ]
+    ],
+    "frame_votes": {
+      "9": 609,
+      "10": 134,
+      "11": 21,
+      "20": 6,
+      "8": 3
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "table tennis bat",
+    "label_prob": 0.595,
+    "description": "The table tennis bat looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        21.4,
+        12.9,
+        3.3
+      ],
+      "size_cm_ci": [
+        [
+          20.9,
+          22.0
+        ],
+        [
+          12.3,
+          13.4
+        ],
+        [
+          3.3,
+          3.4
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          17.4,
+          10.5,
+          2.7
+        ],
+        [
+          25.3,
+          15.2,
+          3.9
+        ]
+      ],
+      "position_sd_cm": 11.4,
+      "boundary_uncertainty_cm": 5.93,
+      "mean_abs_shift_cm": 2.5,
+      "reach": 0.0,
+      "approach": 0.06,
+      "height_m": 0.94
+    }
+  },
+  {
+    "id": 3,
+    "kind": "appearance",
+    "n_points": 655,
+    "centroid": [
+      0.007199999876320362,
+      -0.060100000351667404,
+      0.7842000126838684
+    ],
+    "centroid_std": 0.05057922378182411,
+    "extent": [
+      0.11429999768733978,
+      0.0494999997317791,
+      0.00419999985024333
+    ],
+    "extent_ci": [
+      [
+        0.1054,
+        0.1191
+      ],
+      [
+        0.0455,
+        0.0543
+      ],
+      [
+        0.004,
+        0.0044
+      ]
+    ],
+    "frame_votes": {
+      "30": 274,
+      "31": 164,
+      "33": 109,
+      "34": 87,
+      "49": 17
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "glass vase",
+    "label_prob": 0.934,
+    "description": "The glass vase looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        25.7,
+        11.1,
+        0.9
+      ],
+      "size_cm_ci": [
+        [
+          23.7,
+          26.8
+        ],
+        [
+          10.2,
+          12.2
+        ],
+        [
+          0.9,
+          1.0
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          20.9,
+          9.1,
+          0.8
+        ],
+        [
+          30.5,
+          13.2,
+          1.1
+        ]
+      ],
+      "position_sd_cm": 11.4,
+      "boundary_uncertainty_cm": 11.65,
+      "mean_abs_shift_cm": 19.5,
+      "reach": 0.0,
+      "approach": 0.08,
+      "height_m": 0.82
+    }
+  },
+  {
+    "id": 1,
+    "kind": "removed",
+    "n_points": 598,
+    "centroid": [
+      -0.6474999785423279,
+      -0.26809999346733093,
+      0.7646999955177307
+    ],
+    "centroid_std": 0.050578415393829346,
+    "extent": [
+      0.0803999975323677,
+      0.05869999900460243,
+      0.02199999988079071
+    ],
+    "extent_ci": [
+      [
+        0.0766,
+        0.0831
+      ],
+      [
+        0.0558,
+        0.0604
+      ],
+      [
+        0.0214,
+        0.0231
+      ]
+    ],
+    "frame_votes": {
+      "14": 469,
+      "15": 129
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "shoe",
+    "label_prob": 0.323,
+    "description": "A shoe that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        18.1,
+        13.2,
+        4.9
+      ],
+      "size_cm_ci": [
+        [
+          17.2,
+          18.7
+        ],
+        [
+          12.5,
+          13.6
+        ],
+        [
+          4.8,
+          5.2
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          14.7,
+          10.8,
+          4.0
+        ],
+        [
+          21.4,
+          15.6,
+          5.9
+        ]
+      ],
+      "position_sd_cm": 11.4,
+      "boundary_uncertainty_cm": 10.57,
+      "mean_abs_shift_cm": 19.3,
+      "reach": 0.0,
+      "approach": 0.98,
+      "height_m": 1.32
+    }
+  }
+]
