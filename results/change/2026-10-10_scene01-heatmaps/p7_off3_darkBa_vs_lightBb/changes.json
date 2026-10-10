@@ -1,0 +1,171 @@
+[
+  {
+    "id": 1,
+    "kind": "added",
+    "n_points": 1018,
+    "centroid": [
+      -0.38600000739097595,
+      0.06419999897480011,
+      0.6394000053405762
+    ],
+    "centroid_std": 0.03137533739209175,
+    "extent": [
+      0.09749999642372131,
+      0.07209999859333038,
+      0.021900000050663948
+    ],
+    "extent_ci": [
+      [
+        0.0899,
+        0.1039
+      ],
+      [
+        0.0696,
+        0.0748
+      ],
+      [
+        0.0186,
+        0.0247
+      ]
+    ],
+    "frame_votes": {
+      "33": 664,
+      "52": 231,
+      "32": 92,
+      "51": 26,
+      "49": 5
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "coaster",
+    "label_prob": 0.556,
+    "description": "A coaster appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        42.4,
+        31.4,
+        9.5
+      ],
+      "size_cm_ci": [
+        [
+          39.1,
+          45.2
+        ],
+        [
+          30.3,
+          32.6
+        ],
+        [
+          8.1,
+          10.7
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          34.6,
+          25.6,
+          7.8
+        ],
+        [
+          50.3,
+          37.2,
+          11.3
+        ]
+      ],
+      "position_sd_cm": 13.7,
+      "boundary_uncertainty_cm": 16.46,
+      "mean_abs_shift_cm": 40.7,
+      "reach": 0.0,
+      "approach": 0.62,
+      "height_m": 0.25
+    }
+  },
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 619,
+    "centroid": [
+      -0.5503000020980835,
+      -0.03970000147819519,
+      0.7523999810218811
+    ],
+    "centroid_std": 0.03137470409274101,
+    "extent": [
+      0.07450000196695328,
+      0.05700000002980232,
+      0.016100000590085983
+    ],
+    "extent_ci": [
+      [
+        0.0716,
+        0.0776
+      ],
+      [
+        0.0548,
+        0.0606
+      ],
+      [
+        0.0149,
+        0.0171
+      ]
+    ],
+    "frame_votes": {
+      "24": 344,
+      "6": 148,
+      "11": 109,
+      "4": 18
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "blanket",
+    "label_prob": 0.175,
+    "description": "The blanket looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        32.4,
+        24.8,
+        7.0
+      ],
+      "size_cm_ci": [
+        [
+          31.2,
+          33.8
+        ],
+        [
+          23.8,
+          26.4
+        ],
+        [
+          6.5,
+          7.4
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          26.4,
+          20.2,
+          5.7
+        ],
+        [
+          38.4,
+          29.4,
+          8.3
+        ]
+      ],
+      "position_sd_cm": 13.7,
+      "boundary_uncertainty_cm": 10.04,
+      "mean_abs_shift_cm": 13.6,
+      "reach": 0.0,
+      "approach": 0.29,
+      "height_m": 0.56
+    }
+  }
+]
