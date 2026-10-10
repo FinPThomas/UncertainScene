@@ -1,0 +1,426 @@
+[
+  {
+    "id": 2,
+    "kind": "appearance",
+    "n_points": 2353,
+    "centroid": [
+      -0.6692000031471252,
+      -0.08429999649524689,
+      0.8755000233650208
+    ],
+    "centroid_std": 0.04707453027367592,
+    "extent": [
+      0.14659999310970306,
+      0.09860000014305115,
+      0.024299999698996544
+    ],
+    "extent_ci": [
+      [
+        0.1423,
+        0.151
+      ],
+      [
+        0.0956,
+        0.1017
+      ],
+      [
+        0.0238,
+        0.025
+      ]
+    ],
+    "frame_votes": {
+      "9": 1337,
+      "10": 570,
+      "12": 264,
+      "8": 109,
+      "11": 44
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "table tennis bat",
+    "label_prob": 0.996,
+    "description": "The table tennis bat looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        31.8,
+        21.4,
+        5.3
+      ],
+      "size_cm_ci": [
+        [
+          30.9,
+          32.8
+        ],
+        [
+          20.8,
+          22.1
+        ],
+        [
+          5.2,
+          5.4
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          25.9,
+          17.4,
+          4.3
+        ],
+        [
+          37.7,
+          25.4,
+          6.3
+        ]
+      ],
+      "position_sd_cm": 10.2,
+      "boundary_uncertainty_cm": 3.48,
+      "mean_abs_shift_cm": 1.9,
+      "reach": 0.0,
+      "approach": 0.06,
+      "height_m": 0.88
+    }
+  },
+  {
+    "id": 3,
+    "kind": "appearance",
+    "n_points": 2057,
+    "centroid": [
+      -0.01140000019222498,
+      0.015200000256299973,
+      0.7157999873161316
+    ],
+    "centroid_std": 0.04707813635468483,
+    "extent": [
+      0.18700000643730164,
+      0.09309999644756317,
+      0.034299999475479126
+    ],
+    "extent_ci": [
+      [
+        0.182,
+        0.1914
+      ],
+      [
+        0.0904,
+        0.0953
+      ],
+      [
+        0.0316,
+        0.0387
+      ]
+    ],
+    "frame_votes": {
+      "31": 894,
+      "34": 562,
+      "30": 396,
+      "32": 135,
+      "45": 27
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "pillow",
+    "label_prob": 0.199,
+    "description": "The pillow looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        40.6,
+        20.2,
+        7.4
+      ],
+      "size_cm_ci": [
+        [
+          39.5,
+          41.6
+        ],
+        [
+          19.6,
+          20.7
+        ],
+        [
+          6.9,
+          8.4
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          33.1,
+          16.5,
+          6.1
+        ],
+        [
+          48.1,
+          24.0,
+          8.8
+        ]
+      ],
+      "position_sd_cm": 10.2,
+      "boundary_uncertainty_cm": 4.93,
+      "mean_abs_shift_cm": 9.9,
+      "reach": 0.0,
+      "approach": 0.02,
+      "height_m": 0.8
+    }
+  },
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 1941,
+    "centroid": [
+      -0.289000004529953,
+      -0.163100004196167,
+      0.7368999719619751
+    ],
+    "centroid_std": 0.04709797352552414,
+    "extent": [
+      0.4259999990463257,
+      0.1517000049352646,
+      0.07620000094175339
+    ],
+    "extent_ci": [
+      [
+        0.4074,
+        0.4446
+      ],
+      [
+        0.1481,
+        0.1565
+      ],
+      [
+        0.0733,
+        0.0783
+      ]
+    ],
+    "frame_votes": {
+      "15": 1322,
+      "0": 295,
+      "25": 183,
+      "7": 72,
+      "1": 33
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "baseball cap",
+    "label_prob": 0.176,
+    "description": "A baseball cap that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        92.5,
+        32.9,
+        16.5
+      ],
+      "size_cm_ci": [
+        [
+          88.4,
+          96.5
+        ],
+        [
+          32.2,
+          34.0
+        ],
+        [
+          15.9,
+          17.0
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          75.4,
+          26.8,
+          13.5
+        ],
+        [
+          109.6,
+          39.0,
+          19.6
+        ]
+      ],
+      "position_sd_cm": 10.2,
+      "boundary_uncertainty_cm": 13.5,
+      "mean_abs_shift_cm": 34.0,
+      "reach": 0.0,
+      "approach": 0.95,
+      "height_m": 1.08
+    }
+  },
+  {
+    "id": 4,
+    "kind": "appearance",
+    "n_points": 916,
+    "centroid": [
+      -0.027499999850988388,
+      0.08760000020265579,
+      0.6114000082015991
+    ],
+    "centroid_std": 0.04707593470811844,
+    "extent": [
+      0.11259999871253967,
+      0.04659999907016754,
+      0.03150000050663948
+    ],
+    "extent_ci": [
+      [
+        0.1087,
+        0.1149
+      ],
+      [
+        0.0432,
+        0.0496
+      ],
+      [
+        0.0287,
+        0.0364
+      ]
+    ],
+    "frame_votes": {
+      "33": 508,
+      "32": 257,
+      "49": 111,
+      "30": 25,
+      "50": 15
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "cup",
+    "label_prob": 0.495,
+    "description": "The cup looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        24.4,
+        10.1,
+        6.8
+      ],
+      "size_cm_ci": [
+        [
+          23.6,
+          24.9
+        ],
+        [
+          9.4,
+          10.8
+        ],
+        [
+          6.2,
+          7.9
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          19.9,
+          8.2,
+          5.6
+        ],
+        [
+          29.0,
+          12.0,
+          8.1
+        ]
+      ],
+      "position_sd_cm": 10.2,
+      "boundary_uncertainty_cm": 4.29,
+      "mean_abs_shift_cm": 5.6,
+      "reach": 0.01,
+      "approach": 0.25,
+      "height_m": 0.74
+    }
+  },
+  {
+    "id": 1,
+    "kind": "removed",
+    "n_points": 764,
+    "centroid": [
+      0.037700001150369644,
+      0.2434999942779541,
+      0.5504999756813049
+    ],
+    "centroid_std": 0.04708320274949074,
+    "extent": [
+      0.1581999957561493,
+      0.07989999651908875,
+      0.02850000001490116
+    ],
+    "extent_ci": [
+      [
+        0.1539,
+        0.1633
+      ],
+      [
+        0.0754,
+        0.0838
+      ],
+      [
+        0.0268,
+        0.0299
+      ]
+    ],
+    "frame_votes": {
+      "4": 330,
+      "17": 326,
+      "3": 74,
+      "16": 34
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "guitar",
+    "label_prob": 0.844,
+    "description": "A guitar that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        34.3,
+        17.3,
+        6.2
+      ],
+      "size_cm_ci": [
+        [
+          33.4,
+          35.5
+        ],
+        [
+          16.4,
+          18.2
+        ],
+        [
+          5.8,
+          6.5
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          28.0,
+          14.1,
+          5.0
+        ],
+        [
+          40.7,
+          20.6,
+          7.3
+        ]
+      ],
+      "position_sd_cm": 10.2,
+      "boundary_uncertainty_cm": 19.54,
+      "mean_abs_shift_cm": 38.0,
+      "reach": 0.28,
+      "approach": 0.83,
+      "height_m": 0.42
+    }
+  }
+]
