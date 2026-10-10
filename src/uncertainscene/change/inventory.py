@@ -256,6 +256,7 @@ def object_rows(objs: list[SceneObject], scale: float, floor_up: np.ndarray, flo
                      "views": o.extra.get("n_views"), "complete": o.complete,
                      "partner": None if o.partner is None else f"{'B' if o.recording == 'A' else 'A'}{o.partner}",
                      "description": o.extra.get("description"),
+                     "position_cm": o.extra.get("position_cm"),
                      "stats": {k: v for k, v in o.stats.items() if not isinstance(v, np.ndarray)}})
     return rows
 

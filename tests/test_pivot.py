@@ -191,11 +191,17 @@ def test_full_step_end_to_end(tmp_path, monkeypatch):
     note = scene01.step_fn(spec, tmp_path / "cache")(out, tmp_path)
     assert "changed objects" in note
     for n in ("metrics.json", "objects.json", "changes.json", "objects.png", "object_overlays.png", "heatmaps.png",
-              "viewer.html", "scene_report.md", "report.md", "step_log.txt"):
+              "viewer.html", "scene_report.md", "report.md", "step_log.txt", "position_map.png",
+              "position_precision.png", "scene3d.json"):
         assert (out / n).exists() and (out / n).stat().st_size > 100, n
     import json
     m = json.loads((out / "metrics.json").read_text())
     assert m["obj_moved"] == 1 and m["version"] == 2 and m["sam_error"] is None
+    assert m["title"].startswith("Objects moved, same lighting") and m["question"]
+    assert m["pos_radius90_cm_median"] > 0 and m["pos_single_view_radius90_cm_median"] >= m["pos_radius90_cm_median"]
+    sc = json.loads((out / "scene3d.json").read_text())
+    assert {l["kind"] for l in sc["layers"]} >= {"colour", "heat"} and any("ring" in o for o in sc["objects"])
+    assert "What this run tests" in (out / "report.md").read_text()
     rep = (out / "scene_report.md").read_text()
     assert "Every object in the scene" in rep and "box" in rep
 
@@ -207,8 +213,10 @@ def test_v2_queue_and_summary(tmp_path):
 
     q = queue()
     names = [s if isinstance(s, str) else s.name for s in q]
-    assert len(names) == len(set(names)) and names[0] == "p1_lightBa_vs_lightAa"
-    pairs = {(s.a, s.b) for s in q if isinstance(s, Spec) and s.name[:2] in ("p1", "p2")}
+    assert len(names) == len(set(names)) and names[0] == "1-main_moved_light-before-a_vs_light-after-a"
+    assert names[1] == "1-main_no-change_light-before-a_vs_light-before-b"
+    assert any(n.startswith("2-position_") for n in names)
+    pairs = {(s.a, s.b) for s in q if isinstance(s, Spec) and s.name.startswith(("1-main", "3-allpairs"))}
     assert len(pairs) == 21                      # every pair of the 7 recordings, once
     assert all(not (s.a.endswith(("after_a", "after_b")) and "before" in s.b) for s in q if isinstance(s, Spec) and s.variant != "reversed")
     for i, (t, n) in enumerate([("static", 1), ("lighting", 2), ("change", 6), ("change+lighting", 5)]):
@@ -222,3 +230,104 @@ def test_v2_queue_and_summary(tmp_path):
         (d / "changes.json").write_text(json.dumps([{"label": "guitar", "status": "added"}]))
     md = summarize.write(tmp_path, tmp_path / "summary").read_text()
     assert "AUROC 1.00" in md and "guitar added" in md
+
+
+class _Obj:
+    """Minimal stand-in for a SceneObject: points from n views, each view offset by noise."""
+
+    def __init__(self, centre, n_views, sd, rng, structure=False):
+        offs = rng.normal(0, sd, (n_views, 3))
+        self.X = np.concatenate([centre + o + rng.normal(0, 0.001, (40, 3)) for o in offs])
+        self.frame = np.repeat(np.arange(n_views), 40)
+        self.centroid = np.asarray(centre, float)
+        self.extent = np.array([0.2, 0.1, 0.05])
+        self.structure = structure
+        self.extra = {}
+        self.desc = None
+        self.label, self.label_prob = "cup", 0.9
+
+
+def test_position_regions_shrink_and_are_honest():
+    from uncertainscene.change import position as pos
+
+    rng = np.random.default_rng(0)
+    up = np.array([0, -1.0, 0])
+    hits, r1, r2 = [], [], []
+    for t in range(300):
+        c = rng.uniform(-1, 1, 3)
+        a, b = _Obj(c, 12, 0.02, rng), _Obj(c, 12, 0.02, rng)
+        pos.annotate([a, b], 1.0, up)
+        ea, eb = a.extra["position"], b.extra["position"]
+        hits.append(pos.mahalanobis2(ea, eb) <= pos.CHI2_3_90)
+        r1.append(pos.radius90(ea["cov"]))
+        r2.append(pos.radius90(pos.pooled([a, b])["cov"]))
+    assert 0.8 < np.mean(hits) < 0.97                       # regions are about right
+    assert 0.65 < np.median(r2) / np.median(r1) < 0.92     # two agreeing clips shrink (cautiously: between-clip spread has 1 dof)
+    # two clips that disagree (offset far beyond their view noise): pooling must not shrink the region
+    c = np.zeros(3)
+    a, b = _Obj(c, 12, 0.02, rng), _Obj(c + 0.3, 12, 0.02, rng)
+    pos.annotate([a, b], 1.0, up)
+    assert pos.radius90(pos.pooled([a, b])["cov"]) > 3 * pos.radius90(a.extra["position"]["cov"])
+    # more views -> smaller region, roughly 1/sqrt(n)
+    objs = [_Obj(rng.uniform(-1, 1, 3), 32, 0.02, rng) for _ in range(20)]
+    curve = pos.views_curve(objs, 1.0, ns=(2, 8))
+    assert 1.6 < curve[2]["median_radius90_cm"] / curve[8]["median_radius90_cm"] < 2.5
+    e = pos.floor_ellipse(np.zeros(3), np.eye(3), up)
+    assert abs(e["a"] - np.sqrt(pos.CHI2_2_90)) < 1e-6
+
+
+def test_clips_step_end_to_end(tmp_path, monkeypatch):
+    """Phase 2 step on four synthetic clips (two before, two after; the box moves)."""
+    import json
+    from uncertainscene.change.segment import key_frames
+    from uncertainscene.experiments import clips, scene01
+    from uncertainscene.recon.frames import Recon
+
+    _fake_clip(monkeypatch)
+    r1 = make_recon((-0.5, 0.8, 0.0), (-0.5, 0.8, 0.0), seed=0)
+    r2 = make_recon((0.0, 0.8, 0.0), (0.0, 0.8, 0.0), seed=1)
+    rec = _with_files(Recon(np.concatenate([r1.images, r2.images]), np.concatenate([r1.depth, r2.depth]),
+                            np.concatenate([r1.conf, r2.conf]), np.concatenate([r1.K, r2.K]),
+                            np.concatenate([r1.E, r2.E]), np.concatenate([r1.video, r2.video + 2])), tmp_path)
+    monkeypatch.setattr(clips, "_recon", lambda spec, cache: (rec, {"chunks": 1, "chunk_residuals": []}))
+    monkeypatch.setattr(scene01, "_masks", lambda rec_, spec, cache: _fake_masks(
+        rec_, [k for v in range(4) for k in key_frames(rec_, v, 8)]))
+    spec = scene01.ClipsSpec("2-position_test", ("scene01_light_before_a", "scene01_light_before_b",
+                                                 "scene01_light_after_a", "scene01_light_after_b"),
+                             ("before", "before", "after", "after"), title="test clips", question="q?")
+    out = tmp_path / "out"
+    out.mkdir()
+    note = scene01.step_fn(spec, tmp_path / "cache")(out, tmp_path)
+    m = json.loads((out / "metrics.json").read_text())
+    assert m["step_kind"] == "clips" and m["matched_objects"] >= 1, note
+    c = m["pos_clips_curve"]
+    assert c["2"]["median_radius90_cm"] < c["1"]["median_radius90_cm"]
+    for n in ("position_map.png", "position_precision.png", "scene3d.json", "report.md", "positions.json"):
+        assert (out / n).exists() and (out / n).stat().st_size > 100, n
+
+
+def test_filter_shrinks_with_views_and_nis_flags_overconfidence():
+    from uncertainscene.change import position as pos
+
+    rng = np.random.default_rng(1)
+    truth = np.array([0.3, 0.8, 1.0])
+
+    def views(n, sd_true, sd_claimed):
+        out = []
+        for _ in range(n):
+            ray = rng.normal(size=3)
+            ray /= np.linalg.norm(ray)
+            out.append({"c": truth + rng.normal(0, sd_true, 3), "ray": ray, "sd_depth": sd_claimed,
+                        "sd_side": sd_claimed, "pixel": 0.001})
+        return out
+
+    honest = [pos.ekf(views(20, 0.02, 0.02)) for _ in range(50)]
+    nis = np.mean([np.mean(e["nis"]) for e in honest])
+    assert 2.4 < nis < 3.6                                    # honest uncertainties: NIS ~ 3
+    tr = np.median([e["trace"] for e in honest], 0)
+    assert tr[0] > tr[3] > tr[15]                             # every view narrows the range
+    cover = np.mean([(e["mean"] - truth) @ np.linalg.solve(e["cov"], e["mean"] - truth) <= pos.CHI2_3_90
+                     for e in honest])
+    assert cover > 0.8
+    over = pos.ekf(views(20, 0.06, 0.02))                     # true noise 3x the claimed noise
+    assert np.mean(over["nis"]) > 15

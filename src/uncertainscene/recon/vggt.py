@@ -145,16 +145,24 @@ def reconstruct_all(label_a: str, label_b: str, n_per_video: int | None = None, 
     """Many frames per recording (None = every extracted frame) in overlapping chunks that fit
     the GPU, aligned through shared anchor frames (see recon.chunked). On CUDA out-of-memory
     the chunk size shrinks by 20% and the reconstruction restarts (up to 3 times)."""
+    return reconstruct_many([label_a, label_b], n_per_video, offset, long_side, model_name, n_anchor, chunk_size)
+
+
+def reconstruct_many(labels: list[str], n_per_video: int | None = None, offset: int = 0, long_side: int = 518,
+                     model_name: str = "facebook/VGGT-1B", n_anchor: int = 8,
+                     chunk_size: int | None = None) -> tuple[Recon, dict]:
+    """Any number of recordings in one shared frame (video id = position in `labels`)."""
     import torch
 
     from .chunked import reconstruct_chunked
 
     n = n_per_video or 10_000
-    files_a = select_frames(label_a, n, offset)
-    files_b = select_frames(label_b, n, offset)
-    files = files_a + files_b
+    per = [select_frames(lab, n, offset) for lab in labels]
+    files = [f for p in per for f in p]
+    files_a, files_b = per[0], (per[1] if len(per) > 1 else [])
     imgs = load_images(files, long_side)
-    video = np.array([0] * len(files_a) + [1] * len(files_b))
+    video = np.concatenate([np.full(len(p), i) for i, p in enumerate(per)])
+    n_anchor = max(n_anchor, 3 * len(labels))
     size = chunk_size or min(48, max_frames_for_gpu() - 4)
     if torch.cuda.is_available():
         torch.cuda.reset_peak_memory_stats()
@@ -163,7 +171,7 @@ def reconstruct_all(label_a: str, label_b: str, n_per_video: int | None = None, 
         try:
             rec, cinfo = reconstruct_chunked(imgs, video, lambda idx: _forward(imgs[idx], model_name),
                                              chunk_size=size, n_anchor=n_anchor, files=[str(f) for f in files],
-                                             labels=(label_a, label_b))
+                                             labels=tuple(labels))
             break
         except torch.cuda.OutOfMemoryError:
             torch.cuda.empty_cache()
@@ -176,6 +184,7 @@ def reconstruct_all(label_a: str, label_b: str, n_per_video: int | None = None, 
             "size_hw": list(imgs.shape[1:3]), "seconds": round(secs, 1), "used_per_video": len(files_a),
             "requested_per_video": n_per_video, "oom_retries": attempt, **cinfo,
             "gpu_peak_gb": round(torch.cuda.max_memory_allocated() / 1024**3, 2) if torch.cuda.is_available() else None}
-    log.info("reconstructed %d frames (%d + %d) in %d chunks in %.0f s; worst chunk residual %.3f",
-             len(files), len(files_a), len(files_b), cinfo["chunks"], secs, cinfo.get("chunk_residual_max", 0))
+    info["frames_per_recording"] = [len(p) for p in per]
+    log.info("reconstructed %d frames (%s) in %d chunks in %.0f s; worst chunk residual %.3f",
+             len(files), " + ".join(str(len(p)) for p in per), cinfo["chunks"], secs, cinfo.get("chunk_residual_max", 0))
     return rec, info

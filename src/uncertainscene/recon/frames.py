@@ -56,15 +56,21 @@ class Recon:
     E: np.ndarray                 # [S, 3, 4]
     video: np.ndarray             # [S] int
     files: list[str] = field(default_factory=list)
-    labels: tuple[str, str] = ("A", "B")
+    labels: tuple = ("A", "B")
+    # per frame: factor from the model's own (normalised) units to this reconstruction's units
+    # (the chunk's similarity scale; 1 when reconstructed in one pass). VGGT's depth confidence
+    # describes errors in its normalised units, so errors here are (alpha / conf) * scale.
+    scale: np.ndarray | None = None
 
     def save(self, path: str | Path) -> None:
+        extra = {"scale": self.scale} if self.scale is not None else {}
         np.savez_compressed(path, images=self.images, depth=self.depth.astype(np.float16),
                             conf=self.conf.astype(np.float16), K=self.K, E=self.E, video=self.video,
-                            files=np.array(self.files), labels=np.array(self.labels))
+                            files=np.array(self.files), labels=np.array(self.labels), **extra)
 
     @classmethod
     def load(cls, path: str | Path) -> "Recon":
         z = np.load(path)
         return cls(z["images"], z["depth"].astype(np.float32), z["conf"].astype(np.float32), z["K"], z["E"],
-                   z["video"], [str(f) for f in z["files"]], tuple(str(x) for x in z["labels"]))
+                   z["video"], [str(f) for f in z["files"]], tuple(str(x) for x in z["labels"]),
+                   z["scale"] if "scale" in z.files else None)

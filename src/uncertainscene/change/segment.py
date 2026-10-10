@@ -69,30 +69,69 @@ def load_sam(model_id: str = "facebook/sam2.1-hiera-small", points_per_side: int
     return _SAM[key]
 
 
+WOBBLE_OFFSET = 1.0     # logit offset; SAM's own stability score uses the same +-1 thresholds
+
+
+def mask_wobble(predictor, img: np.ndarray, ms: list[dict]) -> list:
+    """How much each mask's centre moves within SAM 2's own boundary uncertainty: re-decode
+    the mask from its prompt point with logits, threshold at -1 (loose) and +1 (tight), and
+    return the centroid shift (du, dv) in full-resolution pixels (None if it fails)."""
+    import torch
+
+    out = []
+    with torch.inference_mode():
+        predictor.set_image(img)
+        for m in ms:
+            try:
+                pt = np.asarray(m["point_coords"], float).reshape(-1, 2)[:1]
+                logits, _, _ = predictor.predict(point_coords=pt, point_labels=np.ones(1), multimask_output=True,
+                                                 return_logits=True)
+                seg = m["segmentation"]
+                best = max(range(len(logits)), key=lambda k: np.logical_and(logits[k] > 0, seg).sum()
+                           / max(np.logical_or(logits[k] > 0, seg).sum(), 1))
+                lg = logits[best]
+                c = []
+                for thr in (-WOBBLE_OFFSET, WOBBLE_OFFSET):
+                    v, u = np.nonzero(lg > thr)
+                    c.append((u.mean(), v.mean()) if len(u) else (np.nan, np.nan))
+                d = np.subtract(c[0], c[1])
+                out.append(d.tolist() if np.isfinite(d).all() else None)
+            except Exception:  # noqa: BLE001 - wobble is optional
+                out.append(None)
+    return out
+
+
 def sam_masks(files: list[str], frames: list[int], size_hw: tuple[int, int], model_id: str = "facebook/sam2.1-hiera-small",
-              points_per_side: int = 24, min_area: float = 0.001, max_area: float = 0.5) -> dict:
-    """{frame: [dict(mask=bool[H, W] at reconstruction size, full_bbox=(x0, y0, x1, y1), score)]}."""
+              points_per_side: int = 24, min_area: float = 0.001, max_area: float = 0.5, wobble: bool = True) -> dict:
+    """{frame: [dict(mask=bool[H, W] at reconstruction size, full_bbox=(x0, y0, x1, y1), score,
+    wobble_px=(du, dv) or None)]}."""
     import torch
     from PIL import Image
 
     gen = load_sam(model_id, points_per_side)
     H, W = size_hw
     out = {}
+    wobble_failed = False
     for s in frames:
         img = np.asarray(Image.open(files[s]).convert("RGB"))
         with torch.inference_mode():
             ms = gen.generate(img)
         fh, fw = img.shape[:2]
+        ms = [m for m in ms if min_area <= m["area"] / (fh * fw) <= max_area]
+        wob = [None] * len(ms)
+        if wobble and not wobble_failed:
+            try:
+                wob = mask_wobble(gen.predictor, img, ms)
+            except Exception as e:  # noqa: BLE001
+                wobble_failed = True
+                log.warning("mask wobble unavailable (%s: %s); continuing without it", type(e).__name__, e)
         keep = []
-        for m in ms:
-            a = m["area"] / (fh * fw)
-            if not (min_area <= a <= max_area):
-                continue
+        for m, w in zip(ms, wob):
             seg = Image.fromarray(m["segmentation"].astype(np.uint8) * 255).resize((W, H), Image.Resampling.NEAREST)
-            x, y, w, h = m["bbox"]
-            keep.append({"mask": np.asarray(seg) > 127, "full_bbox": (int(x), int(y), int(x + w), int(y + h)),
+            x, y, w_, h = m["bbox"]
+            keep.append({"mask": np.asarray(seg) > 127, "full_bbox": (int(x), int(y), int(x + w_), int(y + h)),
                          "score": float(m["predicted_iou"]) * float(m["stability_score"]),
-                         "full_hw": (fh, fw)})
+                         "full_hw": (fh, fw), "wobble_px": w})
         out[s] = keep
     torch.cuda.empty_cache()
     return out
@@ -110,6 +149,39 @@ def _erode(m: np.ndarray) -> np.ndarray:
 
 def _keys(X: np.ndarray, voxel: float) -> set:
     return set(map(tuple, np.floor(X / voxel).astype(np.int64)))
+
+
+VGGT_CONF_ALPHA = 0.2   # VGGT's confidence loss: c * |error| - alpha * log c, so |error| ~ alpha / c
+
+
+def view_measurement(rec: Recon, s: int, X: np.ndarray, v: np.ndarray, u: np.ndarray, m: dict) -> dict:
+    """One view's measurement of the object's centre and its covariance, from the models'
+    own uncertainty (no tuning):
+    - depth: VGGT's per-pixel confidence c gives an expected depth error alpha / c (in VGGT's
+      units, times the chunk scale). Depth errors are shared by the whole object (a depth map
+      is off by a smooth amount), so the median over the mask is used, along the viewing ray;
+    - sideways: SAM 2 mask wobble, the centroid shift between its loose and tight masks
+      (logit -1 / +1), as a uniform range (sd = shift / sqrt(12)), converted with depth / focal."""
+    c = np.median(X, 0)
+    R, t = rec.E[s][:, :3], rec.E[s][:, 3]
+    cam = -R.T @ t
+    ray = c - cam
+    dist = float(np.linalg.norm(ray)) + 1e-12
+    ray = ray / dist
+    sc = 1.0 if rec.scale is None else float(rec.scale[s])
+    conf = rec.conf[s][v, u]
+    sd_depth = float(np.median(VGGT_CONF_ALPHA / np.maximum(conf, 1e-3))) * sc
+    z = float(np.median(rec.depth[s][v, u]))
+    f = float(rec.K[s][0, 0])
+    wob = m.get("wobble_px")
+    if wob is not None:
+        fh, fw = m["full_hw"]
+        H, W = rec.depth.shape[1:]
+        px = float(np.hypot(wob[0] * W / fw, wob[1] * H / fh))
+        sd_side = px / np.sqrt(12) * z / f
+    else:
+        sd_side = None
+    return {"c": c, "ray": ray, "sd_depth": sd_depth, "sd_side": sd_side, "pixel": z / f}
 
 
 def lift(rec: Recon, masks: dict, voxel: float, conf_quantile: float = 0.3, max_points: int = 1500,
@@ -140,7 +212,7 @@ def lift(rec: Recon, masks: dict, voxel: float, conf_quantile: float = 0.3, max_
             border = x0 <= 2 or y0 <= 2 or x1 >= fw - 3 or y1 >= fh - 3
             frags.append({"frame": s, "X": X, "pix": np.stack([v, u], 1), "mask": m["mask"], "full_bbox": m["full_bbox"],
                           "area": int(m["mask"].sum()), "border": border, "score": m["score"],
-                          "vox": _keys(X, voxel)})
+                          "vox": _keys(X, voxel), "meas": view_measurement(rec, s, X, v, u, m)})
     return frags
 
 
@@ -187,13 +259,19 @@ def _extent(X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     return np.median(X, 0), np.sort(ext)[::-1]
 
 
-def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structure_units: float,
-                  max_points: int = 3000, min_frames: int = 1, min_voxels: int = 8, seed: int = 0) -> list[SceneObject]:
-    rng = np.random.default_rng(seed)
-    # voxels must be coarser than the pixel footprint, or views of one surface share no voxel
+def effective_voxel(rec: Recon, masks: dict, voxel: float) -> float:
+    """Voxels must be coarser than the pixel footprint, or views of one surface share no voxel.
+    Compute this once for all recordings of a reconstruction, so their voxel keys line up."""
     fp = [np.median(rec.depth[s][rec.depth[s] > 0]) / rec.K[s][0, 0] for s in masks if (rec.depth[s] > 0).any()]
-    if fp:
-        voxel = max(voxel, 2.5 * float(np.median(fp)))
+    return max(voxel, 2.5 * float(np.median(fp))) if fp else voxel
+
+
+def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structure_units: float,
+                  max_points: int = 3000, min_frames: int = 1, min_voxels: int = 8, seed: int = 0,
+                  adapt_voxel: bool = True) -> list[SceneObject]:
+    rng = np.random.default_rng(seed)
+    if adapt_voxel:
+        voxel = effective_voxel(rec, masks, voxel)
     frags = lift(rec, masks, voxel, seed=seed)
     objs = []
     for g in merge(frags):
@@ -216,6 +294,11 @@ def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structu
                 mk[f["frame"]] = f["mask"]
         o = SceneObject(len(objs), recording, X, frame, pix, vox, mk, best_frame=int(best["frame"]),
                         complete=not best["border"], centroid=c, extent=ext, structure=bool(ext[0] > structure_units))
+        views: dict = {}
+        for f_ in fs:
+            if f_["frame"] not in views or f_["area"] > views[f_["frame"]][0]:
+                views[f_["frame"]] = (f_["area"], f_["meas"])
+        o.extra["views"] = [dict(frame=int(k), **views[k][1]) for k in sorted(views)]
         o.extra["full_bbox"] = best["full_bbox"]
         o.extra["voxel"] = voxel
         o.extra["n_views"] = len(mk)

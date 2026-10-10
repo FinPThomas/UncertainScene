@@ -31,11 +31,13 @@ RunChunk = Callable[[list[int]], dict]
 
 
 def plan_chunks(video: np.ndarray, chunk_size: int, n_anchor: int) -> tuple[list[int], list[list[int]]]:
-    """Anchors (evenly spread, half from each recording) and the non-anchor frames per chunk."""
+    """Anchors (evenly spread, shared equally between the recordings) and the non-anchor
+    frames per chunk. Works for any number of recordings (video ids 0..V-1)."""
     anchors = []
-    for vid in (0, 1):
+    vids = [int(v) for v in np.unique(video)]
+    for r, vid in enumerate(vids):
         idx = np.nonzero(video == vid)[0]
-        k = n_anchor // 2 + (n_anchor % 2 if vid == 0 else 0)
+        k = n_anchor // len(vids) + (1 if r < n_anchor % len(vids) else 0)
         anchors += [int(idx[int(round(x))]) for x in np.linspace(0, len(idx) - 1, min(k, len(idx)))]
     anchors = sorted(set(anchors))
     rest = [i for i in range(len(video)) if i not in set(anchors)]
@@ -80,7 +82,8 @@ def reconstruct_chunked(images: np.ndarray, video: np.ndarray, run_chunk: RunChu
     S = len(images)
     if S <= chunk_size:
         out = run_chunk(list(range(S)))
-        return Recon(images, out["depth"], out["conf"], out["K"], out["E"], video, files or [], labels), \
+        return Recon(images, out["depth"], out["conf"], out["K"], out["E"], video, files or [], labels,
+                     np.ones(S)), \
             {"chunks": 1, "chunk_residuals": []}
     anchors, chunks = plan_chunks(video, chunk_size, n_anchor)
     H, W = images.shape[1:3]
@@ -88,6 +91,7 @@ def reconstruct_chunked(images: np.ndarray, video: np.ndarray, run_chunk: RunChu
     conf = np.zeros((S, H, W), np.float32)
     K = np.zeros((S, 3, 3))
     E = np.zeros((S, 3, 4))
+    fscale = np.ones(S)         # model units -> reconstruction units, per frame
     ref = None                  # anchor outputs of the first chunk
     residuals = []
     for c, rest in enumerate(chunks):
@@ -119,6 +123,7 @@ def reconstruct_chunked(images: np.ndarray, video: np.ndarray, run_chunk: RunChu
             if k < na and c > 0:
                 continue        # anchors come from the first chunk
             depth[i], conf[i], K[i], E[i] = Dn[k], out["conf"][k], out["K"][k], En[k]
+            fscale[i] = s
         if c > 0:
             residuals.append(round(res, 4))
             log.info("chunk %d/%d: %d frames, scale %.3f, anchor residual %.3f (relative to depth)",
@@ -140,4 +145,4 @@ def reconstruct_chunked(images: np.ndarray, video: np.ndarray, run_chunk: RunChu
     files = files or []
     k = np.nonzero(keep)[0]
     return Recon(images[k], depth[k], conf[k], K[k], E[k], video[k],
-                 [files[i] for i in k] if files else [], labels), info
+                 [files[i] for i in k] if files else [], labels, fscale[k]), info

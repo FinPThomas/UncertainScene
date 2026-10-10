@@ -63,56 +63,98 @@ class Spec:
         return {"disk_gb": 6, "ram_gb": 3.5, "minutes": round(minutes)}
 
 
+@dataclass
+class ClipsSpec:
+    """Several clips (takes) reconstructed together, to measure how precisely each object is
+    located and how that improves with more clips. `groups` names the scene state of each
+    clip (clips with the same state show the same scene)."""
+    name: str
+    clips: tuple
+    groups: tuple
+    n_per_video: int | None = None
+    n_key: int = 36
+    sam_points: int = 24
+    variant: str = "clips"
+    outputs: str = "full"
+    title: str = ""
+    question: str = ""
+
+    @property
+    def needs(self) -> dict:
+        n = len(self.clips) * (self.n_per_video or 185)
+        minutes = 4 + n / 40 * 0.8 + len(self.clips) * self.n_key * 2.5 / 60 + 6
+        return {"disk_gb": 8, "ram_gb": 2.0 + 0.006 * n, "minutes": round(minutes)}
+
+
 def queue() -> list:
     """Order (Fin, 2026-10-10): the light before/after pair first as the pilot, then the other
-    main pairs, then every remaining pair, then how many frames are enough, then robot
-    scenarios (cheap, cached), then stability repeats."""
+    main pairs, then where objects are and how that improves with more clips, then every
+    remaining pair, how many frames are enough, robot variants and repeats.
+
+    Step folders say what they compare: <phase>_<variant>_<kind>_<recording a>_vs_<recording b>,
+    e.g. 1-main_moved_light-before-a_vs_light-after-a (see experiments/catalog.py)."""
+    from .catalog import step_name
+
     q: list = []
     core = [(LB, LA), (LB, LBb), (DB, LB), (DB, LA), (LBb, LAb), (DB, DBb)]
     for a, b in core:
-        q.append(Spec(f"p1_{short(a)}_vs_{short(b)}", a, b))
-    q.append("summary_p1")
+        q.append(Spec(step_name("1-main", a, b), a, b))
+    q.append("1-main_summary")
+
+    q.append(ClipsSpec("2-position_3-clips_no-change_dark-before-a-b-c", (DB, DBb, DBc), ("before",) * 3,
+                       title="Position uncertainty with 1, 2 and 3 clips: dark, before, takes a, b and c",
+                       question="How precisely is each object located, and how much does each extra clip of the "
+                                "same scene shrink that range?"))
+    q.append(ClipsSpec("2-position_2-clips-each_moved_light-before-a-b_vs_light-after-a-b", (LB, LBb, LA, LAb),
+                       ("before", "before", "after", "after"),
+                       title="Position uncertainty and change with 1 or 2 clips per state: light, before a+b vs "
+                             "after a+b",
+                       question="With two clips of each state instead of one, are object positions tighter and "
+                                "are moved objects easier to tell from noise?"))
+    q.append("2-position_summary")
 
     every = [(x, y) for i, x in enumerate(REC) for y in list(REC)[i + 1:]]
     rest = [(a, b) for a, b in every if (a, b) not in core and (b, a) not in core]
     rest = [(b, a) if REC[a][1] == "after" and REC[b][1] == "before" else (a, b) for a, b in rest]   # before first
     for a, b in rest:
-        q.append(Spec(f"p2_{short(a)}_vs_{short(b)}", a, b, outputs="standard"))
-    q.append("summary_p2")
+        q.append(Spec(step_name("3-allpairs", a, b), a, b, outputs="standard"))
+    q.append("3-allpairs_summary")
 
-    # how many frames / key frames are enough (proper evaluation of the frame count)
     for a, b in (core[0], core[1]):
         for n in (28, 56, 100):
-            q.append(Spec(f"p3_n{n}_{short(a)}_vs_{short(b)}", a, b, n_per_video=n, variant=f"n{n}",
+            q.append(Spec(step_name("4-frames", a, b, f"{n}-frames"), a, b, n_per_video=n, variant=f"n{n}",
                           outputs="standard"))
     for k in (16, 72):
-        q.append(Spec(f"p3_key{k}_{short(LB)}_vs_{short(LA)}", LB, LA, n_key=k, variant=f"key{k}", outputs="standard"))
-    q.append("summary_p3")
+        q.append(Spec(step_name("4-frames", LB, LA, f"{k}-sam-views"), LB, LA, n_key=k, variant=f"key{k}",
+                      outputs="standard"))
+    q.append("4-frames_summary")
 
     robots = {"short_arm": {"reach_m": 0.6}, "long_arm": {"reach_m": 1.1},
               "table_mount": {"shoulder_height_m": 0.75}, "mobile_closer": {"base_offset_m": 0.6},
               "big_gripper": {"gripper_clearance_m": 0.2, "gripper_radius_m": 0.05}}
     for v, r in robots.items():
         for a, b in (core[0], core[4]):
-            q.append(Spec(f"p4_{v}_{short(a)}_vs_{short(b)}", a, b, variant=v, robot=r, outputs="standard"))
+            q.append(Spec(step_name("5-robot", a, b, v.replace("_", "-")), a, b, variant=v, robot=r,
+                          outputs="standard"))
     for a, b in (core[0], core[4]):
-        q.append(Spec(f"p4_before_fields_{short(a)}_vs_{short(b)}", a, b, variant="fields_on_A", fields_on="A",
-                      outputs="standard"))
-    q.append("summary_p4")
+        q.append(Spec(step_name("5-robot", a, b, "maps-of-before-scene"), a, b, variant="fields_on_A",
+                      fields_on="A", outputs="standard"))
+    q.append("5-robot_summary")
 
-    # stability: 100 frames per recording from different picks, and the reversed direction
     for off in (1, 2, 3):
         for a, b in core:
-            q.append(Spec(f"p5_off{off}_{short(a)}_vs_{short(b)}", a, b, n_per_video=100, offset=off,
+            q.append(Spec(step_name("6-repeat", a, b, f"frame-picks-{off}"), a, b, n_per_video=100, offset=off,
                           variant=f"offset{off}", outputs="light"))
-        q.append(f"summary_p5_off{off}")
-    q.append(Spec(f"p5_reversed_{short(LA)}_vs_{short(LB)}", LA, LB, variant="reversed", outputs="standard"))
-    q.append("summary_p5")
+        q.append(f"6-repeat_summary-{off}")
+    q.append(Spec(step_name("6-repeat", LA, LB, "reversed"), LA, LB, variant="reversed", outputs="standard"))
+    q.append("6-repeat_summary")
     return q
 
 
 # ---- cached stages ------------------------------------------------------------------------
-def _key(spec: Spec) -> str:
+def _key(spec) -> str:
+    if isinstance(spec, ClipsSpec):
+        return "clips_" + "_".join(short(c) for c in spec.clips) + f"_n{spec.n_per_video or 'all'}"
     return f"{spec.a}_{spec.b}_n{spec.n_per_video or 'all'}_o{spec.offset}"
 
 
@@ -171,7 +213,7 @@ def _masks(rec, spec: Spec, cache: Path) -> dict:
             return out
         except Exception as e:  # noqa: BLE001
             log.warning("SAM cache unreadable (%s); recomputing", e)
-    frames = key_frames(rec, 0, spec.n_key) + key_frames(rec, 1, spec.n_key)
+    frames = [k for v in np.unique(rec.video) for k in key_frames(rec, int(v), spec.n_key)]
     t0 = time.time()
     out = sam_masks(rec.files, frames, (H, W), points_per_side=spec.sam_points)
     log.info("SAM 2: %d masks on %d frames in %.0f s", sum(len(v) for v in out.values()), len(frames), time.time() - t0)
@@ -196,6 +238,11 @@ def step_fn(spec: Spec, cache: Path, store=None, check=None):
         for name in ("uncertainscene", "httpx", "huggingface_hub"):
             logging.getLogger(name).setLevel(logging.INFO if name == "uncertainscene" else logging.WARNING)
         try:
+            if isinstance(spec, ClipsSpec):
+                from .clips import analyse_clips
+
+                log.info("step %s: clips %s, %s frames/video", spec.name, ", ".join(spec.clips), spec.n_per_video or "all")
+                return analyse_clips(spec, out, cache, check)
             log.info("step %s: %s vs %s, %s frames/video, %d SAM key frames, variant %s", spec.name, spec.a, spec.b,
                      spec.n_per_video or "all", spec.n_key, spec.variant)
             return analyse(spec, out, cache, store, check)
@@ -213,8 +260,10 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     from ..change import scene_report
     from ..change.fields import RobotModel, base_placement, compute_fields, field_stats, fit_floor, object_fields
     from ..change.floor import combine_scale, object_scale
-    from ..change.segment import build_objects
+    from ..change import position as pos
+    from ..change.segment import build_objects, effective_voxel
     from ..viz import objects_plots, plots, viewer
+    from .catalog import describe as describe_step
 
     t0 = time.time()
     stage = _Stage(spec.name, check)
@@ -238,12 +287,12 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     obj_thr, sam_error = {}, None
     try:
         masks = _masks(rec, spec, cache)
-        voxel = 0.012 / floor.scale_m_per_unit
+        voxel = effective_voxel(rec, masks, 0.012 / floor.scale_m_per_unit)   # one grid for both recordings
         struct = 1.2 / floor.scale_m_per_unit
         A = {s: m for s, m in masks.items() if rec.video[s] == 0}
         B = {s: m for s, m in masks.items() if rec.video[s] == 1}
-        objs_a = build_objects(rec, A, "A", voxel, struct)
-        objs_b = build_objects(rec, B, "B", voxel, struct)
+        objs_a = build_objects(rec, A, "A", voxel, struct, adapt_voxel=False)
+        objs_b = build_objects(rec, B, "B", voxel, struct, adapt_voxel=False)
         stage(f"SAM 2 objects ({len(objs_a)} in A, {len(objs_b)} in B)")
         inv.label_all(objs_a + objs_b, rec)
         stage("CLIP labels for every object")
@@ -260,8 +309,13 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         (out / "sam_error.txt").write_text(sam_error + "\n")
 
     s = floor.scale_m_per_unit
+    pos.annotate(objs_a + objs_b, s, np.array(floor.up))
     for o in objs_a + objs_b:
         o.extra["description"] = inv.describe(o, rec.E, s, scale_range=floor.scale_range)
+        pc = o.extra.get("position_cm")
+        if pc and not o.structure and not pc["too_few_views"]:
+            o.extra["description"] += (f" Its centre is known to within about {pc['radius90_cm']:.0f} cm (90%, from "
+                                       f"{pc['n_views']} views; one view alone: {pc['single_view_radius90_cm']:.0f} cm).")
 
     # ---- heat maps ----
     f = fstats = None
@@ -304,7 +358,8 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
 
     # ---- metrics ----
     ptype = pair_type(spec.a, spec.b)
-    m = {"pair_type": ptype, "a": spec.a, "b": spec.b, "pair": f"{short(spec.a)}_vs_{short(spec.b)}",
+    d = describe_step(spec.name, {"pair_type": ptype, "a": spec.a, "b": spec.b, "variant": spec.variant})
+    m = {"title": d["title"], "question": d["question"], "phase_title": d["phase_title"], "pair_type": ptype, "a": spec.a, "b": spec.b, "pair": f"{short(spec.a)}_vs_{short(spec.b)}",
          "n_per_video": rinfo.get("used_per_video"), "requested_per_video": spec.n_per_video, "offset": spec.offset,
          "n_key": spec.n_key, "variant": spec.variant, "version": 2, "detect_config": asdict(cfg),
          "robot": asdict(robot), "fields_on": spec.fields_on, "recon_seconds": rinfo.get("seconds"),
@@ -319,6 +374,7 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     if fstats:
         m.update({f"field_{k}": v for k, v in fstats.items()})
     m.update(object_metrics(objs_a, objs_b, obj_thr))
+    m.update(position_metrics(objs_a, objs_b, s))
     rows = inv.object_rows(objs_a + objs_b, s, np.array(floor.up), floor.height)
     changes = [r for r in rows if r["status"] not in ("unchanged", "not seen in other recording", "unknown")
                and not r["structure"]]
@@ -337,6 +393,8 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     if objs_a or objs_b:
         objects_plots.inventory_sheet(objs_b + objs_a, rec, out / "objects.png", title)
         objects_plots.mask_overlays(objs_a, objs_b, rec, out / "object_overlays.png")
+    if objs_a or objs_b:
+        _position_figures(objs_a, objs_b, res, floor, s, m, out, d["title"])
     if f is not None:
         plots.field_maps(f, rec, out / "heatmaps.png", title)
         plots.base_map(bm, out / "base_placement.png", title)
@@ -354,12 +412,81 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         viewer.write_ply(res, out / "cloud.ply")
         if f is not None:
             viewer.write_fields_ply(f, out / "fields.ply")
+    try:
+        _write_scene3d(res, objs_a, objs_b, f, out, (short(spec.a), short(spec.b)))
+    except Exception:  # noqa: BLE001 - the viewer file must not lose the step
+        log.exception("scene3d.json failed")
     stage("figures, viewer and reports")
     write_report(spec, m, rows, out)
     enforce_size(out)
     return (f"{ptype}: {m.get('obj_changed', 0)} changed objects of {m.get('obj_total', 0)} "
             f"({m.get('obj_changed_frac', 0):.0%}); labels: {', '.join(c['label'] or '?' for c in changes[:5])}; "
             f"scale {s:.3f} m/unit; {m['step_seconds']:.0f}s")
+
+
+def _write_scene3d(res, objs_a, objs_b, f, out: Path, labels, max_mb: float = 4.5) -> None:
+    from ..viz import scene3d
+
+    n = 20000
+    while True:
+        sc = scene3d.from_analysis(res, objs_a, objs_b, f, n_colour=n, n_heat=int(0.6 * n), labels=labels)
+        txt = json.dumps(sc, separators=(",", ":"), default=float)
+        if len(txt) < max_mb * 1024**2 or n < 3000:
+            break
+        n = int(n * 0.7)
+    (out / "scene3d.json").write_text(txt)
+
+
+def position_metrics(objs_a: list, objs_b: list, scale: float) -> dict:
+    """How precisely objects are located, from one video each (label-free): the main range from
+    the VGGT-confidence + SAM 2 wobble filter, the views-disagreeing range as a check, the
+    filter's consistency (NIS, ~3 when honest), how the range shrinks with views, and, for
+    objects unchanged between the two recordings, whether their positions agree within the
+    stated ranges (only meaningful where nothing moved)."""
+    from ..change import position as pos
+
+    things = [o for o in objs_a + objs_b if not o.structure and "position" in o.extra
+              and not o.extra["position_cm"]["too_few_views"]]
+    out: dict = {}
+    if not things:
+        return out
+    pc = [o.extra["position_cm"] for o in things]
+    med = (lambda key: round(float(np.median([p[key] for p in pc if p.get(key) is not None])), 2)
+           if any(p.get(key) is not None for p in pc) else None)
+    out.update({"pos_method": pc[0]["method"], "pos_radius90_cm_median": med("radius90_cm"),
+                "pos_radius90_cm_views_median": med("radius90_cm_views"),
+                "pos_single_view_radius90_cm_median": med("single_view_radius90_cm"),
+                "pos_depth_sd_cm_median": med("depth_sd_cm"), "pos_side_sd_cm_median": med("side_sd_cm"),
+                "pos_nis_median": med("nis_mean"), "pos_views_median": int(np.median([p["n_views"] for p in pc])),
+                "pos_wobble_share": round(float(np.mean([p.get("wobble_views", 0) / max(p["n_views"], 1) for p in pc])), 3),
+                "pos_views_curve": {str(k): v for k, v in pos.views_curve(things, scale).items()},
+                "pos_model_curve": {str(k): v for k, v in pos.ekf_curve(things, scale).items()}})
+    d2 = []
+    for o in objs_a:
+        if o.status == "unchanged" and o.partner is not None and not o.structure and o.partner < len(objs_b):
+            d2.append(pos.mahalanobis2(o.extra["position"], objs_b[o.partner].extra["position"]))
+    if d2:
+        out["pos_unchanged_pairs"] = len(d2)
+        out["pos_coverage90_unchanged"] = round(float(np.mean(np.array(d2) <= pos.CHI2_3_90)), 3)
+    return out
+
+
+def _position_figures(objs_a, objs_b, res, floor, s, m, out: Path, title: str) -> None:
+    from ..change.inventory import STATUS_COLOR
+    from ..viz import position_plots
+
+    rng = np.random.default_rng(0)
+    panels = []
+    for ps, objs, lab in ((res.A, objs_a, "before"), (res.B, objs_b, "after")):
+        k = rng.choice(len(ps.X), min(30000, len(ps.X)), replace=False) if len(ps.X) else np.zeros(0, int)
+        items = [{"label": o.label or "object", "mean": o.extra["position"]["mean"], "cov": o.extra["position"]["cov"],
+                  "color": STATUS_COLOR.get(o.status, (90, 90, 90)), "r90_cm": o.extra["position_cm"]["radius90_cm"]}
+                 for o in objs if not o.structure and "position" in o.extra]
+        panels.append({"title": f"{lab}: {len(items)} objects", "bg": ps.X[k], "bg_rgb": ps.rgb[k], "items": items})
+    position_plots.floor_plan(panels, np.array(floor.up), s, out / "position_map.png", title)
+    position_plots.precision_curves({int(k): v for k, v in m.get("pos_views_curve", {}).items()}, None,
+                                    out / "position_precision.png", title,
+                                    model={int(k): v for k, v in m.get("pos_model_curve", {}).items()})
 
 
 def physical(objs_a: list, objs_b: list) -> list:
@@ -384,9 +511,10 @@ def object_metrics(objs_a: list, objs_b: list, thr: dict) -> dict:
 
 
 def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
-    L = [f"# {spec.name}", "",
-         f"**{spec.a}** (A, before) vs **{spec.b}** (B, after): pair type **{m['pair_type']}**, "
-         f"{m['n_per_video']} frames per recording, {spec.n_key} SAM 2 key frames each, variant `{spec.variant}`.", ""]
+    L = [f"# {m.get('title', spec.name)}", "",
+         f"**What this run tests:** {m.get('question', '')}", "",
+         f"Before: `{spec.a}`. After: `{spec.b}`. {m['n_per_video']} frames per recording, {spec.n_key} SAM 2 views "
+         f"each. Step folder `{spec.name}` (part of *{m.get('phase_title', '')}*).", ""]
     if m.get("sam_error"):
         L += [f"SAM 2 failed ({m['sam_error']}); objects below come from point clusters.", ""]
     L += ["| Measure | Value |", "|---|---|",
@@ -399,12 +527,24 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
           f"| Scale | {m.get('field_scale_m_per_unit')} m/unit (phone height cue {m.get('field_scale_phone_height')}, "
           f"objects cue {m.get('field_scale_objects')} from {m.get('field_scale_objects_n')} objects) |",
           f"| Reconstruction | {m['frames_total']} frames in {m.get('recon_chunks')} chunks, {m['recon_seconds']} s, "
-          f"worst anchor residual {m.get('chunk_residual_max')} |", ""]
+          f"worst anchor residual {m.get('chunk_residual_max')} |",
+          f"| Where objects are (90% range, median over objects) | ±{m.get('pos_radius90_cm_median', '-')} cm from "
+          f"VGGT confidence and SAM 2 mask wobble over {m.get('pos_views_median', '-')} views (one view alone: "
+          f"±{m.get('pos_single_view_radius90_cm_median', '-')} cm); check from views disagreeing: "
+          f"±{m.get('pos_radius90_cm_views_median', '-')} cm |",
+          f"| Consistency check (3 = honest, higher = overconfident) | {m.get('pos_nis_median', '-')} |"]
+    if m.get("pos_coverage90_unchanged") is not None:
+        L.append(f"| Do unchanged objects agree between the recordings? | {m['pos_coverage90_unchanged']:.0%} within "
+                 f"their combined 90% ranges ({m['pos_unchanged_pairs']} objects; about 90% expected where nothing "
+                 f"moved) |")
+    L += [""]
     if m["pair_type"] in ("static", "lighting"):
         L += [f"Nothing was moved between these recordings, so every changed object is a false alarm "
               f"(**{m.get('obj_changed', 0)} of {m.get('obj_compared', 0)}**).", ""]
     for img, cap in (("objects.png", "every object, labelled, border = status"),
                      ("object_overlays.png", "object masks in the frames"), ("heatmaps.png", "heat maps"),
+                     ("position_map.png", "where each object is: 90% regions, top-down"),
+                     ("position_precision.png", "how position precision grows with more views"),
                      ("base_placement.png", "where a robot could stand"), ("change_map.png", "change map")):
         if (out / img).exists():
             L += [f"![{cap}]({img})", ""]
