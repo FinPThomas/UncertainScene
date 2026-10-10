@@ -1,0 +1,257 @@
+[
+  {
+    "id": 2,
+    "kind": "appearance",
+    "n_points": 2540,
+    "centroid": [
+      0.028300000354647636,
+      -0.12610000371932983,
+      0.9822999835014343
+    ],
+    "centroid_std": 0.028605101630091667,
+    "extent": [
+      0.12280000001192093,
+      0.06069999933242798,
+      0.029200000688433647
+    ],
+    "extent_ci": [
+      [
+        0.1205,
+        0.1253
+      ],
+      [
+        0.0591,
+        0.0615
+      ],
+      [
+        0.0287,
+        0.0296
+      ]
+    ],
+    "frame_votes": {
+      "35": 1810,
+      "37": 390,
+      "34": 225,
+      "36": 65,
+      "33": 27
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "cup",
+    "label_prob": 0.592,
+    "description": "The cup looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        56.1,
+        27.7,
+        13.3
+      ],
+      "size_cm_ci": [
+        [
+          55.0,
+          57.2
+        ],
+        [
+          27.0,
+          28.1
+        ],
+        [
+          13.1,
+          13.5
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          45.7,
+          22.6,
+          10.9
+        ],
+        [
+          66.4,
+          32.8,
+          15.8
+        ]
+      ],
+      "position_sd_cm": 13.1,
+      "boundary_uncertainty_cm": 5.42,
+      "mean_abs_shift_cm": 9.1,
+      "reach": 0.0,
+      "approach": 0.04,
+      "height_m": 0.38
+    }
+  },
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 1344,
+    "centroid": [
+      -0.5407999753952026,
+      -0.05959999933838844,
+      0.7608000040054321
+    ],
+    "centroid_std": 0.028609653934836388,
+    "extent": [
+      0.12849999964237213,
+      0.08179999887943268,
+      0.03440000116825104
+    ],
+    "extent_ci": [
+      [
+        0.1251,
+        0.1322
+      ],
+      [
+        0.0797,
+        0.0856
+      ],
+      [
+        0.0332,
+        0.0364
+      ]
+    ],
+    "frame_votes": {
+      "11": 428,
+      "24": 282,
+      "4": 250,
+      "5": 214,
+      "6": 115
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "rug",
+    "label_prob": 0.4,
+    "description": "The rug looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        58.7,
+        37.3,
+        15.7
+      ],
+      "size_cm_ci": [
+        [
+          57.1,
+          60.3
+        ],
+        [
+          36.4,
+          39.1
+        ],
+        [
+          15.2,
+          16.6
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          47.8,
+          30.4,
+          12.8
+        ],
+        [
+          69.5,
+          44.3,
+          18.6
+        ]
+      ],
+      "position_sd_cm": 13.1,
+      "boundary_uncertainty_cm": 9.08,
+      "mean_abs_shift_cm": 12.0,
+      "reach": 0.0,
+      "approach": 0.49,
+      "height_m": 0.93
+    }
+  },
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 770,
+    "centroid": [
+      0.17270000278949738,
+      0.07680000364780426,
+      0.9214000105857849
+    ],
+    "centroid_std": 0.028606606647372246,
+    "extent": [
+      0.07490000128746033,
+      0.053599998354911804,
+      0.03660000115633011
+    ],
+    "extent_ci": [
+      [
+        0.0729,
+        0.0777
+      ],
+      [
+        0.0514,
+        0.0555
+      ],
+      [
+        0.0346,
+        0.0383
+      ]
+    ],
+    "frame_votes": {
+      "17": 325,
+      "13": 277,
+      "0": 89,
+      "26": 70,
+      "8": 9
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "guitar",
+    "label_prob": 0.978,
+    "description": "A guitar that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        34.2,
+        24.5,
+        16.7
+      ],
+      "size_cm_ci": [
+        [
+          33.3,
+          35.5
+        ],
+        [
+          23.5,
+          25.3
+        ],
+        [
+          15.8,
+          17.5
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          27.9,
+          19.9,
+          13.6
+        ],
+        [
+          40.5,
+          29.0,
+          19.8
+        ]
+      ],
+      "position_sd_cm": 13.1,
+      "boundary_uncertainty_cm": 6.39,
+      "mean_abs_shift_cm": 60.8,
+      "reach": 0.0,
+      "approach": 0.98,
+      "height_m": -0.59
+    }
+  }
+]
