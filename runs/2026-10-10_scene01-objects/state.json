@@ -3,6 +3,16 @@
   "path": "change",
   "run_id": "2026-10-10_scene01-objects",
   "steps": {
+    "1-main_moved-and-light-changed_dark-before-a_vs_light-after-a": {
+      "account": "colab-9ce8",
+      "attempts": 1,
+      "commit": "1194bca",
+      "expires": 1791653570.4592965,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 16:01:20 UTC",
+      "status": "running"
+    },
     "1-main_moved_light-before-a_vs_light-after-a": {
       "account": "colab-9ce8",
       "attempts": 1,
