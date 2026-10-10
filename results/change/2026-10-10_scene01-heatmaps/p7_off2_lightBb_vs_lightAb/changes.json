@@ -1,0 +1,252 @@
+[
+  {
+    "id": 2,
+    "kind": "appearance",
+    "n_points": 2179,
+    "centroid": [
+      0.03759999945759773,
+      -0.002899999963119626,
+      0.7152000069618225
+    ],
+    "centroid_std": 0.057513751089572906,
+    "extent": [
+      0.29170000553131104,
+      0.08569999784231186,
+      0.02319999970495701
+    ],
+    "extent_ci": [
+      [
+        0.2881,
+        0.2948
+      ],
+      [
+        0.0844,
+        0.0867
+      ],
+      [
+        0.0218,
+        0.0253
+      ]
+    ],
+    "frame_votes": {
+      "30": 660,
+      "31": 509,
+      "32": 478,
+      "49": 304,
+      "29": 188
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "glass vase",
+    "label_prob": 0.78,
+    "description": "The glass vase looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        56.1,
+        16.5,
+        4.5
+      ],
+      "size_cm_ci": [
+        [
+          55.4,
+          56.7
+        ],
+        [
+          16.2,
+          16.7
+        ],
+        [
+          4.2,
+          4.9
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          45.7,
+          13.4,
+          3.6
+        ],
+        [
+          66.5,
+          19.5,
+          5.3
+        ]
+      ],
+      "position_sd_cm": 11.1,
+      "boundary_uncertainty_cm": 5.93,
+      "mean_abs_shift_cm": 10.2,
+      "reach": 0.14,
+      "approach": 0.11,
+      "height_m": 0.78
+    }
+  },
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 1393,
+    "centroid": [
+      -0.15639999508857727,
+      -0.16210000216960907,
+      0.6880999803543091
+    ],
+    "centroid_std": 0.05753163620829582,
+    "extent": [
+      0.3589000105857849,
+      0.20110000669956207,
+      0.050599999725818634
+    ],
+    "extent_ci": [
+      [
+        0.3489,
+        0.3655
+      ],
+      [
+        0.1931,
+        0.2075
+      ],
+      [
+        0.0474,
+        0.058
+      ]
+    ],
+    "frame_votes": {
+      "15": 1335,
+      "16": 56,
+      "26": 2
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "baseball cap",
+    "label_prob": 0.348,
+    "description": "A baseball cap that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        69.0,
+        38.7,
+        9.7
+      ],
+      "size_cm_ci": [
+        [
+          67.1,
+          70.3
+        ],
+        [
+          37.1,
+          39.9
+        ],
+        [
+          9.1,
+          11.1
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          56.2,
+          31.5,
+          7.9
+        ],
+        [
+          81.8,
+          45.8,
+          11.5
+        ]
+      ],
+      "position_sd_cm": 11.1,
+      "boundary_uncertainty_cm": 17.15,
+      "mean_abs_shift_cm": 39.9,
+      "reach": 0.0,
+      "approach": 0.89,
+      "height_m": 0.99
+    }
+  },
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 770,
+    "centroid": [
+      -0.7297999858856201,
+      0.04859999939799309,
+      0.819100022315979
+    ],
+    "centroid_std": 0.05750538036227226,
+    "extent": [
+      0.09769999980926514,
+      0.059300001710653305,
+      0.0215000007301569
+    ],
+    "extent_ci": [
+      [
+        0.0925,
+        0.101
+      ],
+      [
+        0.0565,
+        0.0609
+      ],
+      [
+        0.0203,
+        0.0225
+      ]
+    ],
+    "frame_votes": {
+      "9": 652,
+      "8": 118
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "neck pillow",
+    "label_prob": 0.252,
+    "description": "The neck pillow looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        18.8,
+        11.4,
+        4.1
+      ],
+      "size_cm_ci": [
+        [
+          17.8,
+          19.4
+        ],
+        [
+          10.9,
+          11.7
+        ],
+        [
+          3.9,
+          4.3
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          15.3,
+          9.3,
+          3.4
+        ],
+        [
+          22.3,
+          13.5,
+          4.9
+        ]
+      ],
+      "position_sd_cm": 11.1,
+      "boundary_uncertainty_cm": 5.1,
+      "mean_abs_shift_cm": 12.3,
+      "reach": 0.0,
+      "approach": 0.17,
+      "height_m": 0.73
+    }
+  }
+]
