@@ -3,6 +3,16 @@
   "path": "change",
   "run_id": "2026-10-10_scene01-heatmaps",
   "steps": {
+    "p1_darkBa_vs_darkBb": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "741a9de",
+      "expires": 1791593531.9792345,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 00:01:47 UTC",
+      "status": "running"
+    },
     "p1_darkBa_vs_lightAa": {
       "account": "colab-dbb8",
       "attempts": 1,
