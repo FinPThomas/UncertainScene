@@ -97,11 +97,11 @@
       "account": "colab-9ce8",
       "attempts": 1,
       "commit": "46e1e11",
-      "expires": 1791660189.0060482,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 18:29:39 UTC",
+      "note": "static: 0 changed objects of 488 (0%); labels: ; scale 5.248 m/unit; 2240s",
       "started": "2026-10-10 17:51:39 UTC",
-      "status": "running"
+      "status": "done"
     }
   }
 }
