@@ -1,0 +1,252 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 1055,
+    "centroid": [
+      0.5526000261306763,
+      -0.06960000097751617,
+      0.8774999976158142
+    ],
+    "centroid_std": 0.03238814324140549,
+    "extent": [
+      0.06159999966621399,
+      0.043800000101327896,
+      0.01549999974668026
+    ],
+    "extent_ci": [
+      [
+        0.06,
+        0.0628
+      ],
+      [
+        0.0429,
+        0.0459
+      ],
+      [
+        0.0149,
+        0.0161
+      ]
+    ],
+    "frame_votes": {
+      "15": 469,
+      "14": 446,
+      "16": 140
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "cup",
+    "label_prob": 0.78,
+    "description": "The cup looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        30.6,
+        21.8,
+        7.7
+      ],
+      "size_cm_ci": [
+        [
+          29.8,
+          31.2
+        ],
+        [
+          21.3,
+          22.8
+        ],
+        [
+          7.4,
+          8.0
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          24.9,
+          17.7,
+          6.3
+        ],
+        [
+          36.3,
+          25.8,
+          9.1
+        ]
+      ],
+      "position_sd_cm": 16.1,
+      "boundary_uncertainty_cm": 9.35,
+      "mean_abs_shift_cm": 24.8,
+      "reach": 0.0,
+      "approach": 0.61,
+      "height_m": 0.66
+    }
+  },
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 777,
+    "centroid": [
+      0.34380000829696655,
+      -0.3222000002861023,
+      0.9991999864578247
+    ],
+    "centroid_std": 0.032391760498285294,
+    "extent": [
+      0.09849999845027924,
+      0.03359999880194664,
+      0.020400000736117363
+    ],
+    "extent_ci": [
+      [
+        0.0961,
+        0.1016
+      ],
+      [
+        0.0313,
+        0.0354
+      ],
+      [
+        0.0189,
+        0.0225
+      ]
+    ],
+    "frame_votes": {
+      "21": 355,
+      "22": 270,
+      "20": 152
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "sofa",
+    "label_prob": 0.163,
+    "description": "The sofa looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        48.9,
+        16.7,
+        10.1
+      ],
+      "size_cm_ci": [
+        [
+          47.7,
+          50.5
+        ],
+        [
+          15.5,
+          17.6
+        ],
+        [
+          9.4,
+          11.2
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          39.9,
+          13.6,
+          8.3
+        ],
+        [
+          58.0,
+          19.8,
+          12.0
+        ]
+      ],
+      "position_sd_cm": 16.1,
+      "boundary_uncertainty_cm": 6.42,
+      "mean_abs_shift_cm": 17.1,
+      "reach": 0.0,
+      "approach": 0.72,
+      "height_m": 1.84
+    }
+  },
+  {
+    "id": 2,
+    "kind": "appearance",
+    "n_points": 597,
+    "centroid": [
+      0.16120000183582306,
+      -0.3248000144958496,
+      0.9818999767303467
+    ],
+    "centroid_std": 0.03240220993757248,
+    "extent": [
+      0.15080000460147858,
+      0.04179999977350235,
+      0.0215000007301569
+    ],
+    "extent_ci": [
+      [
+        0.1471,
+        0.1549
+      ],
+      [
+        0.0401,
+        0.0437
+      ],
+      [
+        0.0202,
+        0.0224
+      ]
+    ],
+    "frame_votes": {
+      "43": 488,
+      "38": 68,
+      "44": 39,
+      "42": 2
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "baseball cap",
+    "label_prob": 0.804,
+    "description": "The baseball cap looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        74.9,
+        20.8,
+        10.7
+      ],
+      "size_cm_ci": [
+        [
+          73.1,
+          76.9
+        ],
+        [
+          19.9,
+          21.7
+        ],
+        [
+          10.0,
+          11.1
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          61.0,
+          16.9,
+          8.7
+        ],
+        [
+          88.8,
+          24.6,
+          12.7
+        ]
+      ],
+      "position_sd_cm": 16.1,
+      "boundary_uncertainty_cm": 7.01,
+      "mean_abs_shift_cm": 18.4,
+      "reach": 0.0,
+      "approach": 0.46,
+      "height_m": 1.89
+    }
+  }
+]
