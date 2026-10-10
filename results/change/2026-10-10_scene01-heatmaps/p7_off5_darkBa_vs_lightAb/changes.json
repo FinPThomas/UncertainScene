@@ -1,0 +1,254 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 3190,
+    "centroid": [
+      -0.10949999839067459,
+      -0.13729999959468842,
+      0.830299973487854
+    ],
+    "centroid_std": 0.03819548338651657,
+    "extent": [
+      0.23260000348091125,
+      0.10930000245571136,
+      0.04390000179409981
+    ],
+    "extent_ci": [
+      [
+        0.2307,
+        0.2349
+      ],
+      [
+        0.1076,
+        0.1108
+      ],
+      [
+        0.0429,
+        0.0451
+      ]
+    ],
+    "frame_votes": {
+      "11": 1050,
+      "4": 614,
+      "3": 613,
+      "5": 479,
+      "25": 175
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "table tennis bat",
+    "label_prob": 0.999,
+    "description": "The table tennis bat looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        132.0,
+        62.0,
+        24.9
+      ],
+      "size_cm_ci": [
+        [
+          130.9,
+          133.3
+        ],
+        [
+          61.1,
+          62.9
+        ],
+        [
+          24.3,
+          25.6
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          107.6,
+          50.5,
+          20.3
+        ],
+        [
+          156.4,
+          73.5,
+          29.5
+        ]
+      ],
+      "position_sd_cm": 21.7,
+      "boundary_uncertainty_cm": 13.71,
+      "mean_abs_shift_cm": 15.5,
+      "reach": 0.0,
+      "approach": 0.68,
+      "height_m": 1.46
+    }
+  },
+  {
+    "id": 2,
+    "kind": "added",
+    "n_points": 1501,
+    "centroid": [
+      0.5982999801635742,
+      -0.12200000137090683,
+      0.917900025844574
+    ],
+    "centroid_std": 0.03819570317864418,
+    "extent": [
+      0.12639999389648438,
+      0.09539999812841415,
+      0.032600000500679016
+    ],
+    "extent_ci": [
+      [
+        0.1211,
+        0.1316
+      ],
+      [
+        0.0908,
+        0.0995
+      ],
+      [
+        0.0309,
+        0.0339
+      ]
+    ],
+    "frame_votes": {
+      "50": 589,
+      "27": 310,
+      "34": 219,
+      "29": 118,
+      "48": 109
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "sofa",
+    "label_prob": 0.464,
+    "description": "A sofa appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        71.7,
+        54.1,
+        18.5
+      ],
+      "size_cm_ci": [
+        [
+          68.7,
+          74.7
+        ],
+        [
+          51.5,
+          56.5
+        ],
+        [
+          17.5,
+          19.2
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          58.5,
+          44.1,
+          15.1
+        ],
+        [
+          85.0,
+          64.2,
+          21.9
+        ]
+      ],
+      "position_sd_cm": 21.7,
+      "boundary_uncertainty_cm": 30.39,
+      "mean_abs_shift_cm": 68.8,
+      "reach": 0.0,
+      "approach": 0.59,
+      "height_m": 0.94
+    }
+  },
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 615,
+    "centroid": [
+      0.5774000287055969,
+      -0.06499999761581421,
+      0.8827999830245972
+    ],
+    "centroid_std": 0.03819101303815842,
+    "extent": [
+      0.05079999938607216,
+      0.025299999862909317,
+      0.012799999676644802
+    ],
+    "extent_ci": [
+      [
+        0.0494,
+        0.0523
+      ],
+      [
+        0.0237,
+        0.0265
+      ],
+      [
+        0.0116,
+        0.0141
+      ]
+    ],
+    "frame_votes": {
+      "15": 412,
+      "14": 203
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "cup",
+    "label_prob": 0.649,
+    "description": "The cup looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        28.8,
+        14.4,
+        7.3
+      ],
+      "size_cm_ci": [
+        [
+          28.0,
+          29.7
+        ],
+        [
+          13.5,
+          15.0
+        ],
+        [
+          6.6,
+          8.0
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          23.5,
+          11.7,
+          5.9
+        ],
+        [
+          34.2,
+          17.0,
+          8.6
+        ]
+      ],
+      "position_sd_cm": 21.7,
+      "boundary_uncertainty_cm": 14.11,
+      "mean_abs_shift_cm": 19.3,
+      "reach": 0.0,
+      "approach": 0.24,
+      "height_m": 0.67
+    }
+  }
+]
