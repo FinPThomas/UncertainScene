@@ -1,0 +1,12 @@
+2026-10-10 03:13:12,386 INFO uncertainscene.poc: step p7_off6_lightBb_vs_lightAb: scene01_light_before_b vs scene01_light_after_b, 28 frames/video, variant offset6, outputs light
+2026-10-10 03:13:12,664 INFO uncertainscene.poc: [p7_off6_lightBb_vs_lightAb] start done in 0 s | RAM 4.7/12.7 GB, disk free 57.6 GB, GPU 5.2/15.0 GB
+2026-10-10 03:13:12,665 WARNING uncertainscene.recon.vggt: GPU fits ~27 frames per recording; using 27 instead of 28
+2026-10-10 03:13:13,677 INFO uncertainscene.recon.vggt: VGGT on 54 frames (518, 294); GPU free 9.3/14.6 GB
+2026-10-10 03:13:41,846 INFO uncertainscene.recon.vggt: reconstructed 54 frames in 26 s (GPU peak 9.57 GB)
+2026-10-10 03:13:44,706 INFO uncertainscene.poc: [p7_off6_lightBb_vs_lightAb] reconstruction (54 frames) done in 32 s | RAM 4.7/12.7 GB, disk free 57.6 GB, GPU 5.2/15.0 GB
+2026-10-10 03:13:46,208 INFO uncertainscene.poc: [p7_off6_lightBb_vs_lightAb] DINOv2 features done in 2 s | RAM 4.7/12.7 GB, disk free 57.5 GB, GPU 5.3/15.0 GB
+2026-10-10 03:14:27,637 INFO uncertainscene.poc: [p7_off6_lightBb_vs_lightAb] change detection (594753 points, tau 0.158) done in 41 s | RAM 5.1/12.7 GB, disk free 57.5 GB, GPU 5.3/15.0 GB
+2026-10-10 03:14:28,305 INFO uncertainscene.poc: [p7_off6_lightBb_vs_lightAb] objects (2 clusters) done in 1 s | RAM 5.1/12.7 GB, disk free 57.5 GB, GPU 5.3/15.0 GB
+2026-10-10 03:14:42,848 INFO uncertainscene.poc: [p7_off6_lightBb_vs_lightAb] heat maps (108910 points, scale 2.106 m/unit) done in 15 s | RAM 5.1/12.7 GB, disk free 57.5 GB, GPU 5.3/15.0 GB
+2026-10-10 03:14:43,216 INFO uncertainscene.poc: [p7_off6_lightBb_vs_lightAb] labels (table tennis bat, towel) done in 0 s | RAM 5.1/12.7 GB, disk free 57.5 GB, GPU 5.3/15.0 GB
+2026-10-10 03:14:52,114 INFO uncertainscene.poc: [p7_off6_lightBb_vs_lightAb] figures, viewer and reports done in 9 s | RAM 5.1/12.7 GB, disk free 57.5 GB, GPU 5.3/15.0 GB
