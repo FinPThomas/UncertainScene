@@ -1,0 +1,256 @@
+[
+  {
+    "id": 1,
+    "kind": "removed",
+    "n_points": 904,
+    "centroid": [
+      0.2012999951839447,
+      0.09880000352859497,
+      0.9240999817848206
+    ],
+    "centroid_std": 0.03085370361804962,
+    "extent": [
+      0.10970000177621841,
+      0.07500000298023224,
+      0.04659999907016754
+    ],
+    "extent_ci": [
+      [
+        0.1055,
+        0.1136
+      ],
+      [
+        0.0726,
+        0.0778
+      ],
+      [
+        0.0433,
+        0.0487
+      ]
+    ],
+    "frame_votes": {
+      "13": 305,
+      "8": 229,
+      "0": 191,
+      "26": 147,
+      "7": 32
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "guitar",
+    "label_prob": 0.994,
+    "description": "A guitar that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        65.7,
+        44.9,
+        27.9
+      ],
+      "size_cm_ci": [
+        [
+          63.2,
+          68.1
+        ],
+        [
+          43.5,
+          46.6
+        ],
+        [
+          25.9,
+          29.2
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          53.6,
+          36.6,
+          22.8
+        ],
+        [
+          77.9,
+          53.3,
+          33.1
+        ]
+      ],
+      "position_sd_cm": 18.5,
+      "boundary_uncertainty_cm": 34.06,
+      "mean_abs_shift_cm": 83.9,
+      "reach": 0.0,
+      "approach": 0.96,
+      "height_m": -0.8
+    }
+  },
+  {
+    "id": 2,
+    "kind": "added",
+    "n_points": 702,
+    "centroid": [
+      0.05000000074505806,
+      -0.2540000081062317,
+      1.034500002861023
+    ],
+    "centroid_std": 0.030852215364575386,
+    "extent": [
+      0.1290999948978424,
+      0.032099999487400055,
+      0.00860000029206276
+    ],
+    "extent_ci": [
+      [
+        0.1181,
+        0.1374
+      ],
+      [
+        0.0299,
+        0.0348
+      ],
+      [
+        0.0079,
+        0.0091
+      ]
+    ],
+    "frame_votes": {
+      "32": 413,
+      "35": 190,
+      "31": 98,
+      "33": 1
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "rug",
+    "label_prob": 0.164,
+    "description": "A rug appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        77.4,
+        19.2,
+        5.2
+      ],
+      "size_cm_ci": [
+        [
+          70.8,
+          82.3
+        ],
+        [
+          17.9,
+          20.9
+        ],
+        [
+          4.7,
+          5.5
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          63.0,
+          15.7,
+          4.2
+        ],
+        [
+          91.7,
+          22.8,
+          6.1
+        ]
+      ],
+      "position_sd_cm": 18.5,
+      "boundary_uncertainty_cm": 32.83,
+      "mean_abs_shift_cm": 77.3,
+      "reach": 0.0,
+      "approach": 0.65,
+      "height_m": 1.25
+    }
+  },
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 635,
+    "centroid": [
+      0.1793999969959259,
+      -0.039400000125169754,
+      0.9542999863624573
+    ],
+    "centroid_std": 0.03086388111114502,
+    "extent": [
+      0.164000004529953,
+      0.05559999868273735,
+      0.05290000140666962
+    ],
+    "extent_ci": [
+      [
+        0.1598,
+        0.1686
+      ],
+      [
+        0.0533,
+        0.058
+      ],
+      [
+        0.0498,
+        0.0549
+      ]
+    ],
+    "frame_votes": {
+      "7": 374,
+      "8": 139,
+      "0": 101,
+      "13": 19,
+      "26": 2
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "guitar",
+    "label_prob": 0.937,
+    "description": "A guitar that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        98.3,
+        33.3,
+        31.7
+      ],
+      "size_cm_ci": [
+        [
+          95.8,
+          101.0
+        ],
+        [
+          31.9,
+          34.8
+        ],
+        [
+          29.8,
+          32.9
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          80.1,
+          27.1,
+          25.8
+        ],
+        [
+          116.5,
+          39.5,
+          37.6
+        ]
+      ],
+      "position_sd_cm": 18.5,
+      "boundary_uncertainty_cm": 31.75,
+      "mean_abs_shift_cm": 71.3,
+      "reach": 0.0,
+      "approach": 0.95,
+      "height_m": -0.22
+    }
+  }
+]
