@@ -1403,6 +1403,16 @@
       "started": "2026-10-10 03:53:50 UTC",
       "status": "done"
     },
+    "p7_off8_lightBb_vs_lightAb": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "74360ee",
+      "expires": 1791607864.2372217,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 04:00:40 UTC",
+      "status": "running"
+    },
     "summary_p1": {
       "account": "colab-dbb8",
       "attempts": 1,
