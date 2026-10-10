@@ -1353,6 +1353,16 @@
       "started": "2026-10-10 03:36:41 UTC",
       "status": "done"
     },
+    "p7_off8_lightBa_vs_lightAa": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "7b40a9d",
+      "expires": 1791607352.4613295,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 03:52:08 UTC",
+      "status": "running"
+    },
     "summary_p1": {
       "account": "colab-dbb8",
       "attempts": 1,
