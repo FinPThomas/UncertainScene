@@ -382,6 +382,16 @@
       "note": "summary of 29 steps (summary.md, lighting.md)",
       "started": "2026-10-10 00:46:32 UTC",
       "status": "done"
+    },
+    "summary_p4": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "adae7a6",
+      "expires": 1791595525.3235357,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 00:52:25 UTC",
+      "status": "running"
     }
   }
 }
