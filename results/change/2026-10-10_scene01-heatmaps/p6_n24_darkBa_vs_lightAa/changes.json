@@ -1,0 +1,418 @@
+[
+  {
+    "id": 4,
+    "kind": "added",
+    "n_points": 2682,
+    "centroid": [
+      -0.1039000004529953,
+      -0.27300000190734863,
+      1.0506999492645264
+    ],
+    "centroid_std": 0.02826034091413021,
+    "extent": [
+      0.25209999084472656,
+      0.05770000070333481,
+      0.033799998462200165
+    ],
+    "extent_ci": [
+      [
+        0.2469,
+        0.2576
+      ],
+      [
+        0.0561,
+        0.0595
+      ],
+      [
+        0.0325,
+        0.0353
+      ]
+    ],
+    "frame_votes": {
+      "32": 668,
+      "33": 661,
+      "31": 641,
+      "27": 423,
+      "34": 124
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "rug",
+    "label_prob": 0.148,
+    "description": "A rug appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        183.7,
+        42.1,
+        24.6
+      ],
+      "size_cm_ci": [
+        [
+          180.0,
+          187.7
+        ],
+        [
+          40.9,
+          43.4
+        ],
+        [
+          23.7,
+          25.7
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          149.7,
+          34.3,
+          20.1
+        ],
+        [
+          217.8,
+          49.8,
+          29.2
+        ]
+      ],
+      "position_sd_cm": 20.6,
+      "boundary_uncertainty_cm": 17.34,
+      "mean_abs_shift_cm": 108.3,
+      "reach": 0.0,
+      "approach": 0.59,
+      "height_m": 2.09
+    }
+  },
+  {
+    "id": 3,
+    "kind": "appearance",
+    "n_points": 1280,
+    "centroid": [
+      -0.2865999937057495,
+      -0.3253999948501587,
+      1.0263999700546265
+    ],
+    "centroid_std": 0.02824839949607849,
+    "extent": [
+      0.06949999928474426,
+      0.03590000048279762,
+      0.02410000003874302
+    ],
+    "extent_ci": [
+      [
+        0.0636,
+        0.0734
+      ],
+      [
+        0.0332,
+        0.0382
+      ],
+      [
+        0.0223,
+        0.0253
+      ]
+    ],
+    "frame_votes": {
+      "19": 745,
+      "18": 535
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "baseball cap",
+    "label_prob": 0.608,
+    "description": "The baseball cap looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        50.7,
+        26.2,
+        17.6
+      ],
+      "size_cm_ci": [
+        [
+          46.4,
+          53.5
+        ],
+        [
+          24.2,
+          27.8
+        ],
+        [
+          16.3,
+          18.4
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          41.3,
+          21.3,
+          14.3
+        ],
+        [
+          60.0,
+          31.0,
+          20.8
+        ]
+      ],
+      "position_sd_cm": 20.6,
+      "boundary_uncertainty_cm": 3.21,
+      "mean_abs_shift_cm": 30.8,
+      "reach": 0.0,
+      "approach": 0.75,
+      "height_m": 2.94
+    }
+  },
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 1168,
+    "centroid": [
+      -0.4438000023365021,
+      0.04639999940991402,
+      0.6164000034332275
+    ],
+    "centroid_std": 0.028253737837076187,
+    "extent": [
+      0.08860000222921371,
+      0.07890000194311142,
+      0.01759999990463257
+    ],
+    "extent_ci": [
+      [
+        0.0862,
+        0.0921
+      ],
+      [
+        0.0768,
+        0.0801
+      ],
+      [
+        0.0163,
+        0.0187
+      ]
+    ],
+    "frame_votes": {
+      "1": 1168
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "coaster",
+    "label_prob": 0.214,
+    "description": "A coaster that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        64.6,
+        57.5,
+        12.8
+      ],
+      "size_cm_ci": [
+        [
+          62.8,
+          67.1
+        ],
+        [
+          56.0,
+          58.4
+        ],
+        [
+          11.9,
+          13.6
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          52.6,
+          46.9,
+          10.5
+        ],
+        [
+          76.5,
+          68.2,
+          15.2
+        ]
+      ],
+      "position_sd_cm": 20.6,
+      "boundary_uncertainty_cm": 32.24,
+      "mean_abs_shift_cm": 77.6,
+      "reach": 0.0,
+      "approach": 1.0,
+      "height_m": 0.6
+    }
+  },
+  {
+    "id": 2,
+    "kind": "appearance",
+    "n_points": 1017,
+    "centroid": [
+      -0.5267999768257141,
+      -0.01679999940097332,
+      0.7721999883651733
+    ],
+    "centroid_std": 0.028252137824892998,
+    "extent": [
+      0.08619999885559082,
+      0.04859999939799309,
+      0.011900000274181366
+    ],
+    "extent_ci": [
+      [
+        0.084,
+        0.089
+      ],
+      [
+        0.0473,
+        0.0494
+      ],
+      [
+        0.0114,
+        0.0125
+      ]
+    ],
+    "frame_votes": {
+      "10": 545,
+      "2": 252,
+      "3": 159,
+      "4": 34,
+      "21": 22
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "table tennis bat",
+    "label_prob": 0.999,
+    "description": "The table tennis bat looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        62.8,
+        35.4,
+        8.7
+      ],
+      "size_cm_ci": [
+        [
+          61.2,
+          64.9
+        ],
+        [
+          34.5,
+          36.0
+        ],
+        [
+          8.3,
+          9.1
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          51.2,
+          28.9,
+          7.1
+        ],
+        [
+          74.5,
+          42.0,
+          10.3
+        ]
+      ],
+      "position_sd_cm": 20.6,
+      "boundary_uncertainty_cm": 18.8,
+      "mean_abs_shift_cm": 7.7,
+      "reach": 0.0,
+      "approach": 0.52,
+      "height_m": 1.4
+    }
+  },
+  {
+    "id": 1,
+    "kind": "removed",
+    "n_points": 802,
+    "centroid": [
+      -0.01489999983459711,
+      -0.2079000025987625,
+      1.2347999811172485
+    ],
+    "centroid_std": 0.0282533410936594,
+    "extent": [
+      0.0828000009059906,
+      0.060100000351667404,
+      0.021400000900030136
+    ],
+    "extent_ci": [
+      [
+        0.0795,
+        0.0856
+      ],
+      [
+        0.0568,
+        0.0631
+      ],
+      [
+        0.0188,
+        0.0219
+      ]
+    ],
+    "frame_votes": {
+      "12": 400,
+      "17": 356,
+      "13": 46
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "floor",
+    "label_prob": 0.212,
+    "description": "A floor that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        60.3,
+        43.8,
+        15.6
+      ],
+      "size_cm_ci": [
+        [
+          57.9,
+          62.4
+        ],
+        [
+          41.4,
+          46.0
+        ],
+        [
+          13.7,
+          16.0
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          49.2,
+          35.7,
+          12.7
+        ],
+        [
+          71.5,
+          51.9,
+          18.5
+        ]
+      ],
+      "position_sd_cm": 20.6,
+      "boundary_uncertainty_cm": 41.49,
+      "mean_abs_shift_cm": 123.7,
+      "reach": 0.0,
+      "approach": 0.78,
+      "height_m": 1.66
+    }
+  }
+]

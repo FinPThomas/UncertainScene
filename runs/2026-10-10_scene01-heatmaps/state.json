@@ -477,11 +477,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "d1570b6",
-      "expires": 1791598140.3629413,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 01:21:36 UTC",
+      "note": "change+lighting: 2.05% changed, 5 changes (0 moved), interactable 0%, 90s",
       "started": "2026-10-10 01:19:48 UTC",
-      "status": "running"
+      "status": "done"
     },
     "p6_n24_lightBa_vs_lightAa": {
       "account": "colab-dbb8",
