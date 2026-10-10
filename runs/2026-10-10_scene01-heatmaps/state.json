@@ -953,6 +953,16 @@
       "started": "2026-10-10 02:45:39 UTC",
       "status": "done"
     },
+    "p7_off5_darkBa_vs_lightAb": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "51caf5a",
+      "expires": 1791603786.289827,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 02:52:42 UTC",
+      "status": "running"
+    },
     "p7_off5_darkBa_vs_lightBa": {
       "account": "colab-dbb8",
       "attempts": 1,
