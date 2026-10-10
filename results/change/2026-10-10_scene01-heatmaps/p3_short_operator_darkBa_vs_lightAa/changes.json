@@ -1,0 +1,334 @@
+[
+  {
+    "id": 3,
+    "kind": "added",
+    "n_points": 4077,
+    "centroid": [
+      -0.053300000727176666,
+      -0.22779999673366547,
+      1.0182000398635864
+    ],
+    "centroid_std": 0.027671027928590775,
+    "extent": [
+      0.20520000159740448,
+      0.06270000338554382,
+      0.03830000013113022
+    ],
+    "extent_ci": [
+      [
+        0.203,
+        0.2072
+      ],
+      [
+        0.0598,
+        0.0647
+      ],
+      [
+        0.0371,
+        0.0395
+      ]
+    ],
+    "frame_votes": {
+      "36": 778,
+      "37": 565,
+      "30": 499,
+      "31": 489,
+      "38": 431
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "keys",
+    "label_prob": 0.105,
+    "description": "A keys appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        79.0,
+        24.1,
+        14.7
+      ],
+      "size_cm_ci": [
+        [
+          78.1,
+          79.8
+        ],
+        [
+          23.0,
+          24.9
+        ],
+        [
+          14.3,
+          15.2
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          75.6,
+          23.1,
+          14.1
+        ],
+        [
+          109.9,
+          33.6,
+          20.5
+        ]
+      ],
+      "position_sd_cm": 10.7,
+      "boundary_uncertainty_cm": 15.67,
+      "mean_abs_shift_cm": 57.0,
+      "reach": 0.0,
+      "approach": 0.35,
+      "height_m": 0.8
+    }
+  },
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 1190,
+    "centroid": [
+      -0.447299987077713,
+      0.04439999908208847,
+      0.6208999752998352
+    ],
+    "centroid_std": 0.027673250064253807,
+    "extent": [
+      0.09380000084638596,
+      0.08540000021457672,
+      0.01640000008046627
+    ],
+    "extent_ci": [
+      [
+        0.0888,
+        0.1001
+      ],
+      [
+        0.0805,
+        0.088
+      ],
+      [
+        0.0153,
+        0.0177
+      ]
+    ],
+    "frame_votes": {
+      "1": 1190
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "coaster",
+    "label_prob": 0.295,
+    "description": "A coaster that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        36.1,
+        32.9,
+        6.3
+      ],
+      "size_cm_ci": [
+        [
+          34.2,
+          38.5
+        ],
+        [
+          31.0,
+          33.9
+        ],
+        [
+          5.9,
+          6.8
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          34.5,
+          31.4,
+          6.0
+        ],
+        [
+          50.2,
+          45.7,
+          8.8
+        ]
+      ],
+      "position_sd_cm": 10.7,
+      "boundary_uncertainty_cm": 16.84,
+      "mean_abs_shift_cm": 39.1,
+      "reach": 0.0,
+      "approach": 1.0,
+      "height_m": 0.37
+    }
+  },
+  {
+    "id": 1,
+    "kind": "removed",
+    "n_points": 1093,
+    "centroid": [
+      -0.009800000116229057,
+      -0.2062000036239624,
+      1.233299970626831
+    ],
+    "centroid_std": 0.02767052687704563,
+    "extent": [
+      0.08569999784231186,
+      0.05559999868273735,
+      0.02199999988079071
+    ],
+    "extent_ci": [
+      [
+        0.0836,
+        0.0877
+      ],
+      [
+        0.0534,
+        0.0574
+      ],
+      [
+        0.0212,
+        0.0229
+      ]
+    ],
+    "frame_votes": {
+      "19": 376,
+      "13": 341,
+      "14": 310,
+      "15": 66
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "towel",
+    "label_prob": 0.323,
+    "description": "A towel that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        33.0,
+        21.4,
+        8.5
+      ],
+      "size_cm_ci": [
+        [
+          32.2,
+          33.8
+        ],
+        [
+          20.6,
+          22.1
+        ],
+        [
+          8.2,
+          8.8
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          31.6,
+          20.5,
+          8.1
+        ],
+        [
+          45.9,
+          29.8,
+          11.8
+        ]
+      ],
+      "position_sd_cm": 10.7,
+      "boundary_uncertainty_cm": 23.12,
+      "mean_abs_shift_cm": 63.8,
+      "reach": 0.0,
+      "approach": 0.54,
+      "height_m": 0.58
+    }
+  },
+  {
+    "id": 2,
+    "kind": "appearance",
+    "n_points": 947,
+    "centroid": [
+      -0.28459998965263367,
+      -0.3262999951839447,
+      1.0233999490737915
+    ],
+    "centroid_std": 0.027668355032801628,
+    "extent": [
+      0.0560000017285347,
+      0.028699999675154686,
+      0.012600000016391277
+    ],
+    "extent_ci": [
+      [
+        0.0502,
+        0.0631
+      ],
+      [
+        0.0262,
+        0.0302
+      ],
+      [
+        0.0118,
+        0.0133
+      ]
+    ],
+    "frame_votes": {
+      "21": 743,
+      "20": 204
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "baseball cap",
+    "label_prob": 0.686,
+    "description": "The baseball cap looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        21.6,
+        11.0,
+        4.9
+      ],
+      "size_cm_ci": [
+        [
+          19.3,
+          24.3
+        ],
+        [
+          10.1,
+          11.6
+        ],
+        [
+          4.5,
+          5.1
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          20.6,
+          10.6,
+          4.6
+        ],
+        [
+          30.0,
+          15.4,
+          6.7
+        ]
+      ],
+      "position_sd_cm": 10.7,
+      "boundary_uncertainty_cm": 4.55,
+      "mean_abs_shift_cm": 19.4,
+      "reach": 0.0,
+      "approach": 0.64,
+      "height_m": 1.36
+    }
+  }
+]
