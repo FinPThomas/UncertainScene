@@ -1097,11 +1097,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "fbdb4d4",
-      "expires": 1791605225.3548455,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 03:18:21 UTC",
+      "note": "change+lighting: 3.39% changed, 5 changes (0 moved), interactable 0%, 88s",
       "started": "2026-10-10 03:16:41 UTC",
-      "status": "running"
+      "status": "done"
     },
     "p7_off6_darkBa_vs_lightBa": {
       "account": "colab-dbb8",
