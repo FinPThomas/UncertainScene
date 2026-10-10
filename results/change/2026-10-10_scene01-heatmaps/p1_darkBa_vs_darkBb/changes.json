@@ -1,0 +1,336 @@
+[
+  {
+    "id": 2,
+    "kind": "added",
+    "n_points": 2932,
+    "centroid": [
+      -0.04809999838471413,
+      -0.227400004863739,
+      1.0362000465393066
+    ],
+    "centroid_std": 0.029186036437749863,
+    "extent": [
+      0.11550000309944153,
+      0.055399999022483826,
+      0.025100000202655792
+    ],
+    "extent_ci": [
+      [
+        0.1141,
+        0.1176
+      ],
+      [
+        0.0535,
+        0.0568
+      ],
+      [
+        0.024,
+        0.0264
+      ]
+    ],
+    "frame_votes": {
+      "32": 1204,
+      "35": 870,
+      "50": 827,
+      "27": 17,
+      "46": 6
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "blanket",
+    "label_prob": 0.337,
+    "description": "A blanket appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        2996.5,
+        1437.3,
+        651.2
+      ],
+      "size_cm_ci": [
+        [
+          2960.2,
+          3051.0
+        ],
+        [
+          1388.0,
+          1473.6
+        ],
+        [
+          622.7,
+          684.9
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          2441.6,
+          1171.1,
+          530.6
+        ],
+        [
+          3551.4,
+          1703.5,
+          771.8
+        ]
+      ],
+      "position_sd_cm": 757.2,
+      "boundary_uncertainty_cm": 1296.59,
+      "mean_abs_shift_cm": 3749.2,
+      "reach": 0.0,
+      "approach": 1.0,
+      "height_m": 50.33
+    }
+  },
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 2449,
+    "centroid": [
+      -0.6053000092506409,
+      0.01940000057220459,
+      0.7710999846458435
+    ],
+    "centroid_std": 0.029187072068452835,
+    "extent": [
+      0.1193000003695488,
+      0.06539999693632126,
+      0.013799999840557575
+    ],
+    "extent_ci": [
+      [
+        0.1174,
+        0.1213
+      ],
+      [
+        0.0635,
+        0.0662
+      ],
+      [
+        0.0132,
+        0.0146
+      ]
+    ],
+    "frame_votes": {
+      "11": 1290,
+      "6": 331,
+      "24": 294,
+      "3": 247,
+      "5": 147
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "towel",
+    "label_prob": 0.267,
+    "description": "The towel looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        3095.1,
+        1696.7,
+        358.0
+      ],
+      "size_cm_ci": [
+        [
+          3045.8,
+          3147.0
+        ],
+        [
+          1647.4,
+          1717.5
+        ],
+        [
+          342.5,
+          378.8
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          2521.9,
+          1382.5,
+          291.7
+        ],
+        [
+          3668.3,
+          2010.9,
+          424.3
+        ]
+      ],
+      "position_sd_cm": 757.2,
+      "boundary_uncertainty_cm": 630.65,
+      "mean_abs_shift_cm": 1005.6,
+      "reach": 0.0,
+      "approach": 1.0,
+      "height_m": 52.92
+    }
+  },
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 1358,
+    "centroid": [
+      -0.47940000891685486,
+      -0.0007999999797903001,
+      0.6858000159263611
+    ],
+    "centroid_std": 0.029201261699199677,
+    "extent": [
+      0.2012999951839447,
+      0.06080000102519989,
+      0.03889999911189079
+    ],
+    "extent_ci": [
+      [
+        0.1981,
+        0.2044
+      ],
+      [
+        0.0596,
+        0.0629
+      ],
+      [
+        0.0378,
+        0.04
+      ]
+    ],
+    "frame_votes": {
+      "1": 1358
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "stack of books",
+    "label_prob": 0.423,
+    "description": "A stack of books that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        5222.5,
+        1577.4,
+        1009.2
+      ],
+      "size_cm_ci": [
+        [
+          5139.5,
+          5303.0
+        ],
+        [
+          1546.3,
+          1631.9
+        ],
+        [
+          980.7,
+          1037.8
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          4255.4,
+          1285.3,
+          822.3
+        ],
+        [
+          6189.7,
+          1869.5,
+          1196.1
+        ]
+      ],
+      "position_sd_cm": 757.6,
+      "boundary_uncertainty_cm": 1283.27,
+      "mean_abs_shift_cm": 2810.5,
+      "reach": 0.0,
+      "approach": 1.0,
+      "height_m": 20.67
+    }
+  },
+  {
+    "id": 3,
+    "kind": "appearance",
+    "n_points": 877,
+    "centroid": [
+      -0.06279999762773514,
+      -0.14329999685287476,
+      1.0194000005722046
+    ],
+    "centroid_std": 0.02919199876487255,
+    "extent": [
+      0.10670000314712524,
+      0.05209999904036522,
+      0.02319999970495701
+    ],
+    "extent_ci": [
+      [
+        0.1045,
+        0.109
+      ],
+      [
+        0.0501,
+        0.0554
+      ],
+      [
+        0.0208,
+        0.0256
+      ]
+    ],
+    "frame_votes": {
+      "35": 675,
+      "32": 201,
+      "50": 1
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "blanket",
+    "label_prob": 0.141,
+    "description": "The blanket looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        2768.2,
+        1351.7,
+        601.9
+      ],
+      "size_cm_ci": [
+        [
+          2711.1,
+          2827.9
+        ],
+        [
+          1299.8,
+          1437.3
+        ],
+        [
+          539.6,
+          664.2
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          2255.6,
+          1101.4,
+          490.4
+        ],
+        [
+          3280.9,
+          1602.0,
+          713.4
+        ]
+      ],
+      "position_sd_cm": 757.4,
+      "boundary_uncertainty_cm": 507.91,
+      "mean_abs_shift_cm": 709.1,
+      "reach": 0.0,
+      "approach": 1.0,
+      "height_m": 36.23
+    }
+  }
+]
