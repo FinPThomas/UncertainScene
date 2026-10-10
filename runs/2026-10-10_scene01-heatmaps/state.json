@@ -1257,11 +1257,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "6d2ac8e",
-      "expires": 1791606530.1088636,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 03:40:09 UTC",
+      "note": "change: 4.47% changed, 6 changes (0 moved), interactable 0%, 92s",
       "started": "2026-10-10 03:38:26 UTC",
-      "status": "running"
+      "status": "done"
     },
     "p7_off7_lightBa_vs_lightBb": {
       "account": "colab-dbb8",
