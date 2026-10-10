@@ -233,6 +233,16 @@
       "started": "2026-10-10 00:27:31 UTC",
       "status": "done"
     },
+    "p3_tall_operator_lightBa_vs_lightAa": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "8e3d46e",
+      "expires": 1791595653.1711369,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 00:37:09 UTC",
+      "status": "running"
+    },
     "summary_p1": {
       "account": "colab-dbb8",
       "attempts": 1,
