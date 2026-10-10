@@ -1,0 +1,10 @@
+2026-10-10 00:33:52,806 INFO uncertainscene.poc: step p3_big_gripper_lightBa_vs_lightAa: scene01_light_before_a vs scene01_light_after_a, 28 frames/video, variant big_gripper, outputs standard
+2026-10-10 00:33:53,199 INFO uncertainscene.poc: [p3_big_gripper_lightBa_vs_lightAa] start done in 0 s | RAM 4.7/12.7 GB, disk free 62.8 GB, GPU 5.2/15.0 GB
+2026-10-10 00:33:53,200 INFO uncertainscene.poc: reusing cached reconstruction recon_scene01_light_before_a_scene01_light_after_a_n28_o0.npz
+2026-10-10 00:33:54,074 INFO uncertainscene.poc: [p3_big_gripper_lightBa_vs_lightAa] reconstruction (54 frames) done in 1 s | RAM 4.7/12.7 GB, disk free 62.8 GB, GPU 5.2/15.0 GB
+2026-10-10 00:33:54,465 INFO uncertainscene.poc: [p3_big_gripper_lightBa_vs_lightAa] DINOv2 features done in 0 s | RAM 4.8/12.7 GB, disk free 62.8 GB, GPU 5.2/15.0 GB
+2026-10-10 00:34:49,827 INFO uncertainscene.poc: [p3_big_gripper_lightBa_vs_lightAa] change detection (800000 points, tau 0.088) done in 55 s | RAM 5.2/12.7 GB, disk free 62.8 GB, GPU 5.2/15.0 GB
+2026-10-10 00:34:50,534 INFO uncertainscene.poc: [p3_big_gripper_lightBa_vs_lightAa] objects (2 clusters) done in 1 s | RAM 5.2/12.7 GB, disk free 62.8 GB, GPU 5.2/15.0 GB
+2026-10-10 00:35:11,503 INFO uncertainscene.poc: [p3_big_gripper_lightBa_vs_lightAa] heat maps (120000 points, scale 2.527 m/unit) done in 21 s | RAM 5.2/12.7 GB, disk free 62.8 GB, GPU 5.2/15.0 GB
+2026-10-10 00:35:11,951 INFO uncertainscene.poc: [p3_big_gripper_lightBa_vs_lightAa] labels (hat, cup) done in 0 s | RAM 5.2/12.7 GB, disk free 62.8 GB, GPU 5.2/15.0 GB
+2026-10-10 00:35:29,451 INFO uncertainscene.poc: [p3_big_gripper_lightBa_vs_lightAa] figures, viewer and reports done in 17 s | RAM 5.2/12.7 GB, disk free 62.8 GB, GPU 5.2/15.0 GB
