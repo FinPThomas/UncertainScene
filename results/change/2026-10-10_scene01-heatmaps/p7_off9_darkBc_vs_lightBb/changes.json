@@ -1,0 +1,84 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 1821,
+    "centroid": [
+      -0.031099999323487282,
+      -0.08720000088214874,
+      0.6449000239372253
+    ],
+    "centroid_std": 0.053083550184965134,
+    "extent": [
+      0.12600000202655792,
+      0.05849999934434891,
+      0.005200000014156103
+    ],
+    "extent_ci": [
+      [
+        0.1228,
+        0.1294
+      ],
+      [
+        0.0566,
+        0.0597
+      ],
+      [
+        0.0049,
+        0.0056
+      ]
+    ],
+    "frame_votes": {
+      "6": 1223,
+      "7": 598
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "glass vase",
+    "label_prob": 0.284,
+    "description": "The glass vase looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        68.6,
+        31.8,
+        2.8
+      ],
+      "size_cm_ci": [
+        [
+          66.8,
+          70.4
+        ],
+        [
+          30.8,
+          32.5
+        ],
+        [
+          2.7,
+          3.0
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          55.9,
+          25.9,
+          2.3
+        ],
+        [
+          81.3,
+          37.7,
+          3.4
+        ]
+      ],
+      "position_sd_cm": 28.9,
+      "boundary_uncertainty_cm": 19.61,
+      "mean_abs_shift_cm": 41.9,
+      "reach": 0.0,
+      "approach": 0.61,
+      "height_m": 1.39
+    }
+  }
+]
