@@ -1,0 +1,255 @@
+[
+  {
+    "id": 2,
+    "kind": "added",
+    "n_points": 1096,
+    "centroid": [
+      -0.8787000179290771,
+      -0.23250000178813934,
+      0.6421999931335449
+    ],
+    "centroid_std": 0.04362678527832031,
+    "extent": [
+      0.18539999425411224,
+      0.09920000284910202,
+      0.05920000001788139
+    ],
+    "extent_ci": [
+      [
+        0.1808,
+        0.19
+      ],
+      [
+        0.0956,
+        0.1025
+      ],
+      [
+        0.0553,
+        0.0641
+      ]
+    ],
+    "frame_votes": {
+      "27": 440,
+      "28": 440,
+      "40": 123,
+      "50": 93
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "bag",
+    "label_prob": 0.131,
+    "description": "A bag appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        263.7,
+        141.1,
+        84.2
+      ],
+      "size_cm_ci": [
+        [
+          257.1,
+          270.2
+        ],
+        [
+          136.0,
+          145.8
+        ],
+        [
+          78.7,
+          91.2
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          214.9,
+          115.0,
+          68.6
+        ],
+        [
+          312.5,
+          167.2,
+          99.8
+        ]
+      ],
+      "position_sd_cm": 62.0,
+      "boundary_uncertainty_cm": 125.59,
+      "mean_abs_shift_cm": 220.3,
+      "reach": 0.0,
+      "approach": 0.98,
+      "height_m": 1.19
+    }
+  },
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 892,
+    "centroid": [
+      -0.8755999803543091,
+      -0.5026000142097473,
+      0.7929999828338623
+    ],
+    "centroid_std": 0.043629273772239685,
+    "extent": [
+      0.13269999623298645,
+      0.11680000275373459,
+      0.05640000104904175
+    ],
+    "extent_ci": [
+      [
+        0.1203,
+        0.1377
+      ],
+      [
+        0.113,
+        0.1228
+      ],
+      [
+        0.0519,
+        0.0701
+      ]
+    ],
+    "frame_votes": {
+      "13": 756,
+      "12": 102,
+      "24": 18,
+      "14": 6,
+      "15": 5
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "table tennis bat",
+    "label_prob": 0.201,
+    "description": "The table tennis bat looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        188.7,
+        166.1,
+        80.2
+      ],
+      "size_cm_ci": [
+        [
+          171.1,
+          195.8
+        ],
+        [
+          160.7,
+          174.7
+        ],
+        [
+          73.8,
+          99.7
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          153.8,
+          135.4,
+          65.4
+        ],
+        [
+          223.7,
+          196.9,
+          95.1
+        ]
+      ],
+      "position_sd_cm": 62.1,
+      "boundary_uncertainty_cm": 40.18,
+      "mean_abs_shift_cm": 37.7,
+      "reach": 0.0,
+      "approach": 0.94,
+      "height_m": 5.08
+    }
+  },
+  {
+    "id": 1,
+    "kind": "added",
+    "n_points": 629,
+    "centroid": [
+      -0.8622999787330627,
+      -0.40630000829696655,
+      0.6658999919891357
+    ],
+    "centroid_std": 0.04363740608096123,
+    "extent": [
+      0.1738000065088272,
+      0.08799999952316284,
+      0.03480000048875809
+    ],
+    "extent_ci": [
+      [
+        0.1678,
+        0.1797
+      ],
+      [
+        0.0836,
+        0.096
+      ],
+      [
+        0.032,
+        0.0365
+      ]
+    ],
+    "frame_votes": {
+      "28": 404,
+      "27": 161,
+      "40": 48,
+      "50": 16
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "stack of books",
+    "label_prob": 0.677,
+    "description": "A stack of books appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        247.2,
+        125.2,
+        49.5
+      ],
+      "size_cm_ci": [
+        [
+          238.7,
+          255.6
+        ],
+        [
+          118.9,
+          136.5
+        ],
+        [
+          45.5,
+          51.9
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          201.4,
+          102.0,
+          40.3
+        ],
+        [
+          293.0,
+          148.3,
+          58.7
+        ]
+      ],
+      "position_sd_cm": 62.1,
+      "boundary_uncertainty_cm": 129.13,
+      "mean_abs_shift_cm": 181.8,
+      "reach": 0.0,
+      "approach": 0.98,
+      "height_m": 3.48
+    }
+  }
+]
