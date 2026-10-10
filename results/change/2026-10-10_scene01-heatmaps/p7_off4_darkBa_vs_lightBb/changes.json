@@ -1,0 +1,169 @@
+[
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 844,
+    "centroid": [
+      0.46880000829696655,
+      0.01769999973475933,
+      0.859499990940094
+    ],
+    "centroid_std": 0.031633760780096054,
+    "extent": [
+      0.06769999861717224,
+      0.023499999195337296,
+      0.017799999564886093
+    ],
+    "extent_ci": [
+      [
+        0.0647,
+        0.0705
+      ],
+      [
+        0.0223,
+        0.0246
+      ],
+      [
+        0.0146,
+        0.0196
+      ]
+    ],
+    "frame_votes": {
+      "14": 380,
+      "16": 297,
+      "15": 116,
+      "18": 51
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "guitar",
+    "label_prob": 0.993,
+    "description": "The guitar looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        17.7,
+        6.2,
+        4.7
+      ],
+      "size_cm_ci": [
+        [
+          16.9,
+          18.5
+        ],
+        [
+          5.8,
+          6.4
+        ],
+        [
+          3.8,
+          5.1
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          14.4,
+          5.0,
+          3.8
+        ],
+        [
+          21.0,
+          7.3,
+          5.5
+        ]
+      ],
+      "position_sd_cm": 8.3,
+      "boundary_uncertainty_cm": 6.82,
+      "mean_abs_shift_cm": 17.7,
+      "reach": 0.0,
+      "approach": 0.33,
+      "height_m": 0.7
+    }
+  },
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 677,
+    "centroid": [
+      0.5637000203132629,
+      -0.07400000095367432,
+      0.8991000056266785
+    ],
+    "centroid_std": 0.03163454309105873,
+    "extent": [
+      0.05389999970793724,
+      0.03610000014305115,
+      0.016200000420212746
+    ],
+    "extent_ci": [
+      [
+        0.0519,
+        0.0573
+      ],
+      [
+        0.0344,
+        0.0389
+      ],
+      [
+        0.0142,
+        0.0166
+      ]
+    ],
+    "frame_votes": {
+      "14": 293,
+      "15": 265,
+      "16": 119
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "cup",
+    "label_prob": 0.531,
+    "description": "The cup looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        14.1,
+        9.5,
+        4.2
+      ],
+      "size_cm_ci": [
+        [
+          13.6,
+          15.0
+        ],
+        [
+          9.0,
+          10.2
+        ],
+        [
+          3.7,
+          4.3
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          11.5,
+          7.7,
+          3.5
+        ],
+        [
+          16.7,
+          11.2,
+          5.0
+        ]
+      ],
+      "position_sd_cm": 8.3,
+      "boundary_uncertainty_cm": 5.02,
+      "mean_abs_shift_cm": 8.5,
+      "reach": 0.0,
+      "approach": 0.33,
+      "height_m": 0.86
+    }
+  }
+]
