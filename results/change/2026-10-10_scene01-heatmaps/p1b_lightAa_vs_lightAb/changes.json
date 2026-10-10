@@ -1,0 +1,170 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 1343,
+    "centroid": [
+      -0.01590000092983246,
+      -0.13979999721050262,
+      0.9248999953269958
+    ],
+    "centroid_std": 0.03470844775438309,
+    "extent": [
+      0.1535000056028366,
+      0.043699998408555984,
+      0.028200000524520874
+    ],
+    "extent_ci": [
+      [
+        0.1447,
+        0.1574
+      ],
+      [
+        0.0412,
+        0.0491
+      ],
+      [
+        0.0259,
+        0.0301
+      ]
+    ],
+    "frame_votes": {
+      "15": 1083,
+      "16": 226,
+      "14": 34
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "blanket",
+    "label_prob": 0.169,
+    "description": "The blanket looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        36.5,
+        10.4,
+        6.7
+      ],
+      "size_cm_ci": [
+        [
+          34.4,
+          37.5
+        ],
+        [
+          9.8,
+          11.7
+        ],
+        [
+          6.2,
+          7.2
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          29.8,
+          8.5,
+          5.5
+        ],
+        [
+          43.3,
+          12.3,
+          8.0
+        ]
+      ],
+      "position_sd_cm": 8.3,
+      "boundary_uncertainty_cm": 4.5,
+      "mean_abs_shift_cm": 4.2,
+      "reach": 0.0,
+      "approach": 0.02,
+      "height_m": 1.12
+    }
+  },
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 1337,
+    "centroid": [
+      0.5455999970436096,
+      -0.029400000348687172,
+      0.9373000264167786
+    ],
+    "centroid_std": 0.03470825031399727,
+    "extent": [
+      0.09619999676942825,
+      0.07609999924898148,
+      0.049400001764297485
+    ],
+    "extent_ci": [
+      [
+        0.0934,
+        0.0988
+      ],
+      [
+        0.0741,
+        0.0775
+      ],
+      [
+        0.0474,
+        0.0506
+      ]
+    ],
+    "frame_votes": {
+      "31": 742,
+      "30": 555,
+      "50": 35,
+      "49": 3,
+      "33": 2
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "shoe",
+    "label_prob": 0.275,
+    "description": "The shoe looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        22.9,
+        18.1,
+        11.8
+      ],
+      "size_cm_ci": [
+        [
+          22.2,
+          23.5
+        ],
+        [
+          17.6,
+          18.4
+        ],
+        [
+          11.3,
+          12.0
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          18.7,
+          14.8,
+          9.6
+        ],
+        [
+          27.1,
+          21.5,
+          13.9
+        ]
+      ],
+      "position_sd_cm": 8.3,
+      "boundary_uncertainty_cm": 2.83,
+      "mean_abs_shift_cm": 12.1,
+      "reach": 0.0,
+      "approach": 0.26,
+      "height_m": 0.89
+    }
+  }
+]

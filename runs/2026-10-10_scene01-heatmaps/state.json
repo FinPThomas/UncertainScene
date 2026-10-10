@@ -117,11 +117,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "b1bcb3c",
-      "expires": 1791594424.7009065,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 00:18:50 UTC",
+      "note": "static: 1.82% changed, 2 changes (0 moved), interactable 0%, 112s",
       "started": "2026-10-10 00:16:40 UTC",
-      "status": "running"
+      "status": "done"
     }
   }
 }
