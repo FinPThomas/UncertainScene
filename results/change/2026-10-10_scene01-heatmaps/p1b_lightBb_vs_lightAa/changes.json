@@ -1,0 +1,87 @@
+[
+  {
+    "id": 0,
+    "kind": "added",
+    "n_points": 1527,
+    "centroid": [
+      -0.023499999195337296,
+      0.09399999678134918,
+      0.47290000319480896
+    ],
+    "centroid_std": 0.03763804957270622,
+    "extent": [
+      0.19679999351501465,
+      0.14079999923706055,
+      0.049300000071525574
+    ],
+    "extent_ci": [
+      [
+        0.191,
+        0.2022
+      ],
+      [
+        0.1336,
+        0.1455
+      ],
+      [
+        0.0472,
+        0.0519
+      ]
+    ],
+    "frame_votes": {
+      "44": 549,
+      "30": 334,
+      "31": 324,
+      "45": 121,
+      "32": 88
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "guitar",
+    "label_prob": 0.992,
+    "description": "A guitar appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        39.6,
+        28.3,
+        9.9
+      ],
+      "size_cm_ci": [
+        [
+          38.5,
+          40.7
+        ],
+        [
+          26.9,
+          29.3
+        ],
+        [
+          9.5,
+          10.4
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          32.3,
+          23.1,
+          8.1
+        ],
+        [
+          47.0,
+          33.6,
+          11.8
+        ]
+      ],
+      "position_sd_cm": 7.6,
+      "boundary_uncertainty_cm": 16.27,
+      "mean_abs_shift_cm": 26.2,
+      "reach": 0.0,
+      "approach": 0.48,
+      "height_m": 1.01
+    }
+  }
+]
