@@ -1027,11 +1027,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "bf4b1a5",
-      "expires": 1791601987.8009741,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 02:40:10 UTC",
+      "note": "summary of 93 steps (summary.md, lighting.md)",
       "started": "2026-10-10 02:40:07 UTC",
-      "status": "running"
+      "status": "done"
     }
   }
 }
