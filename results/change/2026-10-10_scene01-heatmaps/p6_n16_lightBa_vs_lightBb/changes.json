@@ -1,0 +1,86 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 1761,
+    "centroid": [
+      0.39719998836517334,
+      -0.10220000147819519,
+      0.9211999773979187
+    ],
+    "centroid_std": 0.026856476441025734,
+    "extent": [
+      0.10119999945163727,
+      0.05339999869465828,
+      0.03779999911785126
+    ],
+    "extent_ci": [
+      [
+        0.0998,
+        0.1039
+      ],
+      [
+        0.0492,
+        0.0581
+      ],
+      [
+        0.0367,
+        0.039
+      ]
+    ],
+    "frame_votes": {
+      "6": 1339,
+      "9": 280,
+      "0": 140,
+      "7": 2
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "shoe",
+    "label_prob": 0.524,
+    "description": "The shoe looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        24.3,
+        12.8,
+        9.1
+      ],
+      "size_cm_ci": [
+        [
+          23.9,
+          24.9
+        ],
+        [
+          11.8,
+          13.9
+        ],
+        [
+          8.8,
+          9.4
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          19.8,
+          10.4,
+          7.4
+        ],
+        [
+          28.8,
+          15.2,
+          10.7
+        ]
+      ],
+      "position_sd_cm": 6.4,
+      "boundary_uncertainty_cm": 2.92,
+      "mean_abs_shift_cm": 8.2,
+      "reach": 0.0,
+      "approach": 0.03,
+      "height_m": 0.76
+    }
+  }
+]
