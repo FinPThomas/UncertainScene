@@ -1,0 +1,86 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 715,
+    "centroid": [
+      0.2793000042438507,
+      -0.03620000183582306,
+      0.9114000201225281
+    ],
+    "centroid_std": 0.0279147457331419,
+    "extent": [
+      0.05849999934434891,
+      0.036400001496076584,
+      0.00860000029206276
+    ],
+    "extent_ci": [
+      [
+        0.0556,
+        0.0626
+      ],
+      [
+        0.035,
+        0.0376
+      ],
+      [
+        0.0081,
+        0.0089
+      ]
+    ],
+    "frame_votes": {
+      "14": 296,
+      "16": 260,
+      "15": 143,
+      "23": 16
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "guitar",
+    "label_prob": 0.993,
+    "description": "The guitar looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        47.7,
+        29.7,
+        7.0
+      ],
+      "size_cm_ci": [
+        [
+          45.4,
+          51.1
+        ],
+        [
+          28.5,
+          30.7
+        ],
+        [
+          6.6,
+          7.3
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          38.9,
+          24.2,
+          5.7
+        ],
+        [
+          56.6,
+          35.2,
+          8.3
+        ]
+      ],
+      "position_sd_cm": 22.8,
+      "boundary_uncertainty_cm": 10.28,
+      "mean_abs_shift_cm": 40.7,
+      "reach": 0.0,
+      "approach": 0.84,
+      "height_m": 0.4
+    }
+  }
+]
