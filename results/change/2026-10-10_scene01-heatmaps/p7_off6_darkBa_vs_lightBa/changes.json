@@ -1,0 +1,336 @@
+[
+  {
+    "id": 1,
+    "kind": "added",
+    "n_points": 994,
+    "centroid": [
+      -0.31679999828338623,
+      0.03629999980330467,
+      0.6802999973297119
+    ],
+    "centroid_std": 0.02746342122554779,
+    "extent": [
+      0.12110000103712082,
+      0.05900000035762787,
+      0.03400000184774399
+    ],
+    "extent_ci": [
+      [
+        0.1172,
+        0.1285
+      ],
+      [
+        0.0572,
+        0.0604
+      ],
+      [
+        0.0328,
+        0.036
+      ]
+    ],
+    "frame_votes": {
+      "29": 553,
+      "27": 262,
+      "52": 62,
+      "28": 61,
+      "45": 56
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "pillow",
+    "label_prob": 0.075,
+    "description": "A pillow appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        56.7,
+        27.6,
+        15.9
+      ],
+      "size_cm_ci": [
+        [
+          54.9,
+          60.2
+        ],
+        [
+          26.8,
+          28.3
+        ],
+        [
+          15.4,
+          16.9
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          46.2,
+          22.5,
+          13.0
+        ],
+        [
+          67.2,
+          32.8,
+          18.9
+        ]
+      ],
+      "position_sd_cm": 12.9,
+      "boundary_uncertainty_cm": 24.15,
+      "mean_abs_shift_cm": 44.7,
+      "reach": 0.0,
+      "approach": 0.65,
+      "height_m": 0.38
+    }
+  },
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 853,
+    "centroid": [
+      0.14079999923706055,
+      -0.055799998342990875,
+      0.9230999946594238
+    ],
+    "centroid_std": 0.02745119482278824,
+    "extent": [
+      0.07119999825954437,
+      0.03440000116825104,
+      0.011099999770522118
+    ],
+    "extent_ci": [
+      [
+        0.068,
+        0.0741
+      ],
+      [
+        0.0329,
+        0.0354
+      ],
+      [
+        0.0107,
+        0.0116
+      ]
+    ],
+    "frame_votes": {
+      "14": 283,
+      "15": 276,
+      "16": 264,
+      "17": 30
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "guitar",
+    "label_prob": 0.991,
+    "description": "The guitar looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        33.3,
+        16.1,
+        5.2
+      ],
+      "size_cm_ci": [
+        [
+          31.8,
+          34.7
+        ],
+        [
+          15.4,
+          16.6
+        ],
+        [
+          5.0,
+          5.4
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          27.2,
+          13.1,
+          4.2
+        ],
+        [
+          39.5,
+          19.1,
+          6.2
+        ]
+      ],
+      "position_sd_cm": 12.9,
+      "boundary_uncertainty_cm": 6.76,
+      "mean_abs_shift_cm": 19.9,
+      "reach": 0.0,
+      "approach": 0.52,
+      "height_m": 0.24
+    }
+  },
+  {
+    "id": 3,
+    "kind": "appearance",
+    "n_points": 848,
+    "centroid": [
+      0.1746000051498413,
+      -0.10999999940395355,
+      0.9354000091552734
+    ],
+    "centroid_std": 0.027459876611828804,
+    "extent": [
+      0.11190000176429749,
+      0.0697999969124794,
+      0.02539999969303608
+    ],
+    "extent_ci": [
+      [
+        0.1088,
+        0.1141
+      ],
+      [
+        0.0671,
+        0.0718
+      ],
+      [
+        0.0246,
+        0.0263
+      ]
+    ],
+    "frame_votes": {
+      "38": 535,
+      "37": 189,
+      "39": 124
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "cup",
+    "label_prob": 0.621,
+    "description": "The cup looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        52.4,
+        32.7,
+        11.9
+      ],
+      "size_cm_ci": [
+        [
+          51.0,
+          53.4
+        ],
+        [
+          31.4,
+          33.6
+        ],
+        [
+          11.5,
+          12.3
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          42.7,
+          26.6,
+          9.7
+        ],
+        [
+          62.1,
+          38.7,
+          14.1
+        ]
+      ],
+      "position_sd_cm": 12.9,
+      "boundary_uncertainty_cm": 6.65,
+      "mean_abs_shift_cm": 18.5,
+      "reach": 0.0,
+      "approach": 0.49,
+      "height_m": 0.47
+    }
+  },
+  {
+    "id": 2,
+    "kind": "added",
+    "n_points": 710,
+    "centroid": [
+      -0.4334999918937683,
+      -0.24150000512599945,
+      0.7993000149726868
+    ],
+    "centroid_std": 0.027452033013105392,
+    "extent": [
+      0.0640999972820282,
+      0.04569999873638153,
+      0.006300000008195639
+    ],
+    "extent_ci": [
+      [
+        0.0614,
+        0.0659
+      ],
+      [
+        0.0436,
+        0.0476
+      ],
+      [
+        0.0058,
+        0.0067
+      ]
+    ],
+    "frame_votes": {
+      "32": 694,
+      "33": 16
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "neck pillow",
+    "label_prob": 0.136,
+    "description": "A neck pillow appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        30.0,
+        21.4,
+        3.0
+      ],
+      "size_cm_ci": [
+        [
+          28.8,
+          30.9
+        ],
+        [
+          20.4,
+          22.3
+        ],
+        [
+          2.7,
+          3.1
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          24.5,
+          17.4,
+          2.4
+        ],
+        [
+          35.6,
+          25.4,
+          3.5
+        ]
+      ],
+      "position_sd_cm": 12.9,
+      "boundary_uncertainty_cm": 6.31,
+      "mean_abs_shift_cm": 30.0,
+      "reach": 0.0,
+      "approach": 0.99,
+      "height_m": 1.62
+    }
+  }
+]
