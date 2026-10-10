@@ -173,6 +173,16 @@
       "started": "2026-10-10 00:21:11 UTC",
       "status": "done"
     },
+    "p3_table_mount_lightBa_vs_lightAa": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "6c66c3a",
+      "expires": 1791595075.6184082,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 00:27:31 UTC",
+      "status": "running"
+    },
     "summary_p1": {
       "account": "colab-dbb8",
       "attempts": 1,
