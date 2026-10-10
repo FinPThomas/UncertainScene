@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-10_scene01-heatmaps",
+  "step": "summary_p1",
+  "status": "done",
+  "account": "colab-dbb8",
+  "commit": "c95c163",
+  "minutes": 0.0,
+  "usage_at_end": "RAM 4.7/12.7 GB, disk free 63.0 GB, GPU 5.2/15.0 GB",
+  "note": "summary of 13 steps (summary.md, lighting.md)"
+}
