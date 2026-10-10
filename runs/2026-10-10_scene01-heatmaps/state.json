@@ -797,11 +797,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "13667df",
-      "expires": 1791601526.6051276,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 02:16:49 UTC",
+      "note": "change: 1.24% changed, 2 changes (0 moved), interactable 0%, 95s",
       "started": "2026-10-10 02:15:02 UTC",
-      "status": "running"
+      "status": "done"
     },
     "summary_p1": {
       "account": "colab-dbb8",
