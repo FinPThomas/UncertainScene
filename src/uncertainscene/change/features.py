@@ -18,6 +18,20 @@ VOCAB = [
 ]
 BACKGROUND = {"sofa", "armchair", "rug", "floor", "wall", "door", "shelf", "power socket", "cable"}
 
+# wider list for labelling every object in the scene (SAM 2 inventory)
+VOCAB_ALL = sorted(set(VOCAB) | {
+    "acoustic guitar", "guitar case", "ukulele", "sofa cushion", "seat cushion", "woven cushion", "patterned cushion",
+    "grey cushion", "throw blanket", "folded blanket", "jumper", "hoodie", "coat", "scarf", "sock", "slipper",
+    "backpack", "handbag", "tote bag", "paper bag", "cardboard box", "basket", "storage box", "magazine",
+    "notebook", "picture", "poster", "framed print", "postcard", "greeting card", "mirror", "clock", "candle",
+    "candle holder", "tea light", "bowl", "plate", "glass", "wine glass", "water bottle", "jar", "flower pot",
+    "houseplant", "flowers", "tv remote", "game controller", "tablet", "charger", "earphones", "speaker",
+    "lamp shade", "floor lamp", "side table", "coffee table", "stool", "chair", "cupboard", "drawer", "radiator",
+    "window", "curtain", "skirting board", "light switch", "plug", "extension lead", "carpet", "wooden floor",
+    "tiled floor", "ceiling", "door frame", "wooden panel", "wooden crate", "leather sofa", "sofa arm",
+    "sofa back", "teddy bear", "soft toy", "ball", "tennis ball", "table tennis ball", "glasses", "sunglasses",
+    "wallet", "pen", "a4 paper sheet", "envelope", "tissue box", "cushion cover", "cap"})
+
 
 def _device():
     import torch
@@ -45,6 +59,35 @@ def dino_features(images: np.ndarray, model_name: str = "facebook/dinov2-small",
         f = torch.nn.functional.normalize(tok.float(), dim=-1).reshape(len(x), h, w, -1)
         out.append(f.half().cpu().numpy())
     return np.concatenate(out)
+
+
+def clip_inventory(crops: list, vocab: list[str] = VOCAB_ALL, model_name: str = "openai/clip-vit-large-patch14",
+                   batch: int = 32) -> tuple[list, np.ndarray]:
+    """Top-3 (label, probability) per PIL crop and L2-normalised CLIP image embeddings [N, D]
+    (the embeddings also serve re-identification across recordings)."""
+    import torch
+    from transformers import CLIPModel, CLIPProcessor
+
+    if model_name not in _CACHE:
+        _CACHE[model_name] = (CLIPModel.from_pretrained(model_name).to(_device()).eval(),
+                              CLIPProcessor.from_pretrained(model_name))
+    model, proc = _CACHE[model_name]
+    if not crops:
+        return [], np.zeros((0, 1), np.float32)
+    with torch.no_grad():
+        t = proc(text=[f"a photo of a {v}" for v in vocab], return_tensors="pt", padding=True)
+        tf = model.get_text_features(**{k: v.to(_device()) for k, v in t.items()})
+        tf = torch.nn.functional.normalize(tf.float(), dim=-1)
+        tops, embs = [], []
+        for i in range(0, len(crops), batch):
+            px = proc(images=crops[i:i + batch], return_tensors="pt")["pixel_values"].to(_device())
+            imf = torch.nn.functional.normalize(model.get_image_features(pixel_values=px).float(), dim=-1)
+            probs = (100 * imf @ tf.T).softmax(-1).cpu().numpy()
+            for p in probs:
+                o = np.argsort(-p)[:3]
+                tops.append([(vocab[j], float(p[j])) for j in o])
+            embs.append(imf.cpu().numpy())
+    return tops, np.concatenate(embs).astype(np.float32)
 
 
 def clip_labels(crops: list, vocab: list[str] = VOCAB, model_name: str = "openai/clip-vit-base-patch32"):

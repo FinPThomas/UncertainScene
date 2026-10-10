@@ -49,6 +49,7 @@ MEASURES = [  # key, label, scale
     ("field_uncertainty_cm_median", "surface uncertainty, median cm", 1),
     ("n_changes", "change objects found", 1),
 ]
+MEASURES_V2 = [("obj_changed", "changed objects (SAM 2)", 1), ("obj_changed_frac", "% of compared objects changed", 100)]
 
 
 def _value(m: dict, key: str):
@@ -92,6 +93,9 @@ def write(run_dir: Path, out_dir: Path | None = None) -> Path:
         md.write_text("# Lighting comparison\n\nNo finished steps yet.\n")
         return md
 
+    global MEASURES
+    if any("obj_changed" in r for r in rows):      # version 2: object-level measures first
+        MEASURES = MEASURES_V2 + [x for x in MEASURES if x[0] not in ("n_changes", "appearance_frac")]
     fig, axes = plt.subplots(2, 3, figsize=(17, 9))
     for ax, (key, lab, sc) in zip(axes.ravel(), MEASURES):
         for i, g in enumerate(GROUPS):

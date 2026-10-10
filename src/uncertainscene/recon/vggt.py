@@ -116,3 +116,66 @@ def _reconstruct(label_a, label_b, n_per_video, offset, long_side, model_name):
         torch.cuda.empty_cache()
     log.info("reconstructed %d frames in %.0f s (GPU peak %s GB)", len(files), secs, info["gpu_peak_gb"])
     return rec, info
+
+
+def _forward(imgs: np.ndarray, model_name: str) -> dict:
+    """One VGGT pass over uint8 images [n, H, W, 3] -> depth, conf, K, E as numpy."""
+    import torch
+    from vggt.utils.pose_enc import pose_encoding_to_extri_intri
+
+    model = load_model(model_name)
+    dev = next(model.parameters()).device
+    x = torch.from_numpy(imgs).permute(0, 3, 1, 2).float().div(255).to(dev)[None]
+    use_bf16 = dev.type == "cuda" and torch.cuda.get_device_capability()[0] >= 8
+    dtype = torch.bfloat16 if use_bf16 else torch.float16
+    with torch.no_grad(), torch.autocast(device_type=dev.type, dtype=dtype, enabled=dev.type == "cuda"):
+        pred = model(x)
+    extr, intr = pose_encoding_to_extri_intri(pred["pose_enc"], x.shape[-2:])
+    out = {"depth": pred["depth"][0, ..., 0].float().cpu().numpy(), "conf": pred["depth_conf"][0].float().cpu().numpy(),
+           "K": intr[0].float().cpu().numpy().astype(np.float64), "E": extr[0].float().cpu().numpy().astype(np.float64)}
+    del pred, x
+    if dev.type == "cuda":
+        torch.cuda.empty_cache()
+    return out
+
+
+def reconstruct_all(label_a: str, label_b: str, n_per_video: int | None = None, offset: int = 0,
+                    long_side: int = 518, model_name: str = "facebook/VGGT-1B", n_anchor: int = 8,
+                    chunk_size: int | None = None) -> tuple[Recon, dict]:
+    """Many frames per recording (None = every extracted frame) in overlapping chunks that fit
+    the GPU, aligned through shared anchor frames (see recon.chunked). On CUDA out-of-memory
+    the chunk size shrinks by 20% and the reconstruction restarts (up to 3 times)."""
+    import torch
+
+    from .chunked import reconstruct_chunked
+
+    n = n_per_video or 10_000
+    files_a = select_frames(label_a, n, offset)
+    files_b = select_frames(label_b, n, offset)
+    files = files_a + files_b
+    imgs = load_images(files, long_side)
+    video = np.array([0] * len(files_a) + [1] * len(files_b))
+    size = chunk_size or min(48, max_frames_for_gpu() - 4)
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
+    for attempt in range(4):
+        t0 = time.time()
+        try:
+            rec, cinfo = reconstruct_chunked(imgs, video, lambda idx: _forward(imgs[idx], model_name),
+                                             chunk_size=size, n_anchor=n_anchor, files=[str(f) for f in files],
+                                             labels=(label_a, label_b))
+            break
+        except torch.cuda.OutOfMemoryError:
+            torch.cuda.empty_cache()
+            if attempt == 3:
+                raise
+            size = max(16, int(size * 0.8))
+            log.warning("CUDA out of memory; restarting with chunks of %d frames", size)
+    secs = time.time() - t0
+    info = {"model": model_name, "frames": len(files), "frames_a": len(files_a), "frames_b": len(files_b),
+            "size_hw": list(imgs.shape[1:3]), "seconds": round(secs, 1), "used_per_video": len(files_a),
+            "requested_per_video": n_per_video, "oom_retries": attempt, **cinfo,
+            "gpu_peak_gb": round(torch.cuda.max_memory_allocated() / 1024**3, 2) if torch.cuda.is_available() else None}
+    log.info("reconstructed %d frames (%d + %d) in %d chunks in %.0f s; worst chunk residual %.3f",
+             len(files), len(files_a), len(files_b), cinfo["chunks"], secs, cinfo.get("chunk_residual_max", 0))
+    return rec, info

@@ -46,7 +46,9 @@ def write_ply(res: ChangeResult, out: Path, max_points: int = 260000, seed: int 
 
 def write_html(res: ChangeResult, objs: list, out: Path, title: str = "", n_bg: int = 45000,
                n_change: int = 15000, seed: int = 0, fields: dict | None = None, n_field: int = 12000,
-               max_mb: float = 4.5) -> Path:
+               max_mb: float = 4.5, markers: list | None = None) -> Path:
+    """markers: optional list of dicts (x, y, z, text, color, group, hover) drawn as labelled
+    points, one legend entry per group (e.g. every SAM 2 object by change status)."""
     import plotly.graph_objects as go
 
     rng = np.random.default_rng(seed)
@@ -95,6 +97,16 @@ def write_html(res: ChangeResult, objs: list, out: Path, title: str = "", n_bg: 
                                        marker=dict(size=2, color=val.round(3), colorscale=plotly_cmap, cmin=vmin,
                                                    cmax=vmax, showscale=False),
                                        name=f"heat map: {ttl}", visible="legendonly", hoverinfo="skip"))
+    if markers:
+        groups: dict = {}
+        for mk in markers:
+            groups.setdefault(mk["group"], []).append(mk)
+        for g, ms in groups.items():
+            traces.append(go.Scatter3d(x=[m["x"] for m in ms], y=[m["y"] for m in ms], z=[m["z"] for m in ms],
+                                       mode="markers+text", text=[m["text"] for m in ms],
+                                       hovertext=[m.get("hover", m["text"]) for m in ms], textfont=dict(size=10),
+                                       marker=dict(size=5, color=[m["color"] for m in ms]), name=f"objects: {g}",
+                                       visible=True if g != "unchanged" else "legendonly"))
     fig = go.Figure(traces)
     fig.update_layout(title=title, scene=dict(aspectmode="data", camera=dict(up=dict(x=0, y=-1, z=0)),
                                               xaxis_visible=False, yaxis_visible=False, zaxis_visible=False),
@@ -102,7 +114,7 @@ def write_html(res: ChangeResult, objs: list, out: Path, title: str = "", n_bg: 
     fig.write_html(out, include_plotlyjs="cdn", full_html=True)
     if Path(out).stat().st_size > max_mb * 1024**2 and n_bg > 2000:   # keep under the git file limit
         return write_html(res, objs, out, title, int(n_bg * 0.6), int(n_change * 0.6), seed, fields,
-                          int(n_field * 0.6), max_mb)
+                          int(n_field * 0.6), max_mb, markers)
     return out
 
 

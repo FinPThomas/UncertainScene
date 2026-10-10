@@ -39,52 +39,12 @@ class RobotModel:
     uncertainty_ok_cm: float = 3.0       # uncertainty at which interactability is halved
 
 
-@dataclass
-class Floor:
-    up: list
-    height: float                        # floor offset along `up`, scene units
-    inlier_frac: float
-    scale_m_per_unit: float
-    scale_range: list
-    camera_height_units: float
+from .floor import Floor, fit_floor as _fit_floor  # noqa: E402
 
 
-def fit_floor(X: np.ndarray, E: np.ndarray, robot: RobotModel, seed: int = 0, iters: int = 400) -> Floor:
-    rng = np.random.default_rng(seed)
-    up = up_vector(E)
-    h = X @ up
-    low = X[h < np.quantile(h, 0.25)]
-    low = low[rng.choice(len(low), min(len(low), 50000), replace=False)]
-    best = (0, up, np.quantile(h, 0.02))
-    span = np.quantile(h, 0.98) - np.quantile(h, 0.02)
-    tol = 0.01 * span
-    for _ in range(iters):
-        p = low[rng.choice(len(low), 3, replace=False)]
-        n = np.cross(p[1] - p[0], p[2] - p[0])
-        if np.linalg.norm(n) < 1e-12:
-            continue
-        n /= np.linalg.norm(n)
-        if n @ up < 0:
-            n = -n
-        if n @ up < np.cos(np.radians(25)):
-            continue
-        d = p[0] @ n
-        inl = np.abs(low @ n - d) < tol
-        if inl.sum() > best[0]:
-            best = (inl.sum(), n, d)
-    n_inl, n, d = best
-    if n_inl > 0.05 * len(low):        # refine with least squares on inliers
-        inl = low[np.abs(low @ n - d) < tol]
-        c = inl.mean(0)
-        _, _, vt = np.linalg.svd(inl - c, full_matrices=False)
-        n2 = vt[-1] * (1 if vt[-1] @ up > 0 else -1)
-        n, d = n2, c @ n2
-    cam_h = np.median(cam_centers(E) @ n - d)
-    cam_h = cam_h if cam_h > 1e-6 else np.median(cam_centers(E) @ up - np.quantile(h, 0.02))
-    s = robot.phone_height_m / cam_h
-    rng_s = [robot.phone_height_range_m[0] / cam_h, robot.phone_height_range_m[1] / cam_h]
-    return Floor(up=n.round(5).tolist(), height=float(d), inlier_frac=float(n_inl / max(len(low), 1)),
-                 scale_m_per_unit=float(s), scale_range=[float(x) for x in rng_s], camera_height_units=float(cam_h))
+def fit_floor(X: np.ndarray, E: np.ndarray, robot: RobotModel, seed: int = 0) -> Floor:
+    lo, hi = robot.phone_height_range_m
+    return _fit_floor(X, E, robot.phone_height_m, phone_sd_log=float(np.log(hi / lo) / (2 * 1.645)), seed=seed)
 
 
 def _normals(X: np.ndarray, toward: np.ndarray, k: int = 16) -> np.ndarray:
@@ -137,13 +97,13 @@ def _voxel(X: np.ndarray, size: float) -> np.ndarray:
 
 
 def compute_fields(res: ChangeResult, rec: Recon, robot: RobotModel | None = None, which: str = "B",
-                   voxel_m: float = 0.01, max_points: int = 120000) -> dict:
+                   voxel_m: float = 0.01, max_points: int = 120000, floor: Floor | None = None) -> dict:
     """Fields for the points of recording `which` (B = the scene as it is now), on a voxel
     grid of `voxel_m` metres. Returns dict with indices into the PointSet and arrays."""
     robot = robot or RobotModel()
     ps: PointSet = res.B if which == "B" else res.A
     allX = np.concatenate([res.A.X, res.B.X])
-    floor = fit_floor(allX, rec.E, robot)
+    floor = floor or fit_floor(allX, rec.E, robot)
     up = np.array(floor.up)
     s = floor.scale_m_per_unit
     idx = _voxel(ps.X, voxel_m / s)
@@ -184,7 +144,13 @@ def field_stats(f: dict) -> dict:
         a = a[np.isfinite(a)]
         return round(float(np.quantile(a, p)), 3) if len(a) else None
     sh = np.abs(f["shift_cm"])
-    return {"floor_inlier_frac": round(f["floor"]["inlier_frac"], 3),
+    cues = f["floor"].get("scale_cues", {})
+    extra = {"scale_phone_height": round(cues["phone_height"]["scale"], 4) if "phone_height" in cues else None,
+             "scale_objects": round(cues["objects"]["scale"], 4) if "objects" in cues else None,
+             "scale_objects_n": cues["objects"]["n"] if "objects" in cues else 0,
+             "scale_disagreement_sigma": cues.get("combined", {}).get("disagreement_sigma"),
+             "gravity_change_deg": f["floor"].get("gravity_change_deg")}
+    return {**extra, "floor_inlier_frac": round(f["floor"]["inlier_frac"], 3),
             "scale_m_per_unit": round(f["floor"]["scale_m_per_unit"], 4),
             "scale_range": [round(x, 4) for x in f["floor"]["scale_range"]],
             "uncertainty_cm_median": q(f["uncertainty_cm"], 0.5), "uncertainty_cm_p90": q(f["uncertainty_cm"], 0.9),

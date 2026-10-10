@@ -32,6 +32,62 @@ def load(run_dir: Path) -> list[dict]:
     return rows
 
 
+def auroc(pos: list, neg: list) -> float | None:
+    """Probability that a pair with real changes scores above a pair without (ties count half)."""
+    if not pos or not neg:
+        return None
+    p, n = np.array(pos, float)[:, None], np.array(neg, float)[None, :]
+    return float(((p > n) + 0.5 * (p == n)).mean())
+
+
+def object_headline(rows: list[dict], out_dir: Path) -> list[str]:
+    """Version-2 runs: changed objects per pair type, and how well that separates pairs with
+    real changes from pairs without (AUROC over pairs, base settings)."""
+    obj = [r for r in rows if "obj_changed" in r and r.get("variant", "base") == "base"]
+    if not obj:
+        return []
+    L = ["## Headline: changed objects by pair type (SAM 2 objects, base settings)", "",
+         "| Pair type | Pairs | Changed objects, median (range) | Share of compared objects | Moved / added / removed / in place / shifted (total) |",
+         "|---|---|---|---|---|"]
+    fig, ax = plt.subplots(figsize=(7, 4.5))
+    for i, t in enumerate(TYPE_ORDER):
+        rs = [r for r in obj if r.get("pair_type") == t]
+        if not rs:
+            continue
+        n = [r["obj_changed"] for r in rs]
+        fr = [100 * r["obj_changed_frac"] for r in rs]
+        tot = [sum(r.get(f"obj_{k}", 0) for r in rs) for k in ("moved", "added", "removed", "changed_in_place", "shifted")]
+        L.append(f"| {t} | {len(rs)} | {np.median(n):.0f} ({min(n)}-{max(n)}) | {np.median(fr):.0f}% | "
+                 f"{' / '.join(map(str, tot))} |")
+        ax.scatter(np.full(len(n), i) + np.random.default_rng(i).uniform(-0.1, 0.1, len(n)), n, s=40,
+                   color=TYPE_COL[t], alpha=0.85)
+        ax.hlines(np.median(n), i - 0.3, i + 0.3, color="k")
+    ax.set_xticks(range(len(TYPE_ORDER)), TYPE_ORDER)
+    ax.set_ylabel("changed objects per pair")
+    ax.set_title("False alarms (static, lighting) vs real changes")
+    fig.tight_layout()
+    fig.savefig(out_dir / "objects_by_type.png", dpi=100)
+    plt.close(fig)
+    pos = [r["obj_changed"] for r in obj if r.get("pair_type", "").startswith("change")]
+    neg = [r["obj_changed"] for r in obj if r.get("pair_type") in ("static", "lighting")]
+    a = auroc(pos, neg)
+    L += ["", "![changed objects by pair type](objects_by_type.png)", ""]
+    if a is not None:
+        L += [f"**Separation: AUROC {a:.2f}** (chance of a real-change pair having more changed objects than a "
+              f"no-change pair; 1.0 = perfect, 0.5 = no better than chance; {len(pos)} vs {len(neg)} pairs).", ""]
+    labs: dict = {}
+    for r in obj:
+        if not r.get("pair_type", "").startswith("change"):
+            continue
+        f = out_dir.parent / r["step"] / "changes.json"
+        for c in (json.loads(f.read_text()) if f.exists() else []):
+            labs[(c.get("label"), c.get("status"))] = labs.get((c.get("label"), c.get("status")), 0) + 1
+    if labs:
+        L += ["Most frequent changes on real-change pairs (label, status: pairs):", "",
+              ", ".join(f"{k[0]} {k[1]}: {v}" for k, v in sorted(labs.items(), key=lambda kv: -kv[1])[:15]), ""]
+    return L
+
+
 def write(run_dir: Path, out_dir: Path | None = None) -> Path:
     run_dir = Path(run_dir)
     out_dir = Path(out_dir or run_dir / "summary")
@@ -74,8 +130,9 @@ def write(run_dir: Path, out_dir: Path | None = None) -> Path:
     plt.close(fig)
 
     # ---- markdown ----------------------------------------------------------------------
-    lines = [f"# Summary of {run_dir.name}", "", f"{len(rows)} finished steps.", "",
-             "![summary](summary.png)", "", "## Headline: changed fraction by pair type (base settings)", "",
+    lines = [f"# Summary of {run_dir.name}", "", f"{len(rows)} finished steps.", ""]
+    lines += object_headline(rows, out_dir)
+    lines += ["![summary](summary.png)", "", "## Point-level changed fraction by pair type (base settings)", "",
              "| Pair type | Steps | Median % changed | Range |", "|---|---|---|---|"]
     for t in TYPE_ORDER:
         xs = [r["changed_frac"] * 100 for r in main if r.get("pair_type") == t]
