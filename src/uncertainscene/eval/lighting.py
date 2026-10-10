@@ -67,7 +67,7 @@ def load(run_dir: Path) -> list[dict]:
     rows = []
     for f in sorted(Path(run_dir).glob("*/metrics.json")):
         m = json.loads(f.read_text())
-        if m.get("step_kind") == "clips":      # multi-clip position steps have their own report
+        if m.get("step_kind") in ("clips", "splat"):   # multi-clip and splat steps have their own report
             continue
         if m.get("variant", "base") not in ("base", "dense") and not str(m.get("variant", "")).startswith("offset"):
             continue          # robot scenarios and ablations would double count

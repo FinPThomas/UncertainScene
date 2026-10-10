@@ -3,7 +3,10 @@ synthetic scene from test_change (numpy only)."""
 
 from __future__ import annotations
 
+import json
+
 import numpy as np
+import pytest
 
 from uncertainscene.recon.chunked import plan_chunks, reconstruct_chunked, transform_cameras, umeyama
 
@@ -217,7 +220,8 @@ def test_v2_queue_and_summary(tmp_path):
     q = queue()
     names = [s if isinstance(s, str) else s.name for s in q]
     assert len(names) == len(set(names)) and names[0] == "1-main_moved_light-before-a_vs_light-after-a"
-    assert names[1] == "1-main_no-change_light-before-a_vs_light-before-b"
+    assert names[1] == "1b-splat_moved_light-before-a_vs_light-after-a"     # splats reuse the pilot's reconstruction
+    assert names[2] == "1-main_no-change_light-before-a_vs_light-before-b"
     assert any(n.startswith("2-position_") for n in names)
     pairs = {(s.a, s.b) for s in q if isinstance(s, Spec) and s.name.startswith(("1-main", "3-allpairs"))}
     assert len(pairs) == 21                      # every pair of the 7 recordings, once
@@ -349,3 +353,46 @@ def test_viewer_point_encoding_round_trip():
     dec = np.array(t["lo"]) + np.array(t["sc"]) * (q + 32500.0)
     ok = np.isfinite(X).all(1)
     assert np.abs(dec[ok] - X[ok]).max() < 1e-3 and (q[~ok] == -32768).all()
+
+
+def test_splat_step_end_to_end(tmp_path, monkeypatch):
+    """analyse_splat with gsplat replaced by a fake splat that renders the photo (own recording)
+    or the photo with a changed patch (other recording): outputs written, change found, noise ~1%."""
+    torch = pytest.importorskip("torch")
+    from uncertainscene.experiments import scene01, splats
+    from uncertainscene.recon import splat as S
+
+    rec = _with_files(make_recon((-0.5, 0.8, 0.0), (0.0, 0.8, 0.0)), tmp_path)
+    monkeypatch.setattr(scene01, "_recon", lambda spec, cache: (rec, {"cached": True}))
+    rng = np.random.default_rng(0)
+
+    class Fake(S.Splat):
+        def __init__(self, v):
+            n = 500
+            super().__init__({"means": torch.randn(n, 3), "scales": torch.full((n, 3), -3.0), "opacities": torch.zeros(n),
+                              "quats": torch.randn(n, 4), "colors": torch.zeros(n, 3)})
+            self.v = v
+
+        def render(self, E, K, wh):
+            s = int(np.argmin([np.abs(e - E).sum() for e in rec.E]))
+            img = S._images([rec.files[s]], max(wh))[0][0].astype(np.float32) / 255
+            img = np.clip(img + rng.normal(0, 0.01, img.shape), 0, 1)
+            if rec.video[s] != self.v:              # the other recording's splat: a patch changed
+                img[: wh[1] // 4, : wh[0] // 4] = 1 - img[: wh[1] // 4, : wh[0] // 4]
+            return img, np.ones(img.shape[:2]), np.ones(img.shape[:2])
+
+    monkeypatch.setattr(S, "train", lambda rec_, v, cfg, check=None: (Fake(v), {
+        "recording": rec_.labels[v], "gaussians": 500, "seconds": 1, "pose_correction_deg_median": 0.0,
+        "train_frames": 7, "held_out_frames": 1, "iters": cfg.iters, "image_size": [64, 48], "final_l1": 0.01}))
+    spec = splats.SplatSpec("1b-splat_test", "scene01_light_before_a", "scene01_light_after_a", iters=10,
+                            title="Gaussian splats: test", question="q?")
+    out = tmp_path / "out"
+    out.mkdir()
+    note = scene01.step_fn(spec, tmp_path / "cache")(out, tmp_path)
+    m = json.loads((out / "metrics.json").read_text())
+    assert m["step_kind"] == "splat", note
+    assert m["same_view_changed_share"] > 0.03                      # the changed patch is found
+    for n in ("splat_compare.png", "splat_orbit.gif", "splat_before.splat", "splat_after.splat", "scene3d.json",
+              "report.md"):
+        assert (out / n).exists() and (out / n).stat().st_size > 100, n
+    assert (out / "splat_before.splat").stat().st_size == 500 * 32

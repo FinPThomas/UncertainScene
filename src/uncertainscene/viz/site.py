@@ -21,7 +21,8 @@ import numpy as np
 
 from .scene3d import Points, _b64, _hex_rgb, _scale_rgb
 
-IMAGES = [("position_map.png", "Where each object is: 90% ranges, top-down"),
+IMAGES = [("splat_compare.png", "Gaussian splats: before and after rendered from the same camera"),
+          ("position_map.png", "Where each object is: 90% ranges, top-down"),
           ("position_closeups.png", "Close-ups of each object's range as clips are added"),
           ("position_precision.png", "How the range shrinks with more views and clips"),
           ("objects.png", "Every object"), ("object_overlays.png", "Object boundaries in the frames"),
@@ -186,7 +187,7 @@ def load_step(d: Path, with_3d: bool = True) -> dict:
     return st
 
 
-FEATURED = ("p1_", "p1b_", "1-main_", "2-position_")
+FEATURED = ("p1_", "p1b_", "1-main_", "1b-splat_", "2-position_")
 
 
 def decimate(scene: dict, keep: float) -> dict:

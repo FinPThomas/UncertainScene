@@ -62,7 +62,7 @@ def how_to_read() -> list[str]:
 
 
 def _figs(run: Path, rel: str, step: str) -> str:
-    names = ("report.md", "objects.png", "position_map.png", "heatmaps.png", "overlays.png", "object_overlays.png",
+    names = ("report.md", "splat_compare.png", "splat_orbit.gif", "objects.png", "position_map.png", "heatmaps.png", "overlays.png", "object_overlays.png",
              "scene_report.md")
     return " · ".join(f"[{n.split('.')[0].replace('_', ' ')}]({rel}/{step}/{n})" for n in names
                       if (run / step / n).exists())
@@ -75,7 +75,7 @@ def run_section(run: Path, rel: str) -> list[str]:
     if not rows:
         return []
     v2 = any("obj_changed" in r or r.get("step_kind") == "clips" for r in rows)
-    pairs = [r for r in rows if r.get("step_kind") != "clips" and r.get("pair_type")]
+    pairs = [r for r in rows if r.get("step_kind") not in ("clips", "splat") and r.get("pair_type")]
     base = [r for r in pairs if r.get("variant", "base") == "base"]
     L = [f"## Run `{run.name}` ({'version 2: SAM 2 objects, every frame' if v2 else 'version 1, first overnight run: point-level, 28 frames per recording'})",
          "", f"{len(rows)} finished runs. Folder: [{rel}]({rel}/).", ""]
@@ -119,6 +119,14 @@ def run_section(run: Path, rel: str) -> list[str]:
             for t, rs in by.items():
                 xs = [r.get("changed_frac") for r in rs if r.get("changed_frac") is not None]
                 L.append(f"| {KIND_TITLE.get(t, t)} | {len(rs)} | {_fmt(np.median(xs), 2, True) if xs else '-'} |")
+            continue
+        if any(r.get("step_kind") == "splat" for r, _ in items):
+            L += ["| Run | Render quality, held-out frames (PSNR before / after) | Changed pixels, same camera (1% = no change) | Depth differs > 5 cm | Details |",
+                  "|---|---|---|---|---|"]
+            for r, d in items:
+                L.append(f"| {d['title']} | {r.get('splat_psnr_before')} / {r.get('splat_psnr_after')} dB | "
+                         f"{_fmt(r.get('same_view_changed_share'), 1, True)} | {_fmt(r.get('depth_changed_share_5cm'), 1, True)} | "
+                         f"{_figs(run, rel, r['step'])} |")
             continue
         if any(r.get("step_kind") == "clips" for r, _ in items):
             L += ["| Run | Objects matched | 90% range with 1 / 2 / 3 clips | Consistency (3 = honest) | Smallest detectable move | Details |",

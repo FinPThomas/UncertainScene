@@ -93,12 +93,18 @@ def queue() -> list:
 
     Step folders say what they compare: <phase>_<variant>_<kind>_<recording a>_vs_<recording b>,
     e.g. 1-main_moved_light-before-a_vs_light-after-a (see experiments/catalog.py)."""
-    from .catalog import step_name
+    from .catalog import PHASES, rec_name, step_name
 
     q: list = []
     core = [(LB, LA), (LB, LBb), (DB, LB), (DB, LA), (LBb, LAb), (DB, DBb)]
-    for a, b in core:
+    for i, (a, b) in enumerate(core):
         q.append(Spec(step_name("1-main", a, b), a, b))
+        if i == 0:      # right after the pilot pair, reusing its reconstruction (Fin chose one pair first)
+            from .splats import SplatSpec
+
+            q.append(SplatSpec(step_name("1b-splat", a, b), a, b,
+                               title=f"Gaussian splats: {rec_name(a)} vs {rec_name(b)}",
+                               question=PHASES["1b-splat"][1]))
     q.append("1-main_summary")
 
     q.append(ClipsSpec("2-position_3-clips_no-change_dark-before-a-b-c", (DB, DBb, DBc), ("before",) * 3,
@@ -238,6 +244,11 @@ def step_fn(spec: Spec, cache: Path, store=None, check=None):
         for name in ("uncertainscene", "httpx", "huggingface_hub"):
             logging.getLogger(name).setLevel(logging.INFO if name == "uncertainscene" else logging.WARNING)
         try:
+            from .splats import SplatSpec, analyse_splat
+
+            if isinstance(spec, SplatSpec):
+                log.info("step %s: Gaussian splats of %s and %s", spec.name, spec.a, spec.b)
+                return analyse_splat(spec, out, cache, check, store)
             if isinstance(spec, ClipsSpec):
                 from .clips import analyse_clips
 

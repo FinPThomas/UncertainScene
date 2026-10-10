@@ -29,6 +29,9 @@ KIND = {
 PHASES = {
     "1-main": ("Main comparisons",
                "One or two pairs of every kind, with every output (objects, heat maps, 3D, scene report)."),
+    "1b-splat": ("Gaussian splats",
+                 "Do splats of each recording render well, and does comparing before and after from the exact same "
+                 "camera separate real changes from noise?"),
     "2-position": ("Where objects are, and how sure",
                    "How precisely is each object located, and does the range shrink with more clips of the same scene?"),
     "3-allpairs": ("Every other pair",
