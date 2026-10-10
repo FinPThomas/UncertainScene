@@ -217,11 +217,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "737cd6f",
-      "expires": 1791595840.1499343,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 00:41:47 UTC",
+      "note": "change: 1.18% changed, 2 changes (0 moved), interactable 1%, 73s",
       "started": "2026-10-10 00:40:16 UTC",
-      "status": "running"
+      "status": "done"
     },
     "p3_table_mount_darkBa_vs_lightAa": {
       "account": "colab-dbb8",
