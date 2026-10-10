@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-10_scene01-heatmaps",
+  "step": "p3_big_gripper_darkBa_vs_lightAa",
+  "status": "done",
+  "account": "colab-dbb8",
+  "commit": "aa75c40",
+  "minutes": 1.5,
+  "usage_at_end": "RAM 4.7/12.7 GB, disk free 62.8 GB, GPU 5.2/15.0 GB",
+  "note": "change+lighting: 2.61% changed, 4 changes (0 moved), interactable 0%, 75s"
+}

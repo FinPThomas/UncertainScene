@@ -137,11 +137,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "aa75c40",
-      "expires": 1791595557.0370457,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 00:37:05 UTC",
+      "note": "change+lighting: 2.61% changed, 4 changes (0 moved), interactable 0%, 75s",
       "started": "2026-10-10 00:35:33 UTC",
-      "status": "running"
+      "status": "done"
     },
     "p3_big_gripper_lightBa_vs_lightAa": {
       "account": "colab-dbb8",
