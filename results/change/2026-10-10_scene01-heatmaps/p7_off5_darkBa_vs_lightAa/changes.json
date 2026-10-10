@@ -1,0 +1,87 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 940,
+    "centroid": [
+      0.48660001158714294,
+      0.029899999499320984,
+      0.8396000266075134
+    ],
+    "centroid_std": 0.03298718482255936,
+    "extent": [
+      0.061500001698732376,
+      0.025499999523162842,
+      0.01140000019222498
+    ],
+    "extent_ci": [
+      [
+        0.0598,
+        0.0631
+      ],
+      [
+        0.024,
+        0.0261
+      ],
+      [
+        0.0104,
+        0.0125
+      ]
+    ],
+    "frame_votes": {
+      "35": 458,
+      "34": 430,
+      "33": 23,
+      "52": 23,
+      "53": 6
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "floor",
+    "label_prob": 0.212,
+    "description": "The floor looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        16.3,
+        6.7,
+        3.0
+      ],
+      "size_cm_ci": [
+        [
+          15.8,
+          16.7
+        ],
+        [
+          6.3,
+          6.9
+        ],
+        [
+          2.8,
+          3.3
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          13.3,
+          5.5,
+          2.5
+        ],
+        [
+          19.3,
+          8.0,
+          3.6
+        ]
+      ],
+      "position_sd_cm": 8.7,
+      "boundary_uncertainty_cm": 3.47,
+      "mean_abs_shift_cm": 10.3,
+      "reach": 0.0,
+      "approach": 0.35,
+      "height_m": 0.71
+    }
+  }
+]
