@@ -1,0 +1,87 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 826,
+    "centroid": [
+      -0.8210999965667725,
+      -0.3449999988079071,
+      0.8766999840736389
+    ],
+    "centroid_std": 0.035674065351486206,
+    "extent": [
+      0.1809999942779541,
+      0.06830000132322311,
+      0.040800001472234726
+    ],
+    "extent_ci": [
+      [
+        0.1765,
+        0.1832
+      ],
+      [
+        0.0651,
+        0.0715
+      ],
+      [
+        0.0354,
+        0.0482
+      ]
+    ],
+    "frame_votes": {
+      "48": 597,
+      "28": 113,
+      "46": 48,
+      "27": 36,
+      "41": 23
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "blanket",
+    "label_prob": 0.368,
+    "description": "The blanket looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        34.8,
+        13.1,
+        7.8
+      ],
+      "size_cm_ci": [
+        [
+          33.9,
+          35.2
+        ],
+        [
+          12.5,
+          13.7
+        ],
+        [
+          6.8,
+          9.3
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          28.3,
+          10.7,
+          6.4
+        ],
+        [
+          41.2,
+          15.5,
+          9.3
+        ]
+      ],
+      "position_sd_cm": 6.9,
+      "boundary_uncertainty_cm": 4.25,
+      "mean_abs_shift_cm": 9.6,
+      "reach": 0.0,
+      "approach": 0.02,
+      "height_m": 0.88
+    }
+  }
+]
