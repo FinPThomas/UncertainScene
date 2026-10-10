@@ -1,0 +1,10 @@
+2026-10-10 00:25:57,442 INFO uncertainscene.poc: step p3_long_arm_darkBa_vs_lightAa: scene01_dark_before_a vs scene01_light_after_a, 28 frames/video, variant long_arm, outputs standard
+2026-10-10 00:25:57,747 INFO uncertainscene.poc: [p3_long_arm_darkBa_vs_lightAa] start done in 0 s | RAM 4.7/12.7 GB, disk free 62.9 GB, GPU 5.2/15.0 GB
+2026-10-10 00:25:57,748 INFO uncertainscene.poc: reusing cached reconstruction recon_scene01_dark_before_a_scene01_light_after_a_n28_o0.npz
+2026-10-10 00:25:58,741 INFO uncertainscene.poc: [p3_long_arm_darkBa_vs_lightAa] reconstruction (54 frames) done in 1 s | RAM 4.8/12.7 GB, disk free 62.9 GB, GPU 5.2/15.0 GB
+2026-10-10 00:25:59,151 INFO uncertainscene.poc: [p3_long_arm_darkBa_vs_lightAa] DINOv2 features done in 0 s | RAM 4.8/12.7 GB, disk free 62.9 GB, GPU 5.2/15.0 GB
+2026-10-10 00:26:55,984 INFO uncertainscene.poc: [p3_long_arm_darkBa_vs_lightAa] change detection (800000 points, tau 0.118) done in 57 s | RAM 5.3/12.7 GB, disk free 62.9 GB, GPU 5.2/15.0 GB
+2026-10-10 00:26:56,821 INFO uncertainscene.poc: [p3_long_arm_darkBa_vs_lightAa] objects (4 clusters) done in 1 s | RAM 5.3/12.7 GB, disk free 62.9 GB, GPU 5.2/15.0 GB
+2026-10-10 00:27:10,658 INFO uncertainscene.poc: [p3_long_arm_darkBa_vs_lightAa] heat maps (120000 points, scale 4.519 m/unit) done in 14 s | RAM 5.4/12.7 GB, disk free 62.9 GB, GPU 5.2/15.0 GB
+2026-10-10 00:27:11,104 INFO uncertainscene.poc: [p3_long_arm_darkBa_vs_lightAa] labels (keys, coaster, towel, baseball cap) done in 0 s | RAM 5.3/12.7 GB, disk free 62.9 GB, GPU 5.2/15.0 GB
+2026-10-10 00:27:28,251 INFO uncertainscene.poc: [p3_long_arm_darkBa_vs_lightAa] figures, viewer and reports done in 17 s | RAM 5.3/12.7 GB, disk free 62.9 GB, GPU 5.2/15.0 GB
