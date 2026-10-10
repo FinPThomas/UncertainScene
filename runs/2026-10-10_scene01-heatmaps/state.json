@@ -157,11 +157,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "494c0d8",
-      "expires": 1791595360.692516,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 00:33:48 UTC",
+      "note": "change+lighting: 2.61% changed, 4 changes (0 moved), interactable 0%, 73s",
       "started": "2026-10-10 00:32:16 UTC",
-      "status": "running"
+      "status": "done"
     },
     "p3_mobile_closer_lightBa_vs_lightAa": {
       "account": "colab-dbb8",
