@@ -213,6 +213,16 @@
       "started": "2026-10-10 00:21:11 UTC",
       "status": "done"
     },
+    "p3_short_operator_darkBa_vs_lightAa": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "2563679",
+      "expires": 1791595935.089012,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 00:41:51 UTC",
+      "status": "running"
+    },
     "p3_short_operator_lightBa_vs_lightAa": {
       "account": "colab-dbb8",
       "attempts": 1,
