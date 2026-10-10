@@ -1,0 +1,256 @@
+[
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 2054,
+    "centroid": [
+      -0.453000009059906,
+      0.02070000022649765,
+      0.6539999842643738
+    ],
+    "centroid_std": 0.02605666220188141,
+    "extent": [
+      0.19920000433921814,
+      0.07000000029802322,
+      0.03999999910593033
+    ],
+    "extent_ci": [
+      [
+        0.1957,
+        0.203
+      ],
+      [
+        0.0684,
+        0.0716
+      ],
+      [
+        0.0389,
+        0.0412
+      ]
+    ],
+    "frame_votes": {
+      "1": 1337,
+      "2": 427,
+      "4": 148,
+      "26": 137,
+      "10": 5
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "coaster",
+    "label_prob": 0.456,
+    "description": "A coaster that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        355.9,
+        125.0,
+        71.5
+      ],
+      "size_cm_ci": [
+        [
+          349.6,
+          362.6
+        ],
+        [
+          122.2,
+          127.9
+        ],
+        [
+          69.5,
+          73.6
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          290.0,
+          101.9,
+          58.2
+        ],
+        [
+          421.8,
+          148.2,
+          84.7
+        ]
+      ],
+      "position_sd_cm": 46.5,
+      "boundary_uncertainty_cm": 98.19,
+      "mean_abs_shift_cm": 156.6,
+      "reach": 0.0,
+      "approach": 1.0,
+      "height_m": 1.88
+    }
+  },
+  {
+    "id": 2,
+    "kind": "added",
+    "n_points": 1648,
+    "centroid": [
+      -0.09839999675750732,
+      -0.3197999894618988,
+      1.0497000217437744
+    ],
+    "centroid_std": 0.0260495413094759,
+    "extent": [
+      0.13410000503063202,
+      0.08910000324249268,
+      0.03020000085234642
+    ],
+    "extent_ci": [
+      [
+        0.1305,
+        0.138
+      ],
+      [
+        0.0864,
+        0.092
+      ],
+      [
+        0.029,
+        0.0311
+      ]
+    ],
+    "frame_votes": {
+      "43": 899,
+      "42": 712,
+      "27": 33,
+      "46": 4
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "sofa",
+    "label_prob": 0.273,
+    "description": "A sofa appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        239.6,
+        159.2,
+        53.9
+      ],
+      "size_cm_ci": [
+        [
+          233.1,
+          246.5
+        ],
+        [
+          154.3,
+          164.3
+        ],
+        [
+          51.8,
+          55.6
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          195.2,
+          129.7,
+          44.0
+        ],
+        [
+          283.9,
+          188.6,
+          63.9
+        ]
+      ],
+      "position_sd_cm": 46.5,
+      "boundary_uncertainty_cm": 56.33,
+      "mean_abs_shift_cm": 195.6,
+      "reach": 0.0,
+      "approach": 0.95,
+      "height_m": 6.41
+    }
+  },
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 1042,
+    "centroid": [
+      -0.011500000022351742,
+      -0.05730000138282776,
+      0.9218000173568726
+    ],
+    "centroid_std": 0.026044011116027832,
+    "extent": [
+      0.057500001043081284,
+      0.0364999994635582,
+      0.025200000032782555
+    ],
+    "extent_ci": [
+      [
+        0.0558,
+        0.0585
+      ],
+      [
+        0.0355,
+        0.0375
+      ],
+      [
+        0.0241,
+        0.0261
+      ]
+    ],
+    "frame_votes": {
+      "14": 369,
+      "16": 196,
+      "18": 186,
+      "17": 117,
+      "15": 115
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "guitar",
+    "label_prob": 0.991,
+    "description": "The guitar looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        102.7,
+        65.2,
+        45.0
+      ],
+      "size_cm_ci": [
+        [
+          99.7,
+          104.5
+        ],
+        [
+          63.4,
+          67.0
+        ],
+        [
+          43.1,
+          46.6
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          83.7,
+          53.1,
+          36.7
+        ],
+        [
+          121.7,
+          77.3,
+          53.4
+        ]
+      ],
+      "position_sd_cm": 46.5,
+      "boundary_uncertainty_cm": 41.07,
+      "mean_abs_shift_cm": 64.5,
+      "reach": 0.0,
+      "approach": 0.92,
+      "height_m": 1.11
+    }
+  }
+]
