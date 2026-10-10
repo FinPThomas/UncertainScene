@@ -1,0 +1,87 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 1622,
+    "centroid": [
+      -0.1412999927997589,
+      -0.04639999940991402,
+      0.870199978351593
+    ],
+    "centroid_std": 0.03147023916244507,
+    "extent": [
+      0.16599999368190765,
+      0.1469999998807907,
+      0.021700000390410423
+    ],
+    "extent_ci": [
+      [
+        0.1616,
+        0.1684
+      ],
+      [
+        0.1423,
+        0.1512
+      ],
+      [
+        0.0199,
+        0.0231
+      ]
+    ],
+    "frame_votes": {
+      "22": 411,
+      "6": 378,
+      "23": 334,
+      "21": 281,
+      "4": 166
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "table tennis bat",
+    "label_prob": 0.782,
+    "description": "The table tennis bat looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        40.5,
+        35.8,
+        5.3
+      ],
+      "size_cm_ci": [
+        [
+          39.4,
+          41.1
+        ],
+        [
+          34.7,
+          36.9
+        ],
+        [
+          4.9,
+          5.6
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          33.0,
+          29.2,
+          4.3
+        ],
+        [
+          48.0,
+          42.5,
+          6.3
+        ]
+      ],
+      "position_sd_cm": 7.7,
+      "boundary_uncertainty_cm": 7.74,
+      "mean_abs_shift_cm": 7.2,
+      "reach": 0.0,
+      "approach": 0.02,
+      "height_m": 0.78
+    }
+  }
+]
