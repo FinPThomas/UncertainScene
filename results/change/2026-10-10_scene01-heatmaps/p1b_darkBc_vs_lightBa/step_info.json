@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-10_scene01-heatmaps",
+  "step": "p1b_darkBc_vs_lightBa",
+  "status": "done",
+  "account": "colab-dbb8",
+  "commit": "a2a43a3",
+  "minutes": 2.1,
+  "usage_at_end": "RAM 4.7/12.7 GB, disk free 63.2 GB, GPU 5.3/15.0 GB",
+  "note": "lighting: 2.07% changed, 4 changes (0 moved), interactable 0%, 107s"
+}
