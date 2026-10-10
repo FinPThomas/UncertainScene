@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-10_scene01-objects",
+  "step": "1-main_no-change_light-before-a_vs_light-before-b",
+  "status": "done",
+  "account": "colab-9ce8",
+  "commit": "fb074d0",
+  "minutes": 36.4,
+  "usage_at_end": "RAM 5.5/12.7 GB, disk free 56.8 GB, GPU 6.6/15.0 GB",
+  "note": "static: 0 changed objects of 548 (0%); labels: ; scale 2.862 m/unit; 2140s"
+}
