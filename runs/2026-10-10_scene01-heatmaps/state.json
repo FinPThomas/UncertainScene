@@ -52,6 +52,16 @@
       "note": "static: 2.04% changed, 2 changes (0 moved), interactable 1%, 107s",
       "started": "2026-10-09 23:55:22 UTC",
       "status": "done"
+    },
+    "p1_lightBb_vs_lightAb": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "033c2ab",
+      "expires": 1791593663.5539284,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 00:03:59 UTC",
+      "status": "running"
     }
   }
 }
