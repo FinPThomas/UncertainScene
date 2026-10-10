@@ -1,0 +1,168 @@
+[
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 4596,
+    "centroid": [
+      -0.26010000705718994,
+      -0.06840000301599503,
+      0.6729999780654907
+    ],
+    "centroid_std": 0.047443971037864685,
+    "extent": [
+      0.4075999855995178,
+      0.20999999344348907,
+      0.08030000329017639
+    ],
+    "extent_ci": [
+      [
+        0.3973,
+        0.4189
+      ],
+      [
+        0.2051,
+        0.2143
+      ],
+      [
+        0.0788,
+        0.0813
+      ]
+    ],
+    "frame_votes": {
+      "15": 1902,
+      "16": 998,
+      "12": 627,
+      "26": 468,
+      "0": 274
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "sofa",
+    "label_prob": 0.392,
+    "description": "A sofa that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        88.0,
+        45.3,
+        17.3
+      ],
+      "size_cm_ci": [
+        [
+          85.8,
+          90.4
+        ],
+        [
+          44.3,
+          46.3
+        ],
+        [
+          17.0,
+          17.5
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          71.7,
+          36.9,
+          14.1
+        ],
+        [
+          104.3,
+          53.7,
+          20.5
+        ]
+      ],
+      "position_sd_cm": 10.2,
+      "boundary_uncertainty_cm": 19.66,
+      "mean_abs_shift_cm": 36.3,
+      "reach": 0.01,
+      "approach": 0.86,
+      "height_m": 1.02
+    }
+  },
+  {
+    "id": 1,
+    "kind": "removed",
+    "n_points": 665,
+    "centroid": [
+      -0.4138000011444092,
+      0.26420000195503235,
+      0.5784000158309937
+    ],
+    "centroid_std": 0.04744817316532135,
+    "extent": [
+      0.20280000567436218,
+      0.06909999996423721,
+      0.013100000098347664
+    ],
+    "extent_ci": [
+      [
+        0.1945,
+        0.2087
+      ],
+      [
+        0.067,
+        0.0716
+      ],
+      [
+        0.0122,
+        0.014
+      ]
+    ],
+    "frame_votes": {
+      "16": 665
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "blanket",
+    "label_prob": 0.09,
+    "description": "A blanket that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        43.8,
+        14.9,
+        2.8
+      ],
+      "size_cm_ci": [
+        [
+          42.0,
+          45.1
+        ],
+        [
+          14.5,
+          15.5
+        ],
+        [
+          2.6,
+          3.0
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          35.7,
+          12.2,
+          2.3
+        ],
+        [
+          51.9,
+          17.7,
+          3.4
+        ]
+      ],
+      "position_sd_cm": 10.2,
+      "boundary_uncertainty_cm": 16.7,
+      "mean_abs_shift_cm": 50.2,
+      "reach": 1.0,
+      "approach": 0.93,
+      "height_m": 0.43
+    }
+  }
+]
