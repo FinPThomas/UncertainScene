@@ -62,6 +62,16 @@
       "note": "change: 3.07% changed, 5 changes (0 moved), interactable 1%, 107s",
       "started": "2026-10-10 00:03:59 UTC",
       "status": "done"
+    },
+    "p1b_darkBb_vs_lightAb": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "b7191ff",
+      "expires": 1791593794.335474,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 00:06:10 UTC",
+      "status": "running"
     }
   }
 }
