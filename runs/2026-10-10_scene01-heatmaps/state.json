@@ -323,6 +323,16 @@
       "started": "2026-10-10 00:47:53 UTC",
       "status": "done"
     },
+    "p4_no_appearance_lightBa_vs_lightAa": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "d5fcdfa",
+      "expires": 1791596447.9293864,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 00:50:23 UTC",
+      "status": "running"
+    },
     "summary_p1": {
       "account": "colab-dbb8",
       "attempts": 1,
