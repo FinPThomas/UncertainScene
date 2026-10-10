@@ -1,0 +1,166 @@
+[
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 984,
+    "centroid": [
+      -0.05700000002980232,
+      -0.05290000140666962,
+      0.46320000290870667
+    ],
+    "centroid_std": 0.04417308047413826,
+    "extent": [
+      0.08560000360012054,
+      0.04639999940991402,
+      0.03779999911785126
+    ],
+    "extent_ci": [
+      [
+        0.0815,
+        0.09
+      ],
+      [
+        0.044,
+        0.0504
+      ],
+      [
+        0.036,
+        0.0388
+      ]
+    ],
+    "frame_votes": {
+      "35": 525,
+      "34": 459
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "cup",
+    "label_prob": 0.637,
+    "description": "The cup looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        18.1,
+        9.8,
+        8.0
+      ],
+      "size_cm_ci": [
+        [
+          17.2,
+          19.0
+        ],
+        [
+          9.3,
+          10.7
+        ],
+        [
+          7.6,
+          8.2
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          14.7,
+          8.0,
+          6.5
+        ],
+        [
+          21.5,
+          11.6,
+          9.5
+        ]
+      ],
+      "position_sd_cm": 9.3,
+      "boundary_uncertainty_cm": 1.95,
+      "mean_abs_shift_cm": 8.1,
+      "reach": 0.0,
+      "approach": 0.37,
+      "height_m": 0.93
+    }
+  },
+  {
+    "id": 0,
+    "kind": "added",
+    "n_points": 751,
+    "centroid": [
+      -0.849399983882904,
+      -0.18880000710487366,
+      0.6157000064849854
+    ],
+    "centroid_std": 0.044179294258356094,
+    "extent": [
+      0.13199999928474426,
+      0.08609999716281891,
+      0.02969999983906746
+    ],
+    "extent_ci": [
+      [
+        0.1246,
+        0.1419
+      ],
+      [
+        0.0836,
+        0.0898
+      ],
+      [
+        0.0284,
+        0.0315
+      ]
+    ],
+    "frame_votes": {
+      "28": 477,
+      "29": 274
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "coaster",
+    "label_prob": 0.257,
+    "description": "A coaster appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        27.9,
+        18.2,
+        6.3
+      ],
+      "size_cm_ci": [
+        [
+          26.3,
+          30.0
+        ],
+        [
+          17.7,
+          19.0
+        ],
+        [
+          6.0,
+          6.7
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          22.7,
+          14.8,
+          5.1
+        ],
+        [
+          33.1,
+          21.6,
+          7.4
+        ]
+      ],
+      "position_sd_cm": 9.3,
+      "boundary_uncertainty_cm": 16.6,
+      "mean_abs_shift_cm": 31.9,
+      "reach": 0.0,
+      "approach": 0.7,
+      "height_m": 0.74
+    }
+  }
+]
