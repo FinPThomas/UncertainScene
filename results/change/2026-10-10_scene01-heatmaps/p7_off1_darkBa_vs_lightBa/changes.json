@@ -1,0 +1,171 @@
+[
+  {
+    "id": 0,
+    "kind": "added",
+    "n_points": 1106,
+    "centroid": [
+      -0.11060000211000443,
+      -0.25929999351501465,
+      1.054900050163269
+    ],
+    "centroid_std": 0.02611418440937996,
+    "extent": [
+      0.16179999709129333,
+      0.1062999963760376,
+      0.05079999938607216
+    ],
+    "extent_ci": [
+      [
+        0.1583,
+        0.1666
+      ],
+      [
+        0.0985,
+        0.1129
+      ],
+      [
+        0.0464,
+        0.0534
+      ]
+    ],
+    "frame_votes": {
+      "40": 529,
+      "27": 190,
+      "39": 138,
+      "38": 86,
+      "46": 75
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "cushion",
+    "label_prob": 0.141,
+    "description": "A cushion appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        68.6,
+        45.1,
+        21.6
+      ],
+      "size_cm_ci": [
+        [
+          67.2,
+          70.7
+        ],
+        [
+          41.8,
+          47.9
+        ],
+        [
+          19.7,
+          22.7
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          55.9,
+          36.7,
+          17.6
+        ],
+        [
+          81.3,
+          53.4,
+          25.5
+        ]
+      ],
+      "position_sd_cm": 11.1,
+      "boundary_uncertainty_cm": 17.07,
+      "mean_abs_shift_cm": 51.6,
+      "reach": 0.0,
+      "approach": 0.54,
+      "height_m": 0.92
+    }
+  },
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 638,
+    "centroid": [
+      0.001500000013038516,
+      -0.09839999675750732,
+      0.932200014591217
+    ],
+    "centroid_std": 0.026098724454641342,
+    "extent": [
+      0.06840000301599503,
+      0.04540000110864639,
+      0.02969999983906746
+    ],
+    "extent_ci": [
+      [
+        0.0643,
+        0.0714
+      ],
+      [
+        0.0437,
+        0.0472
+      ],
+      [
+        0.0272,
+        0.0319
+      ]
+    ],
+    "frame_votes": {
+      "38": 392,
+      "39": 191,
+      "37": 54,
+      "40": 1
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "cup",
+    "label_prob": 0.662,
+    "description": "The cup looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        29.0,
+        19.3,
+        12.6
+      ],
+      "size_cm_ci": [
+        [
+          27.3,
+          30.3
+        ],
+        [
+          18.5,
+          20.0
+        ],
+        [
+          11.5,
+          13.5
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          23.6,
+          15.7,
+          10.3
+        ],
+        [
+          34.4,
+          22.8,
+          14.9
+        ]
+      ],
+      "position_sd_cm": 11.1,
+      "boundary_uncertainty_cm": 8.17,
+      "mean_abs_shift_cm": 8.4,
+      "reach": 0.0,
+      "approach": 0.16,
+      "height_m": 0.38
+    }
+  }
+]
