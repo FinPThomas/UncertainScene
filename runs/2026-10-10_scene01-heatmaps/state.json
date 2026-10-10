@@ -1172,6 +1172,16 @@
       "note": "summary of 93 steps (summary.md, lighting.md)",
       "started": "2026-10-10 02:40:07 UTC",
       "status": "done"
+    },
+    "summary_p7_off5": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "69ff644",
+      "expires": 1791603452.8880258,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 03:04:32 UTC",
+      "status": "running"
     }
   }
 }
