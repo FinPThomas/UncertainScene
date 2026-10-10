@@ -1,0 +1,505 @@
+[
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 2801,
+    "centroid": [
+      0.5264000296592712,
+      -0.23399999737739563,
+      0.8033999800682068
+    ],
+    "centroid_std": 0.032046690583229065,
+    "extent": [
+      0.15449999272823334,
+      0.08940000087022781,
+      0.02449999935925007
+    ],
+    "extent_ci": [
+      [
+        0.1506,
+        0.1578
+      ],
+      [
+        0.0878,
+        0.0911
+      ],
+      [
+        0.0235,
+        0.026
+      ]
+    ],
+    "frame_votes": {
+      "15": 1021,
+      "13": 634,
+      "14": 463,
+      "16": 302,
+      "12": 123
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "pillow",
+    "label_prob": 0.426,
+    "description": "A pillow that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        35.6,
+        20.6,
+        5.6
+      ],
+      "size_cm_ci": [
+        [
+          34.7,
+          36.4
+        ],
+        [
+          20.2,
+          21.0
+        ],
+        [
+          5.4,
+          6.0
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          29.0,
+          16.8,
+          4.6
+        ],
+        [
+          42.2,
+          24.4,
+          6.7
+        ]
+      ],
+      "position_sd_cm": 7.4,
+      "boundary_uncertainty_cm": 1.64,
+      "mean_abs_shift_cm": 30.4,
+      "reach": 0.0,
+      "approach": 0.77,
+      "height_m": 1.15
+    }
+  },
+  {
+    "id": 5,
+    "kind": "appearance",
+    "n_points": 1963,
+    "centroid": [
+      0.8337000012397766,
+      -0.07079999893903732,
+      0.8151000142097473
+    ],
+    "centroid_std": 0.03204609453678131,
+    "extent": [
+      0.13210000097751617,
+      0.05779999867081642,
+      0.02669999934732914
+    ],
+    "extent_ci": [
+      [
+        0.1285,
+        0.135
+      ],
+      [
+        0.0557,
+        0.0599
+      ],
+      [
+        0.0262,
+        0.0273
+      ]
+    ],
+    "frame_votes": {
+      "33": 792,
+      "32": 719,
+      "49": 172,
+      "31": 157,
+      "29": 116
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "shoe",
+    "label_prob": 0.608,
+    "description": "The shoe looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        30.4,
+        13.3,
+        6.2
+      ],
+      "size_cm_ci": [
+        [
+          29.6,
+          31.1
+        ],
+        [
+          12.8,
+          13.8
+        ],
+        [
+          6.0,
+          6.3
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          24.8,
+          10.9,
+          5.0
+        ],
+        [
+          36.1,
+          15.8,
+          7.3
+        ]
+      ],
+      "position_sd_cm": 7.4,
+      "boundary_uncertainty_cm": 2.28,
+      "mean_abs_shift_cm": 6.9,
+      "reach": 0.0,
+      "approach": 0.25,
+      "height_m": 0.79
+    }
+  },
+  {
+    "id": 1,
+    "kind": "removed",
+    "n_points": 1398,
+    "centroid": [
+      0.8245999813079834,
+      -0.11330000311136246,
+      0.7584999799728394
+    ],
+    "centroid_std": 0.032051969319581985,
+    "extent": [
+      0.1128000020980835,
+      0.09549999982118607,
+      0.046799998730421066
+    ],
+    "extent_ci": [
+      [
+        0.1106,
+        0.1153
+      ],
+      [
+        0.0924,
+        0.0983
+      ],
+      [
+        0.0437,
+        0.0501
+      ]
+    ],
+    "frame_votes": {
+      "16": 312,
+      "8": 286,
+      "26": 200,
+      "9": 182,
+      "21": 155
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "book",
+    "label_prob": 0.188,
+    "description": "A book that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        26.0,
+        22.0,
+        10.8
+      ],
+      "size_cm_ci": [
+        [
+          25.5,
+          26.6
+        ],
+        [
+          21.3,
+          22.6
+        ],
+        [
+          10.1,
+          11.5
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          21.2,
+          17.9,
+          8.8
+        ],
+        [
+          30.8,
+          26.1,
+          12.8
+        ]
+      ],
+      "position_sd_cm": 7.4,
+      "boundary_uncertainty_cm": 19.41,
+      "mean_abs_shift_cm": 24.8,
+      "reach": 0.0,
+      "approach": 0.75,
+      "height_m": 0.85
+    }
+  },
+  {
+    "id": 4,
+    "kind": "added",
+    "n_points": 1287,
+    "centroid": [
+      0.6152999997138977,
+      0.25220000743865967,
+      0.7210000157356262
+    ],
+    "centroid_std": 0.03205100819468498,
+    "extent": [
+      0.15530000627040863,
+      0.08709999918937683,
+      0.04390000179409981
+    ],
+    "extent_ci": [
+      [
+        0.1512,
+        0.1614
+      ],
+      [
+        0.0847,
+        0.0891
+      ],
+      [
+        0.0428,
+        0.0446
+      ]
+    ],
+    "frame_votes": {
+      "47": 483,
+      "35": 396,
+      "50": 335,
+      "27": 73
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "guitar",
+    "label_prob": 0.986,
+    "description": "A guitar appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        35.8,
+        20.1,
+        10.1
+      ],
+      "size_cm_ci": [
+        [
+          34.8,
+          37.2
+        ],
+        [
+          19.5,
+          20.5
+        ],
+        [
+          9.9,
+          10.3
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          29.2,
+          16.4,
+          8.2
+        ],
+        [
+          42.4,
+          23.8,
+          12.0
+        ]
+      ],
+      "position_sd_cm": 7.4,
+      "boundary_uncertainty_cm": 13.07,
+      "mean_abs_shift_cm": 29.8,
+      "reach": 1.0,
+      "approach": 0.53,
+      "height_m": 0.19
+    }
+  },
+  {
+    "id": 2,
+    "kind": "removed",
+    "n_points": 765,
+    "centroid": [
+      0.9711999893188477,
+      -0.1265999972820282,
+      1.09660005569458
+    ],
+    "centroid_std": 0.0320618599653244,
+    "extent": [
+      0.1574999988079071,
+      0.09669999778270721,
+      0.005499999970197678
+    ],
+    "extent_ci": [
+      [
+        0.1513,
+        0.1627
+      ],
+      [
+        0.0936,
+        0.0991
+      ],
+      [
+        0.0049,
+        0.0059
+      ]
+    ],
+    "frame_votes": {
+      "10": 765
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "vase",
+    "label_prob": 0.093,
+    "description": "A vase that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        36.3,
+        22.3,
+        1.3
+      ],
+      "size_cm_ci": [
+        [
+          34.9,
+          37.5
+        ],
+        [
+          21.6,
+          22.8
+        ],
+        [
+          1.1,
+          1.4
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          29.6,
+          18.2,
+          1.0
+        ],
+        [
+          43.0,
+          26.4,
+          1.5
+        ]
+      ],
+      "position_sd_cm": 7.4,
+      "boundary_uncertainty_cm": 32.87,
+      "mean_abs_shift_cm": 28.7,
+      "reach": 0.0,
+      "approach": 1.0,
+      "height_m": 0.69
+    }
+  },
+  {
+    "id": 3,
+    "kind": "appearance",
+    "n_points": 596,
+    "centroid": [
+      0.23019999265670776,
+      -0.22310000658035278,
+      0.8773999810218811
+    ],
+    "centroid_std": 0.03204741328954697,
+    "extent": [
+      0.07349999994039536,
+      0.05130000039935112,
+      0.028300000354647636
+    ],
+    "extent_ci": [
+      [
+        0.0699,
+        0.0758
+      ],
+      [
+        0.0483,
+        0.0544
+      ],
+      [
+        0.025,
+        0.0308
+      ]
+    ],
+    "frame_votes": {
+      "5": 483,
+      "6": 71,
+      "23": 42
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "shoe",
+    "label_prob": 0.252,
+    "description": "The shoe looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        16.9,
+        11.8,
+        6.5
+      ],
+      "size_cm_ci": [
+        [
+          16.1,
+          17.5
+        ],
+        [
+          11.1,
+          12.5
+        ],
+        [
+          5.8,
+          7.1
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          13.8,
+          9.6,
+          5.3
+        ],
+        [
+          20.1,
+          14.0,
+          7.7
+        ]
+      ],
+      "position_sd_cm": 7.4,
+      "boundary_uncertainty_cm": 5.84,
+      "mean_abs_shift_cm": 2.8,
+      "reach": 0.0,
+      "approach": 0.0,
+      "height_m": 1.07
+    }
+  }
+]
