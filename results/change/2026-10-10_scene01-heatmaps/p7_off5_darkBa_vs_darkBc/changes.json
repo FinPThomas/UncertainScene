@@ -1,0 +1,167 @@
+[
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 685,
+    "centroid": [
+      -0.01209999993443489,
+      -0.007400000002235174,
+      0.7336999773979187
+    ],
+    "centroid_std": 0.04079442098736763,
+    "extent": [
+      0.11680000275373459,
+      0.04439999908208847,
+      0.03519999980926514
+    ],
+    "extent_ci": [
+      [
+        0.1132,
+        0.1208
+      ],
+      [
+        0.0426,
+        0.0463
+      ],
+      [
+        0.0341,
+        0.0365
+      ]
+    ],
+    "frame_votes": {
+      "1": 440,
+      "2": 245
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "shoe",
+    "label_prob": 0.197,
+    "description": "A shoe that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        84.3,
+        32.0,
+        25.4
+      ],
+      "size_cm_ci": [
+        [
+          81.7,
+          87.2
+        ],
+        [
+          30.7,
+          33.4
+        ],
+        [
+          24.6,
+          26.3
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          68.7,
+          26.1,
+          20.7
+        ],
+        [
+          99.9,
+          38.0,
+          30.1
+        ]
+      ],
+      "position_sd_cm": 29.4,
+      "boundary_uncertainty_cm": 41.5,
+      "mean_abs_shift_cm": 81.5,
+      "reach": 0.0,
+      "approach": 0.94,
+      "height_m": 0.32
+    }
+  },
+  {
+    "id": 1,
+    "kind": "added",
+    "n_points": 646,
+    "centroid": [
+      0.6122000217437744,
+      -0.10180000215768814,
+      0.9383999705314636
+    ],
+    "centroid_std": 0.040790557861328125,
+    "extent": [
+      0.08950000256299973,
+      0.05299999937415123,
+      0.01850000023841858
+    ],
+    "extent_ci": [
+      [
+        0.0796,
+        0.0965
+      ],
+      [
+        0.0489,
+        0.0556
+      ],
+      [
+        0.0173,
+        0.0202
+      ]
+    ],
+    "frame_votes": {
+      "40": 277,
+      "46": 199,
+      "45": 170
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "rug",
+    "label_prob": 0.176,
+    "description": "A rug appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        64.6,
+        38.2,
+        13.4
+      ],
+      "size_cm_ci": [
+        [
+          57.4,
+          69.6
+        ],
+        [
+          35.3,
+          40.1
+        ],
+        [
+          12.5,
+          14.6
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          52.6,
+          31.2,
+          10.9
+        ],
+        [
+          76.6,
+          45.3,
+          15.8
+        ]
+      ],
+      "position_sd_cm": 29.4,
+      "boundary_uncertainty_cm": 40.12,
+      "mean_abs_shift_cm": 91.5,
+      "reach": 0.0,
+      "approach": 0.56,
+      "height_m": 1.25
+    }
+  }
+]
