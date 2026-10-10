@@ -1,0 +1,169 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 1912,
+    "centroid": [
+      -0.032099999487400055,
+      -0.09200000017881393,
+      0.6230000257492065
+    ],
+    "centroid_std": 0.05155761539936066,
+    "extent": [
+      0.12110000103712082,
+      0.0649000033736229,
+      0.00570000009611249
+    ],
+    "extent_ci": [
+      [
+        0.1192,
+        0.1235
+      ],
+      [
+        0.0635,
+        0.0671
+      ],
+      [
+        0.0053,
+        0.006
+      ]
+    ],
+    "frame_votes": {
+      "6": 1368,
+      "7": 544
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "glass vase",
+    "label_prob": 0.47,
+    "description": "The glass vase looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        76.0,
+        40.7,
+        3.6
+      ],
+      "size_cm_ci": [
+        [
+          74.8,
+          77.5
+        ],
+        [
+          39.9,
+          42.1
+        ],
+        [
+          3.3,
+          3.8
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          62.0,
+          33.2,
+          2.9
+        ],
+        [
+          90.1,
+          48.3,
+          4.2
+        ]
+      ],
+      "position_sd_cm": 32.4,
+      "boundary_uncertainty_cm": 21.42,
+      "mean_abs_shift_cm": 43.3,
+      "reach": 0.0,
+      "approach": 0.9,
+      "height_m": 1.97
+    }
+  },
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 773,
+    "centroid": [
+      0.9225000143051147,
+      -0.061400000005960464,
+      0.7724999785423279
+    ],
+    "centroid_std": 0.05156570300459862,
+    "extent": [
+      0.1720999926328659,
+      0.03530000150203705,
+      0.032999999821186066
+    ],
+    "extent_ci": [
+      [
+        0.166,
+        0.1773
+      ],
+      [
+        0.0333,
+        0.038
+      ],
+      [
+        0.0308,
+        0.0341
+      ]
+    ],
+    "frame_votes": {
+      "16": 601,
+      "19": 152,
+      "17": 10,
+      "18": 9,
+      "14": 1
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "guitar",
+    "label_prob": 0.989,
+    "description": "The guitar looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        108.1,
+        22.2,
+        20.7
+      ],
+      "size_cm_ci": [
+        [
+          104.2,
+          111.3
+        ],
+        [
+          20.9,
+          23.9
+        ],
+        [
+          19.3,
+          21.4
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          88.0,
+          18.1,
+          16.9
+        ],
+        [
+          128.1,
+          26.3,
+          24.6
+        ]
+      ],
+      "position_sd_cm": 32.4,
+      "boundary_uncertainty_cm": 19.56,
+      "mean_abs_shift_cm": 39.5,
+      "reach": 0.0,
+      "approach": 0.69,
+      "height_m": 0.73
+    }
+  }
+]
