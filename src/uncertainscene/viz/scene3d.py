@@ -143,7 +143,7 @@ def box_corners(X: np.ndarray) -> list:
 
 def from_analysis(res, objs_a: list, objs_b: list, fields: dict | None = None, n_colour: int = 120000,
                   n_change: int = 20000, n_heat: int = 50000, labels=("before", "after"), seed: int = 0,
-                  n_per_object: int = 1500) -> dict:
+                  n_objects: int | None = None, near_weight: float = 4.0) -> dict:
     """Scene for one pair step: colour cloud of each recording, change classes, every heat map
     (sharing one point table) and every SAM 2 object with its box and 90% position region."""
     from ..change.detect import APPEARANCE, GONE
@@ -153,10 +153,12 @@ def from_analysis(res, objs_a: list, objs_b: list, fields: dict | None = None, n
     rng = np.random.default_rng(seed)
     pts = Points()
     layers = []
-    for ps, rec, lab, gone in ((res.A, "A", labels[0], "removed"), (res.B, "B", labels[1], "added")):
+    n_objects = n_colour if n_objects is None else n_objects
+    for ps, rec, lab, gone, objs in ((res.A, "A", labels[0], "removed", objs_a), (res.B, "B", labels[1], "added", objs_b)):
         idx = np.arange(len(ps.X))
-        if len(idx) > n_colour:
-            idx = np.sort(rng.choice(len(idx), n_colour, replace=False))
+        if len(idx) > n_colour:     # points on or near an object are kept `near_weight` times as often
+            w = near_objects(ps.X, [o for o in objs if not o.structure], near_weight)
+            idx = np.sort(rng.choice(len(idx), n_colour, replace=False, p=w / w.sum()))
         layers.append({"name": f"{lab} (colour)", "kind": "colour", "rec": rec, "visible": rec == "A", "size": 2,
                        "pts": pts.add(ps.X[idx]), "rgb": _b64(ps.rgb[idx].astype(np.uint8))})
         for cls, cname, col in ((GONE, gone, "#d62728"), (APPEARANCE, "looks different", "#9467bd")):
@@ -183,7 +185,7 @@ def from_analysis(res, objs_a: list, objs_b: list, fields: dict | None = None, n
                            "visible": False, "size": 2, "pts": t, "rgb": _b64(rgb),
                            "legend": {"lo": round(float(vmin), 3), "hi": round(float(vmax), 3), "stops": stops}})
     for rec, lab, objs in (("A", labels[0], objs_a), ("B", labels[1], objs_b)):
-        layers += object_layer(pts, [o for o in objs if not o.structure], rec, lab, n_per_object, rng)
+        layers += object_layer(pts, [o for o in objs if not o.structure], rec, lab, n_objects, rng)
     objects = []
     for o in objs_a + objs_b:
         if o.structure:
@@ -208,16 +210,34 @@ def object_colour(o) -> str:
     return PALETTE[int(o.id) % len(PALETTE)]
 
 
-def object_layer(pts: Points, objs: list, rec: str, lab: str, n_per_object: int, rng) -> list:
+def near_objects(X: np.ndarray, objs: list, weight: float, radius_vox: float = 3.0) -> np.ndarray:
+    """Sampling weight per scene point: `weight` within a few point spacings of any object, else 1."""
+    w = np.ones(len(X))
+    if not objs or weight == 1:
+        return w
+    from scipy.spatial import cKDTree
+
+    O = np.concatenate([np.asarray(o.X) for o in objs if len(o.X)])
+    sub = X[np.random.default_rng(0).choice(len(X), min(len(X), 20000), replace=False)]
+    spacing = float(np.median(cKDTree(sub).query(sub, k=2)[0][:, 1]))
+    w[cKDTree(O).query(X, k=1, distance_upper_bound=radius_vox * spacing)[0] < np.inf] = weight
+    return w
+
+
+def object_layer(pts: Points, objs: list, rec: str, lab: str, budget: int, rng, min_per_object: int = 800) -> list:
     """Every object's own 3D points painted one solid colour per object, so objects stand out
-    as filled shapes rather than as a box around part of the room."""
+    as filled shapes rather than as a box around part of the room. `budget` points in total,
+    shared out by object size with at least `min_per_object` each."""
     X, C = [], []
-    for o in objs:
+    sizes = np.array([len(o.X) for o in objs], float)
+    total = sizes.sum()
+    for o, n in zip(objs, sizes):
         x = np.asarray(o.X)
         if not len(x):
             continue
-        if len(x) > n_per_object:
-            x = x[rng.choice(len(x), n_per_object, replace=False)]
+        cap = int(max(min_per_object, budget * n / total)) if total > budget else len(x)
+        if len(x) > cap:
+            x = x[rng.choice(len(x), cap, replace=False)]
         X.append(x)
         C.append(np.repeat(_hex_rgb(object_colour(o), 1), len(x), 0))
     if not X:

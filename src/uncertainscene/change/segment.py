@@ -184,7 +184,7 @@ def view_measurement(rec: Recon, s: int, X: np.ndarray, v: np.ndarray, u: np.nda
     return {"c": c, "ray": ray, "sd_depth": sd_depth, "sd_side": sd_side, "pixel": z / f}
 
 
-def lift(rec: Recon, masks: dict, voxel: float, conf_quantile: float = 0.3, max_points: int = 1500,
+def lift(rec: Recon, masks: dict, voxel: float, conf_quantile: float = 0.3, max_points: int = 4000,
          seed: int = 0) -> list[dict]:
     rng = np.random.default_rng(seed)
     frags = []
@@ -267,7 +267,7 @@ def effective_voxel(rec: Recon, masks: dict, voxel: float) -> float:
 
 
 def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structure_units: float,
-                  max_points: int = 3000, min_frames: int = 1, min_voxels: int = 6, seed: int = 0,
+                  max_points: int = 15000, min_frames: int = 1, min_voxels: int = 6, seed: int = 0,
                   adapt_voxel: bool = True) -> list[SceneObject]:
     rng = np.random.default_rng(seed)
     if adapt_voxel:

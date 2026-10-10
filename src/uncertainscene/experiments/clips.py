@@ -220,7 +220,7 @@ def analyse_clips(spec, out: Path, cache: Path, check=None) -> str:
                            "visible": kk == 1, "pts": pts.add(np.concatenate(rings)),
                            "color": ["#d62728", "#ff7f0e", "#2ca02c", "#1f77b4"][min(kk - 1, 3)]})
     first_objs = [max(g.values(), key=lambda o: o.label_prob) for g in groups_first]
-    layers += scene3d.object_layer(pts, first_objs, None, "all clips", 1500, rng)
+    layers += scene3d.object_layer(pts, first_objs, None, "all clips", 100000, rng)
     objects = []
     for g in groups_first:
         e = _est([g[i] for i in sorted(g)])
