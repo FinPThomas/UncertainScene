@@ -1,0 +1,87 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 1184,
+    "centroid": [
+      -0.8837000131607056,
+      -0.22169999778270721,
+      0.7488999962806702
+    ],
+    "centroid_std": 0.032499540597200394,
+    "extent": [
+      0.11249999701976776,
+      0.05609999969601631,
+      0.01600000075995922
+    ],
+    "extent_ci": [
+      [
+        0.111,
+        0.1145
+      ],
+      [
+        0.0541,
+        0.0579
+      ],
+      [
+        0.0153,
+        0.0168
+      ]
+    ],
+    "frame_votes": {
+      "13": 479,
+      "15": 469,
+      "25": 229,
+      "26": 4,
+      "16": 3
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "towel",
+    "label_prob": 0.115,
+    "description": "The towel looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        23.9,
+        11.9,
+        3.4
+      ],
+      "size_cm_ci": [
+        [
+          23.5,
+          24.3
+        ],
+        [
+          11.5,
+          12.3
+        ],
+        [
+          3.2,
+          3.6
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          19.4,
+          9.7,
+          2.8
+        ],
+        [
+          28.3,
+          14.1,
+          4.0
+        ]
+      ],
+      "position_sd_cm": 6.9,
+      "boundary_uncertainty_cm": 4.02,
+      "mean_abs_shift_cm": 3.7,
+      "reach": 0.0,
+      "approach": 0.06,
+      "height_m": 0.82
+    }
+  }
+]
