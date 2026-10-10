@@ -1,0 +1,168 @@
+[
+  {
+    "id": 1,
+    "kind": "added",
+    "n_points": 1467,
+    "centroid": [
+      -0.0414000004529953,
+      -0.2321999967098236,
+      1.0162999629974365
+    ],
+    "centroid_std": 0.024760199710726738,
+    "extent": [
+      0.22130000591278076,
+      0.07599999755620956,
+      0.04360000044107437
+    ],
+    "extent_ci": [
+      [
+        0.2163,
+        0.2247
+      ],
+      [
+        0.0725,
+        0.0788
+      ],
+      [
+        0.042,
+        0.045
+      ]
+    ],
+    "frame_votes": {
+      "40": 452,
+      "48": 406,
+      "27": 234,
+      "44": 182,
+      "52": 110
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "baseball cap",
+    "label_prob": 0.186,
+    "description": "A baseball cap appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        1167.9,
+        401.1,
+        230.1
+      ],
+      "size_cm_ci": [
+        [
+          1141.6,
+          1185.9
+        ],
+        [
+          382.6,
+          415.9
+        ],
+        [
+          221.7,
+          237.5
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          951.7,
+          326.8,
+          187.5
+        ],
+        [
+          1384.2,
+          475.4,
+          272.7
+        ]
+      ],
+      "position_sd_cm": 130.7,
+      "boundary_uncertainty_cm": 377.48,
+      "mean_abs_shift_cm": 839.9,
+      "reach": 0.0,
+      "approach": 1.0,
+      "height_m": 10.58
+    }
+  },
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 864,
+    "centroid": [
+      -0.44909998774528503,
+      0.03519999980926514,
+      0.6419000029563904
+    ],
+    "centroid_std": 0.024746622890233994,
+    "extent": [
+      0.1298000067472458,
+      0.0697999969124794,
+      0.03240000084042549
+    ],
+    "extent_ci": [
+      [
+        0.1244,
+        0.1341
+      ],
+      [
+        0.0671,
+        0.0711
+      ],
+      [
+        0.0274,
+        0.0362
+      ]
+    ],
+    "frame_votes": {
+      "1": 864
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "coaster",
+    "label_prob": 0.303,
+    "description": "A coaster that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        685.0,
+        368.4,
+        171.0
+      ],
+      "size_cm_ci": [
+        [
+          656.5,
+          707.7
+        ],
+        [
+          354.1,
+          375.2
+        ],
+        [
+          144.6,
+          191.1
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          558.2,
+          300.2,
+          139.3
+        ],
+        [
+          811.9,
+          436.6,
+          202.7
+        ]
+      ],
+      "position_sd_cm": 130.6,
+      "boundary_uncertainty_cm": 232.66,
+      "mean_abs_shift_cm": 512.1,
+      "reach": 0.0,
+      "approach": 1.0,
+      "height_m": 3.75
+    }
+  }
+]
