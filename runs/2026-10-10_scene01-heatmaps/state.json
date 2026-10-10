@@ -177,11 +177,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "687fa73",
-      "expires": 1791595170.3788652,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 00:30:36 UTC",
+      "note": "change+lighting: 2.61% changed, 4 changes (0 moved), interactable 0%, 72s",
       "started": "2026-10-10 00:29:06 UTC",
-      "status": "running"
+      "status": "done"
     },
     "p3_table_mount_lightBa_vs_lightAa": {
       "account": "colab-dbb8",
