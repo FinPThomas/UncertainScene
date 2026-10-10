@@ -1,0 +1,335 @@
+[
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 2141,
+    "centroid": [
+      0.17970000207424164,
+      -0.1177000030875206,
+      0.9672999978065491
+    ],
+    "centroid_std": 0.03449186310172081,
+    "extent": [
+      0.10159999877214432,
+      0.05469999834895134,
+      0.04019999876618385
+    ],
+    "extent_ci": [
+      [
+        0.0968,
+        0.1035
+      ],
+      [
+        0.0531,
+        0.0558
+      ],
+      [
+        0.0394,
+        0.0413
+      ]
+    ],
+    "frame_votes": {
+      "28": 1744,
+      "27": 397
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "cup",
+    "label_prob": 0.171,
+    "description": "The cup looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        112.0,
+        60.3,
+        44.3
+      ],
+      "size_cm_ci": [
+        [
+          106.7,
+          114.1
+        ],
+        [
+          58.5,
+          61.5
+        ],
+        [
+          43.4,
+          45.5
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          91.2,
+          49.1,
+          36.1
+        ],
+        [
+          132.7,
+          71.5,
+          52.5
+        ]
+      ],
+      "position_sd_cm": 38.0,
+      "boundary_uncertainty_cm": 28.43,
+      "mean_abs_shift_cm": 36.1,
+      "reach": 0.0,
+      "approach": 0.57,
+      "height_m": 0.62
+    }
+  },
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 873,
+    "centroid": [
+      -0.3427000045776367,
+      0.03139999881386757,
+      0.6976000070571899
+    ],
+    "centroid_std": 0.03449738025665283,
+    "extent": [
+      0.11919999867677689,
+      0.051500000059604645,
+      0.02889999933540821
+    ],
+    "extent_ci": [
+      [
+        0.1165,
+        0.1224
+      ],
+      [
+        0.0496,
+        0.0538
+      ],
+      [
+        0.027,
+        0.0304
+      ]
+    ],
+    "frame_votes": {
+      "2": 506,
+      "1": 367
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "cup",
+    "label_prob": 0.161,
+    "description": "A cup that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        131.4,
+        56.8,
+        31.9
+      ],
+      "size_cm_ci": [
+        [
+          128.4,
+          134.9
+        ],
+        [
+          54.7,
+          59.3
+        ],
+        [
+          29.8,
+          33.5
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          107.0,
+          46.2,
+          26.0
+        ],
+        [
+          155.7,
+          67.3,
+          37.8
+        ]
+      ],
+      "position_sd_cm": 38.0,
+      "boundary_uncertainty_cm": 61.22,
+      "mean_abs_shift_cm": 122.7,
+      "reach": 0.0,
+      "approach": 1.0,
+      "height_m": 0.54
+    }
+  },
+  {
+    "id": 2,
+    "kind": "appearance",
+    "n_points": 785,
+    "centroid": [
+      -0.49939998984336853,
+      -0.0731000006198883,
+      0.8461999893188477
+    ],
+    "centroid_std": 0.03449837490916252,
+    "extent": [
+      0.11230000108480453,
+      0.05169999971985817,
+      0.03099999949336052
+    ],
+    "extent_ci": [
+      [
+        0.1095,
+        0.1148
+      ],
+      [
+        0.0504,
+        0.0538
+      ],
+      [
+        0.029,
+        0.0344
+      ]
+    ],
+    "frame_votes": {
+      "40": 400,
+      "44": 199,
+      "43": 72,
+      "51": 36,
+      "42": 33
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "power socket",
+    "label_prob": 0.125,
+    "description": "The power socket looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        123.8,
+        57.0,
+        34.2
+      ],
+      "size_cm_ci": [
+        [
+          120.7,
+          126.5
+        ],
+        [
+          55.5,
+          59.3
+        ],
+        [
+          32.0,
+          37.9
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          100.8,
+          46.4,
+          27.8
+        ],
+        [
+          146.7,
+          67.5,
+          40.5
+        ]
+      ],
+      "position_sd_cm": 38.0,
+      "boundary_uncertainty_cm": 32.87,
+      "mean_abs_shift_cm": 43.3,
+      "reach": 0.0,
+      "approach": 0.6,
+      "height_m": 2.28
+    }
+  },
+  {
+    "id": 3,
+    "kind": "appearance",
+    "n_points": 696,
+    "centroid": [
+      -0.4521999955177307,
+      0.03709999844431877,
+      0.6869000196456909
+    ],
+    "centroid_std": 0.03449174016714096,
+    "extent": [
+      0.05209999904036522,
+      0.04430000111460686,
+      0.012199999764561653
+    ],
+    "extent_ci": [
+      [
+        0.0509,
+        0.0536
+      ],
+      [
+        0.0417,
+        0.046
+      ],
+      [
+        0.0112,
+        0.0136
+      ]
+    ],
+    "frame_votes": {
+      "40": 532,
+      "52": 131,
+      "41": 20,
+      "42": 13
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "door",
+    "label_prob": 0.128,
+    "description": "The door looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        57.4,
+        48.8,
+        13.4
+      ],
+      "size_cm_ci": [
+        [
+          56.1,
+          59.1
+        ],
+        [
+          46.0,
+          50.7
+        ],
+        [
+          12.3,
+          15.0
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          46.8,
+          39.8,
+          11.0
+        ],
+        [
+          68.1,
+          57.9,
+          15.9
+        ]
+      ],
+      "position_sd_cm": 38.0,
+      "boundary_uncertainty_cm": 13.94,
+      "mean_abs_shift_cm": 11.2,
+      "reach": 0.0,
+      "approach": 0.51,
+      "height_m": 0.51
+    }
+  }
+]
