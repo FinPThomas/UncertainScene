@@ -1,0 +1,12 @@
+2026-10-10 02:31:14,560 INFO uncertainscene.poc: step p7_off4_darkBc_vs_lightAb: scene01_dark_before_c vs scene01_light_after_b, 28 frames/video, variant offset4, outputs light
+2026-10-10 02:31:14,967 INFO uncertainscene.poc: [p7_off4_darkBc_vs_lightAb] start done in 0 s | RAM 4.7/12.7 GB, disk free 59.1 GB, GPU 5.2/15.0 GB
+2026-10-10 02:31:14,970 WARNING uncertainscene.recon.vggt: GPU fits ~27 frames per recording; using 27 instead of 28
+2026-10-10 02:31:16,260 INFO uncertainscene.recon.vggt: VGGT on 54 frames (518, 294); GPU free 9.3/14.6 GB
+2026-10-10 02:31:45,437 INFO uncertainscene.recon.vggt: reconstructed 54 frames in 27 s (GPU peak 9.57 GB)
+2026-10-10 02:31:48,434 INFO uncertainscene.poc: [p7_off4_darkBc_vs_lightAb] reconstruction (54 frames) done in 33 s | RAM 4.7/12.7 GB, disk free 59.1 GB, GPU 5.2/15.0 GB
+2026-10-10 02:31:49,978 INFO uncertainscene.poc: [p7_off4_darkBc_vs_lightAb] DINOv2 features done in 2 s | RAM 4.7/12.7 GB, disk free 59.1 GB, GPU 5.3/15.0 GB
+2026-10-10 02:32:31,418 INFO uncertainscene.poc: [p7_off4_darkBc_vs_lightAb] change detection (594404 points, tau 0.148) done in 41 s | RAM 5.1/12.7 GB, disk free 59.1 GB, GPU 5.3/15.0 GB
+2026-10-10 02:32:32,136 INFO uncertainscene.poc: [p7_off4_darkBc_vs_lightAb] objects (2 clusters) done in 1 s | RAM 5.1/12.7 GB, disk free 59.1 GB, GPU 5.3/15.0 GB
+2026-10-10 02:32:45,113 INFO uncertainscene.poc: [p7_off4_darkBc_vs_lightAb] heat maps (120000 points, scale 3.547 m/unit) done in 13 s | RAM 5.1/12.7 GB, disk free 59.1 GB, GPU 5.3/15.0 GB
+2026-10-10 02:32:45,539 INFO uncertainscene.poc: [p7_off4_darkBc_vs_lightAb] labels (bag, guitar) done in 0 s | RAM 5.1/12.7 GB, disk free 59.1 GB, GPU 5.3/15.0 GB
+2026-10-10 02:32:56,599 INFO uncertainscene.poc: [p7_off4_darkBc_vs_lightAb] figures, viewer and reports done in 11 s | RAM 5.1/12.7 GB, disk free 59.1 GB, GPU 5.3/15.0 GB
