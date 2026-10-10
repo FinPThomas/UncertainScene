@@ -807,11 +807,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "5160be6",
-      "expires": 1791601636.2295604,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 02:18:41 UTC",
+      "note": "static: 1.57% changed, 1 changes (0 moved), interactable 0%, 98s",
       "started": "2026-10-10 02:16:52 UTC",
-      "status": "running"
+      "status": "done"
     },
     "summary_p1": {
       "account": "colab-dbb8",

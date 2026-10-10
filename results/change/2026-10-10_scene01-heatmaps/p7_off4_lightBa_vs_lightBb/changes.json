@@ -1,0 +1,87 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 625,
+    "centroid": [
+      -0.04010000079870224,
+      -0.12559999525547028,
+      0.8007000088691711
+    ],
+    "centroid_std": 0.030659256502985954,
+    "extent": [
+      0.12039999663829803,
+      0.037300001829862595,
+      0.005900000222027302
+    ],
+    "extent_ci": [
+      [
+        0.1158,
+        0.1238
+      ],
+      [
+        0.0309,
+        0.0418
+      ],
+      [
+        0.0055,
+        0.0063
+      ]
+    ],
+    "frame_votes": {
+      "4": 293,
+      "3": 125,
+      "1": 108,
+      "2": 87,
+      "25": 12
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "box",
+    "label_prob": 0.276,
+    "description": "The box looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        47.3,
+        14.7,
+        2.3
+      ],
+      "size_cm_ci": [
+        [
+          45.5,
+          48.6
+        ],
+        [
+          12.1,
+          16.4
+        ],
+        [
+          2.2,
+          2.5
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          38.5,
+          11.9,
+          1.9
+        ],
+        [
+          56.1,
+          17.4,
+          2.7
+        ]
+      ],
+      "position_sd_cm": 12.0,
+      "boundary_uncertainty_cm": 7.36,
+      "mean_abs_shift_cm": 16.6,
+      "reach": 0.0,
+      "approach": 0.54,
+      "height_m": 0.81
+    }
+  }
+]
