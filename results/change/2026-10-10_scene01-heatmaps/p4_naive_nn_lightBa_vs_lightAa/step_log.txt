@@ -1,0 +1,10 @@
+2026-10-10 00:46:36,902 INFO uncertainscene.poc: step p4_naive_nn_lightBa_vs_lightAa: scene01_light_before_a vs scene01_light_after_a, 28 frames/video, variant naive_nn, outputs light
+2026-10-10 00:46:37,229 INFO uncertainscene.poc: [p4_naive_nn_lightBa_vs_lightAa] start done in 0 s | RAM 4.6/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:46:37,231 INFO uncertainscene.poc: reusing cached reconstruction recon_scene01_light_before_a_scene01_light_after_a_n28_o0.npz
+2026-10-10 00:46:38,222 INFO uncertainscene.poc: [p4_naive_nn_lightBa_vs_lightAa] reconstruction (54 frames) done in 1 s | RAM 4.6/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:46:38,609 INFO uncertainscene.poc: [p4_naive_nn_lightBa_vs_lightAa] DINOv2 features done in 0 s | RAM 4.6/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:47:22,684 INFO uncertainscene.poc: [p4_naive_nn_lightBa_vs_lightAa] change detection (596242 points, tau 0.088) done in 44 s | RAM 5.0/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:47:23,111 INFO uncertainscene.poc: [p4_naive_nn_lightBa_vs_lightAa] objects (0 clusters) done in 0 s | RAM 5.1/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:47:38,806 INFO uncertainscene.poc: [p4_naive_nn_lightBa_vs_lightAa] heat maps (120000 points, scale 2.517 m/unit) done in 16 s | RAM 5.0/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:47:39,094 INFO uncertainscene.poc: [p4_naive_nn_lightBa_vs_lightAa] labels () done in 0 s | RAM 5.0/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
+2026-10-10 00:47:50,319 INFO uncertainscene.poc: [p4_naive_nn_lightBa_vs_lightAa] figures, viewer and reports done in 11 s | RAM 5.0/12.7 GB, disk free 62.7 GB, GPU 5.2/15.0 GB
