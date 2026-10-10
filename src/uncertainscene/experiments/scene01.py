@@ -83,7 +83,7 @@ class ClipsSpec:
     def needs(self) -> dict:
         n = len(self.clips) * (self.n_per_video or 370)
         minutes = 4 + n / 40 * 0.8 + len(self.clips) * self.n_key * 4 / 60 + 6
-        return {"disk_gb": 8, "ram_gb": 2.0 + 0.006 * n, "minutes": round(minutes)}
+        return {"disk_gb": 8, "ram_gb": 2.5 + 0.003 * n, "minutes": round(minutes)}   # 0.006/frame never fit beside the main steps
 
 
 def queue() -> list:
@@ -272,7 +272,7 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     from ..change.fields import RobotModel, base_placement, compute_fields, field_stats, fit_floor, object_fields
     from ..change.floor import combine_scale, object_scale
     from ..change import position as pos
-    from ..change.segment import build_objects, effective_voxel
+    from ..change.segment import build_objects, effective_voxel, merge_voxel
     from ..viz import objects_plots, plots, viewer
     from .catalog import describe as describe_step
 
@@ -302,8 +302,9 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         struct = 1.2 / floor.scale_m_per_unit
         A = {s: m for s, m in masks.items() if rec.video[s] == 0}
         B = {s: m for s, m in masks.items() if rec.video[s] == 1}
-        objs_a = build_objects(rec, A, "A", voxel, struct, adapt_voxel=False)
-        objs_b = build_objects(rec, B, "B", voxel, struct, adapt_voxel=False)
+        mvox = merge_voxel(rec, masks, voxel)                                 # one merge grid for both
+        objs_a = build_objects(rec, A, "A", voxel, struct, adapt_voxel=False, merge_vox=mvox)
+        objs_b = build_objects(rec, B, "B", voxel, struct, adapt_voxel=False, merge_vox=mvox)
         stage(f"SAM 2 objects ({len(objs_a)} in A, {len(objs_b)} in B)")
         inv.label_all(objs_a + objs_b, rec)
         stage("CLIP labels for every object")

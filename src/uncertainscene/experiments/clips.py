@@ -109,7 +109,7 @@ def analyse_clips(spec, out: Path, cache: Path, check=None) -> str:
     from ..change import position as pos
     from ..change.fields import RobotModel, fit_floor
     from ..change.floor import combine_scale, object_scale
-    from ..change.segment import build_objects, effective_voxel
+    from ..change.segment import build_objects, effective_voxel, merge_voxel
     from ..viz import position_plots, scene3d
     from .catalog import rec_name
     from .poc import _Stage, enforce_size, short
@@ -125,10 +125,11 @@ def analyse_clips(spec, out: Path, cache: Path, check=None) -> str:
     masks = _masks(rec, spec, cache)
     voxel = effective_voxel(rec, masks, 0.012 / floor.scale_m_per_unit)
     struct = 1.2 / floor.scale_m_per_unit
+    mvox = merge_voxel(rec, masks, voxel)
     clips = []
     for v in range(len(spec.clips)):
         mv = {s: m for s, m in masks.items() if rec.video[s] == v}
-        clips.append(build_objects(rec, mv, str(v + 1), voxel, struct, adapt_voxel=False))
+        clips.append(build_objects(rec, mv, str(v + 1), voxel, struct, adapt_voxel=False, merge_vox=mvox))
     stage("SAM 2 objects per clip (" + ", ".join(str(len(c)) for c in clips) + ")")
     allobjs = [o for c in clips for o in c]
     inv.label_all(allobjs, rec)

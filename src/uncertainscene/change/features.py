@@ -61,6 +61,12 @@ def dino_features(images: np.ndarray, model_name: str = "facebook/dinov2-small",
     return np.concatenate(out)
 
 
+def _embeds(out):
+    """Projected CLIP embeddings from get_text_features / get_image_features: a tensor in older
+    transformers, an output object whose pooler_output is the projected embedding in 5.x."""
+    return (out if isinstance(out, __import__("torch").Tensor) else out.pooler_output).float()
+
+
 def clip_inventory(crops: list, vocab: list[str] = VOCAB_ALL, model_name: str = "openai/clip-vit-large-patch14",
                    batch: int = 32) -> tuple[list, np.ndarray]:
     """Top-3 (label, probability) per PIL crop and L2-normalised CLIP image embeddings [N, D]
@@ -77,11 +83,11 @@ def clip_inventory(crops: list, vocab: list[str] = VOCAB_ALL, model_name: str = 
     with torch.no_grad():
         t = proc(text=[f"a photo of a {v}" for v in vocab], return_tensors="pt", padding=True)
         tf = model.get_text_features(**{k: v.to(_device()) for k, v in t.items()})
-        tf = torch.nn.functional.normalize(tf.float(), dim=-1)
+        tf = torch.nn.functional.normalize(_embeds(tf), dim=-1)
         tops, embs = [], []
         for i in range(0, len(crops), batch):
             px = proc(images=crops[i:i + batch], return_tensors="pt")["pixel_values"].to(_device())
-            imf = torch.nn.functional.normalize(model.get_image_features(pixel_values=px).float(), dim=-1)
+            imf = torch.nn.functional.normalize(_embeds(model.get_image_features(pixel_values=px)), dim=-1)
             probs = (100 * imf @ tf.T).softmax(-1).cpu().numpy()
             for p in probs:
                 o = np.argsort(-p)[:3]

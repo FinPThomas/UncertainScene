@@ -18,15 +18,29 @@ Last updated 2026-10-10. No answer key yet, so nothing below is scored against g
 5. Floor and scale failed in the dark pairs (259 and 69 m per unit, uncertainty in metres), so heights, reachability and sizes there are meaningless. In light pairs scale is plausible (2.2-2.5 m per unit) but reachable share is 1-14%.
 6. Cause: the change threshold comes from how much one recording disagrees with itself (about 13 cm at 28 frames), so thin objects fall under it, and the floor fit used too few points.
 
-**Version 2 (run `2026-10-10_scene01-objects`, ready, not run yet).** What it adds:
+**Version 2, first attempt (run `2026-10-10_scene01-objects`, 11 steps, 13:38-19:07, then Colab disconnected). Object results are invalid.**
 
-- Every frame of each recording (~185) instead of 28, reconstructed in GPU-sized chunks.
+1. Every step lost its objects: CLIP labelling crashed on the newer transformers library on Colab, so each step fell
+   back and reports 0 changed objects. Ignore the object numbers of this run. Fixed.
+2. Views of an object were almost never merged (1107 of 1122 objects seen in a single view): two views of the same
+   surface disagree in depth by several cm, more than the 1.2 cm grid used to match them. Merging now uses a grid
+   sized from VGGT's own depth uncertainty plus a colour check. Fixed.
+3. The *Where objects are* clips steps did not start (their RAM estimate was too high for what was free). Lowered.
+4. **Gaussian splats (valid):** both splats rendered held-out frames at only ~17.7 dB (blurry), so before vs after
+   from the same camera flagged 2.0% of pixels against 1% when nothing changed. The comparison still highlights the
+   table tennis bat cushion and a card added on the sofa. Next run trains 20 000 steps instead of 7 000 and compares
+   only views the other recording also saw.
+
+**Version 2 (run `2026-10-11_scene01-objects-fixed`, next).** Same steps with the fixes above. What version 2 adds:
+
+- Every frame of each recording (~370 at 6 fps), reconstructed in GPU-sized chunks.
 - Floor and metric scale from gravity, the phone height and the sizes of recognised objects.
 - SAM 2 outlines and a CLIP label for every object, not only changed ones; changes decided per object.
 - **Where each object is, and how sure.** Each view's measurement of an object's centre carries VGGT's own depth
   confidence and SAM 2's mask wobble; a Kalman filter fuses the views, so the 90% range narrows with every
   informative view and every extra clip. A consistency check (3 = honest) says whether to trust it, and the range
   from views disagreeing is shown alongside. Phase *Where objects are* measures this with 1, 2 and 3 clips.
+- Gaussian splats of the light before/after pair, compared from the same cameras.
 
 Results land in this file and the viewer as each phase finishes.
 <!-- /notes -->

@@ -35,7 +35,7 @@ class SplatSpec:
     name: str
     a: str
     b: str
-    iters: int = 7000
+    iters: int = 20000                 # 7000 gave blurry renders (17.7 dB) in run 2
     n_per_video: int | None = None
     offset: int = 0
     variant: str = "splat"
@@ -86,7 +86,7 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
     h0, w0 = rec.depth.shape[1:]
     res = {}
     for v in (0, 1):
-        views = S.test_views(rec, v, cfg.hold_every)
+        views = covered(rec, S.test_views(rec, v, cfg.hold_every), 1 - v)
         own, other = splats[v], splats[1 - v]
         rows = []
         for s in views:
@@ -105,7 +105,7 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
         thr = float(np.quantile(noise, 0.99)) if len(noise) else 1.0
         for r in rows:
             r["changed"] = (r["diff"] > thr) & r["ok"]
-        res[v] = {"rows": rows, "thr": thr,
+        res[v] = {"rows": rows, "thr": thr, "views_compared": len(rows),
                   "psnr": float(np.mean([r["psnr"] for r in rows])) if rows else None,
                   "noise_median": float(np.median(noise)),
                   "diff_median": float(np.median(np.concatenate([r["diff"][r["ok"]] for r in rows]))) if rows else None,
@@ -150,6 +150,7 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
          "same_view_threshold": round(a["thr"], 4), "same_view_changed_share": a["changed_share"],
          "same_view_changed_share_reverse": b["changed_share"], "depth_changed_share_5cm": a["depth_changed_share"],
          "scale_m_per_unit": round(floor.scale_m_per_unit, 4), "exported_gaussians": exported,
+         "same_view_views_compared": a["views_compared"], "same_view_views_compared_reverse": b["views_compared"],
          "frames_total": int(len(rec.video)), "stages": stages, "step_seconds": round(time.time() - t0)}
     (out / "metrics.json").write_text(json.dumps(m, indent=2, default=float))
     write_report(spec, m, out)
@@ -159,6 +160,27 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
     return (f"splats: PSNR before {m['splat_psnr_before']}, after {m['splat_psnr_after']} dB on held-out frames; "
             f"same-view changed {a['changed_share']:.1%} of pixels (noise level 1% by construction); "
             f"{m['step_seconds']} s")
+
+
+def _cam(E):
+    R, t = E[:, :3], E[:, 3]
+    return -R.T @ t, R[2]                      # centre, viewing direction
+
+
+def covered(rec, frames, other: int, max_deg: float = 25.0, max_rel: float = 0.15) -> list:
+    """Held-out frames that the other recording saw from a similar place (a camera within
+    `max_deg` of the same viewing direction and within `max_rel` of the scene's camera spread).
+    Elsewhere the other splat is extrapolating, and its render says nothing about change."""
+    oc = np.array([_cam(rec.E[s])[0] for s in np.nonzero(rec.video == other)[0]])
+    od = np.array([_cam(rec.E[s])[1] for s in np.nonzero(rec.video == other)[0]])
+    spread = float(np.linalg.norm(oc - oc.mean(0), axis=1).max()) + 1e-9
+    keep = []
+    for s in frames:
+        c, d = _cam(rec.E[s])
+        near = (np.linalg.norm(oc - c, axis=1) < max_rel * spread) & (od @ d > np.cos(np.radians(max_deg)))
+        if near.any():
+            keep.append(s)
+    return keep
 
 
 def _centres(sp, n: int):
@@ -241,6 +263,8 @@ def write_report(spec: SplatSpec, m: dict, out: Path) -> None:
          "Each held-out after photo is compared with the after splat's render (nothing changed, so this is the "
          "noise) and with the before splat's render from the same camera (change plus noise). Pixels above the 99th "
          "percentile of the no-change differences count as changed, so about 1% would be flagged if nothing moved.", "",
+         f"- Compared on {m.get('same_view_views_compared')} held-out after frames that the before recording also saw "
+         "from a similar place (elsewhere the before splat would only be guessing).",
          f"- Changed pixels, before splat vs after photos: **{f(m['same_view_changed_share'], 1, True)}** "
          f"(reverse direction {f(m['same_view_changed_share_reverse'], 1, True)}; 1% = no change).",
          f"- Median colour difference: {f(m['same_view_diff_median'], 3)} vs {f(m['same_view_noise_median'], 3)} "

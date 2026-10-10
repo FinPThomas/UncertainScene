@@ -185,7 +185,7 @@ def view_measurement(rec: Recon, s: int, X: np.ndarray, v: np.ndarray, u: np.nda
 
 
 def lift(rec: Recon, masks: dict, voxel: float, conf_quantile: float = 0.3, max_points: int = 4000,
-         seed: int = 0) -> list[dict]:
+         seed: int = 0, merge_vox: float | None = None) -> list[dict]:
     rng = np.random.default_rng(seed)
     frags = []
     H, W = rec.depth.shape[1:]
@@ -204,6 +204,9 @@ def lift(rec: Recon, masks: dict, voxel: float, conf_quantile: float = 0.3, max_
             X, v, u = X[ok], v[ok], u[ok]
             if len(X) < 15:
                 continue
+            vox = _keys(X, voxel)                       # from every point, before thinning
+            voxc = _keys(X, merge_vox or voxel)
+            rgb = rec.images[s][v, u].reshape(-1, 3).mean(0)
             if len(X) > max_points:
                 sel = rng.choice(len(X), max_points, replace=False)
                 X, v, u = X[sel], v[sel], u[sel]
@@ -212,12 +215,16 @@ def lift(rec: Recon, masks: dict, voxel: float, conf_quantile: float = 0.3, max_
             border = x0 <= 2 or y0 <= 2 or x1 >= fw - 3 or y1 >= fh - 3
             frags.append({"frame": s, "X": X, "pix": np.stack([v, u], 1), "mask": m["mask"], "full_bbox": m["full_bbox"],
                           "area": int(m["mask"].sum()), "border": border, "score": m["score"],
-                          "vox": _keys(X, voxel), "meas": view_measurement(rec, s, X, v, u, m)})
+                          "vox": vox, "voxc": voxc, "rgb": rgb, "meas": view_measurement(rec, s, X, v, u, m)})
     return frags
 
 
-def merge(frags: list[dict], min_over_small: float = 0.5, min_over_large: float = 0.25) -> list[list[int]]:
-    """Union-find groups of fragments that overlap in 3D (never two from the same frame)."""
+def merge(frags: list[dict], min_over_small: float = 0.5, min_over_large: float = 0.25,
+          max_colour: float = 60.0) -> list[list[int]]:
+    """Union-find groups of fragments that overlap in 3D on the merge grid ("voxc", sized to the
+    depth uncertainty so two views of one object share cells) and look alike (mean colour
+    within `max_colour` of 255); never two from the same frame."""
+    key = "voxc" if frags and "voxc" in frags[0] else "vox"
     parent = list(range(len(frags)))
 
     def find(i):
@@ -228,7 +235,7 @@ def merge(frags: list[dict], min_over_small: float = 0.5, min_over_large: float 
 
     owner: dict = {}
     for i, f in enumerate(frags):
-        for k in f["vox"]:
+        for k in f[key]:
             owner.setdefault(k, []).append(i)
     pairs: dict = {}
     for ids in owner.values():
@@ -240,7 +247,9 @@ def merge(frags: list[dict], min_over_small: float = 0.5, min_over_large: float 
                 if frags[i]["frame"] != frags[j]["frame"]:
                     pairs[(i, j)] = pairs.get((i, j), 0) + 1
     for (i, j), n in sorted(pairs.items(), key=lambda kv: -kv[1]):
-        ni, nj = len(frags[i]["vox"]), len(frags[j]["vox"])
+        ni, nj = len(frags[i][key]), len(frags[j][key])
+        if "rgb" in frags[i] and np.linalg.norm(frags[i]["rgb"] - frags[j]["rgb"]) > max_colour:
+            continue
         if n / min(ni, nj) > min_over_small and n / max(ni, nj) > min_over_large:
             parent[find(i)] = find(j)
     groups: dict = {}
@@ -266,13 +275,29 @@ def effective_voxel(rec: Recon, masks: dict, voxel: float) -> float:
     return max(voxel, 2.5 * float(np.median(fp))) if fp else voxel
 
 
+def merge_voxel(rec: Recon, masks: dict, voxel: float, k: float = 1.5) -> float:
+    """Grid for merging views and matching objects: coarser than the typical depth error, so
+    two views of the same surface (each off by about that much along its ray) share cells.
+    The error comes from VGGT's own confidence (alpha / conf, in reconstruction units)."""
+    sd = []
+    for s in masks:
+        ok = rec.depth[s] > 0
+        if ok.any():
+            sc = float(rec.scale[s]) if rec.scale is not None else 1.0
+            sd.append(np.median(VGGT_CONF_ALPHA / np.maximum(rec.conf[s][ok], 1e-3)) * sc)
+    return max(3 * voxel, k * float(np.median(sd))) if sd else 3 * voxel
+
+
 def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structure_units: float,
                   max_points: int = 15000, min_frames: int = 1, min_voxels: int = 6, seed: int = 0,
-                  adapt_voxel: bool = True) -> list[SceneObject]:
+                  adapt_voxel: bool = True, merge_vox: float | None = None) -> list[SceneObject]:
+    """`merge_vox`: grid for merging views and for matching across recordings (pass the same
+    value for every recording of a reconstruction; default from merge_voxel)."""
     rng = np.random.default_rng(seed)
     if adapt_voxel:
         voxel = effective_voxel(rec, masks, voxel)
-    frags = lift(rec, masks, voxel, seed=seed)
+    merge_vox = merge_vox or merge_voxel(rec, masks, voxel)
+    frags = lift(rec, masks, voxel, seed=seed, merge_vox=merge_vox)
     objs = []
     for g in merge(frags):
         fs = [frags[i] for i in g]
@@ -292,7 +317,8 @@ def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structu
         for f in fs:                                   # largest mask per frame
             if f["frame"] not in mk or f["area"] > mk[f["frame"]].sum():
                 mk[f["frame"]] = f["mask"]
-        o = SceneObject(len(objs), recording, X, frame, pix, vox, mk, best_frame=int(best["frame"]),
+        voxc = set().union(*(f["voxc"] for f in fs))
+        o = SceneObject(len(objs), recording, X, frame, pix, voxc, mk, best_frame=int(best["frame"]),
                         complete=not best["border"], centroid=c, extent=ext, structure=bool(ext[0] > structure_units))
         views: dict = {}
         for f_ in fs:
@@ -300,20 +326,25 @@ def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structu
                 views[f_["frame"]] = (f_["area"], f_["meas"])
         o.extra["views"] = [dict(frame=int(k), **views[k][1]) for k in sorted(views)]
         o.extra["full_bbox"] = best["full_bbox"]
-        o.extra["voxel"] = voxel
+        o.extra["voxel"] = merge_vox            # size of the cells in o.voxels
+        o.extra["fine_voxel"] = voxel
+        o.extra["fine_vox"] = vox
         o.extra["n_views"] = len(mk)
         objs.append(o)
     # drop parts: an object almost entirely inside a larger non-structure object
-    objs.sort(key=lambda o: -len(o.voxels))
+    objs.sort(key=lambda o: -len(o.extra["fine_vox"]))
     keep = []
     for o in objs:
-        part = any(not p.structure and len(o.voxels & p.voxels) > 0.8 * len(o.voxels) for p in keep)
+        fo = o.extra["fine_vox"]
+        part = any(not p.structure and len(fo & p.extra["fine_vox"]) > 0.8 * len(fo) for p in keep)
         if not part:
             keep.append(o)
     for i, o in enumerate(keep):
         o.id = i
-    log.info("recording %s: %d masks on %d frames -> %d fragments -> %d objects (%d structures)", recording,
-             sum(len(m) for m in masks.values()), len(masks), len(frags), len(keep), sum(o.structure for o in keep))
+    log.info("recording %s: %d masks on %d frames -> %d fragments -> %d objects (%d structures), median %s views "
+             "per object, merge grid %.4f units", recording, sum(len(m) for m in masks.values()), len(masks), len(frags),
+             len(keep), sum(o.structure for o in keep),
+             float(np.median([o.extra["n_views"] for o in keep])) if keep else 0, merge_vox)
     return keep
 
 

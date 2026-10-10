@@ -396,3 +396,24 @@ def test_splat_step_end_to_end(tmp_path, monkeypatch):
               "report.md"):
         assert (out / n).exists() and (out / n).stat().st_size > 100, n
     assert (out / "splat_before.splat").stat().st_size == 500 * 32
+
+
+MV = None     # default merge grid (set to 0.01, the fine grid, the old behaviour fails this test)
+
+
+def test_views_merge_despite_depth_noise(tmp_path, monkeypatch):
+    """Real VGGT depth is off by several cm per view; views of one object must still merge into
+    one multi-view object (run 2 found 1107 of 1122 objects seen in a single view)."""
+    from test_change import colour_feats
+    from uncertainscene.change.segment import build_objects, key_frames
+
+    _fake_clip(monkeypatch)
+    rec = _with_files(make_recon((-0.5, 0.8, 0.0), (-0.5, 0.8, 0.0)), tmp_path)
+    rng = np.random.default_rng(0)
+    rec.depth = rec.depth * (1 + rng.normal(0, 0.04, (len(rec.depth), 1, 1))) \
+        * (1 + rng.normal(0, 0.01, rec.depth.shape))           # per-view offset + per-pixel noise
+    rec.conf = np.full_like(rec.depth, 0.2 / 0.05)             # VGGT-style confidence: ~5 cm depth error
+    masks = _fake_masks(rec, key_frames(rec, 0, 8))
+    objs = build_objects(rec, masks, "A", voxel=0.01, structure_units=1.2, min_voxels=3, merge_vox=MV)
+    box = [o for o in objs if np.all(rec.images[o.best_frame][o.masks[o.best_frame]][:1] == [200, 30, 30])]
+    assert box and box[0].extra["n_views"] >= 6, [o.extra["n_views"] for o in objs]
