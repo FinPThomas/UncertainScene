@@ -153,6 +153,16 @@
       "started": "2026-10-10 00:24:19 UTC",
       "status": "done"
     },
+    "p3_mobile_closer_darkBa_vs_lightAa": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "494c0d8",
+      "expires": 1791595360.692516,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 00:32:16 UTC",
+      "status": "running"
+    },
     "p3_mobile_closer_lightBa_vs_lightAa": {
       "account": "colab-dbb8",
       "attempts": 1,
