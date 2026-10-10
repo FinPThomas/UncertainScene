@@ -93,6 +93,16 @@
       "started": "2026-10-10 17:51:24 UTC",
       "status": "done"
     },
+    "3-allpairs_moved-and-light-changed_dark-before-a_vs_light-after-b": {
+      "account": "colab-9ce8",
+      "attempts": 1,
+      "commit": "627d07a",
+      "expires": 1791664706.488149,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 19:06:56 UTC",
+      "status": "running"
+    },
     "3-allpairs_no-change-light-vs-dark_dark-before-a_vs_light-before-b": {
       "account": "colab-9ce8",
       "attempts": 1,
