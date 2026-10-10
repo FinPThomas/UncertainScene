@@ -977,11 +977,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "cef457c",
-      "expires": 1791603674.7910342,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 02:52:39 UTC",
+      "note": "change: 3.10% changed, 2 changes (0 moved), interactable 0%, 97s",
       "started": "2026-10-10 02:50:50 UTC",
-      "status": "running"
+      "status": "done"
     },
     "p7_off5_lightBa_vs_lightBb": {
       "account": "colab-dbb8",
