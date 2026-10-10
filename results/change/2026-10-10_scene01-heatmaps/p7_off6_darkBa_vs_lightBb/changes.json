@@ -1,0 +1,170 @@
+[
+  {
+    "id": 0,
+    "kind": "added",
+    "n_points": 1345,
+    "centroid": [
+      -0.2962999939918518,
+      0.04430000111460686,
+      0.6736999750137329
+    ],
+    "centroid_std": 0.036154113709926605,
+    "extent": [
+      0.09390000253915787,
+      0.05689999833703041,
+      0.02199999988079071
+    ],
+    "extent_ci": [
+      [
+        0.0921,
+        0.096
+      ],
+      [
+        0.0553,
+        0.0585
+      ],
+      [
+        0.0213,
+        0.0227
+      ]
+    ],
+    "frame_votes": {
+      "52": 544,
+      "33": 362,
+      "34": 230,
+      "51": 209
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "hat",
+    "label_prob": 0.149,
+    "description": "A hat appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        41.0,
+        24.9,
+        9.6
+      ],
+      "size_cm_ci": [
+        [
+          40.2,
+          41.9
+        ],
+        [
+          24.2,
+          25.6
+        ],
+        [
+          9.3,
+          9.9
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          33.4,
+          20.3,
+          7.8
+        ],
+        [
+          48.6,
+          29.5,
+          11.4
+        ]
+      ],
+      "position_sd_cm": 15.8,
+      "boundary_uncertainty_cm": 17.14,
+      "mean_abs_shift_cm": 44.6,
+      "reach": 0.0,
+      "approach": 0.4,
+      "height_m": 0.21
+    }
+  },
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 805,
+    "centroid": [
+      -0.40939998626708984,
+      -0.29100000858306885,
+      0.843500018119812
+    ],
+    "centroid_std": 0.036152951419353485,
+    "extent": [
+      0.08190000057220459,
+      0.04230000078678131,
+      0.015799999237060547
+    ],
+    "extent_ci": [
+      [
+        0.0791,
+        0.0881
+      ],
+      [
+        0.0403,
+        0.0444
+      ],
+      [
+        0.0145,
+        0.0169
+      ]
+    ],
+    "frame_votes": {
+      "42": 479,
+      "41": 189,
+      "39": 85,
+      "38": 52
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "hat",
+    "label_prob": 0.242,
+    "description": "The hat looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        35.8,
+        18.5,
+        6.9
+      ],
+      "size_cm_ci": [
+        [
+          34.6,
+          38.5
+        ],
+        [
+          17.6,
+          19.4
+        ],
+        [
+          6.3,
+          7.4
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          29.2,
+          15.1,
+          5.6
+        ],
+        [
+          42.4,
+          21.9,
+          8.2
+        ]
+      ],
+      "position_sd_cm": 15.8,
+      "boundary_uncertainty_cm": 7.26,
+      "mean_abs_shift_cm": 33.2,
+      "reach": 0.0,
+      "approach": 0.63,
+      "height_m": 1.48
+    }
+  }
+]
