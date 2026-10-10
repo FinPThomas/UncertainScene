@@ -1,0 +1,86 @@
+[
+  {
+    "id": 0,
+    "kind": "removed",
+    "n_points": 1866,
+    "centroid": [
+      -0.06539999693632126,
+      -0.0617000013589859,
+      0.7566999793052673
+    ],
+    "centroid_std": 0.03453652560710907,
+    "extent": [
+      0.23109999299049377,
+      0.08659999817609787,
+      0.04919999837875366
+    ],
+    "extent_ci": [
+      [
+        0.2252,
+        0.2358
+      ],
+      [
+        0.0852,
+        0.0889
+      ],
+      [
+        0.0477,
+        0.0502
+      ]
+    ],
+    "frame_votes": {
+      "1": 1599,
+      "3": 136,
+      "26": 68,
+      "4": 63
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "coaster",
+    "label_prob": 0.277,
+    "description": "A coaster that was there in the first recording is no longer there.",
+    "metric": {
+      "size_cm": [
+        165.4,
+        62.0,
+        35.2
+      ],
+      "size_cm_ci": [
+        [
+          161.2,
+          168.7
+        ],
+        [
+          61.0,
+          63.6
+        ],
+        [
+          34.1,
+          35.9
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          134.8,
+          50.5,
+          28.7
+        ],
+        [
+          196.0,
+          73.5,
+          41.7
+        ]
+      ],
+      "position_sd_cm": 24.7,
+      "boundary_uncertainty_cm": 30.47,
+      "mean_abs_shift_cm": 83.5,
+      "reach": 0.0,
+      "approach": 0.97,
+      "height_m": 0.52
+    }
+  }
+]
