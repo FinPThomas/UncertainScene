@@ -133,6 +133,16 @@
       "started": "2026-10-10 00:18:54 UTC",
       "status": "done"
     },
+    "p3_big_gripper_lightBa_vs_lightAa": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "5e60523",
+      "expires": 1791595455.8597162,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 00:33:51 UTC",
+      "status": "running"
+    },
     "p3_long_arm_darkBa_vs_lightAa": {
       "account": "colab-dbb8",
       "attempts": 1,
