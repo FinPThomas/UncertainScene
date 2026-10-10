@@ -82,6 +82,16 @@
       "note": "splats: PSNR before 17.74, after 17.85 dB on held-out frames; same-view changed 2.0% of pixels (noise level 1% by construction); 1582 s",
       "started": "2026-10-10 14:22:30 UTC",
       "status": "done"
+    },
+    "2-position_summary": {
+      "account": "colab-9ce8",
+      "attempts": 1,
+      "commit": "893fb2b",
+      "expires": 1791656664.10669,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 17:51:24 UTC",
+      "status": "running"
     }
   }
 }
