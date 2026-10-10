@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-10_scene01-objects",
+  "step": "1-main_moved_light-before-b_vs_light-after-b",
+  "status": "done",
+  "account": "colab-9ce8",
+  "commit": "dfd2e20",
+  "minutes": 36.5,
+  "usage_at_end": "RAM 5.7/12.7 GB, disk free 54.2 GB, GPU 6.6/15.0 GB",
+  "note": "change: 0 changed objects of 511 (0%); labels: ; scale 2.186 m/unit; 2142s"
+}
