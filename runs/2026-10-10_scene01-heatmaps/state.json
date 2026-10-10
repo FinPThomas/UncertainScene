@@ -1447,11 +1447,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "6b9698a",
-      "expires": 1791608677.202089,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 04:15:46 UTC",
+      "note": "lighting: 1.84% changed, 1 changes (0 moved), interactable 0%, 82s",
       "started": "2026-10-10 04:14:13 UTC",
-      "status": "running"
+      "status": "done"
     },
     "p7_off8_lightBa_vs_lightAa": {
       "account": "colab-dbb8",
