@@ -807,11 +807,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "c21cbe1",
-      "expires": 1791602603.6177363,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 02:34:45 UTC",
+      "note": "static: 1.42% changed, 2 changes (0 moved), interactable 0%, 93s",
       "started": "2026-10-10 02:32:59 UTC",
-      "status": "running"
+      "status": "done"
     },
     "p7_off4_darkBa_vs_lightAa": {
       "account": "colab-dbb8",
