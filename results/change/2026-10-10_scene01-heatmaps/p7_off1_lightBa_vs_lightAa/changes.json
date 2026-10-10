@@ -1,0 +1,169 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 1201,
+    "centroid": [
+      0.42989999055862427,
+      -0.09830000251531601,
+      0.8646000027656555
+    ],
+    "centroid_std": 0.023020168766379356,
+    "extent": [
+      0.08590000122785568,
+      0.06800000369548798,
+      0.03869999945163727
+    ],
+    "extent_ci": [
+      [
+        0.0833,
+        0.0878
+      ],
+      [
+        0.0656,
+        0.0726
+      ],
+      [
+        0.035,
+        0.0409
+      ]
+    ],
+    "frame_votes": {
+      "10": 1046,
+      "12": 75,
+      "11": 71,
+      "0": 5,
+      "13": 4
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "cup",
+    "label_prob": 0.563,
+    "description": "The cup looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        21.0,
+        16.6,
+        9.4
+      ],
+      "size_cm_ci": [
+        [
+          20.3,
+          21.4
+        ],
+        [
+          16.0,
+          17.7
+        ],
+        [
+          8.5,
+          10.0
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          17.1,
+          13.5,
+          7.7
+        ],
+        [
+          24.8,
+          19.7,
+          11.2
+        ]
+      ],
+      "position_sd_cm": 5.6,
+      "boundary_uncertainty_cm": 1.85,
+      "mean_abs_shift_cm": 5.7,
+      "reach": 0.0,
+      "approach": 0.16,
+      "height_m": 0.81
+    }
+  },
+  {
+    "id": 1,
+    "kind": "appearance",
+    "n_points": 625,
+    "centroid": [
+      0.1995999962091446,
+      -0.3467000126838684,
+      0.9751999974250793
+    ],
+    "centroid_std": 0.023023823276162148,
+    "extent": [
+      0.12219999730587006,
+      0.04450000077486038,
+      0.016699999570846558
+    ],
+    "extent_ci": [
+      [
+        0.1171,
+        0.1251
+      ],
+      [
+        0.0428,
+        0.0469
+      ],
+      [
+        0.016,
+        0.0173
+      ]
+    ],
+    "frame_votes": {
+      "15": 329,
+      "14": 296
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "baseball cap",
+    "label_prob": 0.811,
+    "description": "The baseball cap looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        29.8,
+        10.9,
+        4.1
+      ],
+      "size_cm_ci": [
+        [
+          28.6,
+          30.5
+        ],
+        [
+          10.4,
+          11.4
+        ],
+        [
+          3.9,
+          4.2
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          24.3,
+          8.9,
+          3.3
+        ],
+        [
+          35.3,
+          12.9,
+          4.8
+        ]
+      ],
+      "position_sd_cm": 5.6,
+      "boundary_uncertainty_cm": 1.53,
+      "mean_abs_shift_cm": 5.5,
+      "reach": 0.0,
+      "approach": 0.43,
+      "height_m": 1.31
+    }
+  }
+]
