@@ -1,0 +1,171 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 813,
+    "centroid": [
+      -0.33550000190734863,
+      -0.12870000302791595,
+      0.7897999882698059
+    ],
+    "centroid_std": 0.036145277321338654,
+    "extent": [
+      0.08089999854564667,
+      0.027000000700354576,
+      0.007899999618530273
+    ],
+    "extent_ci": [
+      [
+        0.0791,
+        0.0831
+      ],
+      [
+        0.0263,
+        0.0282
+      ],
+      [
+        0.0076,
+        0.008
+      ]
+    ],
+    "frame_votes": {
+      "4": 486,
+      "5": 175,
+      "3": 99,
+      "2": 28,
+      "1": 25
+    },
+    "recording": "A",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "book",
+    "label_prob": 0.573,
+    "description": "The book looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        39.0,
+        13.0,
+        3.8
+      ],
+      "size_cm_ci": [
+        [
+          38.1,
+          40.1
+        ],
+        [
+          12.7,
+          13.6
+        ],
+        [
+          3.7,
+          3.9
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          31.8,
+          10.6,
+          3.1
+        ],
+        [
+          46.2,
+          15.4,
+          4.5
+        ]
+      ],
+      "position_sd_cm": 17.4,
+      "boundary_uncertainty_cm": 7.87,
+      "mean_abs_shift_cm": 12.9,
+      "reach": 0.0,
+      "approach": 0.83,
+      "height_m": 0.84
+    }
+  },
+  {
+    "id": 1,
+    "kind": "added",
+    "n_points": 619,
+    "centroid": [
+      -0.18359999358654022,
+      0.025499999523162842,
+      0.6973000168800354
+    ],
+    "centroid_std": 0.03615160286426544,
+    "extent": [
+      0.09279999881982803,
+      0.05779999867081642,
+      0.02329999953508377
+    ],
+    "extent_ci": [
+      [
+        0.0867,
+        0.0976
+      ],
+      [
+        0.0557,
+        0.0602
+      ],
+      [
+        0.0222,
+        0.024
+      ]
+    ],
+    "frame_votes": {
+      "52": 291,
+      "33": 195,
+      "34": 72,
+      "51": 61
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "hat",
+    "label_prob": 0.12,
+    "description": "A hat appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        44.8,
+        27.9,
+        11.2
+      ],
+      "size_cm_ci": [
+        [
+          41.8,
+          47.1
+        ],
+        [
+          26.9,
+          29.0
+        ],
+        [
+          10.7,
+          11.6
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          36.5,
+          22.7,
+          9.2
+        ],
+        [
+          53.0,
+          33.0,
+          13.3
+        ]
+      ],
+      "position_sd_cm": 17.4,
+      "boundary_uncertainty_cm": 20.56,
+      "mean_abs_shift_cm": 48.5,
+      "reach": 0.0,
+      "approach": 0.5,
+      "height_m": 0.21
+    }
+  }
+]
