@@ -1,0 +1,84 @@
+{
+  "step": "1b-splat_moved_light-before-a_vs_light-after-a",
+  "step_kind": "splat",
+  "version": 2,
+  "a": "scene01_light_before_a",
+  "b": "scene01_light_after_a",
+  "pair_type": "change",
+  "variant": "splat",
+  "title": "Gaussian splats: light, before, take a vs light, after, take a",
+  "question": "Do splats of each recording render well, and does comparing before and after from the exact same camera separate real changes from noise?",
+  "phase_title": "Gaussian splats",
+  "splat_iters": 7000,
+  "splats": [
+    {
+      "recording": "scene01_light_before_a",
+      "train_frames": 319,
+      "held_out_frames": 45,
+      "iters": 7000,
+      "gaussians": 440085,
+      "seconds": 1208,
+      "image_size": [
+        432,
+        768
+      ],
+      "pose_correction_deg_median": 0.755,
+      "final_l1": 0.068
+    },
+    {
+      "recording": "scene01_light_after_a",
+      "train_frames": 325,
+      "held_out_frames": 46,
+      "iters": 7000,
+      "gaussians": 500617,
+      "seconds": 327,
+      "image_size": [
+        432,
+        768
+      ],
+      "pose_correction_deg_median": 0.668,
+      "final_l1": 0.0701
+    }
+  ],
+  "splat_psnr_before": 17.74,
+  "splat_psnr_after": 17.85,
+  "same_view_noise_median": 0.0523,
+  "same_view_diff_median": 0.0824299305677414,
+  "same_view_threshold": 0.4439,
+  "same_view_changed_share": 0.019966079604812857,
+  "same_view_changed_share_reverse": 0.014233789874130707,
+  "depth_changed_share_5cm": 0.7686512043338944,
+  "scale_m_per_unit": 3.1051,
+  "exported_gaussians": {
+    "before": 140000,
+    "after": 140000
+  },
+  "frames_total": 735,
+  "stages": [
+    {
+      "stage": "reconstruction (735 frames, cached)",
+      "seconds": 6
+    },
+    {
+      "stage": "splat of light, before, take a: 440085 Gaussians, 1208 s",
+      "seconds": 1224
+    },
+    {
+      "stage": "splat of light, after, take a: 500617 Gaussians, 327 s",
+      "seconds": 1559
+    },
+    {
+      "stage": "held-out renders and same-view comparison",
+      "seconds": 1571
+    },
+    {
+      "stage": "figures",
+      "seconds": 1577
+    },
+    {
+      "stage": "exports",
+      "seconds": 1582
+    }
+  ],
+  "step_seconds": 1582
+}

@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-10_scene01-objects",
+  "step": "1b-splat_moved_light-before-a_vs_light-after-a",
+  "status": "done",
+  "account": "colab-9ce8",
+  "commit": "60703f1",
+  "minutes": 26.4,
+  "usage_at_end": "RAM 5.6/12.7 GB, disk free 57.7 GB, GPU 6.8/15.0 GB",
+  "note": "splats: PSNR before 17.74, after 17.85 dB on held-out frames; same-view changed 2.0% of pixels (noise level 1% by construction); 1582 s"
+}

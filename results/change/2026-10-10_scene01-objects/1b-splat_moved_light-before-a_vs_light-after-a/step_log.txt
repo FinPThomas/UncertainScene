@@ -1,0 +1,27 @@
+2026-10-10 14:22:31,218 INFO uncertainscene.scene01: step 1b-splat_moved_light-before-a_vs_light-after-a: Gaussian splats of scene01_light_before_a and scene01_light_after_a
+2026-10-10 14:22:31,233 INFO uncertainscene.scene01: reusing cached reconstruction recon2_scene01_light_before_a_scene01_light_after_a_nall_o0.npz
+2026-10-10 14:22:37,671 INFO uncertainscene.splats: stage done: reconstruction (735 frames, cached) (6 s)
+2026-10-10 14:23:39,440 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 85% (RAM 10.8/12.7 GB, disk free 57.6 GB, GPU 6.5/15.0 GB)
+2026-10-10 14:23:57,375 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 91% (RAM 11.5/12.7 GB, disk free 57.5 GB, GPU 6.5/15.0 GB)
+2026-10-10 14:24:15,457 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 81% (RAM 10.3/12.7 GB, disk free 57.5 GB, GPU 6.5/15.0 GB)
+2026-10-10 14:24:33,137 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 82% (RAM 10.3/12.7 GB, disk free 57.5 GB, GPU 6.5/15.0 GB)
+2026-10-10 14:37:30,540 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 0, L1 0.1630, 249777 Gaussians, 884 s
+2026-10-10 14:38:16,098 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 1000, L1 0.0931, 264789 Gaussians, 929 s
+2026-10-10 14:39:02,534 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 2000, L1 0.0857, 299718 Gaussians, 976 s
+2026-10-10 14:39:48,563 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 3000, L1 0.0826, 337120 Gaussians, 1022 s
+2026-10-10 14:40:35,017 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 4000, L1 0.0737, 379609 Gaussians, 1068 s
+2026-10-10 14:41:21,814 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 5000, L1 0.0738, 429799 Gaussians, 1115 s
+2026-10-10 14:42:08,702 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 6000, L1 0.0723, 440085 Gaussians, 1162 s
+2026-10-10 14:42:54,926 INFO uncertainscene.splats: stage done: splat of light, before, take a: 440085 Gaussians, 1208 s (1224 s)
+2026-10-10 14:43:03,324 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 0, L1 0.2114, 249925 Gaussians, 0 s
+2026-10-10 14:43:49,830 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 1000, L1 0.0918, 273563 Gaussians, 47 s
+2026-10-10 14:44:35,307 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 2000, L1 0.0853, 322626 Gaussians, 92 s
+2026-10-10 14:45:21,528 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 3000, L1 0.0814, 373458 Gaussians, 138 s
+2026-10-10 14:46:08,340 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 4000, L1 0.0792, 426634 Gaussians, 185 s
+2026-10-10 14:46:55,862 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 5000, L1 0.0776, 486581 Gaussians, 233 s
+2026-10-10 14:47:43,296 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 6000, L1 0.0734, 500617 Gaussians, 280 s
+2026-10-10 14:48:30,023 INFO uncertainscene.splats: stage done: splat of light, after, take a: 500617 Gaussians, 327 s (1559 s)
+2026-10-10 14:48:32,753 INFO uncertainscene.change.floor: floor: gravity refined by 8.8 deg, 38 floor points (3% of horizontal), camera 0.435 units above floor -> 3.105 m/unit
+2026-10-10 14:48:41,816 INFO uncertainscene.splats: stage done: held-out renders and same-view comparison (1571 s)
+2026-10-10 14:48:48,550 INFO uncertainscene.splats: stage done: figures (1577 s)
+2026-10-10 14:48:53,554 INFO uncertainscene.splats: stage done: exports (1582 s)

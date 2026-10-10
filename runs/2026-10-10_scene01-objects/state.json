@@ -17,11 +17,11 @@
       "account": "colab-9ce8",
       "attempts": 1,
       "commit": "60703f1",
-      "expires": 1791647010.0261214,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 14:48:53 UTC",
+      "note": "splats: PSNR before 17.74, after 17.85 dB on held-out frames; same-view changed 2.0% of pixels (noise level 1% by construction); 1582 s",
       "started": "2026-10-10 14:22:30 UTC",
-      "status": "running"
+      "status": "done"
     }
   }
 }
