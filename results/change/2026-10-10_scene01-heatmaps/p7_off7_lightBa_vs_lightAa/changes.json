@@ -1,0 +1,85 @@
+[
+  {
+    "id": 0,
+    "kind": "appearance",
+    "n_points": 861,
+    "centroid": [
+      0.8198999762535095,
+      -0.08349999785423279,
+      0.8270000219345093
+    ],
+    "centroid_std": 0.02546456828713417,
+    "extent": [
+      0.16670000553131104,
+      0.06239999830722809,
+      0.006399999838322401
+    ],
+    "extent_ci": [
+      [
+        0.1577,
+        0.1697
+      ],
+      [
+        0.06,
+        0.0647
+      ],
+      [
+        0.0062,
+        0.0107
+      ]
+    ],
+    "frame_votes": {
+      "35": 723,
+      "34": 98,
+      "36": 40
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "door",
+    "label_prob": 0.118,
+    "description": "The door looks different (turned over, deformed or swapped) but occupies the same place.",
+    "metric": {
+      "size_cm": [
+        37.5,
+        14.0,
+        1.4
+      ],
+      "size_cm_ci": [
+        [
+          35.4,
+          38.1
+        ],
+        [
+          13.5,
+          14.5
+        ],
+        [
+          1.4,
+          2.4
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          30.5,
+          11.4,
+          1.2
+        ],
+        [
+          44.4,
+          16.6,
+          1.7
+        ]
+      ],
+      "position_sd_cm": 5.7,
+      "boundary_uncertainty_cm": 2.07,
+      "mean_abs_shift_cm": 6.5,
+      "reach": 0.0,
+      "approach": 0.14,
+      "height_m": 0.77
+    }
+  }
+]
