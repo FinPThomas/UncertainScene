@@ -1217,11 +1217,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "4bde611",
-      "expires": 1791606130.5091164,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 03:33:23 UTC",
+      "note": "lighting: 1.99% changed, 1 changes (0 moved), interactable 0%, 86s",
       "started": "2026-10-10 03:31:46 UTC",
-      "status": "running"
+      "status": "done"
     },
     "p7_off7_lightBa_vs_lightAa": {
       "account": "colab-dbb8",
