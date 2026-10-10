@@ -1,0 +1,17 @@
+{
+  "branch": "exp/change/scene01-heatmaps",
+  "path": "change",
+  "run_id": "2026-10-10_scene01-objects",
+  "steps": {
+    "1-main_moved_light-before-a_vs_light-after-a": {
+      "account": "colab-9ce8",
+      "attempts": 1,
+      "commit": "a9616c4",
+      "expires": 1791645229.3179564,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 13:42:19 UTC",
+      "status": "running"
+    }
+  }
+}
