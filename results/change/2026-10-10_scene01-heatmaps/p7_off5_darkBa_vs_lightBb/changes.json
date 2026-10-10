@@ -1,0 +1,87 @@
+[
+  {
+    "id": 0,
+    "kind": "added",
+    "n_points": 909,
+    "centroid": [
+      0.5946999788284302,
+      -0.10819999873638153,
+      0.9165999889373779
+    ],
+    "centroid_std": 0.038552794605493546,
+    "extent": [
+      0.06989999860525131,
+      0.039400000125169754,
+      0.0348999984562397
+    ],
+    "extent_ci": [
+      [
+        0.0639,
+        0.0755
+      ],
+      [
+        0.0373,
+        0.0421
+      ],
+      [
+        0.0325,
+        0.0377
+      ]
+    ],
+    "frame_votes": {
+      "45": 346,
+      "47": 159,
+      "46": 137,
+      "27": 128,
+      "30": 94
+    },
+    "recording": "B",
+    "displacement": null,
+    "distance": null,
+    "distance_ci": null,
+    "match_similarity": null,
+    "partner": null,
+    "label": "neck pillow",
+    "label_prob": 0.206,
+    "description": "A neck pillow appears in the second recording that was not there before.",
+    "metric": {
+      "size_cm": [
+        52.8,
+        29.8,
+        26.4
+      ],
+      "size_cm_ci": [
+        [
+          48.3,
+          57.1
+        ],
+        [
+          28.2,
+          31.8
+        ],
+        [
+          24.6,
+          28.5
+        ]
+      ],
+      "size_cm_scale_range": [
+        [
+          43.0,
+          24.3,
+          21.5
+        ],
+        [
+          62.6,
+          35.3,
+          31.3
+        ]
+      ],
+      "position_sd_cm": 29.1,
+      "boundary_uncertainty_cm": 6.15,
+      "mean_abs_shift_cm": 116.8,
+      "reach": 0.0,
+      "approach": 0.54,
+      "height_m": 1.46
+    }
+  }
+]
