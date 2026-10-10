@@ -157,11 +157,11 @@
       "account": "colab-dbb8",
       "attempts": 1,
       "commit": "68e19da",
-      "expires": 1791595263.5942698,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-10 00:32:13 UTC",
+      "note": "change: 1.18% changed, 2 changes (0 moved), interactable 1%, 75s",
       "started": "2026-10-10 00:30:39 UTC",
-      "status": "running"
+      "status": "done"
     },
     "p3_short_arm_darkBa_vs_lightAa": {
       "account": "colab-dbb8",
