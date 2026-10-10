@@ -72,6 +72,16 @@
       "note": "change+lighting: 3.13% changed, 5 changes (0 moved), interactable 0%, 97s",
       "started": "2026-10-10 00:06:10 UTC",
       "status": "done"
+    },
+    "p1b_darkBc_vs_lightAa": {
+      "account": "colab-dbb8",
+      "attempts": 1,
+      "commit": "0925cca",
+      "expires": 1791593914.4651122,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-10 00:08:10 UTC",
+      "status": "running"
     }
   }
 }
