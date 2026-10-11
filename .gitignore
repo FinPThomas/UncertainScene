@@ -29,3 +29,6 @@ build/
 # Secrets
 .env
 *.token
+
+# per-object splats of changed objects are small assets (Fin, 2026-10-11)
+!results/**/object_splats/*.splat

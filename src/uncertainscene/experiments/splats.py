@@ -76,7 +76,7 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
     rspec = Spec(spec.name, spec.a, spec.b, n_per_video=spec.n_per_video, offset=spec.offset)
     rec, rinfo = _recon(rspec, cache)
     stage(f"reconstruction ({len(rec.video)} frames{', cached' if rinfo.get('cached') else ''})")
-    from .scene01 import _posed
+    from .scene01 import _key, _posed
 
     rspec.refine_poses = spec.refine_poses
     rec, rinfo, pts = _posed(rspec, cache, rec, rinfo, stage)
@@ -153,6 +153,10 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
                 store.put(full[nm], "run-splats", name=full[nm].name, overwrite=True)
             except Exception as e:  # noqa: BLE001 - the full export is a bonus
                 log.warning("full splat upload failed: %s", e)
+    # per-object splats of the changed objects (SAM 2 objects saved by the main step of this pair)
+    obj_splats = _object_splats(splats, cache / f"objects_{_key(rspec)}.npz", out / "object_splats", spec)
+    if obj_splats:
+        stage(f"per-object splats ({len(obj_splats)} files)")
     # web viewer of the real splats (shapes, sizes, transparency), small enough for git
     from ..viz import splat_site
 
@@ -161,7 +165,9 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
     c2w[:3, :3] = rec.E[s0, :, :3].T
     c2w[:3, 3] = -rec.E[s0, :, :3].T @ rec.E[s0, :, 3]
     fov = float(np.degrees(2 * np.arctan(h0 / 2 / rec.K[s0, 1, 1])))
-    splat_site.build({f"Before ({rec_name(spec.a)})": full["before"], f"After ({rec_name(spec.b)})": full["after"]},
+    entries = {f"Before ({rec_name(spec.a)})": full["before"], f"After ({rec_name(spec.b)})": full["after"]}
+    entries.update({k: v for k, v in list(obj_splats.items())[:12]})
+    splat_site.build(entries,
                      out / "splat_viewer", title="Scene01 Splat Viewer", cameras={"After camera": {"c2w": c2w, "fov_y": fov}},
                      max_gaussians=cfg.viewer_max,
                      notes=f"{spec.iters} steps, poses {'refined by bundle adjustment' if pts is not None else 'from VGGT'}, "
@@ -195,6 +201,59 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
     return (f"splats: PSNR before {m['splat_psnr_before']}, after {m['splat_psnr_after']} dB on held-out frames; "
             f"same-view changed {a['changed_share']:.1%} of pixels (noise level 1% by construction); "
             f"{m['step_seconds']} s")
+
+
+def _object_splats(splats, objects_file: Path, out: Path, spec, max_objects: int = 8) -> dict:
+    """Cut the Gaussians of each changed object out of its recording's splat: Gaussians within
+    one merge voxel of the object's SAM 2 points (and not nearly transparent). Writes
+    <object>_before.splat / <object>_after.splat (standard .splat, any splat viewer or engine
+    imports them). Returns {viewer name: path}."""
+    import torch
+
+    from ..change.assets import CHANGED, load_objects
+    from ..recon.splat import Splat
+
+    if not objects_file.exists():
+        log.info("no saved objects for this pair (%s); no per-object splats", objects_file.name)
+        return {}
+    from scipy.spatial import cKDTree
+
+    objs = load_objects(objects_file)
+    by = {(o["recording"], o["id"]): o for o in objs}
+    picked = []
+    for o in sorted((o for o in objs if o["status"] in CHANGED), key=lambda o: -len(o["X"])):
+        pair = [o]
+        if o["partner"] is not None:
+            p = by.get(("B" if o["recording"] == "A" else "A", o["partner"]))
+            if p is not None:
+                pair.append(p)
+        if any(q in sum(picked, []) for q in pair):
+            continue
+        picked.append(pair)
+        if len(picked) >= max_objects:
+            break
+    out.mkdir(parents=True, exist_ok=True)
+    res = {}
+    for pair in picked:
+        for o in pair:
+            v = 0 if o["recording"] == "A" else 1
+            sp = splats[v]
+            with torch.no_grad():
+                P = sp.p["means"].cpu().numpy()
+                op = torch.sigmoid(sp.p["opacities"]).cpu().numpy()
+            r = float(o["voxel"] or 0.02)
+            d = cKDTree(o["X"]).query(P, distance_upper_bound=r)[0]
+            keep = np.isfinite(d) & (op > 0.05)
+            if keep.sum() < 50:
+                continue
+            k = torch.as_tensor(keep, device=sp.p["means"].device)
+            sub = Splat({n: t[k] for n, t in sp.p.items()}, sp.sh_degree)
+            name = f"{o['recording']}{o['id']:03d}_{(o['label'] or 'object').replace(' ', '_')}_{['before', 'after'][v]}"
+            f = out / f"{name}.splat"
+            sub.export_splat(f, 10**9)
+            res[f"{o['label'] or 'object'} {o['recording']}{o['id']} ({['before', 'after'][v]}, {o['status']})"] = f
+    log.info("per-object splats: %d files for %d changed objects", len(res), len(picked))
+    return res
 
 
 def _cam(E):

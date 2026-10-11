@@ -363,7 +363,7 @@ def measure(rec, objs: list, scale_m_per_unit: float, cfg: MotionConfig = Motion
                      "deform_peak_xyz": np.round(r["peak"], 4).tolist()})
     rows.sort(key=lambda r: -r["deform_p90_cm"])
     med = float(np.median(sig_cm)) if len(sig_cm) else float("nan")
-    return {"links_XA": XA, "links_XB": XB, "disp_cm": disp, "sigma_cm": sig_cm, "z": z, "moved_pt": moved_pt,
+    return {"links_XA": XA, "links_XB": XB, "C": Cd, "disp_cm": disp, "sigma_cm": sig_cm, "z": z, "moved_pt": moved_pt,
             "resid_cm": resid, "deform_sig": defsig, "obj_of": obj_of, "objects": rows, "level": cfg.level,
             "seconds": round(time.time() - t0),
             "summary": {"links": int(len(links)), "points_before": int(np.isfinite(Xs[0]).all(1).sum()),

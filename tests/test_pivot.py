@@ -219,6 +219,8 @@ def test_full_step_end_to_end(tmp_path, monkeypatch):
     note = scene01.step_fn(spec, tmp_path / "cache")(out, tmp_path)
     assert "changed objects" in note
     assert (out / "motion_map.png").exists() and (out / "motion.json").exists()
+    assert (out / "assets" / "scene_graph.json").exists() and len(list((out / "assets").glob("*_hull.obj"))) > 0
+    assert (tmp_path / "cache" / "objects_scene01_light_before_a_scene01_light_after_a_nall_o0.npz").exists()
     rp = (out / "report.md").read_text()
     assert "at a corner" in rp and "8.0 -> 0.70 px" in rp
     for n in ("metrics.json", "objects.json", "changes.json", "objects.png", "object_overlays.png", "heatmaps.png",
@@ -430,6 +432,14 @@ def test_splat_step_end_to_end(tmp_path, monkeypatch):
         "train_frames": 7, "held_out_frames": 1, "iters": cfg.iters, "image_size": [64, 48], "final_l1": 0.01}
 
     monkeypatch.setattr(S, "train", fake_train)
+    from uncertainscene.change import assets
+    from uncertainscene.change.segment import SceneObject
+
+    Xo = np.random.default_rng(2).normal(0, 1, (300, 3))
+    so = [SceneObject(id=i, recording=r, X=Xo, frame=np.zeros(300, int), pix=np.zeros((300, 2)), voxels=set(), masks={},
+                      label="cushion", status=st, partner=1 - i, extra={"voxel": 0.6})
+          for i, (r, st) in enumerate((("A", "moved"), ("B", "moved")))]
+    assets.save_objects(so, tmp_path / "cache" / f"objects_{scene01._key(scene01.Spec('x', 'scene01_light_before_a', 'scene01_light_after_a'))}.npz")
     spec = splats.SplatSpec("1b-splat_test", "scene01_light_before_a", "scene01_light_after_a", iters=10,
                             title="Gaussian splats: test", question="q?")
     out = tmp_path / "out"
@@ -440,7 +450,8 @@ def test_splat_step_end_to_end(tmp_path, monkeypatch):
     assert m["same_view_changed_share"] > 0.03                      # the changed patch is found
     for n in ("splat_compare.png", "splat_orbit.gif", "scene3d.json", "report.md", "splat_viewer/splat_viewer.html"):
         assert (out / n).exists() and (out / n).stat().st_size > 100, n
-    assert len(list((out / "splat_viewer" / "splats").iterdir())) == 2
+    assert len(list((out / "object_splats").glob("*.splat"))) == 2         # the moved cushion, before and after
+    assert len(list((out / "splat_viewer" / "splats").iterdir())) == 4
     assert got == {0: 30, 1: 30}                                    # each splat starts from the points its recording saw
     assert m["poses"]["final"]["median_px"] == 0.6 and "0.60 px" in (out / "report.md").read_text()
 

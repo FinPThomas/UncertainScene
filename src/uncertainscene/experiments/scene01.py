@@ -389,6 +389,22 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
             (out / "motion_error.txt").write_text(f"{type(e).__name__}: {e}\n")
             mot = None
 
+    # ---- node-structured object assets; objects kept for later steps (per-object splats) ----
+    assets_scene = None
+    if objs_a or objs_b:
+        try:
+            from ..change import assets
+
+            assets.save_objects(objs_a + objs_b, cache / f"objects_{_key(spec)}.npz")
+            if spec.outputs == "full":
+                assets_scene = assets.build(objs_a + objs_b, s, np.array(floor.up), out / "assets", mot, motion_objs=objs_a)
+                stage(f"object assets ({len(assets_scene['objects'])} objects, {len(assets_scene['contacts'])} contacts)")
+        except Exception as e:  # noqa: BLE001
+            if type(e).__name__ == "ResourceLimit":
+                raise
+            log.exception("object assets failed; continuing without them")
+            (out / "assets_error.txt").write_text(f"{type(e).__name__}: {e}\n")
+
     # ---- heat maps ----
     f = fstats = None
     bm = {}
@@ -447,6 +463,10 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         m.update({f"field_{k}": v for k, v in fstats.items()})
     m.update(object_metrics(objs_a, objs_b, obj_thr))
     m["poses"] = rinfo.get("poses")
+    if assets_scene is not None:
+        m["assets_objects"] = len(assets_scene["objects"])
+        m["assets_deformable"] = sum(o["behaviour"] == "deformable" for o in assets_scene["objects"])
+        m["assets_contacts"] = len(assets_scene["contacts"])
     if mot is not None:
         m.update({f"motion_{k}": v for k, v in mot["summary"].items()})
         (out / "motion.json").write_text(json.dumps({"summary": mot["summary"], "objects": mot["objects"]},
@@ -658,6 +678,22 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
                          f"({ci[0]}-{ci[1]}) | {r['rotation_deg']:.0f} deg | {r['deform_p90_cm']:.1f} / "
                          f"{r['deform_peak_cm']:.1f} ± {r.get('deform_peak_sigma_cm', '-')} cm | {r['deform_peak_where']} | {r['deformed_share']:.0%} |")
             L += ["", "![distance moved and deformation](motion_map.png)", ""]
+    sg = out / "assets" / "scene_graph.json"
+    if sg.exists():
+        g = json.loads(sg.read_text())
+        L += ["## Object assets (node graphs)", "",
+              f"`assets/` holds {len(g['objects'])} objects as node graphs (nodes with weights, edges with rest length, "
+              "measured strain and relative stiffness, convex hull also as `_hull.obj`) and `scene_graph.json` with "
+              "contacts. Stiffness is relative: 1 = no strain measurable between the recordings, lower = strained; no "
+              "forces were measured.", ""]
+        de = [o for o in g["objects"] if o["behaviour"] == "deformable"]
+        if de:
+            L.append("Deformable (strained edges): " + ", ".join(f"{o['label'] or 'object'} ({o['edges_strained']} edges)"
+                                                               for o in de[:10]) + ".")
+        rel = [c["relation"] for c in g["contacts"] if "rests on" in c["relation"]]
+        if rel:
+            L.append("Contacts: " + "; ".join(rel[:10]) + ".")
+        L.append("")
     if m["pair_type"] in ("static", "lighting"):
         L += [f"Nothing was moved between these recordings, so every changed object is a false alarm "
               f"(**{m.get('obj_changed', 0)} of {m.get('obj_compared', 0)}**).", ""]
