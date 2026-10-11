@@ -187,12 +187,38 @@ def test_full_step_end_to_end(tmp_path, monkeypatch):
     monkeypatch.setattr(scene01, "_feats", lambda rec_, spec, cache: colour_feats(rec_))
     monkeypatch.setattr(scene01, "_masks", lambda rec_, spec, cache: _fake_masks(
         rec_, key_frames(rec_, 0, 8) + key_frames(rec_, 1, 8)))
+    from uncertainscene.change import motion3d
+    from uncertainscene.recon import poses
+
+    monkeypatch.setattr(poses, "refine_recon", lambda rec_, cache, key, cfg=None: (rec_, None, {
+        "vggt": {"median_px": 8.0}, "final": {"median_px": 0.7, "points": 10}, "rotation_change_deg_median": 0.4}))
+
+    def fake_measure(rec_, objs, scale, cfg=None):     # one object moved 5 cm, its corner bent 3 cm
+        o = [x for x in objs if not x.structure][0]
+        XA = o.X[:50]
+        XB = XA + [0.05 / scale, 0, 0]
+        resid = np.linspace(0, 3, len(XA))
+        row = {"recording": o.recording, "id": o.id, "label": o.label, "status": o.status, "links": 50,
+               "rigid_inlier_share": 0.9, "moved_cm": 5.0, "moved_ci_cm": [4.5, 5.5], "moved_beyond_noise": True,
+               "rotation_deg": 3.0, "deform_p90_cm": 2.7, "deform_peak_cm": 3.0, "deformed_share": 0.4,
+               "deformed": True, "deform_peak_where": "at a corner", "deform_peak_axes": [0.9, 0.8],
+               "deform_peak_xyz": XA[-1].tolist()}
+        obj_of = np.full(len(XA), objs.index(o))
+        return {"links_XA": XA, "links_XB": XB, "disp_cm": np.full(len(XA), 5.0), "resid_cm": resid, "obj_of": obj_of,
+                "objects": [row], "null_cm": np.abs(np.random.default_rng(0).normal(0, 0.5, 200)), "threshold_cm": 1.0,
+                "seconds": 1, "summary": {"links": 50, "threshold_cm": 1.0, "objects_measured": 1, "objects_moved": 1,
+                                          "objects_deformed": 1}}
+
+    monkeypatch.setattr(motion3d, "measure", fake_measure)
     spec = scene01.Spec("p1_test", "scene01_light_before_a", "scene01_light_after_a",
                         detect={"stride": 1, "conf_quantile": 0.0}, voxel_m=0.02)
     out = tmp_path / "out"
     out.mkdir()
     note = scene01.step_fn(spec, tmp_path / "cache")(out, tmp_path)
     assert "changed objects" in note
+    assert (out / "motion_map.png").exists() and (out / "motion.json").exists()
+    rp = (out / "report.md").read_text()
+    assert "at a corner" in rp and "8.0 -> 0.70 px" in rp
     for n in ("metrics.json", "objects.json", "changes.json", "objects.png", "object_overlays.png", "heatmaps.png",
               "viewer.html", "scene_report.md", "report.md", "step_log.txt", "position_map.png",
               "position_precision.png", "scene3d.json"):
@@ -205,7 +231,8 @@ def test_full_step_end_to_end(tmp_path, monkeypatch):
     from uncertainscene.viz import scene3d
 
     sc = scene3d.load(out)
-    assert {l["kind"] for l in sc["layers"]} >= {"colour", "heat", "objects"} and any("ring" in o for o in sc["objects"])
+    assert {l["kind"] for l in sc["layers"]} >= {"colour", "heat", "objects", "line"} and any("ring" in o for o in sc["objects"])
+    assert any(l["name"].startswith("heat map: deformation") for l in sc["layers"])
     assert all(o.get("pal") for o in sc["objects"])
     assert "What this run tests" in (out / "report.md").read_text()
     rep = (out / "scene_report.md").read_text()

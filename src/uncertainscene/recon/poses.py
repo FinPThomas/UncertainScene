@@ -121,7 +121,13 @@ def match(kps, descs, P: np.ndarray, cfg: PoseConfig, device: str = "cpu"):
         ib = nn[ok].cpu().numpy()
         if len(ia) < cfg.min_inliers:
             continue
-        _, inl = cv2.findFundamentalMat(kps[a][ia], kps[b][ib], cv2.USAC_MAGSAC, cfg.ransac_px, 0.999, 5000)
+        try:
+            _, inl = cv2.findFundamentalMat(kps[a][ia], kps[b][ib], cv2.USAC_MAGSAC, cfg.ransac_px, 0.999, 5000)
+        except cv2.error:                       # degenerate (e.g. one flat surface): plain RANSAC
+            try:
+                _, inl = cv2.findFundamentalMat(kps[a][ia], kps[b][ib], cv2.FM_RANSAC, cfg.ransac_px, 0.999)
+            except cv2.error:
+                continue
         if inl is None:
             continue
         inl = inl.ravel().astype(bool)
@@ -381,7 +387,7 @@ def refine_recon(rec, cache=None, key: str = "", cfg: PoseConfig = PoseConfig())
     if f is not None and f.exists():
         z = np.load(f)
         log.info("reusing cached refined poses %s", f.name)
-        return (replace(rec, E=z["E"], K=z["K"]), {"X": z["X"], "rgb": z["rgb"], "seen": z["seen"]},
+        return (_aligned(replace(rec, E=z["E"], K=z["K"]), z["ks"]), {"X": z["X"], "rgb": z["rgb"], "seen": z["seen"]},
                 json.loads(str(z["report"])) | {"cached": True})
     h0, w0 = rec.depth.shape[1:]
     E, Kf, pts, report = refine(rec.E, rec.K, rec.video, rec.files, (w0, h0), cfg)
@@ -403,8 +409,38 @@ def refine_recon(rec, cache=None, key: str = "", cfg: PoseConfig = PoseConfig())
     # which recordings saw each point (a point seen only in the after recording may be a moved object)
     seen = np.zeros((len(pts["X"]), int(rec.video.max()) + 1), bool)
     seen[pts["t"], rec.video[pts["frame"]]] = True
+    out = replace(rec, E=E, K=K)
+    ks = np.array([depth_scale(out, s, pts["X"][seen[:, out.video[s]]]) for s in range(len(E))], np.float32)
+    report["depth_scale_median"] = float(np.median(ks))
+    report["depth_scale_p10_p90"] = [float(np.quantile(ks, 0.1)), float(np.quantile(ks, 0.9))]
     if f is not None:
         tmp = f.with_name(f.stem + "_tmp.npz")
-        np.savez_compressed(tmp, E=E, K=K, X=pts["X"], rgb=rgb, seen=seen, report=json.dumps(report))
+        np.savez_compressed(tmp, E=E, K=K, X=pts["X"], rgb=rgb, seen=seen, ks=ks, report=json.dumps(report))
         tmp.replace(f)
-    return replace(rec, E=E, K=K), {"X": pts["X"], "rgb": rgb, "seen": seen}, report
+    return _aligned(out, ks), {"X": pts["X"], "rgb": rgb, "seen": seen}, report
+
+
+def depth_scale(rec, s: int, X: np.ndarray, min_points: int = 20) -> float:
+    """Factor that lines frame s's VGGT depth up with bundle-adjusted 3D points X (median ratio of
+    the points' camera depth to VGGT's depth at their pixels); 1 when too few points are seen."""
+    from ..change.geometry import project
+
+    if X is None or not len(X):
+        return 1.0
+    u, v, z = project(X, rec.K[s], rec.E[s])
+    u, v = np.round(u), np.round(v)
+    h, w = rec.depth.shape[1:]
+    ok = (z > 0) & (u >= 0) & (u < w) & (v >= 0) & (v < h)
+    if ok.sum() < min_points:
+        return 1.0
+    d = rec.depth[s][v[ok].astype(int), u[ok].astype(int)]
+    good = d > 0
+    if good.sum() < min_points:
+        return 1.0
+    return float(np.clip(np.median(z[ok][good] / d[good]), 0.8, 1.25))
+
+
+def _aligned(rec, ks: np.ndarray):
+    """Depth maps (and their per-frame error scale) multiplied by each frame's factor."""
+    return replace(rec, depth=rec.depth * ks[:, None, None],
+                   scale=None if rec.scale is None else rec.scale * ks)

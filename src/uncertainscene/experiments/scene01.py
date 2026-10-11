@@ -51,6 +51,8 @@ class Spec:
     fields_on: str = "B"
     voxel_m: float = 0.008
     outputs: str = "full"              # full | standard | light
+    refine_poses: bool = True          # bundle adjustment of the VGGT poses (not for light steps)
+    motion: bool | None = None         # feature-matched distance moved + deformation; None = full outputs only
 
     @property
     def frames_est(self) -> int:
@@ -60,6 +62,10 @@ class Spec:
     def needs(self) -> dict:
         n = self.frames_est
         minutes = 4 + n / 40 * 0.8 + 2 * self.n_key * 4 / 60 + n / 60 + 4
+        if self.refine_poses and self.outputs != "light":
+            minutes += n / 75                  # SIFT + matching + bundle adjustment (cached per reconstruction)
+        if self.motion or (self.motion is None and self.outputs == "full"):
+            minutes += n / 120                 # feature motion on every 2nd frame
         return {"disk_gb": 8, "ram_gb": 3.0 + 0.003 * n, "minutes": round(minutes)}
 
 
@@ -82,7 +88,7 @@ class ClipsSpec:
     @property
     def needs(self) -> dict:
         n = len(self.clips) * (self.n_per_video or 370)
-        minutes = 4 + n / 40 * 0.8 + len(self.clips) * self.n_key * 4 / 60 + 6
+        minutes = 4 + n / 40 * 0.8 + len(self.clips) * self.n_key * 4 / 60 + 6 + n / 75   # + pose refinement
         return {"disk_gb": 8, "ram_gb": 2.5 + 0.003 * n, "minutes": round(minutes)}   # 0.006/frame never fit beside the main steps
 
 
@@ -185,6 +191,31 @@ def _recon(spec: Spec, cache: Path):
     return rec, info
 
 
+def _posed(spec, cache: Path, rec, rinfo: dict, stage=None):
+    """Refine the reconstruction's camera poses by bundle adjustment (recon.poses, cached per
+    reconstruction), so every later stage works on the sharper poses. Light steps (repeats) keep
+    VGGT's poses to save time. Returns rec, rinfo (with rinfo["poses"]) and the adjusted points."""
+    if getattr(spec, "outputs", "full") == "light" or not getattr(spec, "refine_poses", True):
+        return rec, rinfo, None
+    from ..recon.poses import refine_recon
+
+    try:
+        rec, pts, rep = refine_recon(rec, cache, _key(spec))
+        msg = (f"camera poses refined: {rep['vggt']['median_px']:.1f} px -> {rep['final']['median_px']:.2f} px "
+               f"reprojection error, cameras turned {rep['rotation_change_deg_median']:.2f} deg (median)"
+               f"{', cached' if rep.get('cached') else ''}")
+        if stage is not None:
+            stage(msg)
+        else:
+            log.info(msg)
+        return rec, rinfo | {"poses": rep}, pts
+    except Exception as e:  # noqa: BLE001 - VGGT poses still work
+        if type(e).__name__ == "ResourceLimit":
+            raise
+        log.exception("pose refinement failed; keeping VGGT poses")
+        return rec, rinfo | {"poses": {"failed": f"{type(e).__name__}: {e}"[:300]}}, None
+
+
 def _feats(rec, spec: Spec, cache: Path):
     from ..change.features import dino_features
 
@@ -281,6 +312,7 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     rec, rinfo = _recon(spec, cache)
     stage(f"reconstruction ({len(rec.images)} frames, {rinfo.get('chunks')} chunks, worst anchor residual "
           f"{rinfo.get('chunk_residual_max')})")
+    rec, rinfo, _ = _posed(spec, cache, rec, rinfo, stage)
     feats = _feats(rec, spec, cache)
     stage("DINOv2 features")
     cfg = replace(DetectConfig(max_points=600000), **spec.detect)
@@ -328,6 +360,34 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         if pc and not o.structure and not pc["too_few_views"]:
             o.extra["description"] += (f" Its centre is known to within about {pc['radius90_cm']:.0f} cm (90%, from "
                                        f"{pc['n_views']} views; one view alone: {pc['single_view_radius90_cm']:.0f} cm).")
+
+    # ---- distance moved and deformation from matched feature points ----
+    mot = None
+    if objs_a and (spec.motion or (spec.motion is None and spec.outputs == "full")):
+        try:
+            from ..change import motion3d
+
+            mot = motion3d.measure(rec, objs_a, s)
+            by = {(o.recording, o.id): o for o in objs_a}
+            for r in mot["objects"]:
+                o = by[(r["recording"], r["id"])]
+                o.extra["motion"] = r
+                if r["moved_beyond_noise"]:
+                    o.extra["description"] += (f" Matched feature points: moved {r['moved_cm']:.0f} cm (90%: "
+                                               f"{r['moved_ci_cm'][0]:.0f}-{r['moved_ci_cm'][1]:.0f} cm), turned "
+                                               f"{r['rotation_deg']:.0f} deg.")
+                if r["deformed"]:
+                    o.extra["description"] += (f" Its shape changed: up to {r['deform_peak_cm']:.1f} cm beyond its rigid "
+                                               f"motion, {r['deform_peak_where']} ({r['deformed_share']:.0%} of it).")
+            sm = mot["summary"]
+            stage(f"feature motion ({sm['links']} matched points, no-change level {sm['threshold_cm']} cm, "
+                  f"{sm['objects_moved']} objects moved, {sm['objects_deformed']} deformed)")
+        except Exception as e:  # noqa: BLE001
+            if type(e).__name__ == "ResourceLimit":
+                raise
+            log.exception("feature motion failed; continuing without it")
+            (out / "motion_error.txt").write_text(f"{type(e).__name__}: {e}\n")
+            mot = None
 
     # ---- heat maps ----
     f = fstats = None
@@ -386,6 +446,11 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     if fstats:
         m.update({f"field_{k}": v for k, v in fstats.items()})
     m.update(object_metrics(objs_a, objs_b, obj_thr))
+    m["poses"] = rinfo.get("poses")
+    if mot is not None:
+        m.update({f"motion_{k}": v for k, v in mot["summary"].items()})
+        (out / "motion.json").write_text(json.dumps({"summary": mot["summary"], "objects": mot["objects"]},
+                                                    indent=2, default=float) + "\n")
     m.update(position_metrics(objs_a, objs_b, s))
     rows = inv.object_rows(objs_a + objs_b, s, np.array(floor.up), floor.height)
     changes = [r for r in rows if r["status"] not in ("unchanged", "not seen in other recording", "unknown")
@@ -407,6 +472,13 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         objects_plots.mask_overlays(objs_a, objs_b, rec, out / "object_overlays.png")
     if objs_a or objs_b:
         _position_figures(objs_a, objs_b, res, floor, s, m, out, d["title"])
+    if mot is not None:
+        try:
+            from ..change import motion3d
+
+            motion3d.figure(mot, rec, objs_a, out / "motion_map.png", f"{d['title']}: distance moved and deformation")
+        except Exception:  # noqa: BLE001
+            log.exception("motion figure failed")
     if f is not None:
         plots.field_maps(f, rec, out / "heatmaps.png", title)
         plots.base_map(bm, out / "base_placement.png", title)
@@ -425,7 +497,7 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         if f is not None:
             viewer.write_fields_ply(f, out / "fields.ply")
     try:
-        _write_scene3d(res, objs_a, objs_b, f, out, (short(spec.a), short(spec.b)))
+        _write_scene3d(res, objs_a, objs_b, f, out, (short(spec.a), short(spec.b)), motion=mot)
     except Exception:  # noqa: BLE001 - the viewer file must not lose the step
         log.exception("scene3d.json failed")
     stage("figures, viewer and reports")
@@ -436,13 +508,19 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
             f"scale {s:.3f} m/unit; {m['step_seconds']:.0f}s")
 
 
-def _write_scene3d(res, objs_a, objs_b, f, out: Path, labels, max_mb: float = 13.0) -> None:
+def _write_scene3d(res, objs_a, objs_b, f, out: Path, labels, max_mb: float = 13.0, motion=None) -> None:
     """Dense 3D scene for the viewer, split into files under the git limit (scene3d.save)."""
     from ..viz import scene3d
 
     n = 120000
     while True:
         sc = scene3d.from_analysis(res, objs_a, objs_b, f, n_colour=n, n_heat=int(0.4 * n), labels=labels)
+        if motion is not None:
+            from ..change.motion3d import scene_layers
+
+            pts = scene3d.Points()
+            pts.tables = sc["points"]
+            sc["layers"] += scene_layers(motion, pts)
         txt = json.dumps(sc, separators=(",", ":"), default=float)
         if len(txt) < max_mb * 1024**2 or n < 3000:
             break
@@ -550,11 +628,37 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
         L.append(f"| Do unchanged objects agree between the recordings? | {m['pos_coverage90_unchanged']:.0%} within "
                  f"their combined 90% ranges ({m['pos_unchanged_pairs']} objects; about 90% expected where nothing "
                  f"moved) |")
+    p = m.get("poses") or {}
+    if p.get("final"):
+        L.append(f"| Camera poses (bundle adjustment from VGGT) | reprojection error {p['vggt']['median_px']:.1f} -> "
+                 f"{p['final']['median_px']:.2f} px median, cameras turned {p['rotation_change_deg_median']:.2f} deg |")
+    elif p.get("failed"):
+        L.append(f"| Camera poses | refinement failed ({p['failed']}); VGGT poses used |")
+    if m.get("motion_links") is not None:
+        L.append(f"| Matched feature points before/after | {m['motion_links']} (no-change level {m['motion_threshold_cm']} cm: "
+                 f"97.5% of the displacement between two halves of one recording) |")
+        L.append(f"| Objects moved / deformed (feature points) | {m['motion_objects_moved']} / "
+                 f"{m['motion_objects_deformed']} of {m['motion_objects_measured']} measured |")
     L += [""]
+    mo = out / "motion.json"
+    if mo.exists():
+        rows_m = [r for r in json.loads(mo.read_text())["objects"] if r["moved_beyond_noise"] or r["deformed"]]
+        if rows_m:
+            L += ["## Distance moved and deformation (matched feature points)", "",
+                  "Each object's feature points are matched between the recordings. Its rigid motion gives the distance "
+                  "moved; what the rigid motion cannot explain is deformation (e.g. a bent cushion corner).", "",
+                  "| Object | Moved (90%) | Turned | Deformation p90 / peak | Where | Share deformed |", "|---|---|---|---|---|---|"]
+            for r in rows_m[:15]:
+                ci = r["moved_ci_cm"] or [None, None]
+                L.append(f"| {r['label'] or 'object'} {r['recording']}{r['id']} | {r['moved_cm']:.1f} cm "
+                         f"({ci[0]}-{ci[1]}) | {r['rotation_deg']:.0f} deg | {r['deform_p90_cm']:.1f} / "
+                         f"{r['deform_peak_cm']:.1f} cm | {r['deform_peak_where']} | {r['deformed_share']:.0%} |")
+            L += ["", "![distance moved and deformation](motion_map.png)", ""]
     if m["pair_type"] in ("static", "lighting"):
         L += [f"Nothing was moved between these recordings, so every changed object is a false alarm "
               f"(**{m.get('obj_changed', 0)} of {m.get('obj_compared', 0)}**).", ""]
-    for img, cap in (("objects.png", "every object, labelled, border = status"),
+    for img, cap in (("motion_map.png", "distance moved and deformation from matched feature points"),
+                     ("objects.png", "every object, labelled, border = status"),
                      ("object_overlays.png", "object masks in the frames"), ("heatmaps.png", "heat maps"),
                      ("position_map.png", "where each object is: 90% regions, top-down"),
                      ("position_precision.png", "how position precision grows with more views"),

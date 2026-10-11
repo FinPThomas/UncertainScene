@@ -158,23 +158,9 @@ class Splat:
 
 
 def depth_scale(rec, s: int, X: np.ndarray, min_points: int = 20) -> float:
-    """Factor that lines frame s's VGGT depth up with bundle-adjusted 3D points X (median ratio of
-    the points' camera depth to VGGT's depth at their pixels); 1 when too few points are seen."""
-    from ..change.geometry import project
+    from .poses import depth_scale as f
 
-    if X is None or not len(X):
-        return 1.0
-    u, v, z = project(X, rec.K[s], rec.E[s])
-    u, v = np.round(u), np.round(v)
-    h, w = rec.depth.shape[1:]
-    ok = (z > 0) & (u >= 0) & (u < w) & (v >= 0) & (v < h)
-    if ok.sum() < min_points:
-        return 1.0
-    d = rec.depth[s][v[ok].astype(int), u[ok].astype(int)]
-    good = d > 0
-    if good.sum() < min_points:
-        return 1.0
-    return float(np.clip(np.median(z[ok][good] / d[good]), 0.5, 2.0))
+    return f(rec, s, X, min_points)
 
 
 @dataclass
@@ -358,7 +344,31 @@ def train(rec, video: int, cfg: SplatConfig = SplatConfig(), check=None, points:
             "final_l1": round(float(np.mean(losses[-200:])), 4), "pruned": pruned,
             "start_points_adjusted": 0 if PX is None else int(len(PX)),
             "depth_scale_median": round(float(np.median(ks)), 4)}
-    return Splat({k: v.detach() for k, v in params.items()}, cfg.sh_degree), info
+    sp = Splat({k: v.detach() for k, v in params.items()}, cfg.sh_degree)
+    sp.pose_frames, sp.pose_deltas = tr, pose.detach().cpu().numpy() if popt is not None else np.zeros((len(tr), 6))
+    return sp, info
+
+
+def corrected_poses(E: np.ndarray, video: np.ndarray, v: int, frames: np.ndarray, deltas: np.ndarray) -> np.ndarray:
+    """Camera poses with the corrections the splat learnt while training (poses keep improving
+    as it trains). Training frames get their own correction; a held-out frame gets the mean of
+    the corrections of the training frames just before and after it in time (its own photo is
+    never used)."""
+    import torch
+
+    E = E.copy()
+    allv = np.nonzero(video == v)[0]
+    pos = np.searchsorted(frames, allv)
+    for s, p in zip(allv, pos):
+        if p < len(frames) and frames[p] == s:
+            d = deltas[p]
+        else:
+            nb = [i for i in (p - 1, p) if 0 <= i < len(frames)]
+            d = deltas[nb].mean(0)
+        R = _rodrigues(torch.as_tensor(d[None, :3], dtype=torch.float32))[0].numpy()
+        E[s, :, :3] = R @ E[s, :, :3]
+        E[s, :, 3] = R @ E[s, :, 3] + d[3:]
+    return E
 
 
 def test_views(rec, video: int, every: int) -> np.ndarray:

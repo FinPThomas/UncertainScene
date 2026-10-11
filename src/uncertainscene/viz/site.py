@@ -21,7 +21,8 @@ import numpy as np
 
 from .scene3d import Points, _b64, _hex_rgb, _scale_rgb
 
-IMAGES = [("splat_compare.png", "Gaussian splats: before and after rendered from the same camera"),
+IMAGES = [("motion_map.png", "Distance moved and deformation, from matched feature points"),
+          ("splat_compare.png", "Gaussian splats: before and after rendered from the same camera"),
           ("position_map.png", "Where each object is: 90% ranges, top-down"),
           ("position_closeups.png", "Close-ups of each object's range as clips are added"),
           ("position_precision.png", "How the range shrinks with more views and clips"),

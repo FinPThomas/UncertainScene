@@ -76,18 +76,11 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
     rspec = Spec(spec.name, spec.a, spec.b, n_per_video=spec.n_per_video, offset=spec.offset)
     rec, rinfo = _recon(rspec, cache)
     stage(f"reconstruction ({len(rec.video)} frames{', cached' if rinfo.get('cached') else ''})")
-    pts, preport = None, None
-    if spec.refine_poses:
-        from ..recon.poses import refine_recon
-        from .scene01 import _key
+    from .scene01 import _posed
 
-        try:
-            rec, pts, preport = refine_recon(rec, cache, _key(rspec))
-            stage(f"camera poses refined: {preport['vggt']['median_px']:.1f} px -> {preport['final']['median_px']:.2f} px "
-                  f"reprojection error, cameras turned {preport['rotation_change_deg_median']:.2f} deg (median)")
-        except Exception as e:  # noqa: BLE001 - splats still train on VGGT poses
-            log.warning("pose refinement failed, using VGGT poses: %s", e)
-            preport = {"failed": str(e)[:300]}
+    rspec.refine_poses = spec.refine_poses
+    rec, rinfo, pts = _posed(rspec, cache, rec, rinfo, stage)
+    preport = rinfo.get("poses")
     cfg = S.SplatConfig(iters=spec.iters)
     splats, infos = [], []
     for v in (0, 1):
@@ -96,6 +89,16 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
         splats.append(sp)
         infos.append(info)
         stage(f"splat of {rec_name([spec.a, spec.b][v])}: {info['gaussians']} Gaussians, {info['seconds']} s")
+
+    # poses keep improving while the splats train: carry the learnt corrections over (held-out
+    # frames take their neighbours' correction), so the comparison below uses the best poses
+    from dataclasses import replace as _replace
+
+    E_new = rec.E
+    for v in (0, 1):
+        if getattr(splats[v], "pose_deltas", None) is not None:
+            E_new = S.corrected_poses(E_new, rec.video, v, splats[v].pose_frames, splats[v].pose_deltas)
+    rec = _replace(rec, E=E_new.astype(np.float32))
 
     X0, _ = S.init_points(rec, np.nonzero(rec.video == 0)[0], 60000)
     floor = fit_floor(X0, rec.E, RobotModel())

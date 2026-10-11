@@ -113,12 +113,13 @@ def analyse_clips(spec, out: Path, cache: Path, check=None) -> str:
     from ..viz import position_plots, scene3d
     from .catalog import rec_name
     from .poc import _Stage, enforce_size, short
-    from .scene01 import _masks
+    from .scene01 import _masks, _posed
 
     t0 = time.time()
     stage = _Stage(spec.name, check)
     rec, rinfo = _recon(spec, cache)
     stage(f"reconstruction of {len(spec.clips)} clips ({len(rec.images)} frames, {rinfo.get('chunks')} chunks)")
+    rec, rinfo, _ = _posed(spec, cache, rec, rinfo, stage)
     X, C, V = scene_points(rec)
     floor = fit_floor(X, rec.E, RobotModel())
     stage(f"floor ({floor.floor_points} floor points)")

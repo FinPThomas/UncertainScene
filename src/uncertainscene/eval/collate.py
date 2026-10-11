@@ -62,7 +62,7 @@ def how_to_read() -> list[str]:
 
 
 def _figs(run: Path, rel: str, step: str) -> str:
-    names = ("report.md", "splat_compare.png", "splat_orbit.gif", "objects.png", "position_map.png", "heatmaps.png", "overlays.png", "object_overlays.png",
+    names = ("report.md", "motion_map.png", "splat_compare.png", "splat_orbit.gif", "objects.png", "position_map.png", "heatmaps.png", "overlays.png", "object_overlays.png",
              "scene_report.md")
     return " · ".join(f"[{n.split('.')[0].replace('_', ' ')}]({rel}/{step}/{n})" for n in names
                       if (run / step / n).exists())
