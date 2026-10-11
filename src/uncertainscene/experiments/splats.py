@@ -12,9 +12,12 @@ Questions:
 
 Outputs: splat_compare.png (per view: photo, before render, after render, difference, changed
 pixels), splat_orbit.gif (before and after splats side by side along the after camera path),
-splat_before.splat / splat_after.splat (the most visible 140 000 Gaussians each, standard
-.splat format any web splat viewer opens), scene3d.json (splat centres as dense point clouds for
-the results viewer), metrics.json, report.md.
+splat_viewer/ (web viewer of the real splats, the most visible 190 000 Gaussians each; the
+full .splat files go to the run-splats release), scene3d.json (splat centres as dense point
+clouds for the results viewer), metrics.json (incl. the pose refinement report), report.md.
+
+Since run 2 (blurry, floaters): camera poses are refined by bundle adjustment first
+(recon.poses), and the splats get a VGGT depth guide, opacity resets and floater pruning.
 """
 
 from __future__ import annotations
@@ -36,6 +39,7 @@ class SplatSpec:
     a: str
     b: str
     iters: int = 20000                 # 7000 gave blurry renders (17.7 dB) in run 2
+    refine_poses: bool = True          # bundle adjustment before training (recon.poses)
     n_per_video: int | None = None
     offset: int = 0
     variant: str = "splat"
@@ -47,7 +51,8 @@ class SplatSpec:
     def needs(self) -> dict:
         # reconstruction (cached when the 1-main step of the same pair ran first) + 2 splats
         # + first-time gsplat CUDA compile (~10 min)
-        return {"disk_gb": 6, "ram_gb": 6, "minutes": round(12 + 2 * self.iters / 7000 * 8 + 6)}
+        # + pose refinement (~10 min: SIFT, matching, bundle adjustment)
+        return {"disk_gb": 6, "ram_gb": 6, "minutes": round(12 + 2 * self.iters / 7000 * 8 + 6 + 10)}
 
 
 def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=None) -> str:
@@ -68,12 +73,26 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
         if check is not None:
             check()
 
-    rec, rinfo = _recon(Spec(spec.name, spec.a, spec.b, n_per_video=spec.n_per_video, offset=spec.offset), cache)
+    rspec = Spec(spec.name, spec.a, spec.b, n_per_video=spec.n_per_video, offset=spec.offset)
+    rec, rinfo = _recon(rspec, cache)
     stage(f"reconstruction ({len(rec.video)} frames{', cached' if rinfo.get('cached') else ''})")
+    pts, preport = None, None
+    if spec.refine_poses:
+        from ..recon.poses import refine_recon
+        from .scene01 import _key
+
+        try:
+            rec, pts, preport = refine_recon(rec, cache, _key(rspec))
+            stage(f"camera poses refined: {preport['vggt']['median_px']:.1f} px -> {preport['final']['median_px']:.2f} px "
+                  f"reprojection error, cameras turned {preport['rotation_change_deg_median']:.2f} deg (median)")
+        except Exception as e:  # noqa: BLE001 - splats still train on VGGT poses
+            log.warning("pose refinement failed, using VGGT poses: %s", e)
+            preport = {"failed": str(e)[:300]}
     cfg = S.SplatConfig(iters=spec.iters)
     splats, infos = [], []
     for v in (0, 1):
-        sp, info = S.train(rec, v, cfg, check)
+        own = None if pts is None else {"X": pts["X"][pts["seen"][:, v]], "rgb": pts["rgb"][pts["seen"][:, v]]}
+        sp, info = S.train(rec, v, cfg, check, points=own)
         splats.append(sp)
         infos.append(info)
         stage(f"splat of {rec_name([spec.a, spec.b][v])}: {info['gaussians']} Gaussians, {info['seconds']} s")
@@ -121,23 +140,36 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
     stage("figures")
 
     # ---- exports: .splat files and dense points for the results viewer ----
-    exported = {}
+    exported, full = {}, {}
+    cache.mkdir(parents=True, exist_ok=True)
     for v, nm in ((0, "before"), (1, "after")):
-        exported[nm] = splats[v].export_splat(out / f"splat_{nm}.splat", cfg.export_max)
+        full[nm] = cache / f"splat_{nm}_{spec.name}.splat"
+        exported[nm] = splats[v].export_splat(full[nm], 10**9)
         if store is not None:
             try:
-                full = cache / f"splat_{nm}_{spec.name}.splat"
-                splats[v].export_splat(full, 10**9)
-                store.put(full, f"run-splats", name=full.name, overwrite=True)
+                store.put(full[nm], "run-splats", name=full[nm].name, overwrite=True)
             except Exception as e:  # noqa: BLE001 - the full export is a bonus
                 log.warning("full splat upload failed: %s", e)
-    pts = scene3d.Points()
+    # web viewer of the real splats (shapes, sizes, transparency), small enough for git
+    from ..viz import splat_site
+
+    s0 = S.test_views(rec, 1, cfg.hold_every)[0]
+    c2w = np.eye(4)
+    c2w[:3, :3] = rec.E[s0, :, :3].T
+    c2w[:3, 3] = -rec.E[s0, :, :3].T @ rec.E[s0, :, 3]
+    fov = float(np.degrees(2 * np.arctan(h0 / 2 / rec.K[s0, 1, 1])))
+    splat_site.build({f"Before ({rec_name(spec.a)})": full["before"], f"After ({rec_name(spec.b)})": full["after"]},
+                     out / "splat_viewer", title="Scene01 Splat Viewer", cameras={"After camera": {"c2w": c2w, "fov_y": fov}},
+                     max_gaussians=cfg.viewer_max,
+                     notes=f"{spec.iters} steps, poses {'refined by bundle adjustment' if pts is not None else 'from VGGT'}, "
+                           f"floaters pruned. Step {spec.name}.")
+    p3 = scene3d.Points()
     layers = []
     for v, lab, rk in ((0, rec_name(spec.a), "A"), (1, rec_name(spec.b), "B")):
         P, C = _centres(splats[v], 150_000)
         layers.append({"name": f"{lab} (splat centres)", "kind": "colour", "rec": rk, "visible": v == 0, "size": 2,
-                       "pts": pts.add(P), "rgb": scene3d._b64(C)})
-    scene3d.save({"points": pts.tables, "layers": layers, "objects": []}, out)
+                       "pts": p3.add(P), "rgb": scene3d._b64(C)})
+    scene3d.save({"points": p3.tables, "layers": layers, "objects": []}, out)
     stage("exports")
 
     a, b = res[1], res[0]
@@ -151,7 +183,7 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
          "same_view_changed_share_reverse": b["changed_share"], "depth_changed_share_5cm": a["depth_changed_share"],
          "scale_m_per_unit": round(floor.scale_m_per_unit, 4), "exported_gaussians": exported,
          "same_view_views_compared": a["views_compared"], "same_view_views_compared_reverse": b["views_compared"],
-         "frames_total": int(len(rec.video)), "stages": stages, "step_seconds": round(time.time() - t0)}
+         "poses": preport, "frames_total": int(len(rec.video)), "stages": stages, "step_seconds": round(time.time() - t0)}
     (out / "metrics.json").write_text(json.dumps(m, indent=2, default=float))
     write_report(spec, m, out)
     from .poc import enforce_size
@@ -271,5 +303,12 @@ def write_report(spec: SplatSpec, m: dict, out: Path) -> None:
          "when nothing changed.",
          f"- Pixels where the two splats' depth differs by more than 5 cm: {f(m['depth_changed_share_5cm'], 1, True)}.",
          "", "Figures: `splat_compare.png` (per view), `splat_orbit.gif` (both splats along the after camera path). "
-         "The `.splat` files open in any web splat viewer (e.g. drag into antimatter15.com/splat)."]
+         "`splat_viewer/splat_viewer.html` shows the real splats (open it next to its `splats/` folder)."]
+    p = m.get("poses") or {}
+    if p.get("final"):
+        L[8:8] = [f"| Camera poses: reprojection error VGGT -> refined (median, px at frame size) | "
+                  f"{p['vggt']['median_px']:.1f} -> {p['final']['median_px']:.2f} px ({p['final']['points']} points, "
+                  f"cameras turned {p['rotation_change_deg_median']:.2f} deg median) | |"]
+    elif p.get("failed"):
+        L.append(f"\nPose refinement failed ({p['failed']}); VGGT poses used.")
     (out / "report.md").write_text("\n".join(L) + "\n")

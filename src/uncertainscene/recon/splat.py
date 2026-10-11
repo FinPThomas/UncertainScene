@@ -37,8 +37,14 @@ class SplatConfig:
     ssim_weight: float = 0.2
     pose_lr: float = 1e-4           # 0 switches pose correction off
     sh_degree: int = 0              # colour only; view-dependent colour is not needed here
-    export_max: int = 140_000       # Gaussians in the committed .splat file (32 bytes each, < 5 MB)
+    export_max: int = 140_000       # Gaussians in a small .splat export (32 bytes each, < 5 MB)
+    viewer_max: int = 190_000       # Gaussians per splat in the committed web viewer (17 bytes, base64 < 4.8 MB)
     seed: int = 0
+    refine_stop: float = 0.7        # densify/prune until this share of the steps
+    reset_every: int = 3000         # opacity reset (lets unneeded semi-transparent Gaussians fade)
+    prune_opa: float = 0.01
+    prune_at: tuple = (0.55, 0.8)   # floater pruning (share of the steps); training fills the holes after
+    depth_weight: float = 0.05      # VGGT depth guide (relative L1), pulls Gaussians onto surfaces
 
 
 def held_out(frames: np.ndarray, every: int) -> np.ndarray:
@@ -47,8 +53,10 @@ def held_out(frames: np.ndarray, every: int) -> np.ndarray:
     return (k % every) == (every // 2)
 
 
-def init_points(rec, frames: np.ndarray, n: int, conf_quantile: float = 0.5, seed: int = 0):
-    """Confident VGGT depth points (world frame) with colours, from the given frames."""
+def init_points(rec, frames: np.ndarray, n: int, conf_quantile: float = 0.5, seed: int = 0,
+                depth_scale: dict | None = None):
+    """Confident VGGT depth points (world frame) with colours, from the given frames (each
+    frame's depth multiplied by `depth_scale[frame]` when given)."""
     from ..change.geometry import unproject
 
     rng = np.random.default_rng(seed)
@@ -56,7 +64,7 @@ def init_points(rec, frames: np.ndarray, n: int, conf_quantile: float = 0.5, see
     X, C = [], []
     for s in frames:
         good = (rec.depth[s] > 0) & (rec.conf[s] >= np.quantile(rec.conf[s], conf_quantile))
-        x, v, u = unproject(rec.depth[s], rec.K[s], rec.E[s], good)
+        x, v, u = unproject(rec.depth[s] * (depth_scale or {}).get(int(s), 1.0), rec.K[s], rec.E[s], good)
         if len(x) > per:
             k = rng.choice(len(x), per, replace=False)
             x, v, u = x[k], v[k], u[k]
@@ -149,11 +157,77 @@ class Splat:
         return n
 
 
-def train(rec, video: int, cfg: SplatConfig = SplatConfig(), check=None) -> tuple[Splat, dict]:
-    """Train the splat of recording `video` on its non-held-out frames."""
+def depth_scale(rec, s: int, X: np.ndarray, min_points: int = 20) -> float:
+    """Factor that lines frame s's VGGT depth up with bundle-adjusted 3D points X (median ratio of
+    the points' camera depth to VGGT's depth at their pixels); 1 when too few points are seen."""
+    from ..change.geometry import project
+
+    if X is None or not len(X):
+        return 1.0
+    u, v, z = project(X, rec.K[s], rec.E[s])
+    u, v = np.round(u), np.round(v)
+    h, w = rec.depth.shape[1:]
+    ok = (z > 0) & (u >= 0) & (u < w) & (v >= 0) & (v < h)
+    if ok.sum() < min_points:
+        return 1.0
+    d = rec.depth[s][v[ok].astype(int), u[ok].astype(int)]
+    good = d > 0
+    if good.sum() < min_points:
+        return 1.0
+    return float(np.clip(np.median(z[ok][good] / d[good]), 0.5, 2.0))
+
+
+@dataclass
+class _Cams:
+    E4: object                      # [N, 4, 4] torch
+    K: object                       # [N, 3, 3] torch
+    wh: tuple
+
+
+def find_floaters(params, cams: _Cams, views, margin: float = 0.05, min_views: int = 3, front_share: float = 0.5):
+    """Mask of Gaussians that float in front of the rendered surface.
+
+    For each check view: render the expected depth and alpha, project every Gaussian centre; a
+    Gaussian inside the image is 'seen'; it is 'in front' when it sits more than `margin`
+    (relative) in front of the rendered surface at its pixel where that surface is solid
+    (alpha > 0.5). A real surface Gaussian defines the rendered depth, so it is rarely in front;
+    a floater is in front of the surface from most viewpoints. Flags Gaussians in front in more
+    than `front_share` of the views that see them, or seen by fewer than `min_views` views."""
+    import torch
+    from gsplat import rasterization
+
+    W, H = cams.wh
+    n = len(params["means"])
+    dev = params["means"].device
+    seen = torch.zeros(n, device=dev)
+    front = torch.zeros(n, device=dev)
+    with torch.no_grad():
+        for i in views:
+            out, alpha, _ = rasterization(params["means"], params["quats"], torch.exp(params["scales"]),
+                                          torch.sigmoid(params["opacities"]), torch.sigmoid(params["colors"]),
+                                          cams.E4[i:i + 1], cams.K[i:i + 1], W, H, render_mode="ED")
+            D, A = out[0, ..., 0], alpha[0, ..., 0]
+            Xc = params["means"] @ cams.E4[i, :3, :3].T + cams.E4[i, :3, 3]
+            z = Xc[:, 2]
+            u = (cams.K[i, 0, 0] * Xc[:, 0] / z.clamp_min(1e-6) + cams.K[i, 0, 2]).floor().long()
+            v = (cams.K[i, 1, 1] * Xc[:, 1] / z.clamp_min(1e-6) + cams.K[i, 1, 2]).floor().long()
+            ins = (z > 1e-6) & (u >= 0) & (u < W) & (v >= 0) & (v < H)
+            uu, vv = u.clamp(0, W - 1), v.clamp(0, H - 1)
+            d, a = D[vv, uu], A[vv, uu]
+            seen += ins.float()
+            front += (ins & (a > 0.5) & (z < d * (1 - margin))).float()
+    return (seen < min_views) | (front > front_share * seen.clamp_min(1)), seen
+
+
+def train(rec, video: int, cfg: SplatConfig = SplatConfig(), check=None, points: dict | None = None):
+    """Train the splat of recording `video` on its non-held-out frames.
+
+    `points`: bundle-adjusted 3D points of the recording (from recon.poses), {"X", "rgb"}. They
+    are added to the starting Gaussians and line each frame's VGGT depth up for the depth guide."""
     import torch
     from gsplat import rasterization
     from gsplat.strategy import DefaultStrategy
+    from gsplat.strategy.ops import remove, reset_opa
 
     torch.manual_seed(cfg.seed)
     dev = "cuda"
@@ -166,7 +240,12 @@ def train(rec, video: int, cfg: SplatConfig = SplatConfig(), check=None) -> tupl
     Ks[:, 0] *= wh[0] / w0
     Ks[:, 1] *= wh[1] / h0
 
-    X, C = init_points(rec, tr, cfg.max_init, seed=cfg.seed)
+    PX = None if points is None else points["X"]
+    ks = np.array([depth_scale(rec, s, PX) for s in tr])
+    X, C = init_points(rec, tr, cfg.max_init, seed=cfg.seed, depth_scale=dict(zip(tr.tolist(), ks)))
+    if PX is not None and len(PX):
+        X = np.concatenate([X, PX.astype(np.float32)])
+        C = np.concatenate([C, points["rgb"].astype(np.float32) / 255])
     Xt = torch.as_tensor(X, device=dev)
     from scipy.spatial import cKDTree
 
@@ -186,15 +265,30 @@ def train(rec, video: int, cfg: SplatConfig = SplatConfig(), check=None) -> tupl
     sched = torch.optim.lr_scheduler.ExponentialLR(opts["means"], gamma=0.01 ** (1 / cfg.iters))
     pose = torch.nn.Parameter(torch.zeros(len(tr), 6, device=dev))
     popt = torch.optim.Adam([pose], lr=cfg.pose_lr) if cfg.pose_lr > 0 else None
-    strategy = DefaultStrategy(refine_stop_iter=int(cfg.iters * 0.75), reset_every=3000, verbose=False)
+    refine_stop = int(cfg.iters * cfg.refine_stop)
+    strategy = DefaultStrategy(prune_opa=cfg.prune_opa, refine_stop_iter=refine_stop, reset_every=10**9, verbose=False)
     strategy.check_sanity(params, opts)
     state = strategy.initialize_state(scene_scale=scene_scale)
     E4 = np.tile(np.eye(4, dtype=np.float32), (len(tr), 1, 1))
     E4[:, :3, :] = rec.E[tr]
     E4 = torch.as_tensor(E4, device=dev)
     Kt = torch.as_tensor(Ks, dtype=torch.float32, device=dev)
+
+    # depth guide: VGGT depth (lined up with the adjusted points) where VGGT is confident
+    dmaps = None
+    if cfg.depth_weight > 0:
+        import torch.nn.functional as F
+
+        dep = torch.as_tensor(rec.depth[tr] * ks[:, None, None], dtype=torch.float32)
+        cf = torch.as_tensor(rec.conf[tr], dtype=torch.float32)
+        ok = (dep > 0) & (cf >= cf.flatten(1).median(1).values[:, None, None])
+        dep = F.interpolate(dep[:, None], size=(wh[1], wh[0]), mode="nearest")[:, 0]
+        ok = F.interpolate(ok[:, None].float(), size=(wh[1], wh[0]), mode="nearest")[:, 0] > 0.5
+        dmaps = (dep.half(), ok)
+
     rng = np.random.default_rng(cfg.seed)
-    t0, losses = time.time(), []
+    t0, losses, pruned = time.time(), [], {}
+    prune_at = {int(cfg.iters * f) for f in cfg.prune_at}
     for it in range(cfg.iters):
         i = int(rng.integers(len(tr)))
         gt = torch.as_tensor(imgs[i], device=dev).float() / 255
@@ -204,14 +298,20 @@ def train(rec, video: int, cfg: SplatConfig = SplatConfig(), check=None) -> tupl
             D[0, :3, :3] = _rodrigues(pose[i:i + 1, :3])[0]
             D[0, :3, 3] = pose[i, 3:]
             vm = D @ vm
-        out, _, info = rasterization(params["means"], params["quats"], torch.exp(params["scales"]),
-                                     torch.sigmoid(params["opacities"]), torch.sigmoid(params["colors"]),
-                                     vm, Kt[i:i + 1], wh[0], wh[1], packed=False)
+        out, alpha, info = rasterization(params["means"], params["quats"], torch.exp(params["scales"]),
+                                         torch.sigmoid(params["opacities"]), torch.sigmoid(params["colors"]),
+                                         vm, Kt[i:i + 1], wh[0], wh[1], packed=False, render_mode="RGB+ED")
         strategy.step_pre_backward(params, opts, state, it, info)
-        img = out[0]
+        img = out[0, ..., :3]
         l1 = (img - gt).abs().mean()
         loss = (1 - cfg.ssim_weight) * l1 + cfg.ssim_weight * (1 - _ssim(img.permute(2, 0, 1)[None],
                                                                           gt.permute(2, 0, 1)[None]))
+        if dmaps is not None:
+            dg = dmaps[0][i].to(dev).float()
+            m = dmaps[1][i].to(dev) & (alpha[0, ..., 0] > 0.5)
+            if m.any():
+                w = cfg.depth_weight * (1.0 if it < refine_stop else 0.3)
+                loss = loss + w * ((out[0, ..., 3] - dg).abs() / dg.clamp_min(1e-3))[m].mean()
         loss.backward()
         for o in opts.values():
             o.step()
@@ -222,6 +322,29 @@ def train(rec, video: int, cfg: SplatConfig = SplatConfig(), check=None) -> tupl
             popt.zero_grad(set_to_none=True)
         sched.step()
         strategy.step_post_backward(params, opts, state, it, info, packed=False)
+        # gsplat 1.5.3 never resets opacities (its reset condition is always false), so do it
+        # here: semi-transparent Gaussians that the images do not need then fade and get pruned
+        if 0 < it < refine_stop - cfg.reset_every // 2 and it % cfg.reset_every == 0:
+            reset_opa(params, opts, state, value=cfg.prune_opa * 2)
+        if it in prune_at:
+            with torch.no_grad():
+                Ec = E4.clone()
+                if popt is not None:
+                    Dm = torch.eye(4, device=dev)[None].repeat(len(tr), 1, 1)
+                    Dm[:, :3, :3] = _rodrigues(pose[:, :3])
+                    Dm[:, :3, 3] = pose[:, 3:]
+                    Ec = Dm @ Ec
+            views = np.linspace(0, len(tr) - 1, min(len(tr), 80)).round().astype(int)
+            fl, seen = find_floaters(params, _Cams(Ec, Kt, wh), views)
+            op = torch.sigmoid(params["opacities"]).detach()
+            big = torch.exp(params["scales"]).detach().max(1).values > 0.05 * scene_scale
+            mask = fl | (op < cfg.prune_opa) | big
+            pruned[str(it)] = {"floating_or_rarely_seen": int(fl.sum()), "faint": int((op < cfg.prune_opa).sum()),
+                               "huge": int(big.sum()), "removed": int(mask.sum()), "of": int(len(mask))}
+            log.info("splat %s: pruned %d of %d Gaussians at iter %d (%d floating or seen by < 3 views, "
+                     "%d faint, %d huge)", rec.labels[video], int(mask.sum()), len(mask), it, int(fl.sum()),
+                     int((op < cfg.prune_opa).sum()), int(big.sum()))
+            remove(params, opts, state, mask)
         losses.append(float(l1))
         if it % 1000 == 0:
             log.info("splat %s: iter %d, L1 %.4f, %d Gaussians, %.0f s", rec.labels[video], it,
@@ -232,7 +355,9 @@ def train(rec, video: int, cfg: SplatConfig = SplatConfig(), check=None) -> tupl
             "iters": cfg.iters, "gaussians": int(len(params["means"])), "seconds": round(time.time() - t0),
             "image_size": list(wh), "pose_correction_deg_median": round(float(np.degrees(
                 pose[:, :3].norm(dim=1).median().item())), 3) if popt is not None else 0.0,
-            "final_l1": round(float(np.mean(losses[-200:])), 4)}
+            "final_l1": round(float(np.mean(losses[-200:])), 4), "pruned": pruned,
+            "start_points_adjusted": 0 if PX is None else int(len(PX)),
+            "depth_scale_median": round(float(np.median(ks)), 4)}
     return Splat({k: v.detach() for k, v in params.items()}, cfg.sh_degree), info
 
 

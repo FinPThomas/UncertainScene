@@ -381,9 +381,26 @@ def test_splat_step_end_to_end(tmp_path, monkeypatch):
                 img[: wh[1] // 4, : wh[0] // 4] = 1 - img[: wh[1] // 4, : wh[0] // 4]
             return img, np.ones(img.shape[:2]), np.ones(img.shape[:2])
 
-    monkeypatch.setattr(S, "train", lambda rec_, v, cfg, check=None: (Fake(v), {
+    from uncertainscene.recon import poses
+
+    got = {}
+
+    def fake_refine(rec_, cache, key, cfg=None):
+        X = np.random.default_rng(1).normal(0, 0.3, (40, 3)).astype(np.float32)
+        seen = np.zeros((40, 2), bool)
+        seen[:30, 0] = seen[10:, 1] = True
+        return rec_, {"X": X, "rgb": np.zeros((40, 3), np.uint8), "seen": seen}, {
+            "vggt": {"median_px": 9.0}, "final": {"median_px": 0.6, "points": 40}, "rotation_change_deg_median": 0.5}
+
+    monkeypatch.setattr(poses, "refine_recon", fake_refine)
+
+    def fake_train(rec_, v, cfg, check=None, points=None):
+        got[v] = len(points["X"])
+        return Fake(v), {
         "recording": rec_.labels[v], "gaussians": 500, "seconds": 1, "pose_correction_deg_median": 0.0,
-        "train_frames": 7, "held_out_frames": 1, "iters": cfg.iters, "image_size": [64, 48], "final_l1": 0.01}))
+        "train_frames": 7, "held_out_frames": 1, "iters": cfg.iters, "image_size": [64, 48], "final_l1": 0.01}
+
+    monkeypatch.setattr(S, "train", fake_train)
     spec = splats.SplatSpec("1b-splat_test", "scene01_light_before_a", "scene01_light_after_a", iters=10,
                             title="Gaussian splats: test", question="q?")
     out = tmp_path / "out"
@@ -392,10 +409,11 @@ def test_splat_step_end_to_end(tmp_path, monkeypatch):
     m = json.loads((out / "metrics.json").read_text())
     assert m["step_kind"] == "splat", note
     assert m["same_view_changed_share"] > 0.03                      # the changed patch is found
-    for n in ("splat_compare.png", "splat_orbit.gif", "splat_before.splat", "splat_after.splat", "scene3d.json",
-              "report.md"):
+    for n in ("splat_compare.png", "splat_orbit.gif", "scene3d.json", "report.md", "splat_viewer/splat_viewer.html"):
         assert (out / n).exists() and (out / n).stat().st_size > 100, n
-    assert (out / "splat_before.splat").stat().st_size == 500 * 32
+    assert len(list((out / "splat_viewer" / "splats").iterdir())) == 2
+    assert got == {0: 30, 1: 30}                                    # each splat starts from the points its recording saw
+    assert m["poses"]["final"]["median_px"] == 0.6 and "0.60 px" in (out / "report.md").read_text()
 
 
 MV = None     # default merge grid (set to 0.01, the fine grid, the old behaviour fails this test)
@@ -417,3 +435,61 @@ def test_views_merge_despite_depth_noise(tmp_path, monkeypatch):
     objs = build_objects(rec, masks, "A", voxel=0.01, structure_units=1.2, min_voxels=3, merge_vox=MV)
     box = [o for o in objs if np.all(rec.images[o.best_frame][o.masks[o.best_frame]][:1] == [200, 30, 30])]
     assert box and box[0].extra["n_views"] >= 6, [o.extra["n_views"] for o in objs]
+
+
+def test_bundle_adjustment_recovers_poses():
+    """Synthetic scene: VGGT-like pose errors (0.7 deg, 1 cm, focal 3% off) and 3% outlier
+    matches; triangulation + bundle adjustment must bring relative rotations back near truth."""
+    pytest.importorskip("torch")
+    from scipy.spatial.transform import Rotation as Rot
+
+    from uncertainscene.recon import poses as P
+
+    rng = np.random.default_rng(0)
+    N, S, W, H, f = 1200, 24, 1024, 576, 800.0
+    X = np.c_[rng.uniform(-.6, .6, N), rng.uniform(-.4, .4, N), 1.0 + 0.15 * np.sin(3 * rng.uniform(-1, 1, N))]
+
+    def look(c):
+        z = np.array([0, 0, 1.0]) - c
+        z /= np.linalg.norm(z)
+        x = np.cross([0, 1, 0], z)
+        x /= np.linalg.norm(x)
+        R = np.stack([x, np.cross(z, x), z])
+        return np.c_[R, -R @ c]
+
+    E = np.stack([look(np.array([0.5 * np.sin(a), 0.05 * np.cos(3 * a), 0.2 * np.cos(a) - 0.1]))
+                  for a in np.linspace(-1, 1, S)])
+    video = np.repeat([0, 1], S // 2)
+    K = np.tile(np.array([[f, 0, W / 2], [0, f, H / 2], [0, 0, 1.0]]), (S, 1, 1))
+    rows = []
+    for s in range(S):
+        Xc = X @ E[s, :, :3].T + E[s, :, 3]
+        u, v = f * Xc[:, 0] / Xc[:, 2] + W / 2, f * Xc[:, 1] / Xc[:, 2] + H / 2
+        i = np.nonzero((u > 0) & (u < W) & (v > 0) & (v < H) & (rng.random(N) < 0.7))[0]
+        rows.append(np.c_[i, np.full(len(i), s), u[i] + rng.normal(0, .5, len(i)), v[i] + rng.normal(0, .5, len(i))])
+    O = np.concatenate(rows)
+    t, fr, uv = O[:, 0].astype(int), O[:, 1].astype(int), O[:, 2:]
+    bad = rng.random(len(uv)) < 0.03
+    uv[bad] += rng.normal(0, 40, (bad.sum(), 2))
+    Ep = E.copy()
+    for s in range(S):
+        dR = Rot.from_rotvec(rng.normal(0, np.radians(0.7) / np.sqrt(3), 3)).as_matrix()
+        Ep[s, :, :3], Ep[s, :, 3] = dR @ E[s, :, :3], dR @ E[s, :, 3] + rng.normal(0, 0.01, 3)
+    Kp = K.copy()
+    Kp[:, :2, :2] *= 1.03
+
+    def rel_err(Ea):
+        e = [np.degrees(np.arccos(np.clip((np.trace((E[i, :, :3] @ E[j, :, :3].T).T @ Ea[i, :, :3] @ Ea[j, :, :3].T)
+                                            - 1) / 2, -1, 1))) for i in range(S) for j in range(i + 1, S)]
+        return float(np.median(e))
+
+    cfg = P.PoseConfig(iters=150)
+    Xt, tn, fn, uvn = P._filter(Ep, Kp, t, fr, uv, cfg.first_px, cfg.min_angle_deg, cfg.max_points)
+    Ec, Kc, Xb = P.bundle_adjust(Ep, Kp, video, Xt, tn, fn, uvn, cfg)
+    Xt, tn, fn, uvn = P._filter(Ec, Kc, t, fr, uv, 6.0, cfg.min_angle_deg, cfg.max_points)
+    Ec, Kc, Xb = P.bundle_adjust(Ec, Kc, video, Xt, tn, fn, uvn, cfg)
+    E2, X2 = P._to_frame(Ec, Xb, Ep)
+    assert rel_err(Ep) > 0.5
+    assert rel_err(E2) < 0.2
+    assert abs(Kc[0, 0, 0] / f - 1) < 0.02                         # started 3% off
+    assert np.median(P.reproject(E2, Kc, X2, tn, fn, uvn)[0]) < 1.0
