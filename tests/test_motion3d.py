@@ -37,10 +37,13 @@ def test_object_motion_finds_rigid_move_and_bent_corner():
     B = P @ R.T + [0.1, 0.02, 0] + rng.normal(0, 0.002, P.shape)
     corner = (P[:, 0] > 0.17) & (P[:, 1] > 0.08)                     # one corner pushed up by 3 cm
     B[corner] += [0, 0, 0.03]
-    r = object_motion(P, B, P, thr=0.005, cfg=MotionConfig())
+    C = np.tile(np.eye(3) * 0.002**2 * 2, (len(P), 1, 1))           # displacement covariance (2 mm per point)
+    r = object_motion(P, B, C, P, cfg=MotionConfig())
     assert abs(r["moved"] - np.linalg.norm([0.1, 0.02])) < 0.01
     assert abs(r["rotation_deg"] - 10) < 1
     assert r["smooth"][corner].mean() > 0.02 and np.median(r["smooth"][~corner]) < 0.005
+    assert r["significant"][corner].mean() > 0.9 and r["significant"][~corner].mean() < 0.1
+    assert r["moved_significant"]
     from uncertainscene.change.motion3d import where
     assert where(r["peak_axes"]) == "at a corner"
 
@@ -89,13 +92,14 @@ def test_measure_end_to_end(tmp_path):
     o = SceneObject(id=0, recording="A", X=Xbox, frame=np.zeros(len(g), int), pix=np.zeros((len(g), 2)),
                     voxels=_keys(Xbox, vox) | _keys(Xbox + [0, 0, 0.01], vox) | _keys(Xbox - [0, 0, 0.01], vox),
                     masks={}, label="box", extra={"voxel": vox})
-    m = measure(rec, [o], scale_m_per_unit=1.0, cfg=MotionConfig(frame_step=1, k_near=6, k_cross=5, block=3), device="cpu")
+    m = measure(rec, [o], scale_m_per_unit=1.0, cfg=MotionConfig(frame_step=1, k_near=6, k_cross=5), device="cpu")
     assert m["summary"]["links"] > 200, m["summary"]
-    assert m["threshold_cm"] < 1.5, m["summary"]                     # triangulated points are precise
+    assert m["summary"]["point_sigma_cm_median"] < 0.5, m["summary"]   # triangulated points are precise
     on_box = m["obj_of"] == 0
     assert on_box.sum() > 30
     assert abs(np.median(m["disp_cm"][on_box]) - 6) < 1.0           # the box moved 6 cm
     assert np.median(m["disp_cm"][~on_box]) < 1.0                    # the floor did not
+    assert m["moved_pt"][on_box].mean() > 0.9 and m["moved_pt"][~on_box].mean() < 0.1
     row = m["objects"][0]
     assert abs(row["moved_cm"] - 6) < 1.0 and row["moved_beyond_noise"] and not row["deformed"]
 

@@ -200,13 +200,15 @@ def test_full_step_end_to_end(tmp_path, monkeypatch):
         resid = np.linspace(0, 3, len(XA))
         row = {"recording": o.recording, "id": o.id, "label": o.label, "status": o.status, "links": 50,
                "rigid_inlier_share": 0.9, "moved_cm": 5.0, "moved_ci_cm": [4.5, 5.5], "moved_beyond_noise": True,
-               "rotation_deg": 3.0, "deform_p90_cm": 2.7, "deform_peak_cm": 3.0, "deformed_share": 0.4,
+               "rotation_deg": 3.0, "deform_p90_cm": 2.7, "deform_peak_cm": 3.0, "deform_peak_sigma_cm": 0.4, "deformed_share": 0.4,
                "deformed": True, "deform_peak_where": "at a corner", "deform_peak_axes": [0.9, 0.8],
                "deform_peak_xyz": XA[-1].tolist()}
         obj_of = np.full(len(XA), objs.index(o))
         return {"links_XA": XA, "links_XB": XB, "disp_cm": np.full(len(XA), 5.0), "resid_cm": resid, "obj_of": obj_of,
-                "objects": [row], "null_cm": np.abs(np.random.default_rng(0).normal(0, 0.5, 200)), "threshold_cm": 1.0,
-                "seconds": 1, "summary": {"links": 50, "threshold_cm": 1.0, "objects_measured": 1, "objects_moved": 1,
+                "objects": [row], "sigma_cm": np.full(len(XA), 0.4), "z": np.full(len(XA), 12.0),
+                "moved_pt": np.ones(len(XA), bool), "deform_sig": resid > 1, "level": 0.975,
+                "seconds": 1, "summary": {"links": 50, "point_sigma_cm_median": 0.4, "misalignment_sigma_cm": 0.1,
+                                          "links_moved_share": 1.0, "objects_measured": 1, "objects_moved": 1,
                                           "objects_deformed": 1}}
 
     monkeypatch.setattr(motion3d, "measure", fake_measure)

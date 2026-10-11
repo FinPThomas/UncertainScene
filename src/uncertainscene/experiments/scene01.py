@@ -380,7 +380,7 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
                     o.extra["description"] += (f" Its shape changed: up to {r['deform_peak_cm']:.1f} cm beyond its rigid "
                                                f"motion, {r['deform_peak_where']} ({r['deformed_share']:.0%} of it).")
             sm = mot["summary"]
-            stage(f"feature motion ({sm['links']} matched points, no-change level {sm['threshold_cm']} cm, "
+            stage(f"feature motion ({sm['links']} matched points, point uncertainty {sm['point_sigma_cm_median']} cm, "
                   f"{sm['objects_moved']} objects moved, {sm['objects_deformed']} deformed)")
         except Exception as e:  # noqa: BLE001
             if type(e).__name__ == "ResourceLimit":
@@ -635,8 +635,9 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
     elif p.get("failed"):
         L.append(f"| Camera poses | refinement failed ({p['failed']}); VGGT poses used |")
     if m.get("motion_links") is not None:
-        L.append(f"| Matched feature points before/after | {m['motion_links']} (no-change level {m['motion_threshold_cm']} cm: "
-                 f"97.5% of the displacement between two halves of one recording) |")
+        L.append(f"| Matched feature points before/after | {m['motion_links']}; uncertainty per point {m['motion_point_sigma_cm_median']} "
+                 f"cm median (1 sigma, from the triangulation; of which {m['motion_misalignment_sigma_cm']} cm misalignment "
+                 f"between the recordings); {m['motion_links_moved_share']:.0%} moved beyond their own uncertainty |")
         L.append(f"| Objects moved / deformed (feature points) | {m['motion_objects_moved']} / "
                  f"{m['motion_objects_deformed']} of {m['motion_objects_measured']} measured |")
     L += [""]
@@ -647,12 +648,15 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
             L += ["## Distance moved and deformation (matched feature points)", "",
                   "Each object's feature points are matched between the recordings. Its rigid motion gives the distance "
                   "moved; what the rigid motion cannot explain is deformation (e.g. a bent cushion corner).", "",
-                  "| Object | Moved (90%) | Turned | Deformation p90 / peak | Where | Share deformed |", "|---|---|---|---|---|---|"]
+                  "Every matched point carries its own uncertainty (from how many frames saw it, from what angles); "
+                  "deformation counts only where it is beyond that.", "",
+                  "| Object | Moved (90%) | Turned | Deformation p90 / peak (± point uncertainty) | Where | Share beyond uncertainty |",
+                  "|---|---|---|---|---|---|"]
             for r in rows_m[:15]:
                 ci = r["moved_ci_cm"] or [None, None]
                 L.append(f"| {r['label'] or 'object'} {r['recording']}{r['id']} | {r['moved_cm']:.1f} cm "
                          f"({ci[0]}-{ci[1]}) | {r['rotation_deg']:.0f} deg | {r['deform_p90_cm']:.1f} / "
-                         f"{r['deform_peak_cm']:.1f} cm | {r['deform_peak_where']} | {r['deformed_share']:.0%} |")
+                         f"{r['deform_peak_cm']:.1f} ± {r.get('deform_peak_sigma_cm', '-')} cm | {r['deform_peak_where']} | {r['deformed_share']:.0%} |")
             L += ["", "![distance moved and deformation](motion_map.png)", ""]
     if m["pair_type"] in ("static", "lighting"):
         L += [f"Nothing was moved between these recordings, so every changed object is a false alarm "

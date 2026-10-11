@@ -10,15 +10,20 @@ works from those:
    descriptor only (no geometric check, so things that moved are kept). Each before track is
    linked to the after track its features match most often, if that is mutual and seen at
    least twice. Displacement = after point - before point.
-3. No-change null, label-free: the same measurement inside one recording, between two halves of
-   its frames (alternating blocks in time). The 97.5th percentile of that is the smallest
-   displacement that counts as real.
+3. Uncertainty per point, from the triangulation itself: each point's 3D covariance follows
+   from how many frames saw it, from what angles and distances, and the pixel noise of that
+   recording (its median reprojection error). A displacement's covariance is the sum of the
+   before and after points' covariances plus one shared term for the residual misalignment
+   between the two recordings' frames, estimated from the fact that most of the scene did not
+   move (the term that makes the median displacement statistically ordinary). A displacement
+   is real when it is beyond its own uncertainty (chi-square, 97.5%), point by point.
 4. Per object (SAM objects of the before recording, by their voxels): a rigid motion fitted by
-   RANSAC to the object's links gives the distance moved (of its centre) and the rotation.
-   What the rigid motion cannot explain, smoothed over neighbouring links, is the deformation
-   map. Deformation metrics: 90th percentile and peak of the smoothed residual, the share of
-   the object above the null threshold, and where the peak sits along the object's main axes
-   (e.g. one corner of a cushion). Nothing about any particular object is built in.
+   RANSAC to the object's links gives the distance moved (of its centre, 90% range by
+   bootstrap) and the rotation. What the rigid motion cannot explain is the deformation map,
+   judged against each point's own uncertainty over a small neighbourhood. Deformation metrics:
+   90th percentile and peak of the residual (cm, with the point uncertainty there), the share
+   of the object whose deformation is beyond its uncertainty, and where the peak sits along
+   the object's main axes (e.g. one corner of a cushion). Nothing about any object is built in.
 """
 
 from __future__ import annotations
@@ -43,8 +48,8 @@ class MotionConfig:
     min_angle_deg: float = 2.0
     max_px: float = 3.0             # reprojection gate
     min_votes: int = 2              # feature matches needed to link a before track to an after track
-    block: int = 12                 # frames per time block for the no-change null
-    null_q: float = 0.975
+    level: float = 0.975            # chi-square level for "beyond its uncertainty"
+    min_px_sigma: float = 0.3       # floor on the per-recording pixel noise
     min_links: int = 8              # links an object needs for a rigid fit
     smooth_k: int = 6               # neighbours for smoothing the non-rigid residual
 
@@ -74,9 +79,26 @@ def _tri(E, K, t, fr, uv, T):
     return X, ang
 
 
+def _covariances(E, K, X, t, fr, sigma_px: float, T: int) -> np.ndarray:
+    """3D covariance of each track's point from its observations: inverse of sum J^T J / sigma^2,
+    J the 2x3 Jacobian of the pixel projection with respect to the point."""
+    R, tv = E[fr, :, :3], E[fr, :, 3]
+    Xc = np.einsum("nij,nj->ni", R, np.nan_to_num(X[t])) + tv
+    z = np.maximum(Xc[:, 2], 1e-6)
+    fx, fy = K[fr, 0, 0], K[fr, 1, 1]
+    Jc = np.zeros((len(t), 2, 3))
+    Jc[:, 0, 0], Jc[:, 0, 2] = fx / z, -fx * Xc[:, 0] / z**2
+    Jc[:, 1, 1], Jc[:, 1, 2] = fy / z, -fy * Xc[:, 1] / z**2
+    J = Jc @ R
+    info = np.zeros((T, 3, 3))
+    np.add.at(info, t, np.einsum("nki,nkj->nij", J, J) / sigma_px**2)
+    return np.linalg.inv(info + np.eye(3)[None] * 1e-12)
+
+
 def _triangulate_tracks(E, K, t, fr, uv, cfg, use=None):
     """Points of tracks with enough good observations (optionally only observations in `use`).
-    Returns X [T, 3] (NaN where invalid) and the boolean mask of observations kept."""
+    Returns X [T, 3] (NaN where invalid), their covariances [T, 3, 3], the boolean mask of
+    observations kept and the recording's pixel noise (per axis)."""
     from ..recon import poses as P
 
     T = int(t.max()) + 1 if len(t) else 0
@@ -91,19 +113,36 @@ def _triangulate_tracks(E, K, t, fr, uv, cfg, use=None):
         keep = new
     X, ang = _tri(E, K, t[keep], fr[keep], uv[keep], T)
     good = (np.bincount(t[keep], minlength=T) >= cfg.min_obs) & (ang >= cfg.min_angle_deg)
+    keep &= good[t]
+    err, _ = P.reproject(E, K, X, t, fr, uv)
+    # median of a 2D Gaussian error's length is 1.1774 sigma
+    sigma = max(float(np.median(err[keep])) / 1.1774, cfg.min_px_sigma) if keep.any() else 1.0
+    C = _covariances(E, K, X, t[keep], fr[keep], sigma, T)
     X[~good] = np.nan
-    return X, keep & good[t]
+    return X, C, keep, sigma
 
 
-def _null(E, K, t, fr, uv, frames, cfg) -> np.ndarray:
-    """Displacement of the same track triangulated from two halves of one recording's frames
-    (alternating time blocks): what 'moved' looks like when nothing moved."""
-    pos = {int(s): i for i, s in enumerate(frames)}
-    half = np.array([(pos[int(f)] // cfg.block) % 2 for f in fr])
-    X0, _ = _triangulate_tracks(E, K, t, fr, uv, cfg, use=half == 0)
-    X1, _ = _triangulate_tracks(E, K, t, fr, uv, cfg, use=half == 1)
-    ok = np.isfinite(X0).all(1) & np.isfinite(X1).all(1)
-    return np.linalg.norm(X1[ok] - X0[ok], axis=1)
+def _mahal2(d: np.ndarray, C: np.ndarray) -> np.ndarray:
+    return np.einsum("ni,nij,nj->n", d, np.linalg.inv(C), d)
+
+
+def cross_term(d: np.ndarray, C: np.ndarray) -> float:
+    """Variance (per axis) of the shared misalignment between the two recordings: the smallest
+    s^2 >= 0 for which the median of d^T (C + s^2 I)^-1 d is the chi-square(3) median, using
+    that most of the scene did not move. 0 when the point covariances already explain it."""
+    from scipy.stats import chi2
+
+    target = chi2.ppf(0.5, 3)
+    if not len(d) or np.median(_mahal2(d, C)) <= target:
+        return 0.0
+    lo, hi = 0.0, float(np.median((d**2).sum(1))) + 1e-12
+    for _ in range(50):
+        mid = (lo + hi) / 2
+        if np.median(_mahal2(d, C + mid * np.eye(3)[None])) > target:
+            lo = mid
+        else:
+            hi = mid
+    return hi
 
 
 def kabsch(A: np.ndarray, B: np.ndarray):
@@ -116,8 +155,9 @@ def kabsch(A: np.ndarray, B: np.ndarray):
     return R, mb - R @ ma
 
 
-def rigid_ransac(A: np.ndarray, B: np.ndarray, thr: float, iters: int = 300, seed: int = 0):
-    """Robust rigid motion A -> B: RANSAC on 3-point samples, refit on the inliers."""
+def rigid_ransac(A: np.ndarray, B: np.ndarray, thr, iters: int = 300, seed: int = 0):
+    """Robust rigid motion A -> B: RANSAC on 3-point samples, refit on the inliers. `thr`: inlier
+    distance, one number or one per point."""
     rng = np.random.default_rng(seed)
     best = np.zeros(len(A), bool)
     for _ in range(iters):
@@ -135,37 +175,54 @@ def rigid_ransac(A: np.ndarray, B: np.ndarray, thr: float, iters: int = 300, see
     return R, t, inl
 
 
-def object_motion(XA: np.ndarray, XB: np.ndarray, obj_X: np.ndarray, thr: float, cfg: MotionConfig, seed: int = 0) -> dict:
-    """Rigid motion + deformation of one object from its links (XA -> XB), all in scene units.
-    `obj_X`: the object's own points (for its centre and main axes)."""
+def object_motion(XA: np.ndarray, XB: np.ndarray, C: np.ndarray, obj_X: np.ndarray, cfg: MotionConfig,
+                  seed: int = 0) -> dict:
+    """Rigid motion + deformation of one object from its links (XA -> XB, displacement
+    covariances C), all in scene units. `obj_X`: the object's own points (centre, main axes)."""
     from scipy.spatial import cKDTree
+    from scipy.stats import chi2
 
-    R, t, inl = rigid_ransac(XA, XB, thr * 2, seed=seed)
+    sig = np.sqrt(np.trace(C, axis1=1, axis2=2) / 3)                 # per-point uncertainty (1 sigma)
+    R, t, inl = rigid_ransac(XA, XB, np.sqrt(chi2.ppf(0.99, 3)) * sig, seed=seed)
     c = np.median(obj_X, 0)
     moved = R @ c + t - c
     rng = np.random.default_rng(seed)
     boots = []
     idx = np.nonzero(inl)[0]
-    for _ in range(100):                         # how sure is the distance moved
+    for _ in range(200):                         # how sure is the move (resampling the inliers)
         k = rng.choice(idx, len(idx), replace=True)
         if len(np.unique(k)) < 3:
             continue
         Rb, tb = kabsch(XA[k], XB[k])
-        boots.append(np.linalg.norm(Rb @ c + tb - c))
-    resid = np.linalg.norm(XA @ R.T + t - XB, axis=1)
+        boots.append(Rb @ c + tb - c)
+    boots = np.array(boots).reshape(-1, 3)
+    if len(boots) > 3:
+        Cb = np.cov(boots.T) + np.eye(3) * 1e-12
+        m2 = float(moved @ np.linalg.solve(Cb, moved))
+        norms = np.linalg.norm(boots, axis=1)
+        ci = [float(np.quantile(norms, 0.05)), float(np.quantile(norms, 0.95))]
+    else:
+        m2, ci = 0.0, None
+    rv = XB - (XA @ R.T + t)
+    resid = np.linalg.norm(rv, axis=1)
+    z2 = _mahal2(rv, C)
     k = min(cfg.smooth_k, len(XA))
     _, nn = cKDTree(XA).query(XA, k=k)
-    smooth = np.median(resid[nn.reshape(len(XA), -1)], 1)
+    nn = nn.reshape(len(XA), -1)
+    smooth = np.median(resid[nn], 1)
+    # a neighbourhood deforms when its residuals together are beyond their uncertainty
+    sig_def = z2[nn].sum(1) > chi2.ppf(cfg.level, 3 * nn.shape[1])
     # where the deformation peaks, along the object's main axes (-1..1 = one end .. other end)
     Xc = obj_X - c
     _, _, Vt = np.linalg.svd(Xc - Xc.mean(0), full_matrices=False)
     half = np.maximum(np.quantile(np.abs(Xc @ Vt.T), 0.95, axis=0), 1e-9)
-    p = int(np.argmax(smooth))
+    p = int(np.argmax(np.where(sig_def, smooth, -1))) if sig_def.any() else int(np.argmax(smooth))
     ax = np.clip((XA[p] - c) @ Vt.T / half, -1.5, 1.5)
     return {"R": R, "t": t, "inliers": inl, "moved": float(np.linalg.norm(moved)), "moved_vec": moved,
-            "moved_ci": [float(np.quantile(boots, 0.05)), float(np.quantile(boots, 0.95))] if boots else None,
+            "moved_ci": ci, "moved_significant": m2 > chi2.ppf(cfg.level, 3),
             "rotation_deg": float(np.degrees(np.arccos(np.clip((np.trace(R) - 1) / 2, -1, 1)))),
-            "resid": resid, "smooth": smooth, "peak": XA[p], "peak_axes": ax.tolist()}
+            "resid": resid, "smooth": smooth, "significant": sig_def, "sigma": sig, "peak": XA[p], "peak_i": p,
+            "peak_axes": ax.tolist()}
 
 
 def where(axes: list) -> str:
@@ -200,21 +257,20 @@ def measure(rec, objs: list, scale_m_per_unit: float, cfg: MotionConfig = Motion
     K[:, 1] *= wh[1] / h0
     E = rec.E.astype(np.float64)
 
-    tracks, Xs, nulls = [], [], []
+    tracks, Xs, Cs, px = [], [], [], []
     for v in (0, 1):
         t, fr, kp, uv = _within_tracks(rec, use[v], kps, descs, cfg, device)
-        X, _ = _triangulate_tracks(E, K, t, fr, uv, cfg)
-        nulls.append(_null(E, K, t, fr, uv, use[v], cfg))
+        X, C, _, sigma = _triangulate_tracks(E, K, t, fr, uv, cfg)
+        Cs.append(C)
+        px.append(sigma)
         tid = {int(s): np.full(len(kps[int(s)]), -1) for s in use[v]}
         for tt, f, k in zip(t, fr, kp):
             if np.isfinite(X[tt]).all():
                 tid[int(f)][k] = tt
         tracks.append(tid)
         Xs.append(X)
-        log.info("motion: recording %d: %d 3D feature points (%.0f s)", v, int(np.isfinite(X).all(1).sum()),
-                 time.time() - t0)
-    null = np.concatenate(nulls) * cm
-    thr_cm = float(np.quantile(null, cfg.null_q)) if len(null) else float("nan")
+        log.info("motion: recording %d: %d 3D feature points, pixel noise %.2f px (%.0f s)", v,
+                 int(np.isfinite(X).all(1).sum()), sigma, time.time() - t0)
 
     # links: before track -> after track by descriptor votes between nearby before/after frames
     c, d = P._centres_dirs(E)
@@ -246,10 +302,20 @@ def measure(rec, objs: list, scale_m_per_unit: float, cfg: MotionConfig = Motion
             best_b[y] = (x, n)
     links = np.array([(x, y) for x, (y, n) in best_a.items() if n >= cfg.min_votes and best_b[y][0] == x],
                      np.int64).reshape(-1, 2)
+    from scipy.stats import chi2
+
     XA, XB = Xs[0][links[:, 0]], Xs[1][links[:, 1]]
+    Cd = Cs[0][links[:, 0]] + Cs[1][links[:, 1]]
+    s2 = cross_term(XB - XA, Cd)
+    Cd = Cd + s2 * np.eye(3)[None]
     disp = np.linalg.norm(XB - XA, axis=1) * cm
-    log.info("motion: %d before/after links; no-change displacement 97.5%% = %.2f cm; %.0f s", len(links), thr_cm,
-             time.time() - t0)
+    sig_cm = np.sqrt(np.trace(Cd, axis1=1, axis2=2) / 3) * cm
+    z = np.sqrt(_mahal2(XB - XA, Cd))
+    moved_pt = z**2 > chi2.ppf(cfg.level, 3)
+    log.info("motion: %d before/after links; point uncertainty %.2f cm median (of which recording misalignment "
+             "%.2f cm); %.0f%% moved beyond their uncertainty; %.0f s", len(links),
+             float(np.median(sig_cm)) if len(sig_cm) else float("nan"), np.sqrt(s2) * cm,
+             100 * moved_pt.mean() if len(z) else 0, time.time() - t0)
 
     # per object
     obj_of = np.full(len(XA), -1)
@@ -270,33 +336,41 @@ def measure(rec, objs: list, scale_m_per_unit: float, cfg: MotionConfig = Motion
             if j is not None and obj_of[n] < 0:
                 obj_of[n] = j
     resid = np.full(len(XA), np.nan)
+    defsig = np.zeros(len(XA), bool)
     rows = []
     for j in np.unique(obj_of[obj_of >= 0]):
         sel = np.nonzero(obj_of == j)[0]
         if len(sel) < cfg.min_links:
             continue
         o = objs[j]
-        r = object_motion(XA[sel], XB[sel], o.X, thr_cm / cm, cfg, seed=int(j))
+        r = object_motion(XA[sel], XB[sel], Cd[sel], o.X, cfg, seed=int(j))
         resid[sel] = r["smooth"] * cm
+        defsig[sel] = r["significant"]
         sm = r["smooth"] * cm
+        sg = r["significant"]
         rows.append({"recording": o.recording, "id": o.id, "label": o.label, "status": o.status, "links": int(len(sel)),
                      "rigid_inlier_share": round(float(r["inliers"].mean()), 3),
                      "moved_cm": round(r["moved"] * cm, 2),
                      "moved_ci_cm": None if r["moved_ci"] is None else [round(x * cm, 2) for x in r["moved_ci"]],
-                     "moved_beyond_noise": bool(r["moved_ci"] is not None and r["moved_ci"][0] * cm > thr_cm),
+                     "moved_beyond_noise": bool(r["moved_significant"]),
                      "rotation_deg": round(r["rotation_deg"], 1),
-                     "deform_p90_cm": round(float(np.quantile(sm, 0.9)), 2), "deform_peak_cm": round(float(sm.max()), 2),
-                     "deformed_share": round(float((sm > thr_cm).mean()), 3),
-                     "deformed": bool((sm > thr_cm).sum() >= max(3, 0.05 * len(sm))),
+                     "point_sigma_cm": round(float(np.median(r["sigma"])) * cm, 2),
+                     "deform_p90_cm": round(float(np.quantile(sm, 0.9)), 2), "deform_peak_cm": round(float(sm[r["peak_i"]]), 2),
+                     "deform_peak_sigma_cm": round(float(r["sigma"][r["peak_i"]]) * cm, 2),
+                     "deformed_share": round(float(sg.mean()), 3),
+                     "deformed": bool(sg.sum() >= max(3, 0.05 * len(sg))),
                      "deform_peak_where": where(r["peak_axes"]), "deform_peak_axes": [round(x, 2) for x in r["peak_axes"]],
                      "deform_peak_xyz": np.round(r["peak"], 4).tolist()})
     rows.sort(key=lambda r: -r["deform_p90_cm"])
-    return {"links_XA": XA, "links_XB": XB, "disp_cm": disp, "resid_cm": resid, "obj_of": obj_of, "objects": rows,
-            "null_cm": null, "threshold_cm": thr_cm, "seconds": round(time.time() - t0),
+    med = float(np.median(sig_cm)) if len(sig_cm) else float("nan")
+    return {"links_XA": XA, "links_XB": XB, "disp_cm": disp, "sigma_cm": sig_cm, "z": z, "moved_pt": moved_pt,
+            "resid_cm": resid, "deform_sig": defsig, "obj_of": obj_of, "objects": rows, "level": cfg.level,
+            "seconds": round(time.time() - t0),
             "summary": {"links": int(len(links)), "points_before": int(np.isfinite(Xs[0]).all(1).sum()),
-                        "points_after": int(np.isfinite(Xs[1]).all(1).sum()), "threshold_cm": round(thr_cm, 2),
-                        "null_median_cm": round(float(np.median(null)), 3) if len(null) else None,
-                        "links_moved_share": round(float((disp > thr_cm).mean()), 3) if len(disp) else None,
+                        "points_after": int(np.isfinite(Xs[1]).all(1).sum()),
+                        "pixel_noise_px": [round(x, 2) for x in px], "point_sigma_cm_median": round(med, 3),
+                        "misalignment_sigma_cm": round(float(np.sqrt(s2)) * cm, 3),
+                        "links_moved_share": round(float(moved_pt.mean()), 3) if len(z) else None,
                         "objects_measured": len(rows), "objects_moved": sum(r["moved_beyond_noise"] for r in rows),
                         "objects_deformed": sum(r["deformed"] for r in rows)}}
 
@@ -307,13 +381,18 @@ def scene_layers(m: dict, pts, rec_key: str = "A") -> list:
 
     if not len(m["links_XA"]):
         return []
-    thr = m["threshold_cm"]
+    thr = float(np.median(m["sigma_cm"]))
     t = pts.add(m["links_XA"])
     hi = max(float(np.quantile(m["disp_cm"], 0.98)), 2 * thr, 1.0)
     rgb, stops = scene3d._scale_rgb(m["disp_cm"], "viridis", 0, hi)
     L = [{"name": "heat map: distance moved (matched feature points, cm)", "kind": "heat", "rec": rec_key,
           "visible": False, "size": 4, "pts": t, "rgb": scene3d._b64(rgb),
           "legend": {"lo": 0, "hi": round(hi, 2), "stops": stops}}]
+    hu = max(float(np.quantile(m["sigma_cm"], 0.95)), 0.1)
+    rgb, stops = scene3d._scale_rgb(m["sigma_cm"], "cividis", 0, hu)
+    L.append({"name": "heat map: uncertainty of each matched point (1 sigma, cm)", "kind": "heat", "rec": rec_key,
+              "visible": False, "size": 4, "pts": t, "rgb": scene3d._b64(rgb),
+              "legend": {"lo": 0, "hi": round(hu, 2), "stops": stops}})
     ok = np.isfinite(m["resid_cm"])
     if ok.any():
         hi = max(float(np.quantile(m["resid_cm"][ok], 0.98)), 2 * thr, 1.0)
@@ -321,7 +400,7 @@ def scene_layers(m: dict, pts, rec_key: str = "A") -> list:
         L.append({"name": "heat map: deformation (beyond each object's rigid motion, cm)", "kind": "heat",
                   "rec": rec_key, "visible": False, "size": 4, "pts": pts.add(m["links_XA"][ok]),
                   "rgb": scene3d._b64(rgb), "legend": {"lo": 0, "hi": round(hi, 2), "stops": stops}})
-    mv = np.nonzero(m["disp_cm"] > thr)[0]
+    mv = np.nonzero(m["moved_pt"])[0]
     if len(mv):
         mv = mv[np.argsort(-m["disp_cm"][mv])[:3000]]
         seg = np.full((3 * len(mv), 3), np.nan)
@@ -341,7 +420,8 @@ def figure(m: dict, rec, objs: list, out, title: str, n_obj: int = 3) -> None:
 
     from .geometry import project
 
-    XA, disp, res, thr = m["links_XA"], m["disp_cm"], m["resid_cm"], m["threshold_cm"]
+    XA, disp, res = m["links_XA"], m["disp_cm"], m["resid_cm"]
+    thr = float(np.median(m["sigma_cm"])) * 3
     if not len(XA):
         return
     fa = np.nonzero(rec.video == 0)[0]
@@ -371,13 +451,18 @@ def figure(m: dict, rec, objs: list, out, title: str, n_obj: int = 3) -> None:
     ax.set_title("deformation (beyond each object's rigid motion)")
     ax.axis("off")
     ax = fig.add_subplot(gs[0, 2])
-    bins = np.linspace(0, max(np.quantile(disp, 0.99), 3 * thr), 60)
-    ax.hist(np.clip(m["null_cm"], 0, bins[-1]), bins, density=True, alpha=0.6, label="no change (two halves of one recording)")
-    ax.hist(np.clip(disp, 0, bins[-1]), bins, density=True, alpha=0.6, label="before vs after")
-    ax.axvline(thr, color="k", ls="--", label=f"97.5% no change = {thr:.1f} cm")
-    ax.set_xlabel("displacement, cm")
+    from scipy.stats import chi
+    zc = np.sqrt(chi.ppf(m["level"], 3) ** 2)
+    bins = np.linspace(0, 4 * zc, 50)                    # everything beyond lands in the last bar
+    ax.hist(np.clip(m["z"], 0, bins[-1]), bins, density=True, alpha=0.7, label="before vs after, matched points")
+    xs = np.linspace(0, bins[-1], 200)
+    ax.plot(xs, chi.pdf(xs, 3), "k-", lw=1, label="expected if nothing moved")
+    ax.axvline(zc, color="k", ls="--", label=f"{m['level']:.1%} level")
+    sm = m.get("summary", {})
+    ax.set_xlabel(f"displacement / its own uncertainty (last bar: {4 * zc:.0f} or more)")
     ax.legend(fontsize=8)
-    ax.set_title("how far feature points moved")
+    ax.set_title(f"moved beyond their uncertainty: {m['moved_pt'].mean():.0%} of points\n"
+                 f"(point uncertainty {np.median(m['sigma_cm']):.2f} cm median)", fontsize=10)
     by = {(o.recording, o.id): o for o in objs}
     for i, r in enumerate(top):
         o = by[(r["recording"], r["id"])]
@@ -392,9 +477,12 @@ def figure(m: dict, rec, objs: list, out, title: str, n_obj: int = 3) -> None:
         fig.colorbar(sc, ax=ax, fraction=0.046, label="cm")
         ax.set_aspect("equal")
         ax.set_xticks([]), ax.set_yticks([])
-        ax.set_title(f"{o.label or 'object'} {o.recording}{o.id}: deformation p90 {r['deform_p90_cm']:.1f} cm, "
-                     f"peak {r['deform_peak_cm']:.1f} cm {r['deform_peak_where']}\nmoved {r['moved_cm']:.1f} cm, "
-                     f"turned {r['rotation_deg']:.0f} deg", fontsize=9)
+        sg = m["deform_sig"][sel]
+        ax.scatter(P2[sg, 0], P2[sg, 1], s=40, facecolors="none", edgecolors="tab:cyan", lw=0.6)
+        ax.set_title(f"{o.label or 'object'} {o.recording}{o.id}: deformation peak {r['deform_peak_cm']:.1f} "
+                     f"± {r['deform_peak_sigma_cm']:.1f} cm {r['deform_peak_where']}\n(circled: beyond uncertainty, "
+                     f"{r['deformed_share']:.0%}); moved {r['moved_cm']:.1f} cm, turned {r['rotation_deg']:.0f} deg",
+                     fontsize=9)
     fig.suptitle(title, fontsize=11)
     fig.tight_layout()
     fig.savefig(out, dpi=80)
