@@ -1,0 +1,13 @@
+2026-10-11 21:32:29Z INFO  [1/8] Python 3.13.15, platform: Colab
+2026-10-11 21:32:29Z INFO  [2/8] GITHUB_TOKEN found in Colab secrets: fine-grained (github_pat_), 93 characters (value never printed)
+2026-10-11 21:32:31Z INFO  [3/8] token valid for GitHub user 'FinPThomas'; expires: 2026-11-09 14:37:14 UTC; API calls left this hour: 4981
+2026-10-11 21:32:31Z INFO  [4/8] repository FinPThomas/UncertainScene visible (private: False)
+2026-10-11 21:32:31Z INFO        branch exp/change/scene01-heatmaps at 3b5e135
+2026-10-11 21:33:44Z INFO  [5/8] code at 3b5e135 (feat(change): add Rigidity Copilot stiffness from CLIP materials) in 73 s
+2026-10-11 21:36:50Z INFO  [6/8] dependencies installed in 186 s (torch 2.11.0+cu130, SAM 2 ok)
+2026-10-11 21:36:54Z INFO  [7/8] GitHub check passed: test file pushed to exp/change/scene01-heatmaps (results/change/2026-10-11_scene01-objects-fixed/logs/github_check_20261011_213651.txt)
+2026-10-11 21:36:54Z INFO  [8/8] GPU Tesla T4 14.6 GB: fits ~54 frames per reconstruction (more are capped; CUDA out-of-memory retries with 20% fewer)
+2026-10-11 21:36:54Z INFO        machine now: RAM 1.6/12.7 GB, disk free 64.8 GB, GPU 0.0/15.0 GB
+2026-10-11 21:36:54Z INFO        guardrails: RAM warn 80% / stop 92%, disk warn 12 GB / stop 5 GB free, checked every 15 s and between every stage of a step; a step only starts if its RAM, disk and time fit; session plan 11.0 h minus 20 min
+2026-10-11 21:36:54Z INFO        session label colab-634b; run state:
+(no steps yet)
