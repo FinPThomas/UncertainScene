@@ -1,0 +1,625 @@
+2026-10-11 21:36:56,552 INFO uncertainscene.scene01: step 1-main_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant base
+2026-10-11 21:37:12,071 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-10-11 21:37:12,182 INFO dinov2: using MLP layer as FFN
+2026-10-11 21:40:41,569 INFO uncertainscene.recon.vggt: loaded facebook/VGGT-1B on cuda in 210 s
+2026-10-11 21:41:21,659 INFO uncertainscene.recon.chunked: chunk 2/19: 47 frames, scale 1.006, anchor residual 0.002 (relative to depth)
+2026-10-11 21:41:40,584 INFO uncertainscene.recon.chunked: chunk 3/19: 47 frames, scale 1.017, anchor residual 0.003 (relative to depth)
+2026-10-11 21:41:59,743 INFO uncertainscene.recon.chunked: chunk 4/19: 47 frames, scale 1.012, anchor residual 0.004 (relative to depth)
+2026-10-11 21:42:19,143 INFO uncertainscene.recon.chunked: chunk 5/19: 47 frames, scale 1.025, anchor residual 0.004 (relative to depth)
+2026-10-11 21:42:38,040 INFO uncertainscene.recon.chunked: chunk 6/19: 46 frames, scale 1.024, anchor residual 0.005 (relative to depth)
+2026-10-11 21:42:57,135 INFO uncertainscene.recon.chunked: chunk 7/19: 46 frames, scale 1.032, anchor residual 0.005 (relative to depth)
+2026-10-11 21:43:16,405 INFO uncertainscene.recon.chunked: chunk 8/19: 46 frames, scale 1.034, anchor residual 0.005 (relative to depth)
+2026-10-11 21:43:35,813 INFO uncertainscene.recon.chunked: chunk 9/19: 46 frames, scale 1.028, anchor residual 0.005 (relative to depth)
+2026-10-11 21:43:55,420 INFO uncertainscene.recon.chunked: chunk 10/19: 46 frames, scale 1.027, anchor residual 0.006 (relative to depth)
+2026-10-11 21:44:15,083 INFO uncertainscene.recon.chunked: chunk 11/19: 46 frames, scale 1.038, anchor residual 0.006 (relative to depth)
+2026-10-11 21:44:34,812 INFO uncertainscene.recon.chunked: chunk 12/19: 46 frames, scale 1.029, anchor residual 0.005 (relative to depth)
+2026-10-11 21:44:54,595 INFO uncertainscene.recon.chunked: chunk 13/19: 46 frames, scale 1.015, anchor residual 0.005 (relative to depth)
+2026-10-11 21:45:14,458 INFO uncertainscene.recon.chunked: chunk 14/19: 46 frames, scale 1.015, anchor residual 0.005 (relative to depth)
+2026-10-11 21:45:34,389 INFO uncertainscene.recon.chunked: chunk 15/19: 46 frames, scale 1.011, anchor residual 0.005 (relative to depth)
+2026-10-11 21:45:54,385 INFO uncertainscene.recon.chunked: chunk 16/19: 46 frames, scale 1.006, anchor residual 0.005 (relative to depth)
+2026-10-11 21:46:14,445 INFO uncertainscene.recon.chunked: chunk 17/19: 46 frames, scale 1.009, anchor residual 0.005 (relative to depth)
+2026-10-11 21:46:34,541 INFO uncertainscene.recon.chunked: chunk 18/19: 46 frames, scale 1.011, anchor residual 0.003 (relative to depth)
+2026-10-11 21:46:54,657 INFO uncertainscene.recon.chunked: chunk 19/19: 46 frames, scale 1.005, anchor residual 0.003 (relative to depth)
+2026-10-11 21:46:55,223 INFO uncertainscene.recon.vggt: reconstructed 735 frames (364 + 371) in 19 chunks in 585 s; worst chunk residual 0.006
+2026-10-11 21:47:29,977 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] reconstruction (735 frames, 19 chunks, worst anchor residual 0.0061) done in 633 s | RAM 4.7/12.7 GB, disk free 59.7 GB, GPU 4.5/15.0 GB
+2026-10-11 21:50:34,321 INFO uncertainscene.recon.poses: poses: 5015 of 5259 frame pairs matched
+2026-10-11 21:50:35,364 INFO uncertainscene.recon.poses: poses: 1871 features/frame, 178390 tracks, 967287 observations (185 s)
+2026-10-11 21:50:36,653 INFO uncertainscene.recon.poses: poses: VGGT poses reproject at 8.26 px median (107287 points)
+2026-10-11 21:50:45,533 INFO uncertainscene.recon.poses: poses: round 1: 341.43 px median, 107287 points (196 s)
+2026-10-11 21:50:46,618 INFO uncertainscene.recon.poses: poses: round 2: nan px median, 0 points (197 s)
+2026-10-11 21:50:47,525 ERROR uncertainscene.scene01: pose refinement failed; keeping VGGT poses
+Traceback (most recent call last):
+  File "/content/UncertainScene/src/uncertainscene/experiments/scene01.py", line 203, in _posed
+    rec, pts, rep = refine_recon(rec, cache, _key(spec))
+                    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/content/UncertainScene/src/uncertainscene/recon/poses.py", line 393, in refine_recon
+    E, Kf, pts, report = refine(rec.E, rec.K, rec.video, rec.files, (w0, h0), cfg)
+                         ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/content/UncertainScene/src/uncertainscene/recon/poses.py", line 358, in refine
+    "final": {"median_px": float(np.median(err)), "p90_px": float(np.quantile(err, 0.9)),
+                                                                  ~~~~~~~~~~~^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/numpy/lib/_function_base_impl.py", line 4504, in quantile
+    return _quantile_unchecked(
+        a, q, axis, out, overwrite_input, method, keepdims, weights)
+  File "/usr/local/lib/python3.13/dist-packages/numpy/lib/_function_base_impl.py", line 4517, in _quantile_unchecked
+    return _ureduce(a,
+                    func=_quantile_ureduce_func,
+    ...<5 lines>...
+                    overwrite_input=overwrite_input,
+                    method=method)
+  File "/usr/local/lib/python3.13/dist-packages/numpy/lib/_function_base_impl.py", line 3848, in _ureduce
+    r = func(a, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/numpy/lib/_function_base_impl.py", line 4694, in _quantile_ureduce_func
+    result = _quantile(arr,
+                       quantiles=q,
+    ...<2 lines>...
+                       out=out,
+                       weights=wgt)
+  File "/usr/local/lib/python3.13/dist-packages/numpy/lib/_function_base_impl.py", line 4816, in _quantile
+    slices_having_nans = np.isnan(arr[-1, ...])
+                                  ~~~^^^^^^^^^
+IndexError: index -1 is out of bounds for axis 0 with size 0
+2026-10-11 21:50:55,593 INFO numexpr.utils: NumExpr defaulting to 2 threads.
+2026-10-11 21:51:21,765 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] DINOv2 features done in 232 s | RAM 6.3/12.7 GB, disk free 59.2 GB, GPU 5.6/15.0 GB
+2026-10-11 22:08:01,460 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] point-level change detection (1200000 points, tau 0.088) done in 1000 s | RAM 7.2/12.7 GB, disk free 59.2 GB, GPU 5.6/15.0 GB
+2026-10-11 22:08:02,266 INFO uncertainscene.change.floor: floor: gravity refined by 6.5 deg, 35 floor points (3% of horizontal), camera 0.421 units above floor -> 3.206 m/unit
+2026-10-11 22:08:02,613 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] floor (35 floor points, gravity refined 6.5 deg) done in 1 s | RAM 7.2/12.7 GB, disk free 59.2 GB, GPU 5.6/15.0 GB
+2026-10-11 22:08:31,364 INFO root: Loaded checkpoint sucessfully
+2026-10-11 22:08:31,662 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:08:31,781 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:08:32,004 INFO root: Image embeddings computed.
+2026-10-11 22:08:36,976 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:08:37,017 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:08:37,030 INFO root: Image embeddings computed.
+2026-10-11 22:08:37,853 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:08:37,881 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:08:37,902 INFO root: Image embeddings computed.
+2026-10-11 22:08:42,597 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:08:42,622 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:08:42,638 INFO root: Image embeddings computed.
+2026-10-11 22:08:43,415 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:08:43,441 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:08:43,454 INFO root: Image embeddings computed.
+2026-10-11 22:08:48,404 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:08:48,430 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:08:48,443 INFO root: Image embeddings computed.
+2026-10-11 22:08:49,075 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:08:49,102 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:08:49,115 INFO root: Image embeddings computed.
+2026-10-11 22:08:54,156 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:08:54,181 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:08:54,194 INFO root: Image embeddings computed.
+2026-10-11 22:08:54,827 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:08:54,854 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:08:54,868 INFO root: Image embeddings computed.
+2026-10-11 22:08:59,940 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:08:59,965 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:08:59,978 INFO root: Image embeddings computed.
+2026-10-11 22:09:00,570 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:00,595 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:00,608 INFO root: Image embeddings computed.
+2026-10-11 22:09:05,585 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:05,612 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:05,627 INFO root: Image embeddings computed.
+2026-10-11 22:09:06,147 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:06,173 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:06,186 INFO root: Image embeddings computed.
+2026-10-11 22:09:10,847 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:10,875 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:10,888 INFO root: Image embeddings computed.
+2026-10-11 22:09:11,466 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:11,493 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:11,506 INFO root: Image embeddings computed.
+2026-10-11 22:09:16,565 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:16,607 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:16,624 INFO root: Image embeddings computed.
+2026-10-11 22:09:17,287 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:17,330 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:17,347 INFO root: Image embeddings computed.
+2026-10-11 22:09:22,274 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:22,299 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:22,312 INFO root: Image embeddings computed.
+2026-10-11 22:09:22,952 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:22,978 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:22,992 INFO root: Image embeddings computed.
+2026-10-11 22:09:28,052 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:28,090 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:28,120 INFO root: Image embeddings computed.
+2026-10-11 22:09:28,762 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:28,807 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:28,823 INFO root: Image embeddings computed.
+2026-10-11 22:09:34,605 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:34,630 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:34,643 INFO root: Image embeddings computed.
+2026-10-11 22:09:35,065 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:35,091 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:35,103 INFO root: Image embeddings computed.
+2026-10-11 22:09:40,117 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:40,142 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:40,155 INFO root: Image embeddings computed.
+2026-10-11 22:09:40,815 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:40,855 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:40,878 INFO root: Image embeddings computed.
+2026-10-11 22:09:45,775 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:45,801 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:45,816 INFO root: Image embeddings computed.
+2026-10-11 22:09:46,394 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:46,419 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:46,431 INFO root: Image embeddings computed.
+2026-10-11 22:09:51,532 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:51,557 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:51,569 INFO root: Image embeddings computed.
+2026-10-11 22:09:52,153 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:52,179 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:52,195 INFO root: Image embeddings computed.
+2026-10-11 22:09:57,329 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:57,356 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:57,369 INFO root: Image embeddings computed.
+2026-10-11 22:09:57,933 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:09:57,959 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:09:57,973 INFO root: Image embeddings computed.
+2026-10-11 22:10:02,821 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:02,847 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:02,860 INFO root: Image embeddings computed.
+2026-10-11 22:10:03,873 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:03,898 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:03,910 INFO root: Image embeddings computed.
+2026-10-11 22:10:08,932 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:08,958 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:08,971 INFO root: Image embeddings computed.
+2026-10-11 22:10:09,831 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:09,857 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:09,869 INFO root: Image embeddings computed.
+2026-10-11 22:10:15,707 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:15,733 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:15,746 INFO root: Image embeddings computed.
+2026-10-11 22:10:16,502 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:16,535 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:16,548 INFO root: Image embeddings computed.
+2026-10-11 22:10:22,155 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:22,180 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:22,192 INFO root: Image embeddings computed.
+2026-10-11 22:10:22,959 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:22,987 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:23,000 INFO root: Image embeddings computed.
+2026-10-11 22:10:27,625 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:27,649 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:27,662 INFO root: Image embeddings computed.
+2026-10-11 22:10:28,307 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:28,335 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:28,347 INFO root: Image embeddings computed.
+2026-10-11 22:10:33,347 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:33,388 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:33,408 INFO root: Image embeddings computed.
+2026-10-11 22:10:34,071 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:34,097 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:34,111 INFO root: Image embeddings computed.
+2026-10-11 22:10:39,338 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:39,368 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:39,382 INFO root: Image embeddings computed.
+2026-10-11 22:10:39,929 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:39,955 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:39,968 INFO root: Image embeddings computed.
+2026-10-11 22:10:45,061 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:45,100 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:45,116 INFO root: Image embeddings computed.
+2026-10-11 22:10:46,105 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:46,144 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:46,165 INFO root: Image embeddings computed.
+2026-10-11 22:10:51,213 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:51,238 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:51,251 INFO root: Image embeddings computed.
+2026-10-11 22:10:51,734 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:51,760 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:51,776 INFO root: Image embeddings computed.
+2026-10-11 22:10:57,232 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:57,274 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:57,292 INFO root: Image embeddings computed.
+2026-10-11 22:10:57,875 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:10:57,918 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:10:57,938 INFO root: Image embeddings computed.
+2026-10-11 22:11:03,666 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:03,691 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:03,704 INFO root: Image embeddings computed.
+2026-10-11 22:11:04,108 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:04,133 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:04,145 INFO root: Image embeddings computed.
+2026-10-11 22:11:09,719 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:09,761 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:09,780 INFO root: Image embeddings computed.
+2026-10-11 22:11:10,388 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:10,431 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:10,453 INFO root: Image embeddings computed.
+2026-10-11 22:11:15,458 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:15,484 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:15,497 INFO root: Image embeddings computed.
+2026-10-11 22:11:16,177 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:16,204 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:16,217 INFO root: Image embeddings computed.
+2026-10-11 22:11:21,285 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:21,317 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:21,339 INFO root: Image embeddings computed.
+2026-10-11 22:11:22,687 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:22,730 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:22,748 INFO root: Image embeddings computed.
+2026-10-11 22:11:27,809 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:27,836 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:27,848 INFO root: Image embeddings computed.
+2026-10-11 22:11:28,334 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:28,360 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:28,373 INFO root: Image embeddings computed.
+2026-10-11 22:11:33,346 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:33,372 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:33,385 INFO root: Image embeddings computed.
+2026-10-11 22:11:33,952 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:33,978 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:33,991 INFO root: Image embeddings computed.
+2026-10-11 22:11:39,057 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:39,082 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:39,097 INFO root: Image embeddings computed.
+2026-10-11 22:11:39,899 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:39,926 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:39,940 INFO root: Image embeddings computed.
+2026-10-11 22:11:44,931 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:44,956 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:44,969 INFO root: Image embeddings computed.
+2026-10-11 22:11:45,710 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:45,736 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:45,749 INFO root: Image embeddings computed.
+2026-10-11 22:11:50,859 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:50,885 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:50,897 INFO root: Image embeddings computed.
+2026-10-11 22:11:51,963 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:51,997 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:52,015 INFO root: Image embeddings computed.
+2026-10-11 22:11:56,788 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:56,813 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:56,826 INFO root: Image embeddings computed.
+2026-10-11 22:11:57,880 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:11:57,906 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:11:57,919 INFO root: Image embeddings computed.
+2026-10-11 22:12:03,171 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:03,196 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:03,208 INFO root: Image embeddings computed.
+2026-10-11 22:12:03,761 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:03,786 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:03,799 INFO root: Image embeddings computed.
+2026-10-11 22:12:09,094 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:09,120 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:09,133 INFO root: Image embeddings computed.
+2026-10-11 22:12:09,717 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:09,744 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:09,758 INFO root: Image embeddings computed.
+2026-10-11 22:12:14,765 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:14,791 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:14,805 INFO root: Image embeddings computed.
+2026-10-11 22:12:15,300 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:15,325 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:15,341 INFO root: Image embeddings computed.
+2026-10-11 22:12:20,322 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:20,348 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:20,361 INFO root: Image embeddings computed.
+2026-10-11 22:12:20,972 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:21,000 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:21,012 INFO root: Image embeddings computed.
+2026-10-11 22:12:26,390 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:26,431 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:26,448 INFO root: Image embeddings computed.
+2026-10-11 22:12:27,095 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:27,123 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:27,137 INFO root: Image embeddings computed.
+2026-10-11 22:12:32,309 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:32,347 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:32,361 INFO root: Image embeddings computed.
+2026-10-11 22:12:33,107 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:33,132 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:33,145 INFO root: Image embeddings computed.
+2026-10-11 22:12:38,492 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:38,533 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:38,549 INFO root: Image embeddings computed.
+2026-10-11 22:12:39,142 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:39,189 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:39,206 INFO root: Image embeddings computed.
+2026-10-11 22:12:44,358 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:44,386 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:44,404 INFO root: Image embeddings computed.
+2026-10-11 22:12:45,401 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:45,432 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:45,445 INFO root: Image embeddings computed.
+2026-10-11 22:12:50,694 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:50,734 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:50,750 INFO root: Image embeddings computed.
+2026-10-11 22:12:52,107 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:52,149 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:52,172 INFO root: Image embeddings computed.
+2026-10-11 22:12:57,242 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:57,267 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:57,280 INFO root: Image embeddings computed.
+2026-10-11 22:12:58,075 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:12:58,102 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:12:58,115 INFO root: Image embeddings computed.
+2026-10-11 22:13:02,825 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:02,870 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:02,891 INFO root: Image embeddings computed.
+2026-10-11 22:13:03,869 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:03,917 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:03,936 INFO root: Image embeddings computed.
+2026-10-11 22:13:09,294 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:09,320 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:09,333 INFO root: Image embeddings computed.
+2026-10-11 22:13:10,017 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:10,043 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:10,055 INFO root: Image embeddings computed.
+2026-10-11 22:13:15,206 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:15,244 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:15,264 INFO root: Image embeddings computed.
+2026-10-11 22:13:16,051 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:16,095 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:16,111 INFO root: Image embeddings computed.
+2026-10-11 22:13:21,075 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:21,101 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:21,115 INFO root: Image embeddings computed.
+2026-10-11 22:13:21,922 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:21,948 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:21,961 INFO root: Image embeddings computed.
+2026-10-11 22:13:26,771 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:26,802 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:26,815 INFO root: Image embeddings computed.
+2026-10-11 22:13:27,637 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:27,673 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:27,686 INFO root: Image embeddings computed.
+2026-10-11 22:13:32,998 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:33,023 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:33,037 INFO root: Image embeddings computed.
+2026-10-11 22:13:33,718 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:33,748 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:33,761 INFO root: Image embeddings computed.
+2026-10-11 22:13:38,842 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:38,868 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:38,880 INFO root: Image embeddings computed.
+2026-10-11 22:13:39,732 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:39,758 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:39,771 INFO root: Image embeddings computed.
+2026-10-11 22:13:44,813 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:44,839 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:44,855 INFO root: Image embeddings computed.
+2026-10-11 22:13:45,815 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:45,841 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:45,853 INFO root: Image embeddings computed.
+2026-10-11 22:13:51,013 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:51,038 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:51,053 INFO root: Image embeddings computed.
+2026-10-11 22:13:51,782 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:51,810 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:51,824 INFO root: Image embeddings computed.
+2026-10-11 22:13:57,438 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:57,463 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:57,476 INFO root: Image embeddings computed.
+2026-10-11 22:13:58,338 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:13:58,366 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:13:58,379 INFO root: Image embeddings computed.
+2026-10-11 22:14:03,567 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:03,599 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:03,612 INFO root: Image embeddings computed.
+2026-10-11 22:14:04,388 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:04,419 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:04,433 INFO root: Image embeddings computed.
+2026-10-11 22:14:09,721 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:09,747 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:09,760 INFO root: Image embeddings computed.
+2026-10-11 22:14:10,680 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:10,706 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:10,719 INFO root: Image embeddings computed.
+2026-10-11 22:14:16,444 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:16,474 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:16,487 INFO root: Image embeddings computed.
+2026-10-11 22:14:17,107 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:17,132 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:17,145 INFO root: Image embeddings computed.
+2026-10-11 22:14:22,415 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:22,441 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:22,454 INFO root: Image embeddings computed.
+2026-10-11 22:14:23,108 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:23,138 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:23,151 INFO root: Image embeddings computed.
+2026-10-11 22:14:28,241 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:28,268 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:28,281 INFO root: Image embeddings computed.
+2026-10-11 22:14:29,036 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:29,075 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:29,089 INFO root: Image embeddings computed.
+2026-10-11 22:14:34,663 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:34,689 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:34,702 INFO root: Image embeddings computed.
+2026-10-11 22:14:35,183 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:35,211 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:35,226 INFO root: Image embeddings computed.
+2026-10-11 22:14:40,470 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:40,496 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:40,509 INFO root: Image embeddings computed.
+2026-10-11 22:14:41,139 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:41,166 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:41,179 INFO root: Image embeddings computed.
+2026-10-11 22:14:46,666 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:46,692 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:46,704 INFO root: Image embeddings computed.
+2026-10-11 22:14:47,255 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:47,280 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:47,296 INFO root: Image embeddings computed.
+2026-10-11 22:14:52,750 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:52,775 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:52,788 INFO root: Image embeddings computed.
+2026-10-11 22:14:53,381 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:53,408 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:53,422 INFO root: Image embeddings computed.
+2026-10-11 22:14:58,504 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:58,531 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:58,546 INFO root: Image embeddings computed.
+2026-10-11 22:14:59,193 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:14:59,219 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:14:59,231 INFO root: Image embeddings computed.
+2026-10-11 22:15:04,419 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:04,445 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:04,458 INFO root: Image embeddings computed.
+2026-10-11 22:15:05,117 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:05,144 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:05,156 INFO root: Image embeddings computed.
+2026-10-11 22:15:10,538 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:10,579 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:10,602 INFO root: Image embeddings computed.
+2026-10-11 22:15:11,169 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:11,194 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:11,208 INFO root: Image embeddings computed.
+2026-10-11 22:15:16,545 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:16,572 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:16,589 INFO root: Image embeddings computed.
+2026-10-11 22:15:17,076 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:17,104 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:17,118 INFO root: Image embeddings computed.
+2026-10-11 22:15:22,592 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:22,640 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:22,663 INFO root: Image embeddings computed.
+2026-10-11 22:15:23,181 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:23,207 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:23,220 INFO root: Image embeddings computed.
+2026-10-11 22:15:28,861 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:28,887 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:28,899 INFO root: Image embeddings computed.
+2026-10-11 22:15:29,400 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:29,427 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:29,440 INFO root: Image embeddings computed.
+2026-10-11 22:15:35,095 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:35,134 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:35,156 INFO root: Image embeddings computed.
+2026-10-11 22:15:35,651 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:35,682 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:35,694 INFO root: Image embeddings computed.
+2026-10-11 22:15:41,071 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:41,097 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:41,109 INFO root: Image embeddings computed.
+2026-10-11 22:15:41,653 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:41,679 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:41,693 INFO root: Image embeddings computed.
+2026-10-11 22:15:47,246 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:47,287 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:47,309 INFO root: Image embeddings computed.
+2026-10-11 22:15:47,816 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:47,844 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:47,857 INFO root: Image embeddings computed.
+2026-10-11 22:15:52,921 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:52,947 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:52,963 INFO root: Image embeddings computed.
+2026-10-11 22:15:54,045 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:54,071 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:54,083 INFO root: Image embeddings computed.
+2026-10-11 22:15:59,184 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:15:59,223 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:15:59,238 INFO root: Image embeddings computed.
+2026-10-11 22:16:00,410 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:00,439 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:00,451 INFO root: Image embeddings computed.
+2026-10-11 22:16:05,654 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:05,679 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:05,692 INFO root: Image embeddings computed.
+2026-10-11 22:16:06,204 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:06,232 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:06,245 INFO root: Image embeddings computed.
+2026-10-11 22:16:11,721 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:11,763 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:11,779 INFO root: Image embeddings computed.
+2026-10-11 22:16:12,573 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:12,600 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:12,615 INFO root: Image embeddings computed.
+2026-10-11 22:16:17,854 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:17,879 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:17,892 INFO root: Image embeddings computed.
+2026-10-11 22:16:18,344 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:18,380 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:18,401 INFO root: Image embeddings computed.
+2026-10-11 22:16:23,641 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:23,687 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:23,704 INFO root: Image embeddings computed.
+2026-10-11 22:16:24,572 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:24,616 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:24,635 INFO root: Image embeddings computed.
+2026-10-11 22:16:30,230 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:30,260 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:30,272 INFO root: Image embeddings computed.
+2026-10-11 22:16:30,867 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:30,899 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:30,912 INFO root: Image embeddings computed.
+2026-10-11 22:16:36,113 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:36,159 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:36,178 INFO root: Image embeddings computed.
+2026-10-11 22:16:36,875 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:36,919 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:36,939 INFO root: Image embeddings computed.
+2026-10-11 22:16:42,091 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:42,116 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:42,137 INFO root: Image embeddings computed.
+2026-10-11 22:16:42,867 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:42,893 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:42,907 INFO root: Image embeddings computed.
+2026-10-11 22:16:47,944 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:47,994 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:48,010 INFO root: Image embeddings computed.
+2026-10-11 22:16:49,260 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:49,305 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:49,322 INFO root: Image embeddings computed.
+2026-10-11 22:16:54,541 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:54,572 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:54,588 INFO root: Image embeddings computed.
+2026-10-11 22:16:55,183 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:16:55,212 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:16:55,225 INFO root: Image embeddings computed.
+2026-10-11 22:17:01,227 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:17:01,271 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:17:01,288 INFO root: Image embeddings computed.
+2026-10-11 22:17:02,283 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:17:02,315 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:17:02,331 INFO root: Image embeddings computed.
+2026-10-11 22:17:07,693 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:17:07,718 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:17:07,734 INFO root: Image embeddings computed.
+2026-10-11 22:17:08,401 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:17:08,432 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:17:08,445 INFO root: Image embeddings computed.
+2026-10-11 22:17:14,089 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:17:14,129 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:17:14,145 INFO root: Image embeddings computed.
+2026-10-11 22:17:15,134 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:17:15,161 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:17:15,176 INFO root: Image embeddings computed.
+2026-10-11 22:17:20,361 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-11 22:17:20,391 INFO root: Computing image embeddings for the provided image...
+2026-10-11 22:17:20,403 INFO root: Image embeddings computed.
+2026-10-11 22:17:21,361 INFO uncertainscene.scene01: SAM 2: 2017 masks on 88 frames in 559 s
+2026-10-11 22:17:42,962 INFO uncertainscene.change.segment: recording A: 999 masks on 44 frames -> 748 fragments -> 177 objects (15 structures), median 1.0 views per object, merge grid 0.0350 units
+2026-10-11 22:18:03,388 INFO uncertainscene.change.segment: recording B: 1018 masks on 44 frames -> 783 fragments -> 221 objects (17 structures), median 1.0 views per object, merge grid 0.0350 units
+2026-10-11 22:18:04,062 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] SAM 2 objects (177 in A, 221 in B) done in 601 s | RAM 7.2/12.7 GB, disk free 59.0 GB, GPU 4.9/15.0 GB
+2026-10-11 22:19:16,665 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] CLIP labels for every object done in 73 s | RAM 7.3/12.7 GB, disk free 57.5 GB, GPU 7.2/15.0 GB
+2026-10-11 22:19:17,329 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] Rigidity Copilot: expected stiffness of 398 objects done in 1 s | RAM 7.3/12.7 GB, disk free 57.5 GB, GPU 7.2/15.0 GB
+2026-10-11 22:19:17,333 INFO uncertainscene.change.floor: scale: phone height 3.206, objects 2.911 (43: cushion, book, guitar, guitar, neck pillow, baseball cap), combined 3.024 m/unit (cues 0.7 sigma apart)
+2026-10-11 22:28:14,814 INFO uncertainscene.change.inventory: object changes: {'A:unchanged': 157, 'A:moved': 3, 'A:removed': 10, 'A:not seen in other recording': 5, 'A:shifted': 2, 'B:unchanged': 182, 'B:added': 16, 'B:not seen in other recording': 17, 'B:shifted': 3, 'B:moved': 3}; thresholds gone 0.629 appearance 0.805 shift 0.0909 (from 393 null objects)
+2026-10-11 22:28:15,234 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] object-level changes done in 538 s | RAM 7.3/12.7 GB, disk free 57.5 GB, GPU 7.2/15.0 GB
+2026-10-11 22:29:46,413 INFO uncertainscene.recon.poses: poses: 1020 of 1112 frame pairs matched
+2026-10-11 22:29:47,595 INFO uncertainscene.change.motion3d: motion: recording 0: 257 3D feature points, pixel noise 1.24 px (92 s)
+2026-10-11 22:29:52,749 INFO uncertainscene.recon.poses: poses: 921 of 1133 frame pairs matched
+2026-10-11 22:29:54,241 INFO uncertainscene.change.motion3d: motion: recording 1: 315 3D feature points, pixel noise 1.21 px (98 s)
+2026-10-11 22:29:56,873 INFO uncertainscene.change.motion3d: motion: 0 before/after links; point uncertainty nan cm median (of which recording misalignment 0.00 cm); 0% moved beyond their uncertainty; 101 s
+2026-10-11 22:29:57,323 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] feature motion (0 matched points, point uncertainty nan cm, 0 objects moved, 0 deformed) done in 102 s | RAM 7.6/12.7 GB, disk free 57.5 GB, GPU 7.3/15.0 GB
+2026-10-11 22:30:00,386 INFO uncertainscene.change.assets: assets: 60 objects exported (0 deformable), 58 contacts
+2026-10-11 22:30:00,791 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] object assets (60 objects, 58 contacts) done in 3 s | RAM 7.5/12.7 GB, disk free 57.4 GB, GPU 7.3/15.0 GB
+2026-10-11 22:30:19,625 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] heat maps (120000 points, scale 3.024 m/unit) done in 19 s | RAM 7.5/12.7 GB, disk free 57.4 GB, GPU 7.3/15.0 GB
+2026-10-11 22:31:01,010 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] figures, viewer and reports done in 41 s | RAM 7.5/12.7 GB, disk free 57.4 GB, GPU 7.3/15.0 GB
+2026-10-11 22:31:01,011 ERROR uncertainscene.scene01: step 1-main_moved_light-before-a_vs_light-after-a failed
+Traceback (most recent call last):
+  File "/content/UncertainScene/src/uncertainscene/experiments/scene01.py", line 290, in fn
+    return analyse(spec, out, cache, store, check)
+  File "/content/UncertainScene/src/uncertainscene/experiments/scene01.py", line 531, in analyse
+    write_report(spec, m, rows, out)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/content/UncertainScene/src/uncertainscene/experiments/scene01.py", line 667, in write_report
+    f"between the recordings); {m['motion_links_moved_share']:.0%} moved beyond their own uncertainty |")
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unsupported format string passed to NoneType.__format__

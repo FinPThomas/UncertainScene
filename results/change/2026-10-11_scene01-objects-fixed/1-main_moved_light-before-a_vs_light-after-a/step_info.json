@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-11_scene01-objects-fixed",
+  "step": "1-main_moved_light-before-a_vs_light-after-a",
+  "status": "failed",
+  "account": "colab-634b",
+  "commit": "f04b112",
+  "minutes": 54.1,
+  "usage_at_end": "RAM 5.1/12.7 GB, disk free 57.4 GB, GPU 7.3/15.0 GB",
+  "note": "TypeError: unsupported format string passed to NoneType.__format__"
+}
