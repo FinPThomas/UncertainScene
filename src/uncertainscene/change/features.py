@@ -96,6 +96,22 @@ def clip_inventory(crops: list, vocab: list[str] = VOCAB_ALL, model_name: str = 
     return tops, np.concatenate(embs).astype(np.float32)
 
 
+def clip_text(texts: list[str], model_name: str = "openai/clip-vit-large-patch14") -> np.ndarray:
+    """L2-normalised CLIP text embeddings [N, D] (same model as clip_inventory)."""
+    import torch
+    from transformers import CLIPModel, CLIPProcessor
+
+    if model_name not in _CACHE:
+        _CACHE[model_name] = (CLIPModel.from_pretrained(model_name).to(_device()).eval(),
+                              CLIPProcessor.from_pretrained(model_name))
+    model, proc = _CACHE[model_name]
+    with torch.no_grad():
+        t = proc(text=texts, return_tensors="pt", padding=True)
+        tf = model.get_text_features(**{k: v.to(_device()) for k, v in t.items()})
+        tf = torch.nn.functional.normalize(_embeds(tf), dim=-1)
+    return tf.cpu().numpy().astype(np.float32)
+
+
 def clip_labels(crops: list, vocab: list[str] = VOCAB, model_name: str = "openai/clip-vit-base-patch32"):
     """Top label and probability for each PIL crop, plus the full probability table."""
     import torch

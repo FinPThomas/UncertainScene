@@ -340,6 +340,13 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         stage(f"SAM 2 objects ({len(objs_a)} in A, {len(objs_b)} in B)")
         inv.label_all(objs_a + objs_b, rec)
         stage("CLIP labels for every object")
+        try:
+            from ..change.rigidity import copilot
+
+            n_rig = copilot(objs_a + objs_b)
+            stage(f"Rigidity Copilot: expected stiffness of {n_rig} objects")
+        except Exception:  # noqa: BLE001 - stiffness priors are a bonus
+            log.exception("Rigidity Copilot failed; assets get no stiffness")
         floor = combine_scale(floor, object_scale([{"label": o.label, "label_prob": o.label_prob,
                                                     "extent_units": float(o.extent[0]), "complete": o.complete}
                                                    for o in objs_a + objs_b if not o.structure]))
@@ -683,9 +690,18 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
         g = json.loads(sg.read_text())
         L += ["## Object assets (node graphs)", "",
               f"`assets/` holds {len(g['objects'])} objects as node graphs (nodes with weights, edges with rest length, "
-              "measured strain and relative stiffness, convex hull also as `_hull.obj`) and `scene_graph.json` with "
-              "contacts. Stiffness is relative: 1 = no strain measurable between the recordings, lower = strained; no "
-              "forces were measured.", ""]
+              "spring constant from the Rigidity Copilot and measured strain, convex hull also as `_hull.obj`) and "
+              "`scene_graph.json` with contacts.", ""]
+        rg = [o for o in g["objects"] if o.get("rigidity") is not None]
+        if rg:
+            L += ["Rigidity Copilot (CLIP asked what each object is made of and how stiff it is; an expectation from "
+                  "appearance, checked against the measured strain where there is any):", "",
+                  "| Object | Status | Material (CLIP) | Rigidity 0-1 | Young's modulus | Measured | Check |",
+                  "|---|---|---|---|---|---|---|"]
+            for o in sorted(rg, key=lambda o: o["status"] == "unchanged")[:15]:
+                L.append(f"| {o['label'] or 'object'} | {o['status']} | {o['material']} | {o['rigidity']:.2f} | "
+                         f"{o['youngs_modulus_pa']:.2g} Pa | {o['behaviour'] or '-'} | {o.get('copilot_check') or '-'} |")
+            L.append("")
         de = [o for o in g["objects"] if o["behaviour"] == "deformable"]
         if de:
             L.append("Deformable (strained edges): " + ", ".join(f"{o['label'] or 'object'} ({o['edges_strained']} edges)"

@@ -6,18 +6,20 @@ Per object (from its SAM 2 points, metres, world frame with the floor's up vecto
   the object's points nearest to it (a mass proxy, not a mass);
 - edges: each node to its nearest neighbours (symmetric), with rest length (before);
 - hull: convex hull of the points (vertices, faces, volume, area), also written as .obj;
-- strain and relative stiffness, measured, not assumed: where the object has matched feature
+- stiffness from the Rigidity Copilot (rigidity.py: CLIP asked what the object is made of and
+  how stiff it is): expected Young's modulus with a range, and per edge a spring constant
+  k ~ E * L in N/m;
+- observed strain, measured, as a check on the Copilot: where the object has matched feature
   points (change/motion3d.py), every node gets the displacement of its nearby points with
   their uncertainty, the object's rigid motion is removed, and each edge's strain is the
   change of its length over its rest length, with the uncertainty carried through. An edge is
-  strained when |strain| is beyond twice its uncertainty. Relative stiffness 1 = no
-  measurable strain at this precision, towards 0 = strained a lot. No forces were measured,
-  so this says how much each part deformed between the recordings, not stiffness in N/m.
+  strained when |strain| is beyond twice its uncertainty. The object's measured behaviour
+  (deformable / rigid at this precision) is compared with the Copilot's expectation.
   No matched points -> strain unknown (null).
 Between objects: contacts (points of two objects closer than `contact_m`), with which object rests
 on which (from the up vector).
 
-Nothing depends on an object's label.
+The geometry and strain never depend on an object's label; the Copilot looks at its image.
 """
 
 from __future__ import annotations
@@ -201,14 +203,22 @@ def build(objs: list, scale_m: float, up: np.ndarray, out_dir: Path, motion: dic
         h = hull(o.X)
         L0 = np.linalg.norm(g["nodes"][g["edges"][:, 1]] - g["nodes"][g["edges"][:, 0]], axis=1) * scale_m
         strained = np.abs(st["strain"]) > 2 * st["strain_sigma"]
-        stiff = np.clip(2 * st["strain_sigma"] / np.maximum(np.abs(st["strain"]), 1e-9), 0, 1)
         measured = np.isfinite(st["strain"])
+        rig = o.extra.get("rigidity")
+        if rig is not None:
+            from .rigidity import edge_stiffness
+
+            k, klo, khi = edge_stiffness(L0, rig)
+        else:
+            k = klo = khi = np.full(len(L0), np.nan)
         edges = [{"i": int(a), "j": int(b), "rest_m": round(float(l), 4),
-                  "strain": None if not m else round(float(s), 4),
-                  "strain_sigma": None if not m else round(float(sg), 4),
-                  "strained": None if not m else bool(x), "stiffness_rel": None if not m else round(float(k), 3)}
-                 for (a, b), l, s, sg, x, k, m in zip(g["edges"], L0, st["strain"], st["strain_sigma"], strained,
-                                                     stiff, measured)]
+                  "stiffness_n_per_m": None if not np.isfinite(kk) else float(f"{kk:.3g}"),
+                  "stiffness_range_n_per_m": None if not np.isfinite(kk) else [float(f"{x:.3g}") for x in (kl, kh)],
+                  "observed_strain": None if not m else round(float(s), 4),
+                  "observed_strain_sigma": None if not m else round(float(sg), 4),
+                  "strained": None if not m else bool(x)}
+                 for (a, b), l, kk, kl, kh, s, sg, x, m in zip(g["edges"], L0, k, klo, khi, st["strain"],
+                                                              st["strain_sigma"], strained, measured)]
         doc = {"name": name, "label": o.label, "label_top3": o.label_top3, "recording": o.recording, "id": int(o.id),
                "status": o.status, "partner": None if o.partner is None else f"{'B' if o.recording == 'A' else 'A'}{o.partner}",
                "units": "metres, world frame of the reconstruction", "up": np.round(up, 4).tolist(),
@@ -221,11 +231,17 @@ def build(objs: list, scale_m: float, up: np.ndarray, out_dir: Path, motion: dic
                                                "faces": h["faces"].tolist()},
                "deformation": {"edges_measured": int(measured.sum()), "edges_strained": int((strained & measured).sum()),
                                "strain_abs_p90": None if not measured.any() else round(float(np.quantile(np.abs(st["strain"][measured]), 0.9)), 4),
-                               "stiffness_rel_median": None if not measured.any() else round(float(np.median(stiff[measured])), 3),
                                "behaviour": None if not measured.any() else
                                ("deformable" if (strained & measured).sum() >= max(3, 0.1 * measured.sum()) else
                                 "rigid at this precision")},
+               "rigidity_copilot": rig,
                "motion": o.extra.get("motion")}
+        beh = doc["deformation"]["behaviour"]
+        if rig is not None and beh is not None:          # does the measured strain agree with the expectation?
+            expect_soft = rig["rigidity"] < 0.5
+            doc["deformation"]["copilot_check"] = ("agrees" if expect_soft == (beh == "deformable") else
+                                                   "disagrees (expected " + ("soft" if expect_soft else "rigid") +
+                                                   f", measured {beh})")
         (out_dir / f"{name}.json").write_text(json.dumps(doc, default=float, separators=(",", ":")))
         if h is not None:
             obj = [f"v {x:.4f} {y:.4f} {z:.4f}" for x, y, z in h["vertices"] * scale_m]
@@ -235,6 +251,10 @@ def build(objs: list, scale_m: float, up: np.ndarray, out_dir: Path, motion: dic
         graphs.append({"name": name, "recording": o.recording, "points": sub * scale_m})
         files.append({"name": name, "label": o.label, "status": o.status, "nodes": len(g["nodes"]),
                       "edges": len(edges), "behaviour": doc["deformation"]["behaviour"],
+                      "rigidity": None if rig is None else rig["rigidity"],
+                      "material": None if rig is None else rig["materials"][0][0],
+                      "youngs_modulus_pa": None if rig is None else float(f"{rig['youngs_modulus_pa']:.3g}"),
+                      "copilot_check": doc["deformation"].get("copilot_check"),
                       "edges_strained": doc["deformation"]["edges_strained"]})
     con = contacts(graphs, np.asarray(up, float), contact_m) if graphs else []
     scene = {"objects": files, "contacts": con, "scale_m_per_unit": scale_m, "up": np.round(up, 4).tolist()}

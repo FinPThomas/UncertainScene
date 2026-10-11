@@ -50,3 +50,46 @@ def test_objects_round_trip(tmp_path):
     assets.save_objects(objs, tmp_path / "o.npz")
     back = assets.load_objects(tmp_path / "o.npz")
     assert back[0]["status"] == "moved" and back[0]["partner"] == 3 and back[0]["X"].shape == (50, 3)
+
+
+def test_rigidity_copilot_score_and_edges(tmp_path, monkeypatch):
+    from uncertainscene.change import assets, rigidity
+
+    n = len(rigidity.MATERIALS)
+    foam = np.eye(n)[list(rigidity.MATERIALS).index("soft foam or stuffing")]
+    metal = np.eye(n)[list(rigidity.MATERIALS).index("metal")]
+    s_foam, s_metal = rigidity.score(foam * 0.9 + 0.1 / n, 0.1), rigidity.score(metal * 0.9 + 0.1 / n, 0.9)
+    assert s_foam["rigidity"] < 0.3 < 0.8 < s_metal["rigidity"]
+    assert s_foam["youngs_modulus_pa"] < 1e7 < 1e10 < s_metal["youngs_modulus_pa"]
+    lo, hi = s_foam["youngs_modulus_range_pa"]
+    assert lo <= 1e4 and hi >= 1e6
+
+    # the copilot end to end with a tiny random CLIP (same code path as the real model)
+    torch = __import__("pytest").importorskip("torch")
+    transformers = __import__("pytest").importorskip("transformers")
+    from uncertainscene.change import features as F
+
+    cfg = transformers.CLIPConfig(
+        text_config=dict(hidden_size=32, intermediate_size=64, num_hidden_layers=2, num_attention_heads=2,
+                         vocab_size=100, max_position_embeddings=40, bos_token_id=0, eos_token_id=1, pad_token_id=1),
+        vision_config=dict(hidden_size=32, intermediate_size=64, num_hidden_layers=2, num_attention_heads=2,
+                           image_size=32, patch_size=8), projection_dim=16)
+
+    class Proc:
+        def __call__(self, text=None, images=None, return_tensors="pt", padding=True):
+            ids = torch.tensor([[2 + (sum(map(ord, t)) + i) % 90 for i in range(8)] + [1] for t in text])
+            return {"input_ids": ids, "attention_mask": torch.ones_like(ids)}
+
+    monkeypatch.setitem(F._CACHE, "tiny", (transformers.CLIPModel(cfg).eval(), Proc()))
+    monkeypatch.setattr(F, "_device", lambda: "cpu")
+    rng = np.random.default_rng(0)
+    o = _obj(np.c_[rng.uniform(-0.2, 0.2, 500), rng.uniform(-0.1, 0.1, 500), rng.uniform(0, 0.1, 500)], label="cushion")
+    o.extra["clip"] = rng.normal(size=16).astype(np.float32)
+    assert rigidity.copilot([o], model_name="tiny") == 1
+    r = o.extra["rigidity"]
+    assert 0 <= r["rigidity"] <= 1 and len(r["materials"]) == 3
+    assets.build([o], 1.0, np.array([0, 0, 1.0]), tmp_path, n_nodes=32)
+    doc = json.loads((tmp_path / "A000_cushion.json").read_text())
+    e = doc["edges"][0]
+    assert e["stiffness_n_per_m"] > 0 and e["stiffness_range_n_per_m"][0] <= e["stiffness_n_per_m"] <= e["stiffness_range_n_per_m"][1]
+    assert doc["rigidity_copilot"]["source"].startswith("Rigidity Copilot")
