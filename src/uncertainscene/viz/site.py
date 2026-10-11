@@ -163,6 +163,10 @@ def load_step(d: Path, with_3d: bool = True) -> dict:
                                              "frames_total", "n_changes", "pos_radius90_cm_median",
                                              "pos_nis_median", "matched_objects")},
           "images": [], "scene": None}
+    from ..eval.collate import INVALID_OBJECTS
+
+    if d.parent.name in INVALID_OBJECTS and m.get("step_kind") != "splat":
+        st["warning"] = "Object results of this run are invalid: " + INVALID_OBJECTS[d.parent.name]
     for f, cap in IMAGES:
         if (d / f).exists():
             st["images"].append({"caption": cap, "src": _img(d / f)})
@@ -213,7 +217,18 @@ def decimate(scene: dict, keep: float) -> dict:
         if l["pts"] in sel and l.get("rgb"):
             l["rgb"] = _b64(np.frombuffer(base64.b64decode(l["rgb"]), np.uint8).reshape(-1, 3)[sel[l["pts"]]])
         layers.append(l)
-    return {**scene, "points": tables, "layers": layers}
+    objects = scene.get("objects", [])
+    if keep < 0.3 and len(objects) > 60:
+        # keep changed objects and the largest others (objects come largest first); drop the rest's rings
+        n = max(60, int(len(objects) * keep * 2))
+        first = [o for o in objects if o.get("status") not in ("unchanged", "unknown", "not seen in other recording")]
+        objects = (first + [o for o in objects if o not in first])[:n]
+        used = {l["pts"] for l in layers} | {o["ring"] for o in objects if o.get("ring") is not None}
+        remap = {t: i for i, t in enumerate(sorted(used))}
+        tables = [tables[t] for t in sorted(used)]
+        layers = [{**l, "pts": remap[l["pts"]]} for l in layers]
+        objects = [{**o, **({"ring": remap[o["ring"]]} if o.get("ring") is not None else {})} for o in objects]
+    return {**scene, "points": tables, "layers": layers, "objects": objects}
 
 
 def build(run_dirs: list[Path], out: Path, prefixes: tuple = FEATURED, title: str = "Scene01 Change Viewer",
@@ -251,12 +266,12 @@ def build(run_dirs: list[Path], out: Path, prefixes: tuple = FEATURED, title: st
     while True:
         st2 = [{**st, "scene": decimate(st["scene"], keep)} for st in steps]
         payload = json.dumps({"steps": st2, "summary": _md_to_html(summary_md)}, separators=(",", ":"))
-        if len(payload) < (max_mb - 0.1) * 1024**2 or keep < 0.08:
+        if len(payload) < (max_mb - 0.1) * 1024**2 or keep < 0.01:
             break
         keep *= 0.7
         if keep < 0.35:                 # past this, drop figures before thinning the 3D further
             for st in steps:
-                st["images"] = st["images"][:2]
+                st["images"] = st["images"][:2 if keep > 0.1 else 1]
     html = TEMPLATE.replace("__TITLE__", title).replace("__DATA__", payload.replace("</", "<\\/"))
     if standalone:      # a file opened directly needs its own document head (the artifact host adds one)
         html = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" '
@@ -302,6 +317,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
 #legend{position:absolute;right:10px;bottom:10px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:12px;max-width:60%}
 #legend .bar{height:10px;width:180px;max-width:100%;border-radius:3px;margin:3px 0}
 #legend .ends{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums;color:var(--muted)}
+.warn{border-left:3px solid #c0392b;padding:6px 10px;background:var(--chip);margin:6px 0}
 #empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);padding:16px;text-align:center}
 .hint{color:var(--muted);font-size:13px;margin:6px 0}
 .ctrl{display:flex;flex-wrap:wrap;gap:12px;align-items:center;font-size:13px;color:var(--muted);margin:6px 0}
@@ -314,7 +330,7 @@ figcaption{color:var(--muted);font-size:13px;margin:4px 0}
 </style>
 <div class="wrap">
 <header><h1>__TITLE__</h1><select id="pick" aria-label="Choose a run"></select></header>
-<div class="q"><div class="phase" id="phase"></div><h2 id="ttl"></h2><p id="question"></p></div>
+<div class="q"><div class="phase" id="phase"></div><h2 id="ttl"></h2><p id="question"></p><p id="warn" class="warn" hidden></p></div>
 <div class="recs" id="recs"></div>
 <div class="tabs" id="tabs" role="tablist"><button data-t="t3d" class="on">3D scene</button><button data-t="timg">Figures</button><button data-t="tnotes">Findings for this run</button><button data-t="tsum">All runs</button></div>
 <section id="t3d">
@@ -349,7 +365,9 @@ function decode(sc){if(sc._dec)return sc._dec;
  const L=sc.layers.map(l=>{const P=T[l.pts],n=P.length/3;let C;
   if(l.rgb){C=b64(l.rgb)}else{C=new Uint8Array(n*3);const c=hex(typeof l.color==='string'?l.color:'#888');for(let i=0;i<n;i++){C[i*3]=c[0];C[i*3+1]=c[1];C[i*3+2]=c[2]}}
   return{...l,P,C,n}});
- const O=(sc.objects||[]).map(o=>({...o,ring:o.ring!=null?T[o.ring]:null}));
+ const quiet=st=>!st||st==='unchanged'||st==='unknown'||st==='not seen in other recording';let nq=0;
+ // names only for changed objects and the 40 largest others (objects come largest first), so labels stay readable
+ const O=(sc.objects||[]).map(o=>({...o,ring:o.ring!=null?T[o.ring]:null,named:!quiet(o.status)||(nq++<40)}));
  // robust centre and radius from colour layers
  const src=L.filter(l=>l.kind==='colour');const pool=(src.length?src:L).flatMap(l=>{const a=[];for(let i=0;i<l.n;i+=7)if(!isNaN(l.P[i*3]))a.push([l.P[i*3],l.P[i*3+1],l.P[i*3+2]]);return a});
  const med=a=>{a=a.slice().sort((x,y)=>x-y);return a[Math.floor(a.length/2)]||0};
@@ -391,7 +409,7 @@ function render(){const s=D.steps[cur];ctx.clearRect(0,0,W,H);if(!s||!s.scene){$
    if(opts.boxes&&o.corners){const c=o.corners.map(q=>P(q[0],q[1],q[2]));ctx.lineWidth=1.4*dpr;ctx.beginPath();E.forEach(([a,b])=>{if(c[a]&&c[b]){ctx.moveTo(c[a][0],c[a][1]);ctx.lineTo(c[b][0],c[b][1])}});ctx.stroke()}
    if(opts.rings&&o.ring){ctx.lineWidth=1.2*dpr;ctx.setLineDash([4*dpr,3*dpr]);ctx.beginPath();let pen=false;for(let i=0;i<o.ring.length/3;i++){const x=o.ring[i*3];const p=isNaN(x)?null:P(x,o.ring[i*3+1],o.ring[i*3+2]);if(!p){pen=false;continue}pen?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);pen=true}ctx.stroke();ctx.setLineDash([])}
    const p=P(o.center[0],o.center[1],o.center[2]);if(!p)return;ctx.fillStyle=colOf(o);ctx.beginPath();ctx.arc(p[0],p[1],3.5*dpr,0,7);ctx.fill();
-   if(opts.labels){const t=o.label+(o.status&&o.status!=='unchanged'&&o.status!=='matched'?` (${o.status})`:'');ctx.lineWidth=3*dpr;ctx.strokeStyle=bg;ctx.strokeText(t,p[0]+6*dpr,p[1]-6*dpr);ctx.fillStyle=fg;ctx.fillText(t,p[0]+6*dpr,p[1]-6*dpr)}})}
+   if(opts.labels&&o.named){const t=o.label+(o.status&&o.status!=='unchanged'&&o.status!=='matched'?` (${o.status})`:'');ctx.lineWidth=3*dpr;ctx.strokeStyle=bg;ctx.strokeText(t,p[0]+6*dpr,p[1]-6*dpr);ctx.fillStyle=fg;ctx.fillText(t,p[0]+6*dpr,p[1]-6*dpr)}})}
  // legend for an active heat map
  const hl=dec.L.find((l,k)=>vis[k]&&l.legend);const lg=$('legend');
  if(hl){lg.hidden=false;lg.innerHTML=`<div>${hl.name}</div><div class="bar" style="background:linear-gradient(90deg,${hl.legend.stops.join(',')})"></div><div class="ends"><span>${hl.legend.lo}</span><span>${hl.legend.hi}</span></div>`}else lg.hidden=true;
@@ -412,7 +430,7 @@ cv.addEventListener('dblclick',resetCam);$('reset').onclick=resetCam;
 $('psize').oninput=e=>{opts.size=+e.target.value;draw()};
 ['labels','boxes','fill','rings'].forEach(k=>$(k).onchange=e=>{opts[k]=e.target.checked;draw()});
 // ---- views: one recording alone, or the comparison ----
-function setView(v){const s=D.steps[cur];if(!s.scene)return;const L=s.scene.layers;vis={objects:true,rec:null};
+function setView(v){const s=D.steps[cur];if(!s.scene)return;const L=s.scene.layers;vis={objects:!s.warning,rec:null};
  L.forEach((l,k)=>{if(l.kind==='line')vis[k]=v==='compare'||v==='all'?true:l.visible;
   else if(v.startsWith('rec:')){vis[k]=l.kind==='colour'&&l.rec===v.slice(4)}
   else if(v.startsWith('obj:')){vis[k]=l.kind==='objects'&&(l.rec==null||l.rec===v.slice(4))}
@@ -427,6 +445,7 @@ function show(i){cur=i;const s=D.steps[i];
  if(!s.scene&&s.scene_src&&!s._loading){s._loading=true;const el=document.createElement('script');el.src=s.scene_src;
   el.onerror=()=>{s._loading=false;s.scene_src=null;s.scene_error='the 3D file did not load';if(cur===i)show(i)};document.head.appendChild(el)}$('phase').textContent=`${s.phase_title} · ${s.run}`;$('ttl').textContent=s.title;
  $('question').textContent=s.question?('What this run tests: '+s.question):'';
+ $('warn').hidden=!s.warning;$('warn').textContent=s.warning||'';
  $('recs').innerHTML=(s.recordings||[]).map((r,k)=>`<span>${s.type==='clips'?'clip '+(k+1):(k?'after':'before')}: ${r}</span>`).join('');
  const m=s.metrics,f=(v,d=0)=>v==null?'–':(+v).toFixed(d),chips=[];
  if(m.obj_changed!=null)chips.push(`changed objects ${m.obj_changed} of ${m.obj_compared}`);

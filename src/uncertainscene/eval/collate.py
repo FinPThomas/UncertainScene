@@ -68,6 +68,14 @@ def _figs(run: Path, rel: str, step: str) -> str:
                       if (run / step / n).exists())
 
 
+# runs whose object-level results must not be read (shown, but marked, never silently dropped)
+INVALID_OBJECTS = {
+    "2026-10-10_scene01-objects": "CLIP labelling crashed in every step and views of an object were never merged, so "
+                                  "changed objects (all 0) and position ranges are not real results. Surface shares, "
+                                  "scale, heat maps and the Gaussian splats are unaffected. Fixed for the next run.",
+}
+
+
 def run_section(run: Path, rel: str) -> list[str]:
     from ..experiments.catalog import describe
 
@@ -79,9 +87,14 @@ def run_section(run: Path, rel: str) -> list[str]:
     base = [r for r in pairs if r.get("variant", "base") == "base"]
     L = [f"## Run `{run.name}` ({'version 2: SAM 2 objects, every frame' if v2 else 'version 1, first overnight run: point-level, 28 frames per recording'})",
          "", f"{len(rows)} finished runs. Folder: [{rel}]({rel}/).", ""]
+    bad = INVALID_OBJECTS.get(run.name)
+    if bad:
+        L += [f"> **Object results of this run are invalid.** {bad}", ""]
     # headline across all pairs of each kind
     L += ["### Headline: does it tell real changes from noise?", ""]
-    if v2 and any("obj_changed" in r for r in base):
+    if bad:
+        L += ["Changed objects: invalid in this run (see the note above).", ""]
+    elif v2 and any("obj_changed" in r for r in base):
         L += ["| Kind of run | Runs | Changed objects, median (range) | Share of compared objects |", "|---|---|---|---|"]
         for t in TYPE_ORDER:
             rs = [r for r in base if r.get("pair_type") == t and "obj_changed" in r]
@@ -150,7 +163,8 @@ def run_section(run: Path, rel: str) -> list[str]:
             else:
                 ch = [f"{c.get('label')} {c.get('kind')}" for c in r["_changes"]][:6]
             pos = r.get("pos_radius90_cm_median")
-            L.append(f"| {d['title']} | {', '.join(ch) or 'none'} |" + (f" {'±%.1f cm' % pos if pos else '-'} |" if has_pos else "")
+            L.append(f"| {d['title']} | {'invalid' if bad else ', '.join(ch) or 'none'} |"
+                     + (f" {'invalid' if bad else '±%.1f cm' % pos if pos else '-'} |" if has_pos else "")
                      + " "
                      f"{_fmt(r.get('field_scale_m_per_unit'), 3)} | {_fmt(r.get('field_uncertainty_cm_median'), 1)} | "
                      f"{_figs(run, rel, r['step'])} |")
