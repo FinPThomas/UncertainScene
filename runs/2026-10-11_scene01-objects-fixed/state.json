@@ -12,6 +12,16 @@
       "note": "TypeError: unsupported format string passed to NoneType.__format__",
       "started": "2026-10-11 21:36:55 UTC",
       "status": "failed"
+    },
+    "1b-splat_moved_light-before-a_vs_light-after-a": {
+      "account": "colab-634b",
+      "attempts": 1,
+      "commit": "61a1642",
+      "expires": 1791766327.6056826,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-11 22:31:07 UTC",
+      "status": "running"
     }
   }
 }
