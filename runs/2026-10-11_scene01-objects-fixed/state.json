@@ -4,14 +4,14 @@
   "run_id": "2026-10-11_scene01-objects-fixed",
   "steps": {
     "1-main_moved_light-before-a_vs_light-after-a": {
-      "account": "colab-fa00",
-      "attempts": 2,
-      "commit": "18835b1",
-      "expires": null,
-      "finished": "2026-10-12 13:23:14 UTC",
-      "note": "stopped: RAM at 92% (hard limit 92%)",
-      "started": "2026-10-12 12:43:13 UTC",
-      "status": "interrupted"
+      "account": "colab-a68c",
+      "attempts": 3,
+      "commit": "9acd9a8",
+      "expires": 1791830440.9691036,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-12 16:09:10 UTC",
+      "status": "running"
     },
     "1b-splat_moved_light-before-a_vs_light-after-a": {
       "account": "colab-634b",
