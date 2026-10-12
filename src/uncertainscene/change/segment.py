@@ -182,7 +182,7 @@ def _logit_wobble(lg: np.ndarray) -> list | None:
 
 def sam_tracks(files: list[str], frames: list[int], size_hw: tuple[int, int], model_id: str = "facebook/sam2.1-hiera-small",
                points_per_side: int = 32, min_area: float = 0.0005, max_area: float = 0.5, discover_every: int = 8,
-               batch: int = 30, keep_frames=None, gen=None, predictor=None, workdir=None) -> dict:
+               batch: int = 15, keep_frames=None, gen=None, predictor=None, workdir=None) -> dict:
     """Objects tracked through `frames` (one recording, in time order) with SAM 2's video
     predictor. Every `discover_every`-th frame the automatic mask generator proposes masks;
     those not already tracked there (`_is_new`) become new objects, followed forwards and
@@ -198,7 +198,14 @@ def sam_tracks(files: list[str], frames: list[int], size_hw: tuple[int, int], mo
     H, W = size_hw
     keep_frames = set(frames if keep_frames is None else keep_frames)
     n = len(frames)
-    tracked: list[dict] = [dict() for _ in range(n)]      # per frame index: track -> (full-res mask, logits wobble)
+    # memory (run 4 hit Colab's RAM limit keeping float logits of every object in every frame,
+    # ~2.4 MB each): keep only what is used later, compactly. Discovery frames: packed full-res
+    # masks (to test what is new); kept frames: the mask at reconstruction size, its full-res
+    # box and its wobble, computed as each frame arrives.
+    disc = set(range(0, n, discover_every))
+    keep_idx = {i for i, s in enumerate(frames) if s in keep_frames}
+    tracked: list[dict] = [dict() for _ in range(n)]      # per frame index: track -> packed full-res mask
+    kept: list[dict] = [dict() for _ in range(n)]         # per frame index: track -> (mask at rec size, bbox, wobble)
     seeds: list[tuple[int, int, np.ndarray, float]] = []  # (track, frame index, mask, score)
     with tempfile.TemporaryDirectory(dir=workdir) as tmp:
         for i, s in enumerate(frames):                     # the predictor reads a folder of <index>.jpg
@@ -216,7 +223,7 @@ def sam_tracks(files: list[str], frames: list[int], size_hw: tuple[int, int], mo
             with torch.inference_mode():
                 ms = gen(img)
             ms = sorted([m for m in ms if min_area <= m["area"] / (fh * fw) <= max_area], key=lambda m: -m["area"])
-            have = [t[0] for t in tracked[d].values()]
+            have = [np.unpackbits(t, count=fh * fw).reshape(fh, fw).astype(bool) for t in tracked[d].values()]
             new = []
             for m in ms:
                 seg = np.asarray(m["segmentation"], bool)
@@ -237,25 +244,30 @@ def sam_tracks(files: list[str], frames: list[int], size_hw: tuple[int, int], mo
                             lg = logits[:, 0].float().cpu().numpy()
                             for tid, l in zip(ids, lg):
                                 mk = l > 0
-                                if mk.sum() >= min_area * fh * fw:
-                                    tracked[fi][int(tid)] = (mk, l)
-            seeds += new
+                                if mk.sum() < min_area * fh * fw:
+                                    continue
+                                if fi in disc:
+                                    tracked[fi][int(tid)] = np.packbits(mk)
+                                if fi in keep_idx:
+                                    v, u = np.nonzero(mk)
+                                    seg = Image.fromarray(mk.astype(np.uint8) * 255).resize((W, H), Image.Resampling.NEAREST)
+                                    kept[fi][int(tid)] = (np.asarray(seg) > 127,
+                                                          (int(u.min()), int(v.min()), int(u.max()) + 1, int(v.max()) + 1),
+                                                          _logit_wobble(l))
+                            del logits, lg
             if new:
-                log.info("SAM 2 tracking: frame %d/%d: %d new objects (%d tracked so far)", d + 1, n, len(new), len(seeds))
+                log.info("SAM 2 tracking: frame %d/%d: %d new objects (%d tracked so far)", d + 1, n, len(new),
+                         len(seeds) + len(new))
+            seeds += [(t, fi, None, sc) for t, fi, _, sc in new]     # seed masks are no longer needed
+            del new
         if state is not None:
             predictor.reset_state(state)
     score = {t: sc for t, _, _, sc in seeds}
     out: dict = {}
     for i, s in enumerate(frames):
-        if s not in keep_frames:
-            continue
-        keep = []
-        for tid, (mk, lg) in tracked[i].items():
-            v, u = np.nonzero(mk)
-            seg = Image.fromarray(mk.astype(np.uint8) * 255).resize((W, H), Image.Resampling.NEAREST)
-            keep.append({"mask": np.asarray(seg) > 127, "full_bbox": (int(u.min()), int(v.min()), int(u.max()) + 1, int(v.max()) + 1),
-                         "score": score[tid], "full_hw": (fh, fw), "wobble_px": _logit_wobble(lg), "track": int(tid)})
-        out[s] = keep
+        if i in keep_idx:
+            out[s] = [{"mask": mk, "full_bbox": bb, "score": score[tid], "full_hw": (fh, fw), "wobble_px": wb,
+                       "track": int(tid)} for tid, (mk, bb, wb) in kept[i].items()]
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
     return out
