@@ -45,6 +45,7 @@ class Spec:
     offset: int = 0
     n_key: int = 44                    # SAM 2 key frames per recording
     sam_points: int = 32               # SAM 2 points per side (32x32 grid finds smaller objects than 24x24)
+    sam_track: bool = True             # follow objects through the video (run 3: per-frame masks split objects)
     variant: str = "base"
     detect: dict = field(default_factory=dict)
     robot: dict = field(default_factory=dict)
@@ -62,6 +63,8 @@ class Spec:
     def needs(self) -> dict:
         n = self.frames_est
         minutes = 4 + n / 40 * 0.8 + 2 * self.n_key * 4 / 60 + n / 60 + 4
+        if self.sam_track:
+            minutes += 2 * 12                  # SAM 2 video tracking, ~12 min per recording on a T4
         if self.refine_poses and self.outputs != "light":
             minutes += n / 75                  # SIFT + matching + bundle adjustment (cached per reconstruction)
         if self.motion or (self.motion is None and self.outputs == "full"):
@@ -80,6 +83,7 @@ class ClipsSpec:
     n_per_video: int | None = 240      # per clip; 4 clips x every frame would not fit in Colab RAM
     n_key: int = 44
     sam_points: int = 32
+    sam_track: bool = True
     variant: str = "clips"
     outputs: str = "full"
     title: str = ""
@@ -89,6 +93,8 @@ class ClipsSpec:
     def needs(self) -> dict:
         n = len(self.clips) * (self.n_per_video or 370)
         minutes = 4 + n / 40 * 0.8 + len(self.clips) * self.n_key * 4 / 60 + 6 + n / 75   # + pose refinement
+        if self.sam_track:
+            minutes += len(self.clips) * 12    # SAM 2 video tracking
         return {"disk_gb": 8, "ram_gb": 2.5 + 0.003 * n, "minutes": round(minutes)}   # 0.006/frame never fit beside the main steps
 
 
@@ -233,9 +239,9 @@ def _feats(rec, spec: Spec, cache: Path):
 
 def _masks(rec, spec: Spec, cache: Path) -> dict:
     """SAM 2 masks on key frames of both recordings, cached (packed bits)."""
-    from ..change.segment import key_frames, sam_masks
+    from ..change.segment import key_frames, sam_masks, sam_tracks
 
-    f = cache / f"sam2_{_key(spec)}_k{spec.n_key}_p{spec.sam_points}.npz"
+    f = cache / f"sam2{'t' if spec.sam_track else ''}_{_key(spec)}_k{spec.n_key}_p{spec.sam_points}.npz"
     H, W = rec.depth.shape[1:]
     if f.exists():
         try:
@@ -250,10 +256,30 @@ def _masks(rec, spec: Spec, cache: Path) -> dict:
             return out
         except Exception as e:  # noqa: BLE001
             log.warning("SAM cache unreadable (%s); recomputing", e)
-    frames = [k for v in np.unique(rec.video) for k in key_frames(rec, int(v), spec.n_key)]
     t0 = time.time()
-    out = sam_masks(rec.files, frames, (H, W), points_per_side=spec.sam_points)
-    log.info("SAM 2: %d masks on %d frames in %.0f s", sum(len(v) for v in out.values()), len(frames), time.time() - t0)
+    out, how = None, "masks per key frame"
+    if spec.sam_track:
+        # follow every object through the recording (2x the key-frame rate); masks are kept on the
+        # key frames (every 2nd tracked frame), so views and 3D points stay as dense as before
+        try:
+            out = {}
+            for v in np.unique(rec.video):
+                tf = key_frames(rec, int(v), 2 * spec.n_key)
+                tr = sam_tracks(rec.files, tf, (H, W), points_per_side=spec.sam_points, keep_frames=tf[::2],
+                                workdir=str(cache))
+                for ms in tr.values():                  # track ids unique across recordings
+                    for m in ms:
+                        m["track"] += 100000 * int(v)
+                out.update(tr)
+            how = "tracked through each recording"
+        except Exception as e:  # noqa: BLE001 - fall back to independent masks per key frame
+            log.exception("SAM 2 video tracking failed (%s); using masks per key frame", e)
+            out = None
+    if out is None:
+        frames = [k for v in np.unique(rec.video) for k in key_frames(rec, int(v), spec.n_key)]
+        out = sam_masks(rec.files, frames, (H, W), points_per_side=spec.sam_points)
+    log.info("SAM 2 (%s): %d masks on %d frames, %d objects tracked, in %.0f s", how, sum(len(v) for v in out.values()),
+             len(out), len({m["track"] for v in out.values() for m in v if m.get("track") is not None}), time.time() - t0)
     meta, bits = [], []
     for s, ms in out.items():
         for m in ms:

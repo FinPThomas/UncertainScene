@@ -68,9 +68,11 @@ def _embeds(out):
 
 
 def clip_inventory(crops: list, vocab: list[str] = VOCAB_ALL, model_name: str = "openai/clip-vit-large-patch14",
-                   batch: int = 32) -> tuple[list, np.ndarray]:
+                   batch: int = 32, groups: list[list[int]] | None = None) -> tuple[list, np.ndarray]:
     """Top-3 (label, probability) per PIL crop and L2-normalised CLIP image embeddings [N, D]
-    (the embeddings also serve re-identification across recordings)."""
+    (the embeddings also serve re-identification across recordings). With `groups` (lists of
+    crop indices, e.g. several views of one object), one result per group from the mean of
+    its views' embeddings, so the whole object is labelled, not one view of it."""
     import torch
     from transformers import CLIPModel, CLIPProcessor
 
@@ -84,16 +86,19 @@ def clip_inventory(crops: list, vocab: list[str] = VOCAB_ALL, model_name: str = 
         t = proc(text=[f"a photo of a {v}" for v in vocab], return_tensors="pt", padding=True)
         tf = model.get_text_features(**{k: v.to(_device()) for k, v in t.items()})
         tf = torch.nn.functional.normalize(_embeds(tf), dim=-1)
-        tops, embs = [], []
+        embs = []
         for i in range(0, len(crops), batch):
             px = proc(images=crops[i:i + batch], return_tensors="pt")["pixel_values"].to(_device())
-            imf = torch.nn.functional.normalize(_embeds(model.get_image_features(pixel_values=px)), dim=-1)
-            probs = (100 * imf @ tf.T).softmax(-1).cpu().numpy()
-            for p in probs:
-                o = np.argsort(-p)[:3]
-                tops.append([(vocab[j], float(p[j])) for j in o])
-            embs.append(imf.cpu().numpy())
-    return tops, np.concatenate(embs).astype(np.float32)
+            embs.append(torch.nn.functional.normalize(_embeds(model.get_image_features(pixel_values=px)), dim=-1))
+        imf = torch.cat(embs)
+        if groups is not None:
+            imf = torch.nn.functional.normalize(torch.stack([imf[g].mean(0) for g in groups]), dim=-1)
+        probs = (100 * imf @ tf.T).softmax(-1).cpu().numpy()
+        tops = []
+        for p in probs:
+            o = np.argsort(-p)[:3]
+            tops.append([(vocab[j], float(p[j])) for j in o])
+    return tops, imf.cpu().numpy().astype(np.float32)
 
 
 def clip_text(texts: list[str], model_name: str = "openai/clip-vit-large-patch14") -> np.ndarray:

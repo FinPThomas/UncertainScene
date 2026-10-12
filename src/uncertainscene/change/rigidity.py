@@ -1,13 +1,14 @@
 """Rigidity Copilot (Fin, 2026-10-11): how stiff each object is expected to be, asked of CLIP.
 
 Stiffness cannot be seen in two recordings without forces, so it is queried instead. CLIP
-looks at the object's own masked best view (the same image embedding the labels come from) and
-is asked:
+looks at the whole object: the mean embedding of up to 4 masked views of it, the same
+embedding the labels come from (objects are tracked through the video, so this is one
+physical object, not a fragment). It is asked:
 1. what it is made of: zero-shot over common household materials, each with a typical
    Young's modulus range from engineering tables;
 2. how it behaves: "soft, squishy, deformable" vs "hard, rigid".
 The expected Young's modulus is the probability-weighted geometric mean over materials, with
-a range spanning the likely materials; the rigidity score (0 soft .. 1 rigid) averages the
+a range spanning the likely materials (the top one and any above 10%); the rigidity score (0 soft .. 1 rigid) averages the
 material-based and the soft/hard answers. Each edge of an object's node graph then gets a
 spring constant k ~ E * L (a cubic lattice of node spacing L), in N/m, with its range.
 
@@ -37,7 +38,7 @@ LOG_LO, LOG_HI = 4.0, 11.5            # log10 Pa spanning foam .. steel, mapped 
 
 
 def score(p_material: np.ndarray, p_hard: float) -> dict:
-    """Expected Young's modulus (Pa, geometric mean and 90% range over the materials) and the
+    """Expected Young's modulus (Pa, geometric mean and range over the likely materials) and the
     rigidity score from material probabilities (in MATERIALS order) and P(hard)."""
     p = np.asarray(p_material, float)
     p = p / p.sum()
@@ -45,9 +46,11 @@ def score(p_material: np.ndarray, p_hard: float) -> dict:
     hi = np.log10([v[1] for v in MATERIALS.values()])
     mid = (lo + hi) / 2
     e_log = float((p * mid).sum())
-    # range: the materials holding 90% of the probability, their whole ranges
+    # range: the whole ranges of the likely materials (top one, plus any above 10%); run 3 used
+    # the materials holding 90% of the probability, and a few % on "metal" stretched a
+    # cushion's range from 10 kPa to 210 GPa
     order = np.argsort(-p)
-    keep = order[: int(np.searchsorted(np.cumsum(p[order]), 0.9) + 1)]
+    keep = np.array([order[0]] + [i for i in order[1:] if p[i] >= 0.1])
     r_mat = float(np.clip((e_log - LOG_LO) / (LOG_HI - LOG_LO), 0, 1))
     names = list(MATERIALS)
     return {"youngs_modulus_pa": float(10**e_log),

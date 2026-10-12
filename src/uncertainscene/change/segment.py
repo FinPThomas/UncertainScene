@@ -1,13 +1,17 @@
-"""Every object in the scene: SAM 2 masks on key frames, lifted to 3D and merged across frames.
+"""Every object in the scene: SAM 2 masks tracked through each recording, lifted to 3D.
 
-1. SAM 2 (automatic mask generator, frozen, pretrained) cuts each key frame of a recording
-   into object masks at full frame resolution.
+1. SAM 2 cuts frames into object masks at full frame resolution. Main path (run 3 showed
+   that matching single-frame masks in 3D splits one object into 2-9 pieces): `sam_tracks`
+   seeds objects with the automatic mask generator on a few discovery frames and follows
+   each one through the recording with SAM 2's video predictor, so every mask of one object
+   carries the same track id. Objects first seen later are added at the discovery frame
+   where they appear. Fallback: `sam_masks`, independent masks per key frame.
 2. Each mask is lifted into the shared 3D frame with that frame's depth (eroded by one pixel
    and depth-trimmed, so boundary pixels that bleed onto the background are dropped).
-3. Masks of the same physical object in different frames overlap in 3D: fragments whose
-   voxel sets overlap (intersection over the smaller > 0.5 and over the larger > 0.25) are
-   merged with union-find. This is the tracking step: it works across viewpoints because the
-   geometry is shared, so no frame-to-frame prompt propagation is needed.
+3. Fragments with the same track id are one object. Tracks (or, in the fallback, single
+   masks) that overlap in 3D (intersection over the smaller > 0.5 and over the larger
+   > 0.25) are also merged with union-find, but never two that are visible in the same frame:
+   this rejoins an object that left the view and was found again as a new track.
 4. Parts (an object almost entirely inside a larger, non-structure object) are dropped;
    large structures (sofa, wall, floor, rug; largest extent over `structure_m`) are kept
    and flagged.
@@ -137,6 +141,126 @@ def sam_masks(files: list[str], frames: list[int], size_hw: tuple[int, int], mod
     return out
 
 
+# ---- SAM 2 video tracking (GPU) -----------------------------------------------------------
+def load_video_predictor(model_id: str = "facebook/sam2.1-hiera-small"):
+    from sam2.sam2_video_predictor import SAM2VideoPredictor
+
+    key = ("video", model_id)
+    if key not in _SAM:
+        _SAM[key] = SAM2VideoPredictor.from_pretrained(model_id)
+    return _SAM[key]
+
+
+def _is_new(m: np.ndarray, existing: list[np.ndarray], max_iou: float = 0.4, max_inside: float = 0.7) -> bool:
+    """A discovered mask is a new object unless it matches a tracked mask (IoU) or lies mostly
+    inside a tracked mask of similar size (a part). Much larger masks (sofa, wall) never hide
+    the smaller objects on them."""
+    a = m.sum()
+    if a == 0:
+        return False
+    for t in existing:
+        inter = np.logical_and(m, t).sum()
+        if not inter:
+            continue
+        b = t.sum()
+        if inter / (a + b - inter) > max_iou or (b <= 4 * a and inter / a > max_inside):
+            return False
+    return True
+
+
+def _logit_wobble(lg: np.ndarray) -> list | None:
+    """Centroid shift between the loose (logit > -1) and tight (> +1) mask, full-res pixels:
+    the same mask-boundary uncertainty as mask_wobble, read from the tracker's own logits."""
+    c = []
+    for thr in (-WOBBLE_OFFSET, WOBBLE_OFFSET):
+        v, u = np.nonzero(lg > thr)
+        if not len(u):
+            return None
+        c.append((u.mean(), v.mean()))
+    return np.subtract(c[0], c[1]).tolist()
+
+
+def sam_tracks(files: list[str], frames: list[int], size_hw: tuple[int, int], model_id: str = "facebook/sam2.1-hiera-small",
+               points_per_side: int = 32, min_area: float = 0.0005, max_area: float = 0.5, discover_every: int = 8,
+               batch: int = 30, keep_frames=None, gen=None, predictor=None, workdir=None) -> dict:
+    """Objects tracked through `frames` (one recording, in time order) with SAM 2's video
+    predictor. Every `discover_every`-th frame the automatic mask generator proposes masks;
+    those not already tracked there (`_is_new`) become new objects, followed forwards and
+    backwards through all frames in batches of `batch` objects. Returns {frame: [dict(mask,
+    full_bbox, score, full_hw, wobble_px, track)]} for `keep_frames` (default all)."""
+    import tempfile
+
+    import torch
+    from PIL import Image
+
+    gen = gen or load_sam(model_id, points_per_side).generate
+    predictor = predictor or load_video_predictor(model_id)
+    H, W = size_hw
+    keep_frames = set(frames if keep_frames is None else keep_frames)
+    n = len(frames)
+    tracked: list[dict] = [dict() for _ in range(n)]      # per frame index: track -> (full-res mask, logits wobble)
+    seeds: list[tuple[int, int, np.ndarray, float]] = []  # (track, frame index, mask, score)
+    with tempfile.TemporaryDirectory(dir=workdir) as tmp:
+        for i, s in enumerate(frames):                     # the predictor reads a folder of <index>.jpg
+            dst = f"{tmp}/{i:05d}.jpg"
+            if str(files[s]).lower().endswith((".jpg", ".jpeg")):
+                import os
+
+                os.symlink(os.path.abspath(files[s]), dst)
+            else:
+                Image.open(files[s]).convert("RGB").save(dst, quality=95)
+        fh, fw = np.asarray(Image.open(files[frames[0]])).shape[:2]
+        state = None
+        for d in list(range(0, n, discover_every)):
+            img = np.asarray(Image.open(files[frames[d]]).convert("RGB"))
+            with torch.inference_mode():
+                ms = gen(img)
+            ms = sorted([m for m in ms if min_area <= m["area"] / (fh * fw) <= max_area], key=lambda m: -m["area"])
+            have = [t[0] for t in tracked[d].values()]
+            new = []
+            for m in ms:
+                seg = np.asarray(m["segmentation"], bool)
+                if _is_new(seg, have):
+                    have.append(seg)
+                    new.append((len(seeds) + len(new), d, seg, float(m["predicted_iou"]) * float(m["stability_score"])))
+            for b0 in range(0, len(new), batch):
+                chunk = new[b0:b0 + batch]
+                if state is None:
+                    state = predictor.init_state(video_path=tmp, offload_video_to_cpu=True, offload_state_to_cpu=True)
+                else:
+                    predictor.reset_state(state)
+                with torch.inference_mode():
+                    for tid, fi, seg, _ in chunk:
+                        predictor.add_new_mask(state, frame_idx=fi, obj_id=tid, mask=seg)
+                    for rev in (False, True):
+                        for fi, ids, logits in predictor.propagate_in_video(state, start_frame_idx=d, reverse=rev):
+                            lg = logits[:, 0].float().cpu().numpy()
+                            for tid, l in zip(ids, lg):
+                                mk = l > 0
+                                if mk.sum() >= min_area * fh * fw:
+                                    tracked[fi][int(tid)] = (mk, l)
+            seeds += new
+            if new:
+                log.info("SAM 2 tracking: frame %d/%d: %d new objects (%d tracked so far)", d + 1, n, len(new), len(seeds))
+        if state is not None:
+            predictor.reset_state(state)
+    score = {t: sc for t, _, _, sc in seeds}
+    out: dict = {}
+    for i, s in enumerate(frames):
+        if s not in keep_frames:
+            continue
+        keep = []
+        for tid, (mk, lg) in tracked[i].items():
+            v, u = np.nonzero(mk)
+            seg = Image.fromarray(mk.astype(np.uint8) * 255).resize((W, H), Image.Resampling.NEAREST)
+            keep.append({"mask": np.asarray(seg) > 127, "full_bbox": (int(u.min()), int(v.min()), int(u.max()) + 1, int(v.max()) + 1),
+                         "score": score[tid], "full_hw": (fh, fw), "wobble_px": _logit_wobble(lg), "track": int(tid)})
+        out[s] = keep
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    return out
+
+
 # ---- lifting and merging (numpy) ----------------------------------------------------------
 def _erode(m: np.ndarray) -> np.ndarray:
     e = m.copy()
@@ -213,7 +337,7 @@ def lift(rec: Recon, masks: dict, voxel: float, conf_quantile: float = 0.3, max_
             x0, y0, x1, y1 = m["full_bbox"]
             fh, fw = m["full_hw"]
             border = x0 <= 2 or y0 <= 2 or x1 >= fw - 3 or y1 >= fh - 3
-            frags.append({"frame": s, "X": X, "pix": np.stack([v, u], 1), "mask": m["mask"], "full_bbox": m["full_bbox"],
+            frags.append({"frame": s, "track": m.get("track"), "X": X, "pix": np.stack([v, u], 1), "mask": m["mask"], "full_bbox": m["full_bbox"],
                           "area": int(m["mask"].sum()), "border": border, "score": m["score"],
                           "vox": vox, "voxc": voxc, "rgb": rgb, "meas": view_measurement(rec, s, X, v, u, m)})
     return frags
@@ -221,17 +345,33 @@ def lift(rec: Recon, masks: dict, voxel: float, conf_quantile: float = 0.3, max_
 
 def merge(frags: list[dict], min_over_small: float = 0.5, min_over_large: float = 0.25,
           max_colour: float = 60.0) -> list[list[int]]:
-    """Union-find groups of fragments that overlap in 3D on the merge grid ("voxc", sized to the
-    depth uncertainty so two views of one object share cells) and look alike (mean colour
-    within `max_colour` of 255); never two from the same frame."""
+    """Union-find groups of fragments: the same SAM 2 track (when tracked), or overlapping in
+    3D on the merge grid ("voxc", sized to the depth uncertainty so two views of one object
+    share cells) and alike in colour (mean within `max_colour` of 255). Two groups that are
+    both visible in one frame are never merged (they are two objects)."""
     key = "voxc" if frags and "voxc" in frags[0] else "vox"
     parent = list(range(len(frags)))
+    frames_of = {i: {f["frame"]} for i, f in enumerate(frags)}
 
     def find(i):
         while parent[i] != i:
             parent[i] = parent[parent[i]]
             i = parent[i]
         return i
+
+    def union(i, j):
+        a, b = find(i), find(j)
+        if a != b:
+            parent[a] = b
+            frames_of[b] |= frames_of.pop(a)
+
+    first: dict = {}
+    for i, f in enumerate(frags):
+        if f.get("track") is not None:
+            if f["track"] in first:
+                union(i, first[f["track"]])
+            else:
+                first[f["track"]] = i
 
     owner: dict = {}
     for i, f in enumerate(frags):
@@ -250,8 +390,10 @@ def merge(frags: list[dict], min_over_small: float = 0.5, min_over_large: float 
         ni, nj = len(frags[i][key]), len(frags[j][key])
         if "rgb" in frags[i] and np.linalg.norm(frags[i]["rgb"] - frags[j]["rgb"]) > max_colour:
             continue
+        if find(i) == find(j) or frames_of[find(i)] & frames_of[find(j)]:
+            continue
         if n / min(ni, nj) > min_over_small and n / max(ni, nj) > min_over_large:
-            parent[find(i)] = find(j)
+            union(i, j)
     groups: dict = {}
     for i in range(len(frags)):
         groups.setdefault(find(i), []).append(i)
@@ -326,6 +468,7 @@ def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structu
                 views[f_["frame"]] = (f_["area"], f_["meas"])
         o.extra["views"] = [dict(frame=int(k), **views[k][1]) for k in sorted(views)]
         o.extra["full_bbox"] = best["full_bbox"]
+        o.extra["tracks"] = sorted({int(f["track"]) for f in fs if f.get("track") is not None})
         o.extra["voxel"] = merge_vox            # size of the cells in o.voxels
         o.extra["fine_voxel"] = voxel
         o.extra["fine_vox"] = vox

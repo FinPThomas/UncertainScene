@@ -120,11 +120,14 @@ def _with_files(rec, tmp_path):
 def _fake_clip(monkeypatch):
     from uncertainscene.change import features
 
-    def fake(crops, *a, **k):
-        tops, embs = [], []
+    def fake(crops, *a, groups=None, **k):
+        reds = []
         for c in crops:
             a_ = np.asarray(c).reshape(-1, 3).astype(float)
-            red = np.mean((a_[:, 0] > 150) & (a_[:, 1] < 80))
+            reds.append(np.mean((a_[:, 0] > 150) & (a_[:, 1] < 80)))
+        tops, embs = [], []
+        for g in (groups if groups is not None else [[i] for i in range(len(crops))]):
+            red = float(np.mean([reds[i] for i in g]))
             tops.append([("box", 0.9), ("cushion", 0.05), ("bag", 0.02)] if red > 0.08 else
                         [("wall", 0.8), ("door", 0.1), ("shelf", 0.05)])
             e = np.array([red, 1 - red, 0.1])

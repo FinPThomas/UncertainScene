@@ -273,13 +273,15 @@ def canonical(label: str | None) -> str | None:
     return CANON.get(label, label)
 
 
-def masked_crop(o: SceneObject, rec: Recon, margin: float = 0.15, max_side: int = 336):
-    """Crop of the object's best view at full resolution, background faded to grey."""
+def masked_crop(o: SceneObject, rec: Recon, margin: float = 0.15, max_side: int = 336, frame: int | None = None):
+    """Crop of one view of the object (default its best view) at full resolution, background
+    faded to grey."""
     from PIL import Image
 
-    full = Image.open(rec.files[o.best_frame]).convert("RGB")
-    m = Image.fromarray(o.masks[o.best_frame].astype(np.uint8) * 255).resize(full.size, Image.Resampling.NEAREST)
-    x0, y0, x1, y1 = o.extra.get("full_bbox") or m.getbbox()
+    frame = o.best_frame if frame is None else frame
+    full = Image.open(rec.files[frame]).convert("RGB")
+    m = Image.fromarray(o.masks[frame].astype(np.uint8) * 255).resize(full.size, Image.Resampling.NEAREST)
+    x0, y0, x1, y1 = (o.extra.get("full_bbox") if frame == o.best_frame else None) or m.getbbox()
     mw, mh = (x1 - x0) * margin + 6, (y1 - y0) * margin + 6
     box = (int(max(0, x0 - mw)), int(max(0, y0 - mh)), int(min(full.width, x1 + mw)), int(min(full.height, y1 + mh)))
     img = np.asarray(full.crop(box)).astype(np.float32)
@@ -290,17 +292,43 @@ def masked_crop(o: SceneObject, rec: Recon, margin: float = 0.15, max_side: int 
     return out, box
 
 
-def label_all(objs: list[SceneObject], rec: Recon, crop_dir=None) -> None:
-    """CLIP label (top 3) and image embedding for every object, from its masked best view."""
+def label_views(o: SceneObject, n: int = 4) -> list[int]:
+    """Up to `n` views of the object for labelling: its best view plus the largest other masks,
+    spread over the recording (whole object, several sides)."""
+    others = sorted((f for f in o.masks if f != o.best_frame), key=lambda f: -int(o.masks[f].sum()))
+    others = sorted(others[: 3 * n])                       # big views, then spread in time
+    pick = [others[int(round(i))] for i in np.linspace(0, len(others) - 1, min(n - 1, len(others)))] if others else []
+    return [o.best_frame] + sorted(set(pick))
+
+
+def label_all(objs: list[SceneObject], rec: Recon, crop_dir=None, n_views: int = 4) -> None:
+    """CLIP label (top 3) and image embedding for every object, from the mean embedding of up to
+    `n_views` masked views of it (the Rigidity Copilot reads the same whole-object embedding)."""
     from .features import BACKGROUND, clip_inventory
 
-    crops = []
+    crops, groups, best = [], [], []
     for o in objs:
-        img, box = masked_crop(o, rec)
-        o.extra["crop_box"] = box
-        crops.append(img)
-    tops, embs = clip_inventory(crops)
-    for o, top, e, img in zip(objs, tops, embs, crops):
+        g = []
+        for f in label_views(o, n_views):
+            try:
+                img, box = masked_crop(o, rec, frame=f)
+            except Exception:  # noqa: BLE001 - an empty or odd mask in one view
+                continue
+            if f == o.best_frame:
+                o.extra["crop_box"] = box
+                best.append(img)
+            g.append(len(crops))
+            crops.append(img)
+        if not g or len(best) < len(groups) + 1:           # best view must exist
+            img, box = masked_crop(o, rec)
+            o.extra["crop_box"] = box
+            best.append(img)
+            g = g + [len(crops)]
+            crops.append(img)
+        groups.append(g)
+        o.extra["label_views"] = len(g)
+    tops, embs = clip_inventory(crops, groups=groups)
+    for o, top, e, img in zip(objs, tops, embs, best):
         o.label, o.label_prob = canonical(top[0][0]), top[0][1]
         o.label_top3 = [(lab, round(p, 3)) for lab, p in top]
         o.extra["clip"] = e

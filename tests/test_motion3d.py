@@ -48,14 +48,12 @@ def test_object_motion_finds_rigid_move_and_bent_corner():
     assert where(r["peak_axes"]) == "at a corner"
 
 
-def test_measure_end_to_end(tmp_path):
+def _box_scene(tmp_path, pose_noise_deg=0.0):
     """Rendered scene: textured floor (static) and a textured box top that moves 6 cm between
-    recordings. Links on the box must show the move; the floor must not."""
-    pytest.importorskip("cv2")
-    pytest.importorskip("torch")
+    recordings. `pose_noise_deg`: per-frame rotation error of the poses handed to measure()
+    (VGGT's poses were ~8 px off on the first real run)."""
     from PIL import Image
 
-    from uncertainscene.change.motion3d import MotionConfig, measure
     from uncertainscene.change.segment import SceneObject, _keys
     from uncertainscene.recon.frames import Recon
 
@@ -92,6 +90,24 @@ def test_measure_end_to_end(tmp_path):
     o = SceneObject(id=0, recording="A", X=Xbox, frame=np.zeros(len(g), int), pix=np.zeros((len(g), 2)),
                     voxels=_keys(Xbox, vox) | _keys(Xbox + [0, 0, 0.01], vox) | _keys(Xbox - [0, 0, 0.01], vox),
                     masks={}, label="box", extra={"voxel": vox})
+    if pose_noise_deg:
+        from scipy.spatial.transform import Rotation as Rot
+
+        En = rec.E.copy()
+        for s_ in range(S):
+            dR = Rot.from_rotvec(rng.normal(0, np.radians(pose_noise_deg) / np.sqrt(3), 3)).as_matrix()
+            En[s_, :, :3], En[s_, :, 3] = dR @ En[s_, :, :3], dR @ En[s_, :, 3]
+        rec = Recon(rec.images, rec.depth, rec.conf, rec.K, En.astype(np.float32), rec.video, rec.files, rec.labels)
+    return rec, o
+
+
+def test_measure_end_to_end(tmp_path):
+    """Links on the moved box must show the 6 cm move; the floor must not."""
+    pytest.importorskip("cv2")
+    pytest.importorskip("torch")
+    from uncertainscene.change.motion3d import MotionConfig, measure
+
+    rec, o = _box_scene(tmp_path)
     m = measure(rec, [o], scale_m_per_unit=1.0, cfg=MotionConfig(frame_step=1, k_near=6, k_cross=5), device="cpu")
     assert m["summary"]["links"] > 200, m["summary"]
     assert m["summary"]["point_sigma_cm_median"] < 0.5, m["summary"]   # triangulated points are precise
@@ -137,3 +153,21 @@ def test_clip_embeddings_on_this_transformers(monkeypatch):
         full = model(**Proc()(text=["a photo of a cushion"]), pixel_values=Proc()(images=crops)["pixel_values"])
     ref = torch.nn.functional.normalize(full.image_embeds, dim=-1).numpy()
     assert np.allclose(emb, ref, atol=1e-5)
+
+
+def test_measure_with_rough_poses(tmp_path):
+    """Run 3 found no before/after links: with poses several px off, a fixed 3 px gate dropped
+    almost every feature. With rough poses (1.2 deg per frame, ~10 px) links must survive (the old 3 px gate kept 2),
+    the box must still read as moved ~6 cm, and the points' stated uncertainty must widen."""
+    pytest.importorskip("cv2")
+    pytest.importorskip("torch")
+    from uncertainscene.change.motion3d import MotionConfig, measure
+
+    rec, o = _box_scene(tmp_path, pose_noise_deg=1.2)
+    m = measure(rec, [o], scale_m_per_unit=1.0, cfg=MotionConfig(frame_step=1, k_near=6, k_cross=5), device="cpu")
+    assert m["summary"]["links"] > 100, m["summary"]
+    on_box = m["obj_of"] == 0
+    assert on_box.sum() > 20
+    assert abs(np.median(m["disp_cm"][on_box]) - 6) < 2.5
+    assert m["objects"][0]["moved_beyond_noise"]
+    assert m["summary"]["pixel_noise_px"][0] > 1.0                  # rough poses -> wider point uncertainty

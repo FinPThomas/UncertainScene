@@ -232,8 +232,9 @@ def _rodrigues(r):
     return torch.eye(3, dtype=r.dtype, device=r.device) + torch.sin(th) * Kx + (1 - torch.cos(th)) * Kx @ Kx
 
 
-def bundle_adjust(E, K, video, X, t, frame, uv, cfg: PoseConfig, device: str = "cpu"):
-    """Jointly refine per-frame poses, one focal length per recording and the 3D points.
+def bundle_adjust(E, K, video, X, t, frame, uv, cfg: PoseConfig, device: str = "cpu", fix_points: bool = False):
+    """Jointly refine per-frame poses, one focal length per recording and the 3D points (or,
+    with `fix_points`, only the poses and focals: resection, well conditioned).
     Returns new E, K, X."""
     import torch
 
@@ -249,7 +250,7 @@ def bundle_adjust(E, K, video, X, t, frame, uv, cfg: PoseConfig, device: str = "
     om = torch.zeros(len(E), 3, dtype=dt, device=device, requires_grad=True)
     tau = torch.zeros(len(E), 3, dtype=dt, device=device, requires_grad=True)
     lf = torch.zeros(nv, dtype=dt, device=device, requires_grad=True)
-    Xs = torch.as_tensor(X / spread, dtype=dt, device=device).requires_grad_(True)
+    Xs = torch.as_tensor(X / spread, dtype=dt, device=device).requires_grad_(not fix_points)
     ti = torch.as_tensor(t, device=device)
     fi = torch.as_tensor(frame, device=device)
     obs = torch.as_tensor(uv, dtype=dt, device=device)
@@ -296,7 +297,7 @@ def bundle_adjust(E, K, video, X, t, frame, uv, cfg: PoseConfig, device: str = "
 
     # short L-BFGS runs; a run that makes the median reprojection error clearly worse (or
     # non-finite) is undone and ends the adjustment, so it cannot wander off the poses it was given
-    params = [om, tau, lf, Xs]
+    params = [om, tau, lf] if fix_points else [om, tau, lf, Xs]
     start_px = best_px = median_px()
     best = [q.detach().clone() for q in params]
     chunk, prev = 25, None
@@ -368,6 +369,11 @@ def refine(E: np.ndarray, K: np.ndarray, video: np.ndarray, files: list[str], mo
     Kc = Kf
     rounds = []
     for r in range(cfg.rounds):
+        # resection-intersection first (poses with points fixed, then points re-triangulated):
+        # cannot run away, and hands the joint adjustment a start that is already close
+        for _ in range(2):
+            Ec, Kc, _ = bundle_adjust(Ec, Kc, video, X, tn, fr, uvn, cfg, device, fix_points=True)
+            X, _ = triangulate(Ec, Kc, tn, fr, uvn)
         Ec, Kc, X = bundle_adjust(Ec, Kc, video, X, tn, fr, uvn, cfg, device)
         err, _ = reproject(Ec, Kc, X, tn, fr, uvn)
         rounds.append({"median_px": float(np.median(err)), "points": int(len(X)), "observations": int(len(tn))})
