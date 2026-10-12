@@ -77,3 +77,57 @@ def test_sparse_frames_are_resected_not_left_on_rough_poses():
         assert after < before / 5, (s, before, after)
     assert rep["final"]["median_px"] < 1.0
     assert rep["per_frame_median_px"]["worst"] < 1.5
+
+
+def test_pose_uncertainty_is_small_when_constrained_and_vggt_level_when_not():
+    pytest.importorskip("torch")
+    pytest.importorskip("cv2")
+    from uncertainscene.recon import poses as P
+
+    rng = np.random.default_rng(1)
+    sparse = (3, 9, 15, 20)
+    E, Ep, K, Kp, video, X, t, fr, uv, bad = _scene(rng, sparse=sparse, n_sparse=5)
+    Ec, Kc, pts, rep = P.refine_tracks(Ep, Kp, video, t, fr, uv, P.PoseConfig(iters=150, polish_iters=100))
+    pp = pts["pose_px"]
+    dense = np.setdiff1d(np.arange(len(E)), sparse)
+    vg = rep["vggt"]["median_px"] / 1.1774
+    assert np.median(pp[dense]) < 0.3                       # hundreds of points: well pinned
+    assert (pp[list(sparse)] > 10 * np.median(pp[dense])).all()
+    assert pp.max() <= vg + 1e-6
+    assert rep["pose_px"]["frames_unconstrained"] >= 1
+
+
+def test_shaky_view_counts_for_less_in_position():
+    from uncertainscene.change.position import ekf
+
+    ray = [0, 0, 1.0]
+    steady = {"c": [0, 0, 1.0], "ray": ray, "sd_depth": 0.01, "sd_side": 0.002, "sd_pose": 0.0005, "pixel": 0.001}
+    shaky = dict(steady, c=[0.05, 0, 1.0], sd_pose=0.05)            # 5 cm off, from a shaky camera
+    same = dict(steady, c=[0.05, 0, 1.0])                           # same offset, steady camera
+    m_shaky = ekf([steady, shaky])["mean"][0]
+    m_same = ekf([steady, same])["mean"][0]
+    assert m_shaky < 0.001 < 0.02 < m_same
+
+
+def test_shaky_frame_moves_feature_point_less_and_widens_it():
+    from uncertainscene.change import motion3d as M
+
+    # three cameras looking at one point at z = 1; the third frame is off by 6 px
+    E = np.stack([np.c_[np.eye(3), [x, 0, 0]] for x in (-0.2, 0.0, 0.2)])
+    K = np.tile(np.array([[800, 0, 512], [0, 800, 288], [0, 0, 1.0]]), (3, 1, 1))
+    Xw = np.array([0.0, 0.0, 1.0])
+    uv = np.array([[800 * (Xw[0] + e[0, 3]) / 1.0 + 512, 288.0] for e in E])
+    uv[2, 0] += 6
+    t, fr = np.zeros(3, int), np.arange(3)
+    cfg = M.MotionConfig()
+    cfg.min_obs, cfg.min_angle_deg, cfg.max_px = 2, 0.0, 50.0
+    X0, C0, _, _ = M._triangulate_tracks(E, K, t, fr, uv, cfg)
+    X1, C1, _, _ = M._triangulate_tracks(E, K, t, fr, uv, cfg, pose_px=np.array([0.1, 0.1, 6.0]))
+    assert abs(X1[0, 0]) < abs(X0[0, 0]) / 3
+    # the shaky frame adds little information: the point is about as uncertain as from the two
+    # steady frames alone, clearly more than if the third frame were steady too
+    clean = uv.copy()
+    clean[2, 0] -= 6
+    _, C2, _, _ = M._triangulate_tracks(E, K, t[:2], fr[:2], clean[:2], cfg, pose_px=np.array([0.1, 0.1, 6.0]))
+    _, C3, _, _ = M._triangulate_tracks(E, K, t, fr, clean, cfg, pose_px=np.array([0.1, 0.1, 0.1]))
+    assert np.trace(C3[0]) < 0.8 * np.trace(C1[0]) and np.trace(C1[0]) <= np.trace(C2[0]) * 1.01

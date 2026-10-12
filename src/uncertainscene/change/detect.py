@@ -105,11 +105,16 @@ def _test(rec: Recon, X: np.ndarray, src_frame: np.ndarray, src_feat: np.ndarray
           targets: np.ndarray, feats: np.ndarray | None, cfg: DetectConfig, tau: float | None,
           conf_thr: np.ndarray, collect_r: bool = False, return_extra: bool = False):
     """Test points against target frames. Returns counts, mean appearance distance and,
-    if collect_r, samples of the relative depth residual r = (d_target - z) / z."""
+    if collect_r, samples of the relative depth residual r = (d_target - z) / z.
+
+    Counts are weighted by camera-pose confidence (Recon.pose_weight) of both the frame the
+    point came from and the frame it is tested in, so a shaky pose casts only part of a vote."""
     H, W = rec.depth.shape[1:]
     n = len(X)
-    n_same = np.zeros(n, np.int32)
-    n_gone = np.zeros(n, np.int32)
+    pw = rec.pose_weight()
+    w_src = pw[src_frame]
+    n_same = np.zeros(n, np.float64)
+    n_gone = np.zeros(n, np.float64)
     app_sum = np.zeros(n, np.float32)
     app_cnt = np.zeros(n, np.int32)
     disp_sum = np.zeros(n, np.float64)
@@ -140,8 +145,8 @@ def _test(rec: Recon, X: np.ndarray, src_frame: np.ndarray, src_feat: np.ndarray
         disp_cnt[idx[vis]] += 1
         same = np.abs(r) <= tau
         gone = r > tau
-        n_same[idx[same]] += 1
-        n_gone[idx[gone]] += 1
+        n_same[idx[same]] += w_src[idx[same]] * pw[t]
+        n_gone[idx[gone]] += w_src[idx[gone]] * pw[t]
         if feats is not None and src_feat is not None:
             j = idx[same]
             ft = _sample_feat(feats, t, vi[j], ui[j], H, W)

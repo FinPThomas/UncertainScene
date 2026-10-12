@@ -98,11 +98,13 @@ def ellipsoid_points(mean: np.ndarray, cov: np.ndarray, n: int = 14) -> np.ndarr
 
 def measurement_cov(v: dict) -> np.ndarray:
     """Covariance of one view's centre: depth error along the ray, mask wobble sideways
-    (or a quarter pixel footprint when SAM 2 gave no wobble)."""
+    (or a quarter pixel footprint when SAM 2 gave no wobble) plus the camera-pose uncertainty
+    of that frame sideways (a shaky pose makes the view count for less)."""
     r = np.asarray(v["ray"], float)
     side = v["sd_side"] if v.get("sd_side") is not None else v["pixel"] / np.sqrt(12)
+    side2 = side ** 2 + (v.get("sd_pose") or 0.0) ** 2
     rr = np.outer(r, r)
-    return v["sd_depth"] ** 2 * rr + side ** 2 * (np.eye(3) - rr) + np.eye(3) * 1e-14
+    return v["sd_depth"] ** 2 * rr + side2 * (np.eye(3) - rr) + np.eye(3) * 1e-14
 
 
 def ekf(views: list[dict]) -> dict:
@@ -157,6 +159,7 @@ def annotate(objs: list, scale: float, up: np.ndarray) -> None:
                        "depth_sd_cm": round(float(np.median([v["sd_depth"] for v in views])) * k, 2),
                        "side_sd_cm": round(float(np.median([v["sd_side"] if v.get("sd_side") is not None
                                                             else v["pixel"] / np.sqrt(12) for v in views])) * k, 2),
+                       "pose_sd_cm": round(float(np.median([v.get("sd_pose") or 0.0 for v in views])) * k, 2),
                        "wobble_views": int(sum(v.get("sd_side") is not None for v in views)),
                        "nis_mean": round(float(np.mean(main["nis"])), 2) if main["nis"] else None,
                        "trace_cm": [round(x * k, 2) for x in main["trace"]]})

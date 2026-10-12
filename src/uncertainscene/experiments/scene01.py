@@ -689,7 +689,10 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
                  f"{p['final']['median_px']:.2f} px median ({p['final'].get('p90_px', float('nan')):.2f} px p90; worst "
                  f"frame {(p.get('per_frame_median_px') or {}).get('worst') or float('nan'):.2f} px), "
                  f"{p.get('frames_resected', 0)} sparse frames resected, {p.get('frames_interpolated', 0)} "
-                 f"interpolated, cameras turned {p['rotation_change_deg_median']:.2f} deg |")
+                 f"interpolated, cameras turned {p['rotation_change_deg_median']:.2f} deg; pose uncertainty "
+                 f"{(p.get('pose_px') or {}).get('median', float('nan')):.2f} px median, "
+                 f"{(p.get('pose_px') or {}).get('frames_unconstrained', 0)} unconstrained frames count for less "
+                 f"in positions, motion, change votes and splats |")
     elif p.get("failed"):
         L.append(f"| Camera poses | refinement failed ({p['failed']}); VGGT poses used |")
     if not m.get("motion_links") and m.get("motion_links") is not None:

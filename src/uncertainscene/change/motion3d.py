@@ -69,19 +69,21 @@ def _within_tracks(rec, frames, kps, descs, cfg, device):
     return t, frames[fr], kp, uv
 
 
-def _tri(E, K, t, fr, uv, T):
+def _tri(E, K, t, fr, uv, T, w=None):
     from ..recon import poses as P
 
     X, ang = np.zeros((T, 3)), np.zeros(T)
     if len(t):
-        x, a = P.triangulate(E, K, t, fr, uv)
+        x, a = P.triangulate(E, K, t, fr, uv, w)
         X[: len(x)], ang[: len(a)] = x, a
     return X, ang
 
 
-def _covariances(E, K, X, t, fr, sigma_px: float, T: int) -> np.ndarray:
+def _covariances(E, K, X, t, fr, sigma_px, T: int) -> np.ndarray:
     """3D covariance of each track's point from its observations: inverse of sum J^T J / sigma^2,
-    J the 2x3 Jacobian of the pixel projection with respect to the point."""
+    J the 2x3 Jacobian of the pixel projection with respect to the point. `sigma_px` is one
+    number or one per observation (feature noise plus that frame's pose uncertainty)."""
+    sigma_px = np.broadcast_to(np.asarray(sigma_px, float), (len(t),))
     R, tv = E[fr, :, :3], E[fr, :, 3]
     Xc = np.einsum("nij,nj->ni", R, np.nan_to_num(X[t])) + tv
     z = np.maximum(Xc[:, 2], 1e-6)
@@ -91,42 +93,49 @@ def _covariances(E, K, X, t, fr, sigma_px: float, T: int) -> np.ndarray:
     Jc[:, 1, 1], Jc[:, 1, 2] = fy / z, -fy * Xc[:, 1] / z**2
     J = Jc @ R
     info = np.zeros((T, 3, 3))
-    np.add.at(info, t, np.einsum("nki,nkj->nij", J, J) / sigma_px**2)
+    np.add.at(info, t, np.einsum("nki,nkj->nij", J, J) / sigma_px[:, None, None] ** 2)
     return np.linalg.inv(info + np.eye(3)[None] * 1e-12)
 
 
-def _triangulate_tracks(E, K, t, fr, uv, cfg, use=None):
+def _triangulate_tracks(E, K, t, fr, uv, cfg, use=None, pose_px=None):
     """Points of tracks with enough good observations (optionally only observations in `use`).
+    `pose_px`: per-frame pose uncertainty (pixels at this K's size); observations from shaky
+    frames weigh less in each point and widen its covariance.
     Returns X [T, 3] (NaN where invalid), their covariances [T, 3, 3], the boolean mask of
     observations kept and the recording's pixel noise (per axis)."""
     from ..recon import poses as P
 
     T = int(t.max()) + 1 if len(t) else 0
     keep = np.ones(len(t), bool) if use is None else use.copy()
+    pp = np.zeros(len(t)) if pose_px is None else np.asarray(pose_px, float)[fr]
+    # triangulation weight: 1 / (feature noise^2 + pose^2), feature noise ~1 px until measured
+    w = 1.0 / (1.0 + pp**2)
     # gate: max_px, or wider when the poses themselves reproject worse than that (VGGT poses were
     # ~8 px off on the first real run, so a 3 px gate left 257 points and no before/after links);
     # the wider spread is measured below and widens every point's covariance accordingly
     if keep.any():
-        X, _ = _tri(E, K, t[keep], fr[keep], uv[keep], T)
+        X, _ = _tri(E, K, t[keep], fr[keep], uv[keep], T, w[keep])
         err, _ = P.reproject(E, K, X, t, fr, uv)
         max_px = max(cfg.max_px, 2.5 * float(np.median(err[keep])))
     else:
         max_px = cfg.max_px
     for _ in range(3):
-        X, ang = _tri(E, K, t[keep], fr[keep], uv[keep], T)
+        X, ang = _tri(E, K, t[keep], fr[keep], uv[keep], T, w[keep])
         err, z = P.reproject(E, K, X, t, fr, uv)
         good = (np.bincount(t[keep], minlength=T) >= cfg.min_obs) & (ang >= cfg.min_angle_deg)
         new = keep & (err < max_px) & (z > 0) & good[t]
         if (new == keep).all():
             break
         keep = new
-    X, ang = _tri(E, K, t[keep], fr[keep], uv[keep], T)
+    X, ang = _tri(E, K, t[keep], fr[keep], uv[keep], T, w[keep])
     good = (np.bincount(t[keep], minlength=T) >= cfg.min_obs) & (ang >= cfg.min_angle_deg)
     keep &= good[t]
     err, _ = P.reproject(E, K, X, t, fr, uv)
     # median of a 2D Gaussian error's length is 1.1774 sigma
-    sigma = max(float(np.median(err[keep])) / 1.1774, cfg.min_px_sigma) if keep.any() else 1.0
-    C = _covariances(E, K, X, t[keep], fr[keep], sigma, T)
+    # feature noise from frames with steady poses (their residual is not pose error)
+    steady = keep & (pp <= np.median(pp[keep])) if keep.any() else keep
+    sigma = max(float(np.median(err[steady])) / 1.1774, cfg.min_px_sigma) if steady.any() else 1.0
+    C = _covariances(E, K, X, t[keep], fr[keep], np.sqrt(sigma**2 + pp[keep] ** 2), T)
     X[~good] = np.nan
     return X, C, keep, sigma
 
@@ -269,7 +278,8 @@ def measure(rec, objs: list, scale_m_per_unit: float, cfg: MotionConfig = Motion
     tracks, Xs, Cs, px = [], [], [], []
     for v in (0, 1):
         t, fr, kp, uv = _within_tracks(rec, use[v], kps, descs, cfg, device)
-        X, C, _, sigma = _triangulate_tracks(E, K, t, fr, uv, cfg)
+        pose_px = None if rec.pose_px is None else rec.pose_px * wh[0] / w0
+        X, C, _, sigma = _triangulate_tracks(E, K, t, fr, uv, cfg, pose_px=pose_px)
         Cs.append(C)
         px.append(sigma)
         tid = {int(s): np.full(len(kps[int(s)]), -1) for s in use[v]}

@@ -297,7 +297,10 @@ def view_measurement(rec: Recon, s: int, X: np.ndarray, v: np.ndarray, u: np.nda
       units, times the chunk scale). Depth errors are shared by the whole object (a depth map
       is off by a smooth amount), so the median over the mask is used, along the viewing ray;
     - sideways: SAM 2 mask wobble, the centroid shift between its loose and tight masks
-      (logit -1 / +1), as a uniform range (sd = shift / sqrt(12)), converted with depth / focal."""
+      (logit -1 / +1), as a uniform range (sd = shift / sqrt(12)), converted with depth / focal;
+    - pose: the frame's camera-pose uncertainty from bundle adjustment (rec.pose_px, pixels)
+      moves the whole view sideways by pose_px * depth / focal, so a view from a shaky camera
+      counts for less in the fused position."""
     c = np.median(X, 0)
     R, t = rec.E[s][:, :3], rec.E[s][:, 3]
     cam = -R.T @ t
@@ -317,7 +320,8 @@ def view_measurement(rec: Recon, s: int, X: np.ndarray, v: np.ndarray, u: np.nda
         sd_side = px / np.sqrt(12) * z / f
     else:
         sd_side = None
-    return {"c": c, "ray": ray, "sd_depth": sd_depth, "sd_side": sd_side, "pixel": z / f}
+    sd_pose = 0.0 if rec.pose_px is None else float(rec.pose_px[s]) * z / f
+    return {"c": c, "ray": ray, "sd_depth": sd_depth, "sd_side": sd_side, "sd_pose": sd_pose, "pixel": z / f}
 
 
 def lift(rec: Recon, masks: dict, voxel: float, conf_quantile: float = 0.3, max_points: int = 4000,

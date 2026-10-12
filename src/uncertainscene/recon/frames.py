@@ -69,9 +69,21 @@ class Recon:
     # (the chunk's similarity scale; 1 when reconstructed in one pass). VGGT's depth confidence
     # describes errors in its normalised units, so errors here are (alpha / conf) * scale.
     scale: np.ndarray | None = None
+    # per frame: pose uncertainty in pixels (1 sigma per axis, at the depth-map size) from bundle
+    # adjustment; None = not measured (VGGT poses). Shaky poses count for less downstream.
+    pose_px: np.ndarray | None = None
+
+    def pose_weight(self) -> np.ndarray:
+        """Per-frame weight of a frame's evidence: 1 / (1 + pose sigma^2 in pixels). One pixel of
+        pose error halves a frame's say (a pixel is the resolution every per-pixel test works at)."""
+        if self.pose_px is None:
+            return np.ones(len(self.E))
+        return 1.0 / (1.0 + np.asarray(self.pose_px, float) ** 2)
 
     def save(self, path: str | Path) -> None:
         extra = {"scale": self.scale} if self.scale is not None else {}
+        if self.pose_px is not None:
+            extra["pose_px"] = self.pose_px
         np.savez_compressed(path, images=self.images, depth=self.depth.astype(np.float16),
                             conf=self.conf.astype(np.float16), K=self.K, E=self.E, video=self.video,
                             files=np.array(self.files), labels=np.array(self.labels), **extra)
@@ -81,4 +93,4 @@ class Recon:
         z = np.load(path)
         return cls(z["images"], z["depth"].astype(np.float32), z["conf"].astype(np.float32), z["K"], z["E"],
                    z["video"], [str(f) for f in z["files"]], tuple(str(x) for x in z["labels"]),
-                   z["scale"] if "scale" in z.files else None)
+                   z["scale"] if "scale" in z.files else None, z["pose_px"] if "pose_px" in z.files else None)

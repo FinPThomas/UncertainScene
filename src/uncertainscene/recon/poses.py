@@ -181,12 +181,15 @@ def _rays(E, K, frame, uv):
     return c, d / np.linalg.norm(d, axis=1, keepdims=True)
 
 
-def triangulate(E, K, t, frame, uv):
-    """Least-squares intersection of each track's rays. Returns points [T, 3] and the largest
-    angle between any ray and the track's mean ray (degrees), as a parallax measure."""
+def triangulate(E, K, t, frame, uv, w=None):
+    """Least-squares intersection of each track's rays (optionally weighted per observation by
+    `w`, e.g. 1 / pixel variance). Returns points [T, 3] and the largest angle between any ray
+    and the track's mean ray (degrees), as a parallax measure."""
     T = int(t.max()) + 1 if len(t) else 0
     c, d = _rays(E, K, frame, uv)
     A = np.eye(3)[None] - d[:, :, None] * d[:, None, :]
+    if w is not None:
+        A = A * np.asarray(w, float)[:, None, None]
     SA = np.zeros((T, 3, 3))
     Sb = np.zeros((T, 3))
     np.add.at(SA, t, A)
@@ -447,6 +450,24 @@ def _place_weak_frames(Ec, Kc, E, video, t_, frame, uv, weak, gate, cfg):
     return Ec, extra, resected
 
 
+def pose_uncertainty(err, fr, n_frames: int, vggt_px: float, min_points: int = 8) -> np.ndarray:
+    """Per-frame pose uncertainty, as the pixel error (1 sigma per axis) the pose alone adds to
+    any point seen in that frame. Measured, not tuned:
+    - a frame with n adjusted points and residual spread s (median error / 1.1774) has a 6-dof
+      pose fitted from n points, so its pose error projects to about s * sqrt(6 / n); any
+      residual beyond the whole problem's spread is also put down to the pose;
+    - a frame with fewer than `min_points` points is unconstrained: it gets VGGT's own measured
+      error level, the error of the poses it started from."""
+    sg = float(np.median(err)) / 1.1774
+    vg = vggt_px / 1.1774
+    out = np.full(n_frames, vg)
+    n = np.bincount(fr, minlength=n_frames)
+    for s in np.nonzero(n >= min_points)[0]:
+        ss = float(np.median(err[fr == s])) / 1.1774
+        out[s] = min(np.sqrt(ss**2 * 6 / n[s] + max(ss**2 - sg**2, 0.0)), vg)
+    return out
+
+
 def refine_tracks(E: np.ndarray, Kf: np.ndarray, video: np.ndarray, t_: np.ndarray, frame: np.ndarray,
                   uv: np.ndarray, cfg: PoseConfig = PoseConfig(), device: str = "cpu", t0: float | None = None):
     """Bundle adjustment of poses (camera-from-world E, intrinsics Kf at the frame size) from
@@ -508,6 +529,7 @@ def refine_tracks(E: np.ndarray, Kf: np.ndarray, video: np.ndarray, t_: np.ndarr
     err, _ = reproject(Ec, Kc, X, tn, fr, uvn)
     seen = np.bincount(fr, minlength=len(E))
     per_frame = np.array([np.median(err[fr == s]) if (fr == s).any() else np.nan for s in range(len(E))])
+    pose_px = pose_uncertainty(err, fr, len(E), before["median_px"], cfg.min_resect)
 
     c0, d0 = _centres_dirs(E.astype(np.float64))
     c1, d1 = _centres_dirs(Ec)
@@ -522,6 +544,8 @@ def refine_tracks(E: np.ndarray, Kf: np.ndarray, video: np.ndarray, t_: np.ndarr
         "per_frame_median_px": {"median": float(np.median(per_frame[fin])) if fin.any() else None,
                                 "p90": float(np.quantile(per_frame[fin], 0.9)) if fin.any() else None,
                                 "worst": float(per_frame[fin].max()) if fin.any() else None},
+        "pose_px": {"median": float(np.median(pose_px)), "p90": float(np.quantile(pose_px, 0.9)),
+                    "frames_unconstrained": int((pose_px >= before["median_px"] / 1.1774 - 1e-9).sum())},
         "frames_with_few_points": n_weak, "frames_resected": int(resected),
         "frames_interpolated": int(n_weak - resected), "frames_without_points": int((seen == 0).sum()),
         "rotation_change_deg_median": float(np.median(rot)), "rotation_change_deg_p90": float(np.quantile(rot, 0.9)),
@@ -534,7 +558,8 @@ def refine_tracks(E: np.ndarray, Kf: np.ndarray, video: np.ndarray, t_: np.ndarr
              report["final"]["p90_px"], before["median_px"], report["per_frame_median_px"]["worst"] or 0,
              report["rotation_change_deg_median"], n_weak, resected, n_weak - resected)
     return Ec.astype(np.float32), Kc.astype(np.float32), {"X": X.astype(np.float32), "t": tn, "frame": fr,
-                                                          "uv": uvn.astype(np.float32)}, report
+                                                          "uv": uvn.astype(np.float32),
+                                                          "pose_px": pose_px.astype(np.float32)}, report
 
 
 def _extra_pairs(E, video, sparse, P_done, cfg):
@@ -592,11 +617,12 @@ def refine_recon(rec, cache=None, key: str = "", cfg: PoseConfig = PoseConfig())
 
     from PIL import Image
 
-    f = cache / f"poses2_{key}.npz" if cache is not None else None
+    f = cache / f"poses3_{key}.npz" if cache is not None else None
     if f is not None and f.exists():
         z = np.load(f)
         log.info("reusing cached refined poses %s", f.name)
-        return (_aligned(replace(rec, E=z["E"], K=z["K"]), z["ks"]), {"X": z["X"], "rgb": z["rgb"], "seen": z["seen"]},
+        return (_aligned(replace(rec, E=z["E"], K=z["K"], pose_px=z["pose_px"]), z["ks"]),
+                {"X": z["X"], "rgb": z["rgb"], "seen": z["seen"]},
                 json.loads(str(z["report"])) | {"cached": True})
     h0, w0 = rec.depth.shape[1:]
     E, Kf, pts, report = refine(rec.E, rec.K, rec.video, rec.files, (w0, h0), cfg)
@@ -618,13 +644,16 @@ def refine_recon(rec, cache=None, key: str = "", cfg: PoseConfig = PoseConfig())
     # which recordings saw each point (a point seen only in the after recording may be a moved object)
     seen = np.zeros((len(pts["X"]), int(rec.video.max()) + 1), bool)
     seen[pts["t"], rec.video[pts["frame"]]] = True
-    out = replace(rec, E=E, K=K)
+    # pose uncertainty in pixels of the model-size depth maps (the size rec.K describes)
+    pose_px = (pts["pose_px"] * w0 / w).astype(np.float32)
+    out = replace(rec, E=E, K=K, pose_px=pose_px)
     ks = np.array([depth_scale(out, s, pts["X"][seen[:, out.video[s]]]) for s in range(len(E))], np.float32)
     report["depth_scale_median"] = float(np.median(ks))
     report["depth_scale_p10_p90"] = [float(np.quantile(ks, 0.1)), float(np.quantile(ks, 0.9))]
     if f is not None:
         tmp = f.with_name(f.stem + "_tmp.npz")
-        np.savez_compressed(tmp, E=E, K=K, X=pts["X"], rgb=rgb, seen=seen, ks=ks, report=json.dumps(report))
+        np.savez_compressed(tmp, E=E, K=K, X=pts["X"], rgb=rgb, seen=seen, ks=ks, pose_px=pose_px,
+                            report=json.dumps(report))
         tmp.replace(f)
     return _aligned(out, ks), {"X": pts["X"], "rgb": rgb, "seen": seen}, report
 

@@ -275,8 +275,12 @@ def train(rec, video: int, cfg: SplatConfig = SplatConfig(), check=None, points:
     rng = np.random.default_rng(cfg.seed)
     t0, losses, pruned = time.time(), [], {}
     prune_at = {int(cfg.iters * f) for f in cfg.prune_at}
+    # frames with shaky poses (bundle-adjustment uncertainty, in training-image pixels) are
+    # drawn less often: weight 1 / (1 + sigma^2), so a pixel of pose error halves a frame's share
+    pw = np.ones(len(tr)) if rec.pose_px is None else 1.0 / (1.0 + (np.asarray(rec.pose_px)[tr] * wh[0] / w0) ** 2)
+    pick = pw / pw.sum()
     for it in range(cfg.iters):
-        i = int(rng.integers(len(tr)))
+        i = int(rng.choice(len(tr), p=pick))
         gt = torch.as_tensor(imgs[i], device=dev).float() / 255
         vm = E4[i:i + 1]
         if popt is not None:
@@ -337,7 +341,8 @@ def train(rec, video: int, cfg: SplatConfig = SplatConfig(), check=None, points:
                      np.mean(losses[-200:]), len(params["means"]), time.time() - t0)
             if check is not None:
                 check()
-    info = {"recording": rec.labels[video], "train_frames": int(len(tr)), "held_out_frames": int(hold.sum()),
+    info = {"recording": rec.labels[video], "train_frames": int(len(tr)),
+            "train_frames_effective": round(float(pw.sum() ** 2 / (pw**2).sum()), 1), "held_out_frames": int(hold.sum()),
             "iters": cfg.iters, "gaussians": int(len(params["means"])), "seconds": round(time.time() - t0),
             "image_size": list(wh), "pose_correction_deg_median": round(float(np.degrees(
                 pose[:, :3].norm(dim=1).median().item())), 3) if popt is not None else 0.0,
