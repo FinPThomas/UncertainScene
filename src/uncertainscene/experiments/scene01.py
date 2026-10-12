@@ -208,7 +208,9 @@ def _posed(spec, cache: Path, rec, rinfo: dict, stage=None):
     try:
         rec, pts, rep = refine_recon(rec, cache, _key(spec))
         msg = (f"camera poses refined: {rep['vggt']['median_px']:.1f} px -> {rep['final']['median_px']:.2f} px "
-               f"reprojection error, cameras turned {rep['rotation_change_deg_median']:.2f} deg (median)"
+               f"reprojection error (p90 {rep['final'].get('p90_px', float('nan')):.2f} px, "
+               f"{rep.get('frames_resected', 0)} sparse frames resected, "
+               f"{rep.get('frames_interpolated', 0)} interpolated), cameras turned {rep['rotation_change_deg_median']:.2f} deg (median)"
                f"{', cached' if rep.get('cached') else ''}")
         if stage is not None:
             stage(msg)
@@ -684,7 +686,10 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
     p = m.get("poses") or {}
     if p.get("final"):
         L.append(f"| Camera poses (bundle adjustment from VGGT) | reprojection error {p['vggt']['median_px']:.1f} -> "
-                 f"{p['final']['median_px']:.2f} px median, cameras turned {p['rotation_change_deg_median']:.2f} deg |")
+                 f"{p['final']['median_px']:.2f} px median ({p['final'].get('p90_px', float('nan')):.2f} px p90; worst "
+                 f"frame {(p.get('per_frame_median_px') or {}).get('worst') or float('nan'):.2f} px), "
+                 f"{p.get('frames_resected', 0)} sparse frames resected, {p.get('frames_interpolated', 0)} "
+                 f"interpolated, cameras turned {p['rotation_change_deg_median']:.2f} deg |")
     elif p.get("failed"):
         L.append(f"| Camera poses | refinement failed ({p['failed']}); VGGT poses used |")
     if not m.get("motion_links") and m.get("motion_links") is not None:

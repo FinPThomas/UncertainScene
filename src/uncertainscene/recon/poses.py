@@ -51,6 +51,13 @@ class PoseConfig:
     rounds: int = 2
     iters: int = 300                # L-BFGS iterations per round
     max_points: int = 400_000
+    min_frame_points: int = 30      # frames with fewer adjusted points are resected afterwards
+    min_resect: int = 8             # 2D-3D inliers needed to trust a resected pose
+    resect_px: float = 4.0          # PnP inlier gate (px)
+    sparse_obs: int = 150           # frames with fewer track observations get a wider second match
+    min_inliers_sparse: int = 15
+    polish_iters: int = 150         # final joint adjustment over every frame
+    polish_always: bool = True
 
 
 def _rootsift(desc: np.ndarray) -> np.ndarray:
@@ -338,29 +345,115 @@ def _to_frame(E_new, X, E_ref):
     return E2, s * X @ R.T + t
 
 
-def refine(E: np.ndarray, K: np.ndarray, video: np.ndarray, files: list[str], model_wh: tuple[int, int],
-           cfg: PoseConfig = PoseConfig(), device: str | None = None):
-    """Refined camera-from-world E [S, 3, 4] and intrinsics K [S, 3, 3] at the FRAME size (the
-    size of the images in `files`), triangulated points and a report. `K` is given at the model
-    size `model_wh` (w, h) and scaled to the frame size here."""
-    import torch
+def _pose_delta(E_new, E_old):
+    """Camera-side correction C with E_new = C @ E_old (as 4x4), per frame."""
+    def h(E):
+        H = np.tile(np.eye(4), (len(E), 1, 1))
+        H[:, :3] = E
+        return H
+    return np.einsum("nij,njk->nik", h(E_new), np.linalg.inv(h(E_old)))[:, :3]
 
-    device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-    t0 = time.time()
-    kps, descs, wh = features(files, cfg.n_features)
-    Kf = K.astype(np.float64).copy()
-    Kf[:, 0] *= wh[0] / model_wh[0]
-    Kf[:, 1] *= wh[1] / model_wh[1]
-    P = pairs(E, video, cfg.k_near, cfg.k_time)
-    M, n_pairs = match(kps, descs, P, cfg, device)
-    t_, frame, kp = tracks(M, [len(k) for k in kps])
-    off = np.concatenate([[0], np.cumsum([len(k) for k in kps])])
-    uv = np.concatenate(kps)[off[frame] + kp].astype(np.float64)
-    log.info("poses: %d features/frame, %d tracks, %d observations (%.0f s)", int(np.mean([len(k) for k in kps])),
-             int(t_.max()) + 1 if len(t_) else 0, len(t_), time.time() - t0)
-    if len(t_) < 100:
-        raise RuntimeError(f"too few feature tracks ({len(t_)}) to refine poses")
 
+def _blend(C0, C1, w):
+    """Blend two corrections: rotations by slerp, translations linearly (w = weight of C1)."""
+    from scipy.spatial.transform import Rotation as Rot
+    from scipy.spatial.transform import Slerp
+
+    r = Slerp([0, 1], Rot.from_matrix(np.stack([C0[:, :3], C1[:, :3]])))([w]).as_matrix()[0]
+    return np.c_[r, (1 - w) * C0[:, 3] + w * C1[:, 3]]
+
+
+def _interpolate_weak(E_new, E_old, video, weak):
+    """Initial pose of each weak frame: its VGGT pose moved by the correction the adjustment
+    made to its nearest well-constrained neighbours in time (blended before/after)."""
+    C = _pose_delta(E_new, E_old)
+    out = E_new.copy()
+    for v in np.unique(video):
+        idx = np.nonzero(video == v)[0]
+        good = idx[~weak[idx]]
+        if not len(good):
+            continue
+        for w in idx[weak[idx]]:
+            a, b = good[good < w], good[good > w]
+            if len(a) and len(b):
+                Cw = _blend(C[a[-1]], C[b[0]], (w - a[-1]) / (b[0] - a[-1]))
+            else:
+                Cw = C[a[-1] if len(a) else b[0]]
+            out[w] = np.c_[Cw[:, :3] @ E_old[w][:, :3], Cw[:, :3] @ E_old[w][:, 3] + Cw[:, 3]]
+    return out
+
+
+def _resect(E_init, K, X, uv, gate, min_inliers):
+    """One frame's pose from 2D-3D matches (PnP + RANSAC from `E_init`, then Levenberg-Marquardt
+    on the inliers). Returns the pose and the inlier mask, or None if it is not trustworthy."""
+    import cv2
+
+    if len(X) < min_inliers:
+        return None
+    Kc = K.astype(np.float64)
+    rv, _ = cv2.Rodrigues(E_init[:, :3].astype(np.float64))
+    tv = E_init[:, 3].astype(np.float64).reshape(3, 1)
+    obj, img = X.astype(np.float64), uv.astype(np.float64)
+    try:
+        ok, rv2, tv2, inl = cv2.solvePnPRansac(obj, img, Kc, None, rv.copy(), tv.copy(), True, 2000, gate, 0.999,
+                                               flags=cv2.SOLVEPNP_ITERATIVE)
+    except cv2.error:
+        return None
+    if not ok or inl is None or len(inl) < min_inliers:
+        return None
+    inl = inl.ravel()
+    rv2, tv2 = cv2.solvePnPRefineLM(obj[inl], img[inl], Kc, None, rv2, tv2)
+    R = cv2.Rodrigues(rv2)[0]
+    E = np.c_[R, tv2.ravel()]
+    # a resected pose far from the interpolated guess is a wrong solution, not a correction
+    turn = np.degrees(np.arccos(np.clip((np.trace(R @ E_init[:, :3].T) - 1) / 2, -1, 1)))
+    if turn > 10:
+        return None
+    Xc = obj @ R.T + E[:, 3]
+    z = Xc[:, 2]
+    if (z[inl] <= 0).any():
+        return None
+    u = Kc[0, 0] * Xc[:, 0] / np.where(z > 1e-9, z, 1e-9) + Kc[0, 2]
+    v = Kc[1, 1] * Xc[:, 1] / np.where(z > 1e-9, z, 1e-9) + Kc[1, 2]
+    mask = (np.hypot(u - img[:, 0], v - img[:, 1]) < gate) & (z > 0)
+    if mask.sum() < min_inliers:
+        return None
+    return E, mask
+
+
+def _place_weak_frames(Ec, Kc, E, video, t_, frame, uv, weak, gate, cfg):
+    """Pose every weak frame: interpolate its correction from its neighbours, then resect it
+    against points triangulated from the well-constrained frames alone. Returns new poses, the
+    extra observations (track, frame, uv) that support them, and counts."""
+    Ec = _interpolate_weak(Ec, E, video, weak)
+    strong = ~weak[frame]
+    T = int(t_.max()) + 1
+    X, ang = triangulate(Ec, Kc, t_[strong], frame[strong], uv[strong])
+    X = np.r_[X, np.zeros((T - len(X), 3))] if len(X) < T else X
+    err, z = reproject(Ec, Kc, X, t_, frame, uv)
+    okobs = strong & (err < gate) & (z > 0)
+    cnt = np.bincount(t_[okobs], minlength=T)
+    good_t = (cnt >= 2) & (np.r_[ang, np.zeros(T - len(ang))] >= cfg.min_angle_deg)
+    resected, extra = 0, []
+    for w in np.nonzero(weak)[0]:
+        o = np.nonzero((frame == w) & good_t[t_])[0]
+        r = _resect(Ec[w], Kc[w], X[t_[o]], uv[o], gate, cfg.min_resect)
+        if r is None:
+            continue
+        Ec[w], m = r
+        resected += 1
+        extra.append(o[m])
+    extra = np.concatenate(extra) if extra else np.zeros(0, np.int64)
+    return Ec, extra, resected
+
+
+def refine_tracks(E: np.ndarray, Kf: np.ndarray, video: np.ndarray, t_: np.ndarray, frame: np.ndarray,
+                  uv: np.ndarray, cfg: PoseConfig = PoseConfig(), device: str = "cpu", t0: float | None = None):
+    """Bundle adjustment of poses (camera-from-world E, intrinsics Kf at the frame size) from
+    feature tracks (track id, frame, keypoint position per observation). Every frame gets a
+    refined pose: frames with too few points of their own are resected against the others.
+    Returns E, K, the points and their observations, and a report."""
+    t0 = t0 or time.time()
     Ec = E.astype(np.float64)
     X, tn, fr, uvn = _filter(Ec, Kf, t_, frame, uv, cfg.first_px, cfg.min_angle_deg, cfg.max_points)
     err0, _ = reproject(Ec, Kf, X, tn, fr, uvn)
@@ -384,42 +477,111 @@ def refine(E: np.ndarray, K: np.ndarray, video: np.ndarray, files: list[str], mo
             X2, tn2, fr2, uvn2 = _filter(Ec, Kc, t_, frame, uv, gate, cfg.min_angle_deg, cfg.max_points)
             if len(X2) >= 100:
                 X, tn, fr, uvn = X2, tn2, fr2, uvn2
-            continue
     # final gate: final_px, or wider when the poses are still that far off (never an empty set)
     final_gate = max(cfg.final_px, 2 * (rounds[-1]["median_px"] if rounds else before["median_px"]))
     X, tn, fr, uvn = _filter(Ec, Kc, t_, frame, uv, final_gate, cfg.min_angle_deg, cfg.max_points)
     if len(X) < 100:
         raise RuntimeError(f"only {len(X)} points left after bundle adjustment")
+
+    # frames the adjustment could not constrain (few points of their own): interpolate, resect
+    # against the rest, then one more joint adjustment over every frame
+    seen = np.bincount(fr, minlength=len(E))
+    weak = seen < cfg.min_frame_points
+    n_weak, resected = int(weak.sum()), 0
+    if n_weak:
+        Ec, extra, resected = _place_weak_frames(Ec, Kc, E.astype(np.float64), video, t_, frame, uv, weak,
+                                                 max(final_gate, cfg.resect_px), cfg)
+        log.info("poses: %d frames with < %d points: %d resected, %d interpolated from neighbours", n_weak,
+                 cfg.min_frame_points, resected, n_weak - resected)
+    if cfg.polish_iters and (n_weak or cfg.polish_always):
+        X2, tn2, fr2, uvn2 = _filter(Ec, Kc, t_, frame, uv, final_gate, cfg.min_angle_deg, cfg.max_points)
+        if len(X2) >= 100:
+            e_before = float(np.median(reproject(Ec, Kc, X2, tn2, fr2, uvn2)[0]))
+            Ep, Kp, Xp = bundle_adjust(Ec, Kc, video, X2, tn2, fr2, uvn2, replace(cfg, iters=cfg.polish_iters), device)
+            e_after = float(np.median(reproject(Ep, Kp, Xp, tn2, fr2, uvn2)[0]))
+            if np.isfinite(e_after) and e_after <= e_before:
+                Ec, Kc = Ep, Kp
+            X, tn, fr, uvn = _filter(Ec, Kc, t_, frame, uv, final_gate, cfg.min_angle_deg, cfg.max_points)
+            # the polish can only help: refit points once more with the kept poses
+            X, _ = triangulate(Ec, Kc, tn, fr, uvn)
     Ec, X = _to_frame(Ec, X, E.astype(np.float64))
     err, _ = reproject(Ec, Kc, X, tn, fr, uvn)
+    seen = np.bincount(fr, minlength=len(E))
+    per_frame = np.array([np.median(err[fr == s]) if (fr == s).any() else np.nan for s in range(len(E))])
 
     c0, d0 = _centres_dirs(E.astype(np.float64))
     c1, d1 = _centres_dirs(Ec)
     R0, R1 = E[:, :, :3].astype(np.float64), Ec[:, :, :3]
     rot = np.degrees(np.arccos(np.clip((np.trace(R1 @ R0.transpose(0, 2, 1), axis1=1, axis2=2) - 1) / 2, -1, 1)))
     spread = float(np.linalg.norm(c0 - c0.mean(0), axis=1).max())
-    seen = np.bincount(fr, minlength=len(E))
+    fin = np.isfinite(per_frame)
     report = {
-        "frame_size": list(wh), "frame_pairs_tried": int(len(P)), "frame_pairs_matched": int(n_pairs),
         "vggt": before, "rounds": rounds,
         "final": {"median_px": float(np.median(err)), "p90_px": float(np.quantile(err, 0.9)),
                   "points": int(len(X)), "observations": int(len(tn))},
-        "frames_with_few_points": int((seen < 30).sum()),
+        "per_frame_median_px": {"median": float(np.median(per_frame[fin])) if fin.any() else None,
+                                "p90": float(np.quantile(per_frame[fin], 0.9)) if fin.any() else None,
+                                "worst": float(per_frame[fin].max()) if fin.any() else None},
+        "frames_with_few_points": n_weak, "frames_resected": int(resected),
+        "frames_interpolated": int(n_weak - resected), "frames_without_points": int((seen == 0).sum()),
         "rotation_change_deg_median": float(np.median(rot)), "rotation_change_deg_p90": float(np.quantile(rot, 0.9)),
         "centre_change_median_rel": float(np.median(np.linalg.norm(c1 - c0, axis=1)) / (spread + 1e-12)),
         "focal_change": [float(np.median(Kc[video == v, 0, 0] / Kf[video == v, 0, 0])) for v in np.unique(video)],
         "seconds": round(time.time() - t0),
     }
-    log.info("poses: final %.2f px median (VGGT %.2f px); cameras turned %.2f deg median; %d frames with < 30 points",
-             report["final"]["median_px"], before["median_px"], report["rotation_change_deg_median"],
-             report["frames_with_few_points"])
-    # frames the adjustment could not constrain keep their VGGT pose
-    weak = seen < 30
-    Ec[weak] = E[weak]
-    Kout = Kc.copy()
-    Kout[weak] = Kf[weak]
-    return Ec.astype(np.float32), Kout.astype(np.float32), {"X": X.astype(np.float32), "t": tn, "frame": fr,
-                                                           "uv": uvn.astype(np.float32)}, report
+    log.info("poses: final %.2f px median, %.2f px p90 (VGGT %.2f px); per-frame median worst %.2f px; cameras "
+             "turned %.2f deg median; %d weak frames (%d resected, %d interpolated)", report["final"]["median_px"],
+             report["final"]["p90_px"], before["median_px"], report["per_frame_median_px"]["worst"] or 0,
+             report["rotation_change_deg_median"], n_weak, resected, n_weak - resected)
+    return Ec.astype(np.float32), Kc.astype(np.float32), {"X": X.astype(np.float32), "t": tn, "frame": fr,
+                                                          "uv": uvn.astype(np.float32)}, report
+
+
+def _extra_pairs(E, video, sparse, P_done, cfg):
+    """More partners for frames that ended up with few track observations: wider pose
+    neighbourhood and more time neighbours, skipping pairs already tried."""
+    P2 = pairs(E, video, cfg.k_near * 3, cfg.k_time * 3)
+    keep = (sparse[P2[:, 0]] | sparse[P2[:, 1]])
+    done = set(map(tuple, P_done.tolist()))
+    return np.array([p for p in P2[keep].tolist() if tuple(p) not in done], dtype=np.int64).reshape(-1, 2)
+
+
+def refine(E: np.ndarray, K: np.ndarray, video: np.ndarray, files: list[str], model_wh: tuple[int, int],
+           cfg: PoseConfig = PoseConfig(), device: str | None = None):
+    """Refined camera-from-world E [S, 3, 4] and intrinsics K [S, 3, 3] at the FRAME size (the
+    size of the images in `files`), triangulated points and a report. `K` is given at the model
+    size `model_wh` (w, h) and scaled to the frame size here."""
+    import torch
+
+    device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+    t0 = time.time()
+    kps, descs, wh = features(files, cfg.n_features)
+    Kf = K.astype(np.float64).copy()
+    Kf[:, 0] *= wh[0] / model_wh[0]
+    Kf[:, 1] *= wh[1] / model_wh[1]
+    P = pairs(E, video, cfg.k_near, cfg.k_time)
+    M, n_pairs = match(kps, descs, P, cfg, device)
+    n_kp = [len(k) for k in kps]
+    t_, frame, kp = tracks(M, n_kp)
+    # frames with few track observations get a second, wider matching pass (lower inlier bar)
+    sparse = np.bincount(frame, minlength=len(E)) < cfg.sparse_obs
+    if sparse.any():
+        P2 = _extra_pairs(E, video, sparse, P, cfg)
+        M2, n2 = match(kps, descs, P2, replace(cfg, min_inliers=cfg.min_inliers_sparse), device)
+        log.info("poses: %d sparse frames: %d extra pairs tried, %d matched", int(sparse.sum()), len(P2), n2)
+        if len(M2):
+            M, n_pairs, P = np.r_[M, M2], n_pairs + n2, np.r_[P, P2]
+            t_, frame, kp = tracks(M, n_kp)
+    off = np.concatenate([[0], np.cumsum(n_kp)])
+    uv = np.concatenate(kps)[off[frame] + kp].astype(np.float64)
+    log.info("poses: %d features/frame, %d tracks, %d observations (%.0f s)", int(np.mean(n_kp)),
+             int(t_.max()) + 1 if len(t_) else 0, len(t_), time.time() - t0)
+    if len(t_) < 100:
+        raise RuntimeError(f"too few feature tracks ({len(t_)}) to refine poses")
+    Ec, Kc, pts, report = refine_tracks(E, Kf, video, t_, frame, uv, cfg, device, t0)
+    report = {"frame_size": list(wh), "frame_pairs_tried": int(len(P)), "frame_pairs_matched": int(n_pairs),
+              "sparse_frames_rematched": int(sparse.sum())} | report
+    return Ec, Kc, pts, report
 
 
 def refine_recon(rec, cache=None, key: str = "", cfg: PoseConfig = PoseConfig()):
@@ -430,7 +592,7 @@ def refine_recon(rec, cache=None, key: str = "", cfg: PoseConfig = PoseConfig())
 
     from PIL import Image
 
-    f = cache / f"poses_{key}.npz" if cache is not None else None
+    f = cache / f"poses2_{key}.npz" if cache is not None else None
     if f is not None and f.exists():
         z = np.load(f)
         log.info("reusing cached refined poses %s", f.name)
