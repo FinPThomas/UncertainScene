@@ -623,3 +623,55 @@ Traceback (most recent call last):
     f"between the recordings); {m['motion_links_moved_share']:.0%} moved beyond their own uncertainty |")
                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: unsupported format string passed to NoneType.__format__
+2026-10-12 12:43:14,800 INFO uncertainscene.scene01: step 1-main_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant base
+2026-10-12 12:43:30,891 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-10-12 12:43:31,005 INFO dinov2: using MLP layer as FFN
+2026-10-12 12:48:15,695 INFO uncertainscene.recon.vggt: loaded facebook/VGGT-1B on cuda in 286 s
+2026-10-12 12:49:00,685 INFO uncertainscene.recon.chunked: chunk 2/19: 47 frames, scale 1.006, anchor residual 0.002 (relative to depth)
+2026-10-12 12:49:22,955 INFO uncertainscene.recon.chunked: chunk 3/19: 47 frames, scale 1.017, anchor residual 0.003 (relative to depth)
+2026-10-12 12:49:45,779 INFO uncertainscene.recon.chunked: chunk 4/19: 47 frames, scale 1.012, anchor residual 0.004 (relative to depth)
+2026-10-12 12:50:08,794 INFO uncertainscene.recon.chunked: chunk 5/19: 47 frames, scale 1.025, anchor residual 0.004 (relative to depth)
+2026-10-12 12:50:30,666 INFO uncertainscene.recon.chunked: chunk 6/19: 46 frames, scale 1.024, anchor residual 0.005 (relative to depth)
+2026-10-12 12:50:52,503 INFO uncertainscene.recon.chunked: chunk 7/19: 46 frames, scale 1.032, anchor residual 0.005 (relative to depth)
+2026-10-12 12:51:14,530 INFO uncertainscene.recon.chunked: chunk 8/19: 46 frames, scale 1.034, anchor residual 0.005 (relative to depth)
+2026-10-12 12:51:36,534 INFO uncertainscene.recon.chunked: chunk 9/19: 46 frames, scale 1.028, anchor residual 0.005 (relative to depth)
+2026-10-12 12:51:58,422 INFO uncertainscene.recon.chunked: chunk 10/19: 46 frames, scale 1.027, anchor residual 0.006 (relative to depth)
+2026-10-12 12:52:20,333 INFO uncertainscene.recon.chunked: chunk 11/19: 46 frames, scale 1.038, anchor residual 0.006 (relative to depth)
+2026-10-12 12:52:42,308 INFO uncertainscene.recon.chunked: chunk 12/19: 46 frames, scale 1.029, anchor residual 0.005 (relative to depth)
+2026-10-12 12:53:04,362 INFO uncertainscene.recon.chunked: chunk 13/19: 46 frames, scale 1.015, anchor residual 0.005 (relative to depth)
+2026-10-12 12:53:26,282 INFO uncertainscene.recon.chunked: chunk 14/19: 46 frames, scale 1.015, anchor residual 0.005 (relative to depth)
+2026-10-12 12:53:48,301 INFO uncertainscene.recon.chunked: chunk 15/19: 46 frames, scale 1.011, anchor residual 0.005 (relative to depth)
+2026-10-12 12:54:10,272 INFO uncertainscene.recon.chunked: chunk 16/19: 46 frames, scale 1.006, anchor residual 0.005 (relative to depth)
+2026-10-12 12:54:32,230 INFO uncertainscene.recon.chunked: chunk 17/19: 46 frames, scale 1.009, anchor residual 0.005 (relative to depth)
+2026-10-12 12:54:54,155 INFO uncertainscene.recon.chunked: chunk 18/19: 46 frames, scale 1.011, anchor residual 0.003 (relative to depth)
+2026-10-12 12:55:16,064 INFO uncertainscene.recon.chunked: chunk 19/19: 46 frames, scale 1.005, anchor residual 0.003 (relative to depth)
+2026-10-12 12:55:16,699 INFO uncertainscene.recon.vggt: reconstructed 735 frames (364 + 371) in 19 chunks in 708 s; worst chunk residual 0.006
+2026-10-12 12:55:54,021 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] reconstruction (735 frames, 19 chunks, worst anchor residual 0.0061) done in 759 s | RAM 5.6/12.7 GB, disk free 59.7 GB, GPU 4.5/15.0 GB
+2026-10-12 12:59:09,460 INFO uncertainscene.recon.poses: poses: 5015 of 5259 frame pairs matched
+2026-10-12 12:59:10,535 INFO uncertainscene.recon.poses: poses: 1871 features/frame, 178390 tracks, 967287 observations (196 s)
+2026-10-12 12:59:11,932 INFO uncertainscene.recon.poses: poses: VGGT poses reproject at 8.26 px median (107287 points)
+2026-10-12 12:59:23,404 INFO uncertainscene.recon.poses: poses: round 1: 5.39 px median, 107287 points (209 s)
+2026-10-12 12:59:32,273 INFO uncertainscene.recon.poses: poses: round 2: 1.81 px median, 76769 points (218 s)
+2026-10-12 12:59:33,377 INFO uncertainscene.recon.poses: poses: final 0.91 px median (VGGT 8.26 px); cameras turned 1.13 deg median; 146 frames with < 30 points
+2026-10-12 12:59:39,278 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] camera poses refined: 8.3 px -> 0.91 px reprojection error, cameras turned 1.13 deg (median) done in 225 s | RAM 7.2/12.7 GB, disk free 59.7 GB, GPU 5.6/15.0 GB
+2026-10-12 12:59:47,273 INFO numexpr.utils: NumExpr defaulting to 2 threads.
+2026-10-12 13:00:43,597 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] DINOv2 features done in 64 s | RAM 7.3/12.7 GB, disk free 59.2 GB, GPU 5.6/15.0 GB
+2026-10-12 13:18:00,394 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] point-level change detection (1200000 points, tau 0.232) done in 1037 s | RAM 8.1/12.7 GB, disk free 59.2 GB, GPU 5.6/15.0 GB
+2026-10-12 13:18:01,645 INFO uncertainscene.change.floor: floor: gravity refined by 3.7 deg, 68 floor points (7% of horizontal), camera 0.324 units above floor -> 4.166 m/unit
+2026-10-12 13:18:01,936 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] floor (68 floor points, gravity refined 3.7 deg) done in 2 s | RAM 8.1/12.7 GB, disk free 59.2 GB, GPU 5.6/15.0 GB
+2026-10-12 13:18:29,944 INFO root: Loaded checkpoint sucessfully
+2026-10-12 13:18:31,040 INFO root: Loaded checkpoint sucessfully
+2026-10-12 13:18:31,126 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-12 13:18:31,245 INFO root: Computing image embeddings for the provided image...
+2026-10-12 13:18:31,460 INFO root: Image embeddings computed.
+2026-10-12 13:20:40,133 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 80% (RAM 10.2/12.7 GB, disk free 59.0 GB, GPU 9.8/15.0 GB)
+2026-10-12 13:20:55,457 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 82% (RAM 10.4/12.7 GB, disk free 59.0 GB, GPU 9.8/15.0 GB)
+2026-10-12 13:21:10,819 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.5/12.7 GB, disk free 59.0 GB, GPU 9.8/15.0 GB)
+2026-10-12 13:21:26,217 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 59.0 GB, GPU 9.8/15.0 GB)
+2026-10-12 13:21:41,525 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 85% (RAM 10.8/12.7 GB, disk free 59.0 GB, GPU 9.8/15.0 GB)
+2026-10-12 13:21:56,844 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 86% (RAM 11.0/12.7 GB, disk free 59.0 GB, GPU 9.8/15.0 GB)
+2026-10-12 13:22:12,177 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 87% (RAM 11.1/12.7 GB, disk free 59.0 GB, GPU 9.8/15.0 GB)
+2026-10-12 13:22:27,580 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 89% (RAM 11.2/12.7 GB, disk free 59.0 GB, GPU 9.8/15.0 GB)
+2026-10-12 13:22:42,995 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 90% (RAM 11.4/12.7 GB, disk free 59.0 GB, GPU 9.8/15.0 GB)
+2026-10-12 13:22:58,347 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 91% (RAM 11.5/12.7 GB, disk free 59.0 GB, GPU 9.8/15.0 GB)
+2026-10-12 13:23:13,664 ERROR uncertainscene.infra.guard: guard hard limit: RAM at 92% (hard limit 92%); interrupting the running step

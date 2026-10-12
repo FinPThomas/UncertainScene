@@ -7,11 +7,11 @@
       "account": "colab-fa00",
       "attempts": 2,
       "commit": "18835b1",
-      "expires": 1791818083.2889247,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-12 13:23:14 UTC",
+      "note": "stopped: RAM at 92% (hard limit 92%)",
       "started": "2026-10-12 12:43:13 UTC",
-      "status": "running"
+      "status": "interrupted"
     },
     "1b-splat_moved_light-before-a_vs_light-after-a": {
       "account": "colab-634b",
