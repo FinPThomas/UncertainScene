@@ -3,6 +3,7 @@ one physical object must keep one track id across every frame (run 3 split one o
 2-9 pieces when masks were matched per frame), and objects that appear later are found."""
 
 import numpy as np
+import pytest
 from PIL import Image
 
 from uncertainscene.change import segment as S
@@ -64,6 +65,7 @@ def _gen_for(frames_files):
 
 
 def test_one_track_per_object(tmp_path):
+    pytest.importorskip("torch")                  # sam_tracks runs SAM 2 under torch (not installed in CI)
     files = []
     rng = np.random.default_rng(0)
     for f in range(N):
