@@ -4,14 +4,14 @@
   "run_id": "2026-10-11_scene01-objects-fixed",
   "steps": {
     "1-main_moved_light-before-a_vs_light-after-a": {
-      "account": "colab-634b",
-      "attempts": 1,
-      "commit": "f04b112",
-      "expires": null,
-      "finished": "2026-10-11 22:31:01 UTC",
-      "note": "TypeError: unsupported format string passed to NoneType.__format__",
-      "started": "2026-10-11 21:36:55 UTC",
-      "status": "failed"
+      "account": "colab-fa00",
+      "attempts": 2,
+      "commit": "18835b1",
+      "expires": 1791818083.2889247,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-12 12:43:13 UTC",
+      "status": "running"
     },
     "1b-splat_moved_light-before-a_vs_light-after-a": {
       "account": "colab-634b",
