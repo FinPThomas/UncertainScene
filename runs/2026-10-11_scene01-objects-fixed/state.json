@@ -7,11 +7,11 @@
       "account": "colab-a68c",
       "attempts": 3,
       "commit": "9acd9a8",
-      "expires": 1791830440.9691036,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-12 17:46:25 UTC",
+      "note": "change: 0 changed objects of 0 (0%); labels: ; scale 3.609 m/unit; 5813s",
       "started": "2026-10-12 16:09:10 UTC",
-      "status": "running"
+      "status": "done"
     },
     "1b-splat_moved_light-before-a_vs_light-after-a": {
       "account": "colab-634b",

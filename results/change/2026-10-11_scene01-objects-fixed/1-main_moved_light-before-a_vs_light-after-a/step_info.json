@@ -1,10 +1,10 @@
 {
   "run_id": "2026-10-11_scene01-objects-fixed",
   "step": "1-main_moved_light-before-a_vs_light-after-a",
-  "status": "interrupted",
-  "account": "colab-fa00",
-  "commit": "18835b1",
-  "minutes": 40.0,
-  "usage_at_end": "RAM 6.3/12.7 GB, disk free 59.0 GB, GPU 9.8/15.0 GB",
-  "note": "stopped: RAM at 92% (hard limit 92%)"
+  "status": "done",
+  "account": "colab-a68c",
+  "commit": "9acd9a8",
+  "minutes": 97.2,
+  "usage_at_end": "RAM 5.5/12.7 GB, disk free 57.9 GB, GPU 5.8/15.0 GB",
+  "note": "change: 0 changed objects of 0 (0%); labels: ; scale 3.609 m/unit; 5813s"
 }
