@@ -2,8 +2,6 @@
 
 One file for every run so far. *Findings so far* is written by hand; everything after it is regenerated from the run folders (`python -m uncertainscene.eval.collate results/change`).
 
-**Interactive viewer:** https://claude.ai/artifact/7Ys2rRdQCHmw1cEJZeZjSy (pick a run; view one recording alone or the changes between them; heat maps, object boxes and position ranges).
-
 <!-- notes -->
 ## Findings so far
 
@@ -233,6 +231,16 @@ Runs are grouped by phase (what they try to find out). Folder names say what the
 | Run | Changes found | Objects located to (90%) | Scale (m/unit) | Surface uncertainty (cm) | Details |
 |---|---|---|---|---|---|
 | Objects moved, same lighting: light, before, take a vs light, after, take a | baseball cap moved, guitar removed, guitar removed, baseball cap moved, jumper removed, guitar removed | ±0.9 cm | 3.024 | 9.1 | [objects](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/objects.png) · [position map](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/position_map.png) · [heatmaps](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/heatmaps.png) · [object overlays](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/object_overlays.png) · [scene report](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/scene_report.md) |
+
+### Light vs dark (all runs)
+
+| Group | Pairs | changed objects (SAM 2) | % of compared objects changed | % observed points flagged as changed | alignment residual across / within recordings | % points seen by both recordings | surface uncertainty, median cm |
+|---|---|---|---|---|---|---|---|
+| change-light | 1 | 32.00 (32.00-32.00) | 16.24 (16.24-16.24) | 4.24 (4.24-4.24) | 1.09 (1.09-1.09) | 98.50 (98.50-98.50) | 9.12 (9.12-9.12) |
+| After | Light-before pair: changes / labels | Dark-before pair: changes / labels | Shared labels | Label overlap (Jaccard) |
+|---|---|---|---|---|
+
+Full lighting report: [2026-10-11_scene01-objects-fixed/summary_session_colab-fa00/lighting.md](2026-10-11_scene01-objects-fixed/summary_session_colab-fa00/lighting.md)
 
 ## Run `2026-10-10_scene01-objects` (version 2: SAM 2 objects, every frame)
 
