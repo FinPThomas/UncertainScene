@@ -103,11 +103,20 @@ def _triangulate_tracks(E, K, t, fr, uv, cfg, use=None):
 
     T = int(t.max()) + 1 if len(t) else 0
     keep = np.ones(len(t), bool) if use is None else use.copy()
+    # gate: max_px, or wider when the poses themselves reproject worse than that (VGGT poses were
+    # ~8 px off on the first real run, so a 3 px gate left 257 points and no before/after links);
+    # the wider spread is measured below and widens every point's covariance accordingly
+    if keep.any():
+        X, _ = _tri(E, K, t[keep], fr[keep], uv[keep], T)
+        err, _ = P.reproject(E, K, X, t, fr, uv)
+        max_px = max(cfg.max_px, 2.5 * float(np.median(err[keep])))
+    else:
+        max_px = cfg.max_px
     for _ in range(3):
         X, ang = _tri(E, K, t[keep], fr[keep], uv[keep], T)
         err, z = P.reproject(E, K, X, t, fr, uv)
         good = (np.bincount(t[keep], minlength=T) >= cfg.min_obs) & (ang >= cfg.min_angle_deg)
-        new = keep & (err < cfg.max_px) & (z > 0) & good[t]
+        new = keep & (err < max_px) & (z > 0) & good[t]
         if (new == keep).all():
             break
         keep = new

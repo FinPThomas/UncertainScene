@@ -254,6 +254,10 @@ def bundle_adjust(E, K, video, X, t, frame, uv, cfg: PoseConfig, device: str = "
     fi = torch.as_tensor(frame, device=device)
     obs = torch.as_tensor(uv, dtype=dt, device=device)
     C0 = torch.as_tensor(c0, dtype=dt, device=device)
+    # cheirality: points must stay in front of the cameras that see them (a projection through
+    # z ~ 0 is what made the first real run diverge from 8 px to 341 px)
+    z_ref = np.median((np.einsum("nij,nj->ni", E[frame, :, :3], X[t]) + E[frame, :, 3])[:, 2])
+    z_min = 0.02 * float(abs(z_ref))
 
     def cams():
         R = _rodrigues(om) @ E0[:, :, :3]
@@ -264,13 +268,14 @@ def bundle_adjust(E, K, video, X, t, frame, uv, cfg: PoseConfig, device: str = "
         opt.zero_grad()
         R, tv = cams()
         Xc = torch.einsum("nij,nj->ni", R[fi], Xs[ti] * spread) + tv[fi]
-        z = Xc[:, 2].clamp_min(1e-6)
+        z = Xc[:, 2].clamp_min(z_min)
         f = (f0 * torch.exp(lf))[vid][fi]
         u = f * Xc[:, 0] / z + pp[fi, 0]
         v = f * aspect[fi] * Xc[:, 1] / z + pp[fi, 1]
         r = torch.sqrt((u - obs[:, 0]) ** 2 + (v - obs[:, 1]) ** 2 + 1e-12)
         h = cfg.huber_px
         loss = torch.where(r < h, 0.5 * r**2, h * (r - 0.5 * h)).mean()
+        loss = loss + 10 * h * (torch.relu(z_min - Xc[:, 2]) / z_min).mean()
         # weak pull of camera centres towards VGGT's: fixes the free scale/position of the
         # problem without stopping real corrections (a 1% of spread move costs ~0.01 px^2)
         c = -torch.einsum("sji,sj->si", R, tv)
@@ -278,9 +283,38 @@ def bundle_adjust(E, K, video, X, t, frame, uv, cfg: PoseConfig, device: str = "
         loss.backward()
         return loss
 
-    opt = torch.optim.LBFGS([om, tau, lf, Xs], lr=1, max_iter=cfg.iters, history_size=30,
-                            line_search_fn="strong_wolfe", tolerance_grad=1e-12, tolerance_change=1e-14)
-    opt.step(closure)
+    def median_px():
+        with torch.no_grad():
+            R, tv = cams()
+            Xc = torch.einsum("nij,nj->ni", R[fi], Xs[ti] * spread) + tv[fi]
+            f = (f0 * torch.exp(lf))[vid][fi]
+            u = f * Xc[:, 0] / Xc[:, 2] + pp[fi, 0]
+            v = f * aspect[fi] * Xc[:, 1] / Xc[:, 2] + pp[fi, 1]
+            r = torch.sqrt((u - obs[:, 0]) ** 2 + (v - obs[:, 1]) ** 2)
+            r = torch.where((Xc[:, 2] > 0) & torch.isfinite(r), r, torch.full_like(r, 1e9))
+            return float(r.median())
+
+    # short L-BFGS runs; a run that makes the median reprojection error clearly worse (or
+    # non-finite) is undone and ends the adjustment, so it cannot wander off the poses it was given
+    params = [om, tau, lf, Xs]
+    start_px = best_px = median_px()
+    best = [q.detach().clone() for q in params]
+    chunk, prev = 25, None
+    opt = torch.optim.LBFGS(params, lr=1, max_iter=chunk, history_size=30, line_search_fn="strong_wolfe",
+                            tolerance_grad=1e-12, tolerance_change=1e-14)
+    for _ in range(max(1, cfg.iters // chunk)):
+        loss = float(opt.step(closure))
+        px = median_px()
+        if not np.isfinite(px) or not np.isfinite(loss) or px > 1.05 * best_px + 0.05:
+            with torch.no_grad():
+                for q, b in zip(params, best):
+                    q.copy_(b)
+            break
+        best_px, best = min(px, best_px), [q.detach().clone() for q in params]
+        if prev is not None and abs(prev - loss) < 1e-7 * max(abs(prev), 1e-12):
+            break
+        prev = loss
+    log.debug("bundle adjustment: %.2f -> %.2f px median", start_px, median_px())
     with torch.no_grad():
         R, tv = cams()
         En = torch.cat([R, tv[..., None]], 2).cpu().numpy()
@@ -340,9 +374,16 @@ def refine(E: np.ndarray, K: np.ndarray, video: np.ndarray, files: list[str], mo
         log.info("poses: round %d: %.2f px median, %d points (%.0f s)", r + 1, rounds[-1]["median_px"], len(X),
                  time.time() - t0)
         if r + 1 < cfg.rounds:  # re-triangulate all tracks with the better poses, tighter gate
-            X, tn, fr, uvn = _filter(Ec, Kc, t_, frame, uv, max(cfg.final_px * 2, cfg.huber_px * 3),
-                                     cfg.min_angle_deg, cfg.max_points)
-    X, tn, fr, uvn = _filter(Ec, Kc, t_, frame, uv, cfg.final_px, cfg.min_angle_deg, cfg.max_points)
+            gate = max(cfg.final_px * 2, cfg.huber_px * 3, 2 * rounds[-1]["median_px"])
+            X2, tn2, fr2, uvn2 = _filter(Ec, Kc, t_, frame, uv, gate, cfg.min_angle_deg, cfg.max_points)
+            if len(X2) >= 100:
+                X, tn, fr, uvn = X2, tn2, fr2, uvn2
+            continue
+    # final gate: final_px, or wider when the poses are still that far off (never an empty set)
+    final_gate = max(cfg.final_px, 2 * (rounds[-1]["median_px"] if rounds else before["median_px"]))
+    X, tn, fr, uvn = _filter(Ec, Kc, t_, frame, uv, final_gate, cfg.min_angle_deg, cfg.max_points)
+    if len(X) < 100:
+        raise RuntimeError(f"only {len(X)} points left after bundle adjustment")
     Ec, X = _to_frame(Ec, X, E.astype(np.float64))
     err, _ = reproject(Ec, Kc, X, tn, fr, uvn)
 

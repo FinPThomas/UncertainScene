@@ -7,7 +7,7 @@ One file for every run so far. *Findings so far* is written by hand; everything 
 <!-- notes -->
 ## Findings so far
 
-Last updated 2026-10-11. No answer key yet, so nothing below is scored against ground truth; no-change pairs (static, lighting only) give the false-change rate.
+Last updated 2026-10-12. No answer key yet, so nothing below is scored against ground truth; no-change pairs (static, lighting only) give the false-change rate.
 
 **Version 1 (run `2026-10-10_scene01-heatmaps`, 28 frames per recording, point-level).**
 
@@ -39,18 +39,163 @@ Last updated 2026-10-11. No answer key yet, so nothing below is scored against g
    table tennis bat cushion and a card added on the sofa. Next run trains 20 000 steps instead of 7 000 and compares
    only views the other recording also saw.
 
-**Version 2 (run `2026-10-11_scene01-objects-fixed`, next).** Same steps with the fixes above. What version 2 adds:
+## Run 3 overview: `2026-10-11_scene01-objects-fixed` (Colab, 2026-10-11 21:32-22:31)
 
-- Every frame of each recording (~370 at 6 fps), reconstructed in GPU-sized chunks.
-- Floor and metric scale from gravity, the phone height and the sizes of recognised objects.
-- SAM 2 outlines and a CLIP label for every object, not only changed ones; changes decided per object.
-- **Where each object is, and how sure.** Each view's measurement of an object's centre carries VGGT's own depth
-  confidence and SAM 2's mask wobble; a Kalman filter fuses the views, so the 90% range narrows with every
-  informative view and every extra clip. A consistency check (3 = honest) says whether to trust it, and the range
-  from views disagreeing is shown alongside. Phase *Where objects are* measures this with 1, 2 and 3 clips.
-- Gaussian splats of the light before/after pair, compared from the same cameras.
+**What ran.** Only the first step finished its work: light before (take a) vs light after (take a), every frame
+(364 + 371), 55 minutes on a T4. It computed everything (reconstruction, SAM 2, CLIP, Rigidity Copilot, object
+changes, assets, heat maps) and then crashed while writing its report, on a formatting bug triggered by the
+feature-motion step finding no matches. All its figures and data were saved. The Gaussian-splat step started at
+22:31 and never reported back (the Colab session ended), so there are no new splats and the splat viewer still
+shows run 2. No other pair ran. The crash, the pose problem and the motion problem are fixed (see the end).
+There is still no answer key, so "found" below means "matches what Fin listed as moved", not a score.
 
-Results land in this file and the viewer as each phase finishes.
+### At a glance
+
+| What | Result | Verdict |
+|---|---|---|
+| Reconstruction | 735 frames in 19 chunks, chunks agree to 0.6% of depth | good |
+| Camera-pose refinement | bundle adjustment diverged (8.3 px -> 341 px), VGGT poses kept | failed, fixed |
+| Segmentation (SAM 2, real weights) | 2017 masks on 88 frames -> 177 objects before, 221 after | works, over-split |
+| Labelling (CLIP) | every object labelled; distinctive objects right at 0.9-1.0, generic surfaces wrong | mixed |
+| Object changes | 32 changes: cap moved, neck pillow and bat added, guitar and cup gone, book stack shifted | real ones found, plus fragments |
+| How far things moved | cap moved left 43 cm (90% interval 37-49); feature-motion map: no matches | partial |
+| Deformation | not measured (needs the feature matches) | not yet |
+| Object assets | 60 objects: 96 nodes, ~335 edges, convex hull, contacts (58), Copilot stiffness | works, shapes are surface patches |
+| Rigidity Copilot | soft things (neck pillow, cushion, blanket) 0.38-0.50, hard things (mug, crate, panel) 0.87-0.94 | sensible order |
+| Position uncertainty | model says ±1 cm, views disagree by ±4-9 cm; unchanged objects agree only 2% of the time (90% expected) | overconfident |
+| Floor, heights, reach | 3% of points on the floor; a cap on the sofa back sits "1.94 m" up | floor wrong |
+| Gaussian splats | step did not finish | no new result |
+
+### Segmentation and labelling
+
+![Every changed or large object, cropped from its best view](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/objects.png)
+
+![Labels in the frames](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/object_overlays.png)
+
+![Label confidence, views per object, most common labels](2026-10-11_scene01-objects-fixed/overview/labels_and_views.png)
+
+- **SAM 2 works** with the real weights (559 s for 88 key frames). Outlines are clean on real objects: the cap,
+  neck pillow, bat, mug, books and guitar are all cut out well.
+- **Views are still rarely merged.** 76% of objects come from a single view, so one physical object becomes
+  several: the cap is 6 objects, the guitar about 9. Matching views by 3D overlap fails because the same surface
+  lands several cm apart in different views (the pose and depth error below).
+- **CLIP labels distinctive objects well.** Neck pillow 1.00, table tennis bat 1.00, book 0.97, guitar 0.86-0.92,
+  cap 0.54-0.76, mug and wooden crate right. Overall only 28% of labels are above 0.5 (median 0.28).
+- **Generic surfaces get catch-all labels.** "Skirting board" (74 objects) is CLIP's word for any strip of sofa,
+  floor or wall; jeans become "jumper"; a cushion corner becomes "phone". These fragments cause most false changes.
+
+### Object changes
+
+![Change map, top-down and as filmed](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/change_map.png)
+
+| Change found | Detail | Matches Fin's list? |
+|---|---|---|
+| Baseball cap moved | 43 cm to the left (37-49), three cap fragments all say "left" (43-79 cm) | yes (cap) |
+| Neck pillow added | two objects, label 1.00 | yes |
+| Table tennis bat added | on the cushion, label 1.00 | yes (bat) |
+| Guitar removed | it was moved, but the before and after guitar were not paired, so it reads as "removed" | yes, wrong kind |
+| Book stack shifted | surface moved by ~37 cm | yes (book stack) |
+| Cup removed | the mug on the coaster | yes (cup) |
+| Wooden panel added | light board on the seat (probably the card seen in run 2) | not on the list, looks real |
+| 15 small fragments | under 20 cm, label below 0.5: "skirting board", "phone", "box", a 3 cm "sofa" | false changes |
+
+Of 37 change rows, 29 come from a single view. Every item on Fin's list that is visible in this pair shows up,
+but split into fragments, and about 15 rows are noise. The object threshold is now set from 393 unchanged
+objects (no tuning on this pair). Without the answer key this can't be scored as precision and recall yet.
+
+### How far things moved, and deformation
+
+- **Per-object move (from object centres): works for whole objects.** The cap's 43 cm move to the left comes with
+  a 90% interval. Parts of an object that changed shape are reported as "shifted" (surface moved by 29-53 cm), but
+  these are fragments, not real deformation.
+- **Feature-point motion map (distance moved, per-point uncertainty, deformation such as a cushion corner): no
+  result.** It triangulated only 257 and 315 feature points (of ~4000 per frame) and matched none across the
+  recordings. Cause: points were kept only if they reprojected within 3 px, but the VGGT camera poses are 8 px
+  off, and the bundle adjustment meant to fix that diverged. Both are fixed now; the next run is the first real
+  test of the cushion-deformation metric.
+
+### Object assets and the Rigidity Copilot
+
+![Six exported assets: nodes, edges coloured by stiffness, convex hull](2026-10-11_scene01-objects-fixed/overview/assets.png)
+
+![Rigidity Copilot score per object](2026-10-11_scene01-objects-fixed/overview/rigidity_copilot.png)
+
+- **60 assets exported** (the changed objects and the largest others), each with 96 weighted nodes, ~335 neighbour
+  edges, a convex hull (`.obj`) and 58 "touching / resting on" contacts in `scene_graph.json`. Files:
+  [2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/assets/](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/assets/).
+- **Shapes are surface patches, not solids.** Most objects come from one view, so the nodes cover only the side
+  the camera saw (the neck pillow and panel are thin sheets). Large objects also swallow their neighbours (a
+  "cushion" 103 cm long, a sofa hull of 0.97 m^3).
+- **The Copilot's ordering is sensible.** Neck pillows 0.38-0.45, cushions 0.39-0.50, blanket 0.38, caps
+  0.43-0.78, books 0.78-0.82, guitars 0.60-0.87, wooden crate and panel 0.87-0.89, mug 0.94. CLIP's top material
+  is right for most of these (foam, fabric, paper, wood, ceramic).
+- **Its ranges are too wide to use.** A cushion's Young's modulus range runs from 10 kPa to 210 GPa, because metal
+  holds a few percent of the probability. Some guesses are wrong: one sofa fragment is "glass" (0.92), a cup is
+  "metal", one cap fragment is "wood". The soft/hard prompt is weak (a cushion scores 0.65 "hard").
+- **No measured strain yet** to check it against (needs the feature matches above).
+
+### Heat maps, uncertainty, floor and reach
+
+![Heat maps: surface uncertainty, shift, height, reachability](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/heatmaps.png)
+
+![Position uncertainty: model vs views disagreeing](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/position_precision.png)
+
+- **Surface uncertainty**: 9 cm median (90th percentile 25 cm), about the same as run 2's light pairs.
+- **Position uncertainty is about 10x too confident.** The fused model range is ±1 cm, but views of the same
+  object disagree by ±4 cm (±9-13 cm with 1-2 views). Unchanged objects agree between the two recordings within
+  their stated 90% ranges only 2% of the time, against 90% expected; the consistency check reads 1262 (3 = honest).
+  Two causes: the reported radius averages the depth axis (σ 7 cm) with the sideways axes (σ 0.1 cm, SAM 2 mask
+  wobble on a median of hundreds of points), and camera-pose error (~8 px, about 2 cm sideways at 2 m) is not
+  in the model at all.
+- **Floor and heights are wrong.** Only 3% of points fit the floor plane and gravity moved 6.5° between
+  recordings; a cap on the sofa back sits "1.94 m" above the floor. Scale itself looks consistent (phone height
+  and 43 recognised objects agree to 0.7σ: 3.02 m per unit), but heights, reach and approach maps inherit the
+  floor error.
+- **Robot reach** (mobile base, 1.0 m arm): 55% of the surface reachable, 12% approachable, 0.4% "interactable"
+  (reach × approach × certainty: certainty kills it, since few points are under the 3 cm limit).
+
+### Downsides now
+
+1. **Camera poses** are the root problem: 8 px off, which spreads every surface over several cm, stops views of
+   an object merging, and starved the feature-motion map.
+2. **Over-split objects**: one object becomes 2-9 fragments, so changes are counted several times and assets are
+   one-sided patches.
+3. **Position uncertainty is overconfident** (2% vs 90% coverage), the opposite of what Fin wants from it.
+4. **The floor fit fails**, so heights and reach are off.
+5. **Copilot stiffness ranges span 7 orders of magnitude**; the point estimate is usable, the range is not.
+6. **Splats** have not been re-run with the pose and pruning fixes.
+7. **No answer key**, so nothing is scored, and only one of the planned pairs has run.
+
+### Possible research directions
+
+1. **Better poses first.** The guarded bundle adjustment (below) on real frames; if it still struggles, global
+   SfM (COLMAP/GLOMAP) seeded with VGGT, or a newer feed-forward model (MASt3R-SfM, VGGT with tracking head).
+   Everything downstream (merging, motion, splats) improves with this one fix.
+2. **Track objects through the video instead of matching views in 3D.** SAM 2's video predictor carries one mask
+   id across frames, so the cap stays one object with many views. That fixes over-splitting, gives solid assets
+   from all sides, and lets the Kalman filter fuse real views.
+3. **Honest position uncertainty.** Add the measured pose error to each view's covariance, report the largest
+   axis instead of the volume-averaged radius, and check coverage on unchanged objects (target 90%). Uncertainty
+   then still shrinks only with more real views.
+4. **Deformation from dense correspondences.** Once poses are good, match the cushion's before/after surfaces
+   densely (feature tracks or splat-to-splat registration) and report per-node displacement beyond its own
+   uncertainty: the "corner moved 4 cm" metric.
+5. **A real VLM for the Rigidity Copilot** (e.g. SmolVLM or Qwen2-VL): ask for material and stiffness in words,
+   keep only materials above ~10% probability so ranges stay tight, and use the measured strain as the check.
+6. **Floor from the lowest large plane** (RANSAC on points below the sofa, with gravity from the phone's motion)
+   rather than a global fit, so heights and reach become meaningful.
+7. **Change decisions per tracked object with the answer key**: precision and recall per pair, and the
+   no-change pairs as the false-alarm rate.
+
+### Fixed for the next run
+
+- Report crash when the feature-motion step finds no matches.
+- Bundle adjustment can no longer diverge: it keeps points in front of the cameras, runs in short steps, undoes
+  any step that makes the reprojection error worse, and falls back to VGGT's poses instead of crashing. A test
+  that reproduces the failure (points close to a camera; old code went from 11 to 21 px) now passes.
+- Feature-motion keeps points within 2.5x the measured reprojection spread instead of a fixed 3 px, so it keeps
+  points when poses are rough (their covariances widen to match).
+- The notebook re-runs the failed step automatically (`RETRY_FAILED = True`). Reopen it from the link and Run all.
 <!-- /notes -->
 
 ## How to read this
@@ -67,6 +212,27 @@ Every run compares two recordings of the sofa scene (or, in *Where objects are*,
 Recordings: `dark_before_a` = dark, before, take a; `dark_before_b` = dark, before, take b; `dark_before_c` = dark, before, take c; `light_before_a` = light, before, take a; `light_before_b` = light, before, take b; `light_after_a` = light, after, take a; `light_after_b` = light, after, take b.
 
 Runs are grouped by phase (what they try to find out). Folder names say what they compare, e.g. `1-main_moved_light-before-a_vs_light-after-a`. The first overnight run used older short names (`p1_lightBa_vs_lightAa` = light before a vs light after a); its titles below are written out.
+
+## Run `2026-10-11_scene01-objects-fixed` (version 2: SAM 2 objects, every frame)
+
+1 finished runs. Folder: [2026-10-11_scene01-objects-fixed](2026-10-11_scene01-objects-fixed/).
+
+### Headline: does it tell real changes from noise?
+
+| Kind of run | Runs | Changed objects, median (range) | Share of compared objects |
+|---|---|---|---|
+| Objects moved, same lighting | 1 | 32 (32-32) | 16% |
+| Kind of run | Runs | Share of the surface flagged as changed, median (range) |
+|---|---|---|
+| Objects moved, same lighting | 1 | 4.24% (4.24% to 4.24%) |
+
+### Main comparisons
+
+*One or two pairs of every kind, with every output (objects, heat maps, 3D, scene report).* (1 runs)
+
+| Run | Changes found | Objects located to (90%) | Scale (m/unit) | Surface uncertainty (cm) | Details |
+|---|---|---|---|---|---|
+| Objects moved, same lighting: light, before, take a vs light, after, take a | baseball cap moved, guitar removed, guitar removed, baseball cap moved, jumper removed, guitar removed | ±0.9 cm | 3.024 | 9.1 | [objects](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/objects.png) · [position map](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/position_map.png) · [heatmaps](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/heatmaps.png) · [object overlays](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/object_overlays.png) · [scene report](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/scene_report.md) |
 
 ## Run `2026-10-10_scene01-objects` (version 2: SAM 2 objects, every frame)
 

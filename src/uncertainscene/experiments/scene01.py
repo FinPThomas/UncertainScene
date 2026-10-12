@@ -661,7 +661,10 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
                  f"{p['final']['median_px']:.2f} px median, cameras turned {p['rotation_change_deg_median']:.2f} deg |")
     elif p.get("failed"):
         L.append(f"| Camera poses | refinement failed ({p['failed']}); VGGT poses used |")
-    if m.get("motion_links") is not None:
+    if not m.get("motion_links") and m.get("motion_links") is not None:
+        L.append(f"| Matched feature points before/after | none ({m.get('motion_points_before')} / "
+                 f"{m.get('motion_points_after')} 3D feature points per recording), so no distance-moved map |")
+    elif m.get("motion_links") is not None:
         L.append(f"| Matched feature points before/after | {m['motion_links']}; uncertainty per point {m['motion_point_sigma_cm_median']} "
                  f"cm median (1 sigma, from the triangulation; of which {m['motion_misalignment_sigma_cm']} cm misalignment "
                  f"between the recordings); {m['motion_links_moved_share']:.0%} moved beyond their own uncertainty |")

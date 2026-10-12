@@ -533,3 +533,17 @@ def test_bundle_adjustment_recovers_poses():
     assert rel_err(E2) < 0.2
     assert abs(Kc[0, 0, 0] / f - 1) < 0.02                         # started 3% off
     assert np.median(P.reproject(E2, Kc, X2, tn, fn, uvn)[0]) < 1.0
+
+    # points that sit almost on a camera (z ~ 0) made the first real run diverge (8 -> 341 px);
+    # with them added the adjustment must still end no worse than it started, and finite
+    Xt, tn, fn, uvn = P._filter(Ep, Kp, t, fr, uv, cfg.first_px, cfg.min_angle_deg, cfg.max_points)
+    c = -np.einsum("sji,sj->si", Ep[:, :, :3], Ep[:, :, 3])
+    n0 = len(Xt)
+    Xt = np.r_[Xt, c[:8] + 0.002 * (Ep[:8, 2, :3])]
+    tn = np.r_[tn, np.repeat(np.arange(n0, n0 + 8), 2)]
+    fn = np.r_[fn, np.c_[np.arange(8), (np.arange(8) + 5) % S].ravel()]
+    uvn = np.r_[uvn, np.tile([W / 2, H / 2], (16, 1))]
+    e0 = np.median(P.reproject(Ep, Kp, Xt, tn, fn, uvn)[0])
+    Ec, Kc, Xb = P.bundle_adjust(Ep, Kp, video, Xt, tn, fn, uvn, cfg)
+    e1 = np.median(P.reproject(Ec, Kc, Xb, tn, fn, uvn)[0])
+    assert np.isfinite(e1) and e1 <= e0 * 1.05 + 0.05
