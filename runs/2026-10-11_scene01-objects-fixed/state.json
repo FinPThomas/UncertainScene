@@ -14,13 +14,13 @@
       "status": "done"
     },
     "1b-splat_moved_light-before-a_vs_light-after-a": {
-      "account": "colab-634b",
-      "attempts": 1,
-      "commit": "61a1642",
-      "expires": 1791766327.6056826,
+      "account": "colab-a68c",
+      "attempts": 2,
+      "commit": "73ff087",
+      "expires": 1791835653.435485,
       "finished": null,
       "note": null,
-      "started": "2026-10-11 22:31:07 UTC",
+      "started": "2026-10-12 17:46:33 UTC",
       "status": "running"
     },
     "summary_session_colab-fa00": {
