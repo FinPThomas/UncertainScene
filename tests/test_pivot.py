@@ -436,6 +436,9 @@ def test_splat_step_end_to_end(tmp_path, monkeypatch):
         "train_frames": 7, "held_out_frames": 1, "iters": cfg.iters, "image_size": [64, 48], "final_l1": 0.01}
 
     monkeypatch.setattr(S, "train", fake_train)
+    from uncertainscene.recon import gsplat_build
+
+    monkeypatch.setattr(gsplat_build, "build", lambda check=None: {"ok": True, "already_built": True})
     from uncertainscene.change import assets
     from uncertainscene.change.segment import SceneObject
 

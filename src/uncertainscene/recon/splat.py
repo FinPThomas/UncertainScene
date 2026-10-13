@@ -19,11 +19,16 @@ pip install gsplat (needs a CUDA GPU). Everything else here is numpy/torch.
 from __future__ import annotations
 
 import logging
+import os
 import time
 from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
+
+# if gsplat ever compiles in this process (gsplat_build.build() normally did it already), do
+# not let it start its default 10 parallel compiler jobs
+os.environ.setdefault("MAX_JOBS", "2")
 
 log = logging.getLogger(__name__)
 

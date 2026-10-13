@@ -76,11 +76,26 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
     rspec = Spec(spec.name, spec.a, spec.b, n_per_video=spec.n_per_video, offset=spec.offset)
     rec, rinfo = _recon(rspec, cache)
     stage(f"reconstruction ({len(rec.video)} frames{', cached' if rinfo.get('cached') else ''})")
+    from .poc import release_memory
     from .scene01 import _key, _posed
+
+    release_memory()            # VGGT is not needed again in this step
 
     rspec.refine_poses = spec.refine_poses
     rec, rinfo, pts = _posed(rspec, cache, rec, rinfo, stage)
     preport = rinfo.get("poses")
+    # run 7 lost its session here: VGGT, SIFT features and bundle-adjustment arrays were still in
+    # RAM when gsplat started compiling with 10 jobs. Free them, then build (a no-op when the
+    # notebook setup already built it) in a watched child process with jobs sized to free RAM.
+    from ..recon.gsplat_build import build
+
+    freed = release_memory()
+    built = build(check=check)
+    if not built["ok"]:
+        raise RuntimeError(f"gsplat CUDA build failed: {built.get('error', '')}")
+    how = ("built at setup" if built.get("already_built")
+           else "built here with %s jobs, peak RAM %s GB" % (built["jobs"], built["peak_ram_gb"]))
+    stage(f"memory freed to {freed.get('ram_used_gb', '?')} GB RAM; gsplat ready ({how})")
     cfg = S.SplatConfig(iters=spec.iters)
     splats, infos = [], []
     for v in (0, 1):
