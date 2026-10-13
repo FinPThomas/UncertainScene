@@ -282,13 +282,18 @@ def _masks(rec, spec: Spec, cache: Path) -> dict:
         out = sam_masks(rec.files, frames, (H, W), points_per_side=spec.sam_points)
     log.info("SAM 2 (%s): %d masks on %d frames, %d objects tracked, in %.0f s", how, sum(len(v) for v in out.values()),
              len(out), len({m["track"] for v in out.values() for m in v if m.get("track") is not None}), time.time() - t0)
-    meta, bits = [], []
-    for s, ms in out.items():
-        for m in ms:
-            meta.append({k: v for k, v in m.items() if k != "mask"} | {"frame": s})
-            bits.append(m["mask"])
-    np.savez_compressed(f, meta=np.array(meta, dtype=object),
-                        bits=np.packbits(np.stack(bits)) if bits else np.zeros(0, np.uint8), frames=np.array(frames))
+    # cache (a failure here must never lose masks that took an hour to track)
+    try:
+        meta, bits = [], []
+        for s, ms in out.items():
+            for m in ms:
+                meta.append({k: v for k, v in m.items() if k != "mask"} | {"frame": s})
+                bits.append(m["mask"])
+        np.savez_compressed(f, meta=np.array(meta, dtype=object),
+                            bits=np.packbits(np.stack(bits)) if bits else np.zeros(0, np.uint8),
+                            frames=np.array(sorted(out)))
+    except Exception:  # noqa: BLE001
+        log.exception("could not cache SAM 2 masks; continuing with them uncached")
     return out
 
 
@@ -302,6 +307,13 @@ def step_fn(spec: Spec, cache: Path, store=None, check=None):
         root.addHandler(h)
         for name in ("uncertainscene", "httpx", "huggingface_hub"):
             logging.getLogger(name).setLevel(logging.INFO if name == "uncertainscene" else logging.WARNING)
+        # outputs of an earlier attempt of this step would mix with this one's (run 4 showed run
+        # 3's objects next to its own empty object list); keep only the log
+        import shutil
+
+        for p in out.iterdir():
+            if p.name != "step_log.txt":
+                shutil.rmtree(p) if p.is_dir() else p.unlink()
         try:
             from .splats import SplatSpec, analyse_splat
 
@@ -558,6 +570,8 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     stage("figures, viewer and reports")
     write_report(spec, m, rows, out)
     enforce_size(out)
+    if sam_error:   # everything else is saved; mark the step failed so RETRY_FAILED reruns it
+        raise RuntimeError(f"objects failed ({sam_error}); the rest of the step was saved")
     return (f"{ptype}: {m.get('obj_changed', 0)} changed objects of {m.get('obj_total', 0)} "
             f"({m.get('obj_changed_frac', 0):.0%}); labels: {', '.join(c['label'] or '?' for c in changes[:5])}; "
             f"scale {s:.3f} m/unit; {m['step_seconds']:.0f}s")

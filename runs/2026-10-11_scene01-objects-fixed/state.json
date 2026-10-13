@@ -9,9 +9,9 @@
       "commit": "9acd9a8",
       "expires": null,
       "finished": "2026-10-12 17:46:25 UTC",
-      "note": "change: 0 changed objects of 0 (0%); labels: ; scale 3.609 m/unit; 5813s",
+      "note": "objects lost: SAM 2 tracked 139 objects but saving the mask cache crashed (UnboundLocalError), fell back to 0 point clusters; fixed, rerun. Poses 8.26 -> 0.66 px. change: 0 changed objects of 0 (0%); labels: ; scale 3.609 m/unit; 5813s",
       "started": "2026-10-12 16:09:10 UTC",
-      "status": "done"
+      "status": "failed"
     },
     "1b-splat_moved_light-before-a_vs_light-after-a": {
       "account": "colab-a68c",

@@ -37,6 +37,23 @@ Last updated 2026-10-12. No answer key yet, so nothing below is scored against g
    table tennis bat cushion and a card added on the sofa. Next run trains 20 000 steps instead of 7 000 and compares
    only views the other recording also saw.
 
+## Run 5: `2026-10-11_scene01-objects-fixed`, rerun of the main pair (Colab colab-a68c, 2026-10-12 16:09-17:46)
+
+The first run with the new pose refinement (eac6ab8, 4925d4b) and SAM 2 video tracking.
+
+**Good**
+- **Camera poses: fixed.** Reprojection error went from 8.26 px (VGGT) to **0.66 px median, 1.98 px p90**; the worst frame's median error is 2.33 px. Run 4 was 0.91 px but left 146 frames on VGGT's ~8 px poses. This time 159 frames had too few points of their own: 117 were solved against the other frames, and 42 took their neighbours' correction. Median pose uncertainty is 0.45 px; 36 frames are unconstrained and now count for less everywhere. Cameras turned 1.15 deg (median) from VGGT's poses.
+- **SAM 2 tracking ran on real video and stayed in memory** (peak 8.4 of 12.7 GB, against the 92% stop in run 4). It followed **139 objects** through the two recordings (81 in before, 58 in after), from 2088 masks on 88 frames. Run 3 had 398 pieces (177 + 221) before merging. Since one id now follows one object through a whole recording, this is the first real evidence that over-splitting is fixed.
+
+**Bad**
+- **The tracked objects were then lost to a bug in saving them** (`frames` undefined in the SAM cache code, `UnboundLocalError`). The step fell back to point clusters, which found no objects. So this run has **no labels, no object changes, no Rigidity Copilot, no assets and no feature motion**. Files in the step folder dated before this run (`objects.png`, `object_overlays.png`, `position_*.png`, `motion.json`, `assets/`) are run 3's, not run 5's. The report's Copilot table also comes from those old assets. Fixed: the cache is saved safely and a test covers it. A step whose objects fail is now marked failed, so it reruns, and each attempt starts from an empty folder.
+- **Tracking is slow:** 65 min for both recordings, against 9 min for per-frame masks. It is cached now, so it is paid once per session.
+- **Scale is still off:** 3.61 m/unit from the phone-height cue alone (34 floor points, 3% of horizontal surfaces). Run 3 gave 3.02. The object-size cue that should correct it had no objects this time.
+- **The splat step did not finish:** Colab ended the session about a minute after it started. Splat quality is still unknown since run 2 (17.7 dB).
+- Point-level change share (old method): 5.67%, with tau 0.236. Run 3 had tau 0.088 with VGGT poses. Tau comes from the within-recording null, so the wider tau needs checking against the answer key.
+
+**Next:** rerun the main pair (the step is marked failed, so Run all retries it), then the splat step.
+
 ## Run 3 overview: `2026-10-11_scene01-objects-fixed` (Colab, 2026-10-11 21:32-22:31)
 
 **What ran.** Only the first step finished its work: light before (take a) vs light after (take a), every frame

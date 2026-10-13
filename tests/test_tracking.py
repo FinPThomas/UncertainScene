@@ -95,3 +95,29 @@ def test_merge_keeps_tracks_and_rejoins_disjoint():
     frags = [fr(0, 0), fr(1, 0), fr(5, 1), fr(6, 1), fr(1, 2)]
     groups = sorted(sorted(g) for g in S.merge(frags))
     assert [0, 1, 2, 3] in groups and [4] in groups
+
+
+def test_tracked_masks_are_cached_and_reloaded(tmp_path, monkeypatch):
+    """Run 5 tracked 139 objects for an hour, then lost them all to a bug in saving the cache.
+    The tracked path must save, and a second call must reload instead of tracking again."""
+    from types import SimpleNamespace
+
+    from uncertainscene.experiments import scene01 as X
+
+    rec = SimpleNamespace(video=np.repeat([0, 1], 6), depth=np.zeros((12, H, W), np.float32),
+                          files=[f"{i}.jpg" for i in range(12)])
+    calls = []
+
+    def fake_tracks(files, frames, size_hw, **kw):
+        calls.append(list(frames))
+        return {f: [{"mask": _mask(0, 0), "full_bbox": [0, 0, 1, 1], "score": 0.9, "full_hw": (H, W),
+                     "wobble_px": None, "track": 1}] for f in kw["keep_frames"]}
+
+    monkeypatch.setattr(S, "sam_tracks", fake_tracks)
+    spec = X.Spec("t", "a", "b", n_key=3)
+    out1 = X._masks(rec, spec, tmp_path)
+    out2 = X._masks(rec, spec, tmp_path)
+    assert len(calls) == 2                                       # once per recording, not again
+    assert sorted(out1) == sorted(out2) and len(out1) == 6
+    assert {m["track"] for v in out1.values() for m in v} == {1, 100001}
+    assert all((a["mask"] == b["mask"]).all() for k in out1 for a, b in zip(out1[k], out2[k]))
