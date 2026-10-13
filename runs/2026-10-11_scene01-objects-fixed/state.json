@@ -4,14 +4,14 @@
   "run_id": "2026-10-11_scene01-objects-fixed",
   "steps": {
     "1-main_moved_light-before-a_vs_light-after-a": {
-      "account": "colab-a68c",
-      "attempts": 3,
-      "commit": "9acd9a8",
-      "expires": null,
-      "finished": "2026-10-12 17:46:25 UTC",
-      "note": "objects lost: SAM 2 tracked 139 objects but saving the mask cache crashed (UnboundLocalError), fell back to 0 point clusters; fixed, rerun. Poses 8.26 -> 0.66 px. change: 0 changed objects of 0 (0%); labels: ; scale 3.609 m/unit; 5813s",
-      "started": "2026-10-12 16:09:10 UTC",
-      "status": "failed"
+      "account": "colab-5f93",
+      "attempts": 4,
+      "commit": "3f10688",
+      "expires": 1791915971.4432275,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-13 15:00:41 UTC",
+      "status": "running"
     },
     "1b-splat_moved_light-before-a_vs_light-after-a": {
       "account": "colab-a68c",
