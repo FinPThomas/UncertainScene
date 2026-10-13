@@ -16,7 +16,9 @@ this, and VGGT's poses are an excellent starting point for it.
 5. Triangulate with the current poses, drop points behind a camera, with too little
    parallax, or reprojecting badly.
 6. Bundle adjustment (robust Huber loss): per-frame rotation and translation corrections, one
-   focal length per recording (same phone, same zoom, so one number), and every 3D point.
+   focal length shared by all recordings (same phone, same 1x lens; a focal per recording can
+   trade against depth and leave the two recordings at slightly different scales), and every
+   3D point.
 7. Re-triangulate with a tighter threshold and adjust again.
 8. Map the result back onto VGGT's frame (similarity fit of the camera centres), so depth
    maps, floor, objects and every other step keep using the same world frame.
@@ -58,6 +60,7 @@ class PoseConfig:
     min_inliers_sparse: int = 15
     polish_iters: int = 150         # final joint adjustment over every frame
     polish_always: bool = True
+    shared_focal: bool = True       # one focal length for every recording (same phone, same 1x lens)
 
 
 def _rootsift(desc: np.ndarray) -> np.ndarray:
@@ -243,7 +246,8 @@ def _rodrigues(r):
 
 
 def bundle_adjust(E, K, video, X, t, frame, uv, cfg: PoseConfig, device: str = "cpu", fix_points: bool = False):
-    """Jointly refine per-frame poses, one focal length per recording and the 3D points (or,
+    """Jointly refine per-frame poses, the focal length (shared by all recordings, or one per
+    recording without `cfg.shared_focal`) and the 3D points (or,
     with `fix_points`, only the poses and focals: resection, well conditioned).
     Returns new E, K, X."""
     import torch
@@ -252,11 +256,13 @@ def bundle_adjust(E, K, video, X, t, frame, uv, cfg: PoseConfig, device: str = "
     E0 = torch.as_tensor(E, dtype=dt, device=device)
     c0, _ = _centres_dirs(E)
     spread = float(np.linalg.norm(c0 - c0.mean(0), axis=1).max()) + 1e-9
-    nv = int(video.max()) + 1
-    f0 = torch.as_tensor([np.median(K[video == v, 0, 0]) for v in range(nv)], dtype=dt, device=device)
+    # focal index per frame: one for all recordings (same phone and lens, CAPTURE.md), or one each
+    fvid = np.zeros_like(video) if cfg.shared_focal else video
+    nv = int(fvid.max()) + 1
+    f0 = torch.as_tensor([np.median(K[fvid == v, 0, 0]) for v in range(nv)], dtype=dt, device=device)
     pp = torch.as_tensor(K[:, :2, 2], dtype=dt, device=device)
     aspect = torch.as_tensor(K[:, 1, 1] / K[:, 0, 0], dtype=dt, device=device)
-    vid = torch.as_tensor(video, device=device)
+    vid = torch.as_tensor(fvid, device=device)
     om = torch.zeros(len(E), 3, dtype=dt, device=device, requires_grad=True)
     tau = torch.zeros(len(E), 3, dtype=dt, device=device, requires_grad=True)
     lf = torch.zeros(nv, dtype=dt, device=device, requires_grad=True)
@@ -331,8 +337,8 @@ def bundle_adjust(E, K, video, X, t, frame, uv, cfg: PoseConfig, device: str = "
         En = torch.cat([R, tv[..., None]], 2).cpu().numpy()
         f = (f0 * torch.exp(lf)).cpu().numpy()
     Kn = K.copy()
-    Kn[:, 0, 0] = f[video]
-    Kn[:, 1, 1] = f[video] * K[:, 1, 1] / K[:, 0, 0]
+    Kn[:, 0, 0] = f[fvid]
+    Kn[:, 1, 1] = f[fvid] * K[:, 1, 1] / K[:, 0, 0]
     return En, Kn, Xs.detach().cpu().numpy() * spread
 
 
@@ -530,6 +536,11 @@ def refine_tracks(E: np.ndarray, Kf: np.ndarray, video: np.ndarray, t_: np.ndarr
     seen = np.bincount(fr, minlength=len(E))
     per_frame = np.array([np.median(err[fr == s]) if (fr == s).any() else np.nan for s in range(len(E))])
     pose_px = pose_uncertainty(err, fr, len(E), before["median_px"], cfg.min_resect)
+    vids = np.unique(video)
+    nvid = np.zeros((len(X), len(vids)), bool)
+    for k, v in enumerate(vids):
+        nvid[tn[video[fr] == v], k] = True
+    both = nvid.all(1) if len(vids) > 1 else np.zeros(len(X), bool)
 
     c0, d0 = _centres_dirs(E.astype(np.float64))
     c1, d1 = _centres_dirs(Ec)
@@ -551,12 +562,23 @@ def refine_tracks(E: np.ndarray, Kf: np.ndarray, video: np.ndarray, t_: np.ndarr
         "rotation_change_deg_median": float(np.median(rot)), "rotation_change_deg_p90": float(np.quantile(rot, 0.9)),
         "centre_change_median_rel": float(np.median(np.linalg.norm(c1 - c0, axis=1)) / (spread + 1e-12)),
         "focal_change": [float(np.median(Kc[video == v, 0, 0] / Kf[video == v, 0, 0])) for v in np.unique(video)],
+        # how well each recording fits on its own, and how strongly the recordings are tied
+        # together: points seen in both are the only thing that lines the recordings up
+        "per_recording_median_px": [float(np.median(err[video[fr] == v])) if (video[fr] == v).any() else None
+                                    for v in np.unique(video)],
+        "points_in_both": int(both.sum()),
+        "points_in_both_median_px": float(np.median(err[both[tn]])) if both.any() else None,
+        "observations_kept_share": float(len(tn) / max(len(t_), 1)),
         "seconds": round(time.time() - t0),
     }
     log.info("poses: final %.2f px median, %.2f px p90 (VGGT %.2f px); per-frame median worst %.2f px; cameras "
              "turned %.2f deg median; %d weak frames (%d resected, %d interpolated)", report["final"]["median_px"],
              report["final"]["p90_px"], before["median_px"], report["per_frame_median_px"]["worst"] or 0,
              report["rotation_change_deg_median"], n_weak, resected, n_weak - resected)
+    log.info("poses: per recording %s px median; %d points seen in both recordings (%.2f px); %.0f%% of feature "
+             "observations kept", ", ".join(f"{x:.2f}" for x in report["per_recording_median_px"] if x is not None),
+             report["points_in_both"], report["points_in_both_median_px"] or float("nan"),
+             100 * report["observations_kept_share"])
     return Ec.astype(np.float32), Kc.astype(np.float32), {"X": X.astype(np.float32), "t": tn, "frame": fr,
                                                           "uv": uvn.astype(np.float32),
                                                           "pose_px": pose_px.astype(np.float32)}, report
@@ -617,7 +639,7 @@ def refine_recon(rec, cache=None, key: str = "", cfg: PoseConfig = PoseConfig())
 
     from PIL import Image
 
-    f = cache / f"poses3_{key}.npz" if cache is not None else None
+    f = cache / f"poses4_{key}.npz" if cache is not None else None
     if f is not None and f.exists():
         z = np.load(f)
         log.info("reusing cached refined poses %s", f.name)

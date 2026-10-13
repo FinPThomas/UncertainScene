@@ -718,6 +718,12 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
                  f"{(p.get('pose_px') or {}).get('median', float('nan')):.2f} px median, "
                  f"{(p.get('pose_px') or {}).get('frames_unconstrained', 0)} unconstrained frames count for less "
                  f"in positions, motion, change votes and splats |")
+        if p.get("per_recording_median_px"):
+            L.append(f"| How the recordings are tied together | {p.get('points_in_both', 0)} adjusted points seen in both "
+                     f"(their error {p.get('points_in_both_median_px') or float('nan'):.2f} px); per recording "
+                     + " / ".join(f"{x:.2f}" for x in p["per_recording_median_px"] if x is not None)
+                     + f" px median; {p.get('observations_kept_share', float('nan')):.0%} of feature observations kept; "
+                     f"one focal length for both recordings |")
     elif p.get("failed"):
         L.append(f"| Camera poses | refinement failed ({p['failed']}); VGGT poses used |")
     if not m.get("motion_links") and m.get("motion_links") is not None:
@@ -727,6 +733,12 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
         L.append(f"| Matched feature points before/after | {m['motion_links']}; uncertainty per point {m['motion_point_sigma_cm_median']} "
                  f"cm median (1 sigma, from the triangulation; of which {m['motion_misalignment_sigma_cm']} cm misalignment "
                  f"between the recordings); {m['motion_links_moved_share']:.0%} moved beyond their own uncertainty |")
+        al = m.get("motion_alignment") or {}
+        if al:
+            L.append(f"| Alignment between the recordings (static points) | {al.get('static_links', 0)} links agree with "
+                     f"a rigid scene; " + (f"correction {al['shift_cm']} cm, {al['rotation_deg']} deg, scale "
+                     f"{al['scale_change_pct']}% ({al['inlier_share']:.0%} inliers)" if al.get("applied")
+                     else "too few to fit a correction") + " |")
         L.append(f"| Objects moved / deformed (feature points) | {m['motion_objects_moved']} / "
                  f"{m['motion_objects_deformed']} of {m['motion_objects_measured']} measured |")
     L += [""]

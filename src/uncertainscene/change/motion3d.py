@@ -14,8 +14,12 @@ works from those:
    from how many frames saw it, from what angles and distances, and the pixel noise of that
    recording (its median reprojection error). A displacement's covariance is the sum of the
    before and after points' covariances plus one shared term for the residual misalignment
-   between the two recordings' frames, estimated from the fact that most of the scene did not
-   move (the term that makes the median displacement statistically ordinary). A displacement
+   between the two recordings' frames.
+   Alignment: links whose matches pass a fundamental-matrix check between the before and after
+   frame (a rigid scene; does not use our poses) are static. A similarity fitted to the static
+   links (weighted by each point's uncertainty, robust to wrong links) lines the after points up
+   with the before points, and the shared misalignment term is then measured on the static
+   links only (the term that makes their median displacement statistically ordinary). A displacement
    is real when it is beyond its own uncertainty (chi-square, 97.5%), point by point.
 4. Per object (SAM objects of the before recording, by their voxels): a rigid motion fitted by
    RANSAC to the object's links gives the distance moved (of its centre, 90% range by
@@ -52,6 +56,8 @@ class MotionConfig:
     min_px_sigma: float = 0.3       # floor on the per-recording pixel noise
     min_links: int = 8              # links an object needs for a rigid fit
     smooth_k: int = 6               # neighbours for smoothing the non-rigid residual
+    f_px: float = 2.0               # fundamental-matrix RANSAC threshold for the static check
+    min_static: int = 30            # static links needed to fit the alignment between recordings
 
 
 def _within_tracks(rec, frames, kps, descs, cfg, device):
@@ -110,10 +116,15 @@ def _triangulate_tracks(E, K, t, fr, uv, cfg, use=None, pose_px=None):
     pp = np.zeros(len(t)) if pose_px is None else np.asarray(pose_px, float)[fr]
     # triangulation weight: 1 / (feature noise^2 + pose^2), feature noise ~1 px until measured
     w = 1.0 / (1.0 + pp**2)
-    # gate: max_px, or wider when the poses themselves reproject worse than that (VGGT poses were
-    # ~8 px off on the first real run, so a 3 px gate left 257 points and no before/after links);
-    # the wider spread is measured below and widens every point's covariance accordingly
-    if keep.any():
+    # gate without refined poses: max_px, or wider when the poses themselves reproject worse than
+    # that (VGGT poses were ~8 px off on the first real run, so a 3 px gate left 257 points and no
+    # before/after links); the wider spread is measured below and widens every point's covariance
+    # with refined poses (pose_px given) the gate is the feature gate plus each frame's own pose
+    # uncertainty: a loose gate let wrongly chained tracks in (run 6: 11.7 px "noise" against the
+    # adjustment's 0.66 px), and they read as misalignment between the recordings
+    if pose_px is not None:
+        max_px = np.sqrt(cfg.max_px**2 + (3 * pp) ** 2)
+    elif keep.any():
         X, _ = _tri(E, K, t[keep], fr[keep], uv[keep], T, w[keep])
         err, _ = P.reproject(E, K, X, t, fr, uv)
         max_px = max(cfg.max_px, 2.5 * float(np.median(err[keep])))
@@ -161,6 +172,57 @@ def cross_term(d: np.ndarray, C: np.ndarray) -> float:
         else:
             hi = mid
     return hi
+
+
+def _static_matches(pa: np.ndarray, pb: np.ndarray, thr: float) -> np.ndarray:
+    """Which matches between a before and an after frame agree with one fundamental matrix
+    (RANSAC with local refinement; a rigid scene seen from two cameras). Moved objects fail it. All False when there
+    are too few matches to decide."""
+    import cv2
+
+    if len(pa) < 15:
+        return np.zeros(len(pa), bool)
+    _, m = cv2.findFundamentalMat(pa.astype(np.float64), pb.astype(np.float64), getattr(cv2, "USAC_ACCURATE", cv2.FM_RANSAC), thr, 0.999)
+    return np.zeros(len(pa), bool) if m is None else m.ravel().astype(bool)
+
+
+def align_recordings(XA: np.ndarray, XB: np.ndarray, C: np.ndarray, iters: int = 20):
+    """Similarity (scale, R, t) with XA ~ scale * R @ XB + t from static points, each weighted by
+    its own uncertainty, robust to wrong links and moved objects: RANSAC for the largest rigid
+    consensus, then Cauchy-weighted refits with the residual scale taken from that consensus.
+    Identity when no correction is needed (see below). Returns scale, R, t and a summary."""
+    w0 = 1.0 / (np.trace(C, axis1=1, axis2=2) / 3 + 1e-18)
+    # start from the largest rigid consensus (RANSAC), so a moved object or a cluster of wrong
+    # links cannot pull the fit into a compromise; inlier distance 3 sigma of each point
+    thr = 3 / np.sqrt(w0)
+    _, _, inl0 = rigid_ransac(XB, XA, thr, iters=500)
+    w = w0 * (inl0 if inl0.sum() >= 3 else 1.0)
+    sc, R, t = 1.0, np.eye(3), np.zeros(3)
+    for _ in range(iters):
+        ww = w / w.sum()
+        ma, mb = ww @ XA, ww @ XB
+        A, B = XA - ma, XB - mb
+        H = (B * ww[:, None]).T @ A
+        U, S, Vt = np.linalg.svd(H)
+        D = np.diag([1, 1, np.sign(np.linalg.det(Vt.T @ U.T))])
+        R = Vt.T @ D @ U.T
+        sc = float(np.trace(np.diag(S) @ D) / max(ww @ (B**2).sum(1), 1e-18))
+        t = ma - sc * R @ mb
+        r2 = ((XA - (sc * XB @ R.T + t)) ** 2).sum(1) * w0
+        core = r2 < 9 * np.median(r2[w > 0.5 * w0]) if (w > 0.5 * w0).any() else np.ones(len(r2), bool)
+        c2 = 2.0 * np.median(r2[core]) + 1e-18    # Cauchy scale from the consensus' own residuals
+        w = w0 / (1 + r2 / c2)
+    inl = r2 < 9 * np.median(r2[core])
+    # keep the recordings as they are when they already agree: the joint bundle adjustment ties
+    # them together, so a correction must explain clearly more static points than no correction
+    # (otherwise a big moved object could be taken for the static scene)
+    ident = np.linalg.norm(XB - XA, axis=1) < thr
+    fit_in = np.linalg.norm(sc * XB @ R.T + t - XA, axis=1) < thr
+    if ident.mean() >= 0.5 or fit_in.sum() < 1.25 * ident.sum():
+        sc, R, t, inl = 1.0, np.eye(3), np.zeros(3), ident
+    shift = float(np.linalg.norm(t + (sc * R - np.eye(3)) @ np.median(XB, 0)))
+    rot = float(np.degrees(np.arccos(np.clip((np.trace(R) - 1) / 2, -1, 1))))
+    return sc, R, t, {"shift": shift, "rotation_deg": rot, "inlier_share": float(inl.mean())}
 
 
 def kabsch(A: np.ndarray, B: np.ndarray):
@@ -296,6 +358,7 @@ def measure(rec, objs: list, scale_m_per_unit: float, cfg: MotionConfig = Motion
     spread = float(np.linalg.norm(c - c.mean(0), axis=1).max()) + 1e-9
     dist = np.linalg.norm(c[use[0]][:, None] - c[use[1]][None], axis=2) / spread + (1 - d[use[0]] @ d[use[1]].T)
     votes: dict = {}
+    static_votes: dict = {}
     for i, a in enumerate(use[0]):
         Da = torch.as_tensor(descs[int(a)], device=device)
         for j in np.argsort(dist[i])[: cfg.k_cross]:
@@ -309,9 +372,13 @@ def measure(rec, objs: list, scale_m_per_unit: float, cfg: MotionConfig = Motion
             ok = (top.values[:, 0] < cfg.ratio * top.values[:, 1]) & (dd.argmin(0)[nn] == torch.arange(len(nn), device=device))
             ia = torch.nonzero(ok)[:, 0].cpu().numpy()
             ib = nn[ok].cpu().numpy()
+            inl = _static_matches(kps[int(a)][ia], kps[b][ib], cfg.f_px)
             ta, tb = tracks[0][int(a)][ia], tracks[1][b][ib]
-            for x, y in zip(ta[(ta >= 0) & (tb >= 0)], tb[(ta >= 0) & (tb >= 0)]):
-                votes[(int(x), int(y))] = votes.get((int(x), int(y)), 0) + 1
+            both = (ta >= 0) & (tb >= 0)
+            for x, y, st in zip(ta[both], tb[both], inl[both]):
+                key = (int(x), int(y))
+                votes[key] = votes.get(key, 0) + 1
+                static_votes[key] = static_votes.get(key, 0) + int(st)
     best_a: dict = {}
     best_b: dict = {}
     for (x, y), n in votes.items():
@@ -323,14 +390,29 @@ def measure(rec, objs: list, scale_m_per_unit: float, cfg: MotionConfig = Motion
                      np.int64).reshape(-1, 2)
     from scipy.stats import chi2
 
+    # static links: most of their matches agree with a rigid scene between the two frames
+    # (fundamental-matrix RANSAC, which does not use our poses); only these measure alignment
+    static = np.array([2 * static_votes.get((int(x), int(y)), 0) > votes[(int(x), int(y))] for x, y in links], bool)
     XA, XB = Xs[0][links[:, 0]], Xs[1][links[:, 1]]
-    Cd = Cs[0][links[:, 0]] + Cs[1][links[:, 1]]
-    s2 = cross_term(XB - XA, Cd)
+    CA, CB = Cs[0][links[:, 0]], Cs[1][links[:, 1]]
+    align = {"static_links": int(static.sum()), "applied": False}
+    if static.sum() >= cfg.min_static:
+        sc, R, tr, info = align_recordings(XA[static], XB[static], (CA + CB)[static])
+        XB = sc * XB @ R.T + tr
+        CB = sc**2 * np.einsum("ij,njk,lk->nil", R, CB, R)
+        align.update(applied=True, shift_cm=round(info["shift"] * cm, 2), rotation_deg=round(info["rotation_deg"], 3),
+                     scale_change_pct=round(100 * (sc - 1), 3), inlier_share=round(info["inlier_share"], 3))
+    Cd = CA + CB
+    ref = static if static.sum() >= cfg.min_static else np.ones(len(links), bool)
+    s2 = cross_term((XB - XA)[ref], Cd[ref])
     Cd = Cd + s2 * np.eye(3)[None]
     disp = np.linalg.norm(XB - XA, axis=1) * cm
     sig_cm = np.sqrt(np.trace(Cd, axis1=1, axis2=2) / 3) * cm
     z = np.sqrt(_mahal2(XB - XA, Cd))
     moved_pt = z**2 > chi2.ppf(cfg.level, 3)
+    log.info("motion: %d of %d links static; alignment between recordings %s", align["static_links"], len(links),
+             f"corrected by {align['shift_cm']} cm, {align['rotation_deg']} deg, scale {align['scale_change_pct']}%"
+             if align["applied"] else "not corrected (too few static links)")
     log.info("motion: %d before/after links; point uncertainty %.2f cm median (of which recording misalignment "
              "%.2f cm); %.0f%% moved beyond their uncertainty; %.0f s", len(links),
              float(np.median(sig_cm)) if len(sig_cm) else float("nan"), np.sqrt(s2) * cm,
@@ -389,6 +471,7 @@ def measure(rec, objs: list, scale_m_per_unit: float, cfg: MotionConfig = Motion
                         "points_after": int(np.isfinite(Xs[1]).all(1).sum()),
                         "pixel_noise_px": [round(x, 2) for x in px], "point_sigma_cm_median": round(med, 3),
                         "misalignment_sigma_cm": round(float(np.sqrt(s2)) * cm, 3),
+                        "alignment": align,
                         "links_moved_share": round(float(moved_pt.mean()), 3) if len(z) else None,
                         "objects_measured": len(rows), "objects_moved": sum(r["moved_beyond_noise"] for r in rows),
                         "objects_deformed": sum(r["deformed"] for r in rows)}}
