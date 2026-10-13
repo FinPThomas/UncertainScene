@@ -339,6 +339,9 @@ def step_fn(spec: Spec, cache: Path, store=None, check=None):
         finally:
             root.removeHandler(h)
             h.close()
+            from .poc import release_memory
+
+            log.info("released models and memory after %s: %s", spec.name, release_memory())
     return fn
 
 

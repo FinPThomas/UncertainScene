@@ -165,6 +165,39 @@ def _recon(spec: Spec, cache: Path):
     return rec, info
 
 
+def release_memory() -> dict:
+    """Between steps: drop every loaded network (VGGT, DINOv2, CLIP, SAM 2, depth model), run
+    the garbage collector and hand freed heap back to the system. Run 6 ended its main step at
+    8.4 of 12.7 GB RAM, so the next steps (needing 6 GB) never started in that session."""
+    import ctypes
+    import gc
+
+    from ..change import features, metric, segment
+    from ..recon import vggt
+
+    for cache in (vggt._MODEL, features._CACHE, segment._SAM, metric._CACHE):
+        cache.clear()
+    gc.collect()
+    try:
+        ctypes.CDLL("libc.so.6").malloc_trim(0)      # glibc keeps freed memory otherwise
+    except Exception:  # noqa: BLE001 - not glibc (macOS, Windows)
+        pass
+    try:
+        import torch
+
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        import psutil
+
+        vm = psutil.virtual_memory()
+        return {"ram_used_gb": round((vm.total - vm.available) / 1e9, 1)}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
 def trim_cache(cache: Path, max_gb: float = 6.0) -> None:
     """Delete the least recently used cached reconstructions once the cache passes max_gb."""
     if not cache.exists():
