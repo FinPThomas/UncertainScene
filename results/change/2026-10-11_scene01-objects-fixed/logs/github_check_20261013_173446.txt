@@ -1,0 +1,7 @@
+2026-10-13 17:30:24Z INFO  [1/8] Python 3.13.15, platform: Colab
+2026-10-13 17:30:27Z INFO  [2/8] GITHUB_TOKEN found in Colab secrets: fine-grained (github_pat_), 93 characters (value never printed)
+2026-10-13 17:30:28Z INFO  [3/8] token valid for GitHub user 'FinPThomas'; expires: 2026-11-12 18:30:04 UTC; API calls left this hour: 4989
+2026-10-13 17:30:28Z INFO  [4/8] repository FinPThomas/UncertainScene visible (private: False)
+2026-10-13 17:30:28Z INFO        branch exp/change/scene01-heatmaps at 4f0a0dd
+2026-10-13 17:31:24Z INFO  [5/8] code at 4f0a0dd (results(change): write up run 6 and save a picture per object) in 56 s
+2026-10-13 17:34:46Z INFO  [6/8] dependencies installed in 202 s (torch 2.11.0+cu130, SAM 2 ok)
