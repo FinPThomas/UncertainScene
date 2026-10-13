@@ -45,6 +45,21 @@ def _predictor(model_id: str):
     return predict
 
 
+def release(model_id: str = MODEL) -> None:
+    """Free the depth network (~1.3 GB of GPU memory) once the scale is known; SAM 2 and CLIP
+    load after it."""
+    if _CACHE.pop(model_id, None) is not None:
+        import gc
+
+        gc.collect()
+        try:
+            import torch
+
+            torch.cuda.empty_cache()
+        except Exception:  # noqa: BLE001
+            pass
+
+
 def metric_scale(rec, n_frames: int = 80, model_id: str = MODEL, predict=None, bias_sd_log: float = 0.10,
                  conf_quantile: float = 0.5, min_pixels: int = 500) -> dict | None:
     """{"scale" (m per scene unit), "sd_log", "n", "per_frame" (scales), "between_sd_log", ...}
@@ -71,6 +86,7 @@ def metric_scale(rec, n_frames: int = 80, model_id: str = MODEL, predict=None, b
             continue
         logs.append(float(np.median(np.log(m[ok] / d[ok]))))
         ws.append(float(w[s]))
+    release(model_id)
     if not logs:
         return None
     logs, ws = np.array(logs), np.array(ws)

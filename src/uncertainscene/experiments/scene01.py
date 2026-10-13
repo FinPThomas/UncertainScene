@@ -284,6 +284,7 @@ def _masks(rec, spec: Spec, cache: Path) -> dict:
              len(out), len({m["track"] for v in out.values() for m in v if m.get("track") is not None}), time.time() - t0)
     # cache (a failure here must never lose masks that took an hour to track)
     try:
+        f.parent.mkdir(parents=True, exist_ok=True)
         meta, bits = [], []
         for s, ms in out.items():
             for m in ms:

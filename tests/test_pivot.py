@@ -551,3 +551,52 @@ def test_bundle_adjustment_recovers_poses():
     Ec, Kc, Xb = P.bundle_adjust(Ep, Kp, video, Xt, tn, fn, uvn, cfg)
     e1 = np.median(P.reproject(Ec, Kc, Xb, tn, fn, uvn)[0])
     assert np.isfinite(e1) and e1 <= e0 * 1.05 + 0.05
+
+
+def test_full_step_with_real_tracking_poses_motion_and_scale_paths(tmp_path, monkeypatch):
+    """Like test_full_step_end_to_end but with far fewer stand-ins: the real mask cache and
+    tracking glue (only SAM 2 itself faked), the real pose refinement, feature motion and metric
+    scale code (only the depth network faked), and per-frame pose uncertainty set. Run 5 crashed
+    in glue code the other test replaced; this one must reach the end with objects."""
+    from test_change import colour_feats
+    from uncertainscene.change import metric
+    from uncertainscene.change import segment as S
+    from uncertainscene.experiments import scene01
+
+    _fake_clip(monkeypatch)
+    rec = _with_files(make_recon((-0.5, 0.8, 0.0), (0.0, 0.8, 0.0)), tmp_path)
+    rec.pose_px = np.linspace(0.2, 6.0, len(rec.E)).astype(np.float32)     # a few shaky frames
+    monkeypatch.setattr(scene01, "_recon", lambda spec, cache: (rec, {"seconds": 1.0, "chunks": 1, "used_per_video": 8,
+                                                                      "chunk_residual_max": 0.0}))
+    monkeypatch.setattr(scene01, "_feats", lambda rec_, spec, cache: colour_feats(rec_))
+
+    def fake_tracks(files, frames, size_hw, keep_frames=None, **kw):
+        out = _fake_masks(rec, keep_frames)
+        for ms in out.values():
+            for k, m in enumerate(ms):
+                m.update(track=k, wobble_px=(0.5, 0.3))
+        return out
+
+    monkeypatch.setattr(S, "sam_tracks", fake_tracks)
+    true_scale = 2.5
+    monkeypatch.setattr(metric, "_predictor", lambda model_id: (
+        lambda f: rec.depth[rec.files.index(f)] * true_scale))
+    spec = scene01.Spec("p1_test2", "scene01_light_before_a", "scene01_light_after_a", n_key=8,
+                        detect={"stride": 1, "conf_quantile": 0.0}, voxel_m=0.02)
+    out = tmp_path / "out"
+    out.mkdir()
+    (out / "stale_from_last_attempt.png").write_bytes(b"x" * 200)
+    note = scene01.step_fn(spec, tmp_path / "cache")(out, tmp_path)
+    assert "changed objects" in note
+    assert not (out / "stale_from_last_attempt.png").exists()
+    import json
+    m = json.loads((out / "metrics.json").read_text())
+    assert m["sam_error"] is None and m["obj_total"] > 0
+    assert m.get("field_scale_metric_depth") and abs(m["field_scale_metric_depth"] / true_scale - 1) < 0.05
+    assert (out / "assets" / "scene_graph.json").exists()
+    assert list((tmp_path / "cache").glob("sam2t_*.npz"))       # tracked masks cached
+    # a second attempt reuses the cached masks and still finishes
+    out2 = tmp_path / "out2"
+    out2.mkdir()
+    monkeypatch.setattr(S, "sam_tracks", lambda *a, **k: (_ for _ in ()).throw(AssertionError("re-tracked")))
+    assert "changed objects" in scene01.step_fn(spec, tmp_path / "cache")(out2, tmp_path)
