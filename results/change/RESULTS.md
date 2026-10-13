@@ -236,10 +236,10 @@ Runs are grouped by phase (what they try to find out). Folder names say what the
 
 | Kind of run | Runs | Changed objects, median (range) | Share of compared objects |
 |---|---|---|---|
-| Objects moved, same lighting | 1 | 32 (32-32) | 16% |
+| Objects moved, same lighting | 1 | 12 (12-12) | 39% |
 | Kind of run | Runs | Share of the surface flagged as changed, median (range) |
 |---|---|---|
-| Objects moved, same lighting | 1 | 4.24% (4.24% to 4.24%) |
+| Objects moved, same lighting | 1 | 5.72% (5.72% to 5.72%) |
 
 ### Main comparisons
 
@@ -247,7 +247,7 @@ Runs are grouped by phase (what they try to find out). Folder names say what the
 
 | Run | Changes found | Objects located to (90%) | Scale (m/unit) | Surface uncertainty (cm) | Details |
 |---|---|---|---|---|---|
-| Objects moved, same lighting: light, before, take a vs light, after, take a | baseball cap moved, guitar removed, guitar removed, baseball cap moved, jumper removed, guitar removed | ±0.9 cm | 3.024 | 9.1 | [objects](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/objects.png) · [position map](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/position_map.png) · [heatmaps](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/heatmaps.png) · [object overlays](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/object_overlays.png) · [scene report](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/scene_report.md) |
+| Objects moved, same lighting: light, before, take a vs light, after, take a | wooden crate shifted, skirting board shifted, neck pillow removed, baseball cap moved, skirting board shifted, cup shifted | ±0.1 cm | 2.048 | 7.5 | [report](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/report.md) · [motion map](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/motion_map.png) · [objects](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/objects.png) · [position map](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/position_map.png) · [heatmaps](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/heatmaps.png) · [object overlays](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/object_overlays.png) · [scene report](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/scene_report.md) |
 
 ### Light vs dark (all runs)
 
