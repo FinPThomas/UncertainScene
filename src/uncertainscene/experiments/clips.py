@@ -108,7 +108,7 @@ def analyse_clips(spec, out: Path, cache: Path, check=None) -> str:
     from ..change import inventory as inv
     from ..change import position as pos
     from ..change.fields import RobotModel, fit_floor
-    from ..change.floor import add_metric_cue, combine_scale, object_scale
+    from ..change.floor import add_metric_cue, combine_scale, object_scale, size_votes
     from ..change.segment import build_objects, effective_voxel, merge_voxel
     from ..viz import position_plots, scene3d
     from .catalog import rec_name
@@ -135,9 +135,7 @@ def analyse_clips(spec, out: Path, cache: Path, check=None) -> str:
     stage("SAM 2 objects per clip (" + ", ".join(str(len(c)) for c in clips) + ")")
     allobjs = [o for c in clips for o in c]
     inv.label_all(allobjs, rec)
-    floor = combine_scale(floor, object_scale([{"label": o.label, "label_prob": o.label_prob,
-                                                "extent_units": float(o.extent[0]), "complete": o.complete}
-                                               for o in allobjs if not o.structure]))
+    floor = combine_scale(floor, object_scale(size_votes(clips[0])))   # one clip: no double votes
     s = floor.scale_m_per_unit
     pos.annotate(allobjs, s, np.array(floor.up))
     stage("labels and position regions")

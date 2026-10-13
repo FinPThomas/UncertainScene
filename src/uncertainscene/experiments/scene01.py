@@ -341,7 +341,7 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     from ..change import inventory as inv
     from ..change import scene_report
     from ..change.fields import RobotModel, base_placement, compute_fields, field_stats, fit_floor, object_fields
-    from ..change.floor import add_metric_cue, combine_scale, object_scale
+    from ..change.floor import add_metric_cue, combine_scale, object_scale, size_votes
     from ..change import position as pos
     from ..change.segment import build_objects, effective_voxel, merge_voxel
     from ..viz import objects_plots, plots, viewer
@@ -388,9 +388,9 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
             stage(f"Rigidity Copilot: expected stiffness of {n_rig} objects")
         except Exception:  # noqa: BLE001 - stiffness priors are a bonus
             log.exception("Rigidity Copilot failed; assets get no stiffness")
-        floor = combine_scale(floor, object_scale([{"label": o.label, "label_prob": o.label_prob,
-                                                    "extent_units": float(o.extent[0]), "complete": o.complete}
-                                                   for o in objs_a + objs_b if not o.structure]))
+        # objects of the before recording only: most objects appear in both, and voting twice
+        # would make the scale look twice as certain as it is
+        floor = combine_scale(floor, object_scale(size_votes(objs_a)))
         obj_thr = inv.classify(objs_a, objs_b, rec, feats, res, cfg)
         stage("object-level changes")
     except Exception as e:  # noqa: BLE001 - SAM 2 missing or failing must not lose the rest
@@ -685,8 +685,8 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
           f"| Moved / added / removed / changed in place / shifted | {m.get('obj_moved', 0)} / {m.get('obj_added', 0)} / "
           f"{m.get('obj_removed', 0)} / {m.get('obj_changed_in_place', 0)} / {m.get('obj_shifted', 0)} |",
           f"| Point-level changed share (old method) | {m['changed_frac']:.2%} |",
-          f"| Scale | {m.get('field_scale_m_per_unit')} m/unit, 90% {m.get('field_scale_range')} (phone height cue "
-          f"{m.get('field_scale_phone_height')}, metric depth cue {m.get('field_scale_metric_depth')}, "
+          f"| Scale | {m.get('field_scale_m_per_unit')} m/unit, 90% {m.get('field_scale_range')} (most likely from metric "
+          f"depth cue {m.get('field_scale_metric_depth')} and "
           f"objects cue {m.get('field_scale_objects')} from {m.get('field_scale_objects_n')} objects) |",
           f"| Reconstruction | {m['frames_total']} frames in {m.get('recon_chunks')} chunks, {m['recon_seconds']} s, "
           f"worst anchor residual {m.get('chunk_residual_max')} |",

@@ -80,12 +80,13 @@ def test_floor_scale_and_object_cue():
     X = np.concatenate([unproject(rec.depth[s], rec.K[s], rec.E[s], rec.depth[s] > 0)[0][::3] for s in range(len(rec.E))])
     fl = fit_floor(X * 0.4, rec.E * np.array([1, 1, 1, 0.4]))      # scene in arbitrary units (x0.4)
     assert abs(fl.scale_m_per_unit - 2.5) < 0.15 and fl.floor_points > 100
-    obj = object_scale([{"label": "mug", "label_prob": 0.9, "extent_units": 0.12 / 2.4},
-                        {"label": "guitar", "label_prob": 0.8, "extent_units": 1.0 / 2.45},
-                        {"label": "sofa", "label_prob": 0.9, "extent_units": 1.0}])      # no prior: ignored
-    assert obj["n"] == 2 and 2.3 < obj["scale"] < 2.6
-    fl = combine_scale(fl, obj)
-    assert 2.35 < fl.scale_m_per_unit < 2.6 and fl.scale_range[0] < fl.scale_m_per_unit < fl.scale_range[1]
+    # extents are 5-95% spans (0.9 of the length); true scale 2.4 m/unit
+    obj = object_scale([{"label": "mug", "label_prob": 0.9, "extent_units": 0.9 * 0.12 / 2.4},
+                        {"label": "guitar", "label_prob": 0.8, "extent_units": 0.9 * 1.0 / 2.4},
+                        {"label": "wall", "label_prob": 0.9, "extent_units": 1.0}])      # no size: ignored
+    assert obj["n"] == 2 and 2.3 < obj["scale"] < 2.5
+    fl = combine_scale(fl, obj)                     # phone height is reported, never used
+    assert 2.3 < fl.scale_m_per_unit < 2.5 and fl.scale_range[0] < fl.scale_m_per_unit < fl.scale_range[1]
 
 
 # ---- SAM-style objects on the synthetic scene ----------------------------------------------

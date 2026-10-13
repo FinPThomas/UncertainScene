@@ -3,7 +3,7 @@ from types import SimpleNamespace
 
 import numpy as np
 
-from uncertainscene.change.floor import Floor, combine_scale
+from uncertainscene.change.floor import Floor, combine_scale, object_scale
 from uncertainscene.change.metric import metric_scale
 
 
@@ -42,14 +42,34 @@ def _floor(scale, sd):
     return f
 
 
-def test_three_cues_fuse_and_contradiction_widens_range():
-    f = combine_scale(_floor(3.6, 0.12), metric={"scale": 3.0, "sd_log": 0.10})
-    assert 3.0 < f.scale_m_per_unit < 3.6
-    assert f.scale_cues["combined"]["cues"] == ["phone_height", "metric_depth"]
-    f = combine_scale(f, obj={"scale": 3.1, "sd_log": 0.1, "n": 4, "labels": ["mug"]})
-    assert len(f.scale_cues["combined"]["cues"]) == 3
-    narrow = f.scale_range[1] / f.scale_range[0]
-    g = combine_scale(_floor(6.0, 0.12), metric={"scale": 3.0, "sd_log": 0.10})   # 4+ sigma apart
-    assert g.scale_cues["combined"]["disagreement_sigma"] > 2
-    assert g.scale_range[0] <= 3.0 * 1.05 and g.scale_range[1] >= 6.0 * 0.95
-    assert g.scale_range[1] / g.scale_range[0] > narrow
+def _obj(label, true_m, scale, p=0.9, top3=None):
+    return {"label": label, "label_prob": p, "label_top3": top3, "extent": [0.9 * true_m / scale], "complete": True}
+
+
+def test_phone_height_is_never_used_and_most_likely_scale_wins():
+    true = 2.7
+    objs = [_obj("mug", 0.12, true), _obj("guitar", 1.0, true), _obj("table tennis bat", 0.26, true),
+            _obj("baseball cap", 0.28, true),
+            _obj("mug", 0.45, true)]                       # a cushion CLIP called a mug: an outlier
+    o = object_scale(objs)
+    f = combine_scale(_floor(3.6, 0.12), obj=o, metric={"scale": 2.8, "sd_log": 0.10})
+    assert abs(np.log(f.scale_m_per_unit / true)) < 0.06           # phone height said 3.6
+    assert f.scale_range[0] < true < f.scale_range[1]
+    assert f.scale_cues["combined"]["cues"] == ["metric_depth", "objects"]
+    # the wrong label does not drag the mode: same answer without it
+    o4 = object_scale(objs[:4])
+    assert abs(np.log(o["scale"] / o4["scale"])) < 0.03
+
+
+def test_label_uncertainty_spreads_a_vote():
+    # an object that is either a guitar (1.0 m) or a ukulele (0.55 m), 50/50: alone it cannot
+    # tell the two scales apart; the metric depth cue picks the right one
+    v = object_scale([_obj("guitar", 1.0, 2.0, top3=[("guitar", 0.5), ("ukulele", 0.5)])])
+    assert v["range"][1] / v["range"][0] > 1.8
+    f = combine_scale(_floor(9.9, 0.1), obj=v, metric={"scale": 2.0, "sd_log": 0.15})
+    assert abs(np.log(f.scale_m_per_unit / 2.0)) < 0.08
+
+
+def test_without_predictions_phone_height_stays_flagged():
+    f = combine_scale(_floor(3.6, 0.12))
+    assert f.scale_m_per_unit == 3.6 and "warning" in f.scale_cues["combined"]
