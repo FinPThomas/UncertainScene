@@ -171,6 +171,7 @@ def load_step(d: Path, with_3d: bool = True) -> dict:
     for f, cap in IMAGES:
         if (d / f).exists():
             st["images"].append({"caption": cap, "src": _img(d / f)})
+    st["ran"], st["finished"] = _when(d)
     rep = d / "report.md"
     st["notes"] = _md_to_html(rep.read_text()) if rep.exists() else ""
     if with_3d:
@@ -190,6 +191,29 @@ def load_step(d: Path, with_3d: bool = True) -> dict:
                 lab = {str(i + 1): f"clip {i + 1} ({rec_name(c)})" for i, c in enumerate(m["clips"])}
             st["scene"]["recs"] = lab
     return st
+
+
+# sessions the results write-up (RESULTS.md) refers to by number
+RUN_NAMES = {"colab-a68c": "Run 5", "colab-5f93": "Run 6"}
+
+
+def _when(d: Path) -> tuple[str, str]:
+    """'Run 6 · ran 2026-10-13 15:00-17:01 UTC · Colab session colab-5f93 · code 3f10688' for a
+    step folder, from the run's state.json (results/<path>/<run_id>/<step> -> runs/<run_id>);
+    plus the finish time for sorting. Empty when the state file is missing."""
+    try:
+        f = d.parents[3] / "runs" / d.parent.name / "state.json"
+        s = json.loads(f.read_text())["steps"].get(d.name) or {}
+    except Exception:  # noqa: BLE001
+        return "", ""
+    a, b = s.get("started") or "", s.get("finished") or ""
+    if not a:
+        return "", b
+    span = a.replace(" UTC", "") + ("-" + b[11:16] if b[:10] == a[:10] else (" to " + b if b else "")) + " UTC"
+    acc = s.get("account") or ""
+    parts = [RUN_NAMES.get(acc, ""), f"ran {span}", f"Colab session {acc}" if acc else "",
+             f"code {s['commit']}" if s.get("commit") else ""]
+    return " · ".join(p for p in parts if p), b
 
 
 FEATURED = ("p1_", "p1b_", "1-main_", "1b-splat_", "2-position_")
@@ -302,6 +326,8 @@ select{font:inherit;padding:7px 9px;border-radius:8px;border:1px solid var(--lin
 .q{margin:12px 0 4px;display:grid;gap:4px}
 .q .phase{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .q h2{font-size:20px;margin:0;text-wrap:balance;font-weight:650}
+.ran{margin:2px 0 0;font-size:14px;font-weight:600;color:var(--text);background:var(--chip);border-left:4px solid var(--accent);padding:5px 10px;border-radius:4px;max-width:100%;overflow-wrap:anywhere}
+.ran b{color:var(--accent)}
 .q p{margin:0;color:var(--muted);max-width:75ch}
 .recs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
 .recs span{font-size:13px;background:var(--chip);border-radius:6px;padding:2px 8px}
@@ -331,7 +357,7 @@ figcaption{color:var(--muted);font-size:13px;margin:4px 0}
 </style>
 <div class="wrap">
 <header><h1>__TITLE__</h1><select id="pick" aria-label="Choose a run"></select></header>
-<div class="q"><div class="phase" id="phase"></div><h2 id="ttl"></h2><p id="question"></p><p id="warn" class="warn" hidden></p></div>
+<div class="q"><div class="phase" id="phase"></div><h2 id="ttl"></h2><p id="ran" class="ran" hidden></p><p id="question"></p><p id="warn" class="warn" hidden></p></div>
 <div class="recs" id="recs"></div>
 <div class="tabs" id="tabs" role="tablist"><button data-t="t3d" class="on">3D scene</button><button data-t="timg">Figures</button><button data-t="tnotes">Findings for this run</button><button data-t="tsum">All runs</button></div>
 <section id="t3d">
@@ -352,7 +378,8 @@ const $=id=>document.getElementById(id);
 const pick=$('pick');
 // picker grouped by phase, in run order
 const groups={};D.steps.forEach((s,i)=>{const k=s.run+' | '+s.phase_title;(groups[k]=groups[k]||[]).push(i)});
-Object.entries(groups).forEach(([k,ids])=>{const g=document.createElement('optgroup');g.label=k;ids.forEach(i=>{const o=document.createElement('option');o.value=i;o.textContent=D.steps[i].title;g.appendChild(o)});pick.appendChild(g)});
+const latest=D.steps.reduce((b,st,k)=>(st.finished||'')>((D.steps[b]||{}).finished||'')?k:b,0);
+Object.entries(groups).forEach(([k,ids])=>{const g=document.createElement('optgroup');g.label=k;ids.forEach(i=>{const o=document.createElement('option');o.value=i;o.textContent=D.steps[i].title+(D.steps[i].finished?` (${D.steps[i].finished.slice(0,16)})`:'');g.appendChild(o)});pick.appendChild(g)});
 $('tsum').innerHTML=D.summary||'<p class="hint">No summary yet.</p>';
 document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
  ['t3d','timg','tnotes','tsum'].forEach(id=>$(id).hidden=id!==b.dataset.t);if(b.dataset.t==='t3d')resize()});
@@ -444,7 +471,7 @@ function syncChips(){document.querySelectorAll('#layers input[data-k]').forEach(
 window.__S=(i,sc)=>{D.steps[i].scene=sc;D.steps[i]._loading=false;if(cur===i)show(i)};
 function show(i){cur=i;const s=D.steps[i];
  if(!s.scene&&s.scene_src&&!s._loading){s._loading=true;const el=document.createElement('script');el.src=s.scene_src;
-  el.onerror=()=>{s._loading=false;s.scene_src=null;s.scene_error='the 3D file did not load';if(cur===i)show(i)};document.head.appendChild(el)}$('phase').textContent=`${s.phase_title} · ${s.run}`;$('ttl').textContent=s.title;
+  el.onerror=()=>{s._loading=false;s.scene_src=null;s.scene_error='the 3D file did not load';if(cur===i)show(i)};document.head.appendChild(el)}$('phase').textContent=`${s.phase_title} · ${s.run}`;$('ttl').textContent=s.title;$('ran').hidden=!s.ran;$('ran').innerHTML=s.ran?((i===latest?'<b>Latest result</b> · ':'')+s.ran.replace(/[<>&]/g,'')):'';
  $('question').textContent=s.question?('What this run tests: '+s.question):'';
  $('warn').hidden=!s.warning;$('warn').textContent=s.warning||'';
  $('recs').innerHTML=(s.recordings||[]).map((r,k)=>`<span>${s.type==='clips'?'clip '+(k+1):(k?'after':'before')}: ${r}</span>`).join('');
@@ -473,7 +500,7 @@ function show(i){cur=i;const s=D.steps[i];
  $('tnotes').innerHTML=s.notes||'<p class="hint">No notes.</p>'}
 pick.onchange=e=>{show(+e.target.value);try{localStorage.setItem('us-pick2',e.target.value)}catch(_){}};
 let h=null;try{h=localStorage.getItem('us-pick2')}catch(e){}
-if(D.steps.length){let i=h!=null&&D.steps[+h]?+h:D.steps.findIndex(s=>s.type==='change');if(i<0)i=0;pick.value=i;show(i)}
+if(D.steps.length){let i=h!=null&&D.steps[+h]?+h:latest;if(i<0)i=0;pick.value=i;show(i)}
 resize();
 </script>
 """
