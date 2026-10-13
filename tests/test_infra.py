@@ -236,3 +236,22 @@ def test_background_monitor_stops_a_running_step(remote, tmp_path):
     r.guard.stop()
     assert r.state.step("s1").status == INTERRUPTED
     assert "RAM" in r.state.step("s1").note
+
+
+def test_live_log_is_pushed_while_a_step_runs(remote, tmp_path, monkeypatch):
+    """A session that dies mid-step must still leave its progress on the branch."""
+    monkeypatch.setenv("UNCERTAINSCENE_HEARTBEAT_MIN", str(0.3 / 60))   # every 0.3 s
+    a = remote("a")
+    run = make_run(a, tmp_path, "colab-1")
+
+    def slow(out, work):
+        (out / "step_log.txt").write_text("stage done: reconstruction\nstage done: splat of before\n")
+        time.sleep(1.5)
+        return "ok"
+
+    assert run.step("s1", slow) == DONE
+    b = remote("b")
+    live = b / run.live_rel()
+    assert live.exists()
+    text = live.read_text()
+    assert "step s1" in text and "splat of before" in text and "machine:" in text

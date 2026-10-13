@@ -15,6 +15,7 @@ from __future__ import annotations
 import base64
 import logging
 import subprocess
+import threading
 import time
 from pathlib import Path
 
@@ -40,6 +41,9 @@ class Publisher:
         self.max_file_mb, self.max_run_mb = max_file_mb, max_run_mb
         self.remote = remote
         self.retries = retries
+        # git is not safe to drive from two threads at once (the live-progress heartbeat
+        # publishes while a step runs), so every repository-changing call takes this lock
+        self.lock = threading.RLock()
 
     # ---- git plumbing ------------------------------------------------------------------
     def _auth(self) -> list[str]:
@@ -75,6 +79,10 @@ class Publisher:
 
     def sync(self) -> None:
         """Bring in what other sessions pushed (claims, results) before reading state."""
+        with self.lock:
+            self._sync()
+
+    def _sync(self) -> None:
         self.git("fetch", self.remote, self.branch)
         proc = self.git("rebase", f"{self.remote}/{self.branch}", check=False)
         if proc.returncode != 0:
@@ -83,8 +91,9 @@ class Publisher:
 
     def reset_to_remote(self) -> None:
         """Drop local commits that lost a race (used for claims only, never for results)."""
-        self.git("fetch", self.remote, self.branch)
-        self.git("reset", "--hard", f"{self.remote}/{self.branch}")
+        with self.lock:
+            self.git("fetch", self.remote, self.branch)
+            self.git("reset", "--hard", f"{self.remote}/{self.branch}")
 
     # ---- guardrails --------------------------------------------------------------------
     def check_sizes(self, paths: list[str | Path]) -> float:
@@ -109,6 +118,10 @@ class Publisher:
 
         On a rebase conflict: push to `fallback_branch` if given, else raise PushConflict.
         """
+        with self.lock:
+            return self._publish(paths, message, fallback_branch)
+
+    def _publish(self, paths: list[str | Path], message: str, fallback_branch: str | None = None) -> bool:
         paths = [str(p) for p in paths if (self.repo / p).exists()]
         if not paths:
             return False
@@ -124,7 +137,7 @@ class Publisher:
                 return True
             log.warning("push rejected (attempt %d): %s", attempt + 1, self._redact(proc.stderr.strip()))
             try:
-                self.sync()
+                self._sync()
             except PushConflict:
                 if fallback_branch:
                     self.git("push", self.remote, f"HEAD:refs/heads/{fallback_branch}")

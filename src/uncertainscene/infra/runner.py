@@ -23,6 +23,7 @@ import json
 import logging
 import os
 import shutil
+import threading
 import time
 import traceback
 import uuid
@@ -142,6 +143,7 @@ class Run:
         work.mkdir(parents=True, exist_ok=True)
         t0 = time.time()
         status, note = DONE, None
+        beat = self._start_heartbeat(name, out, t0)
         try:
             note = fn(out, work)
         except (ResourceLimit, KeyboardInterrupt) as e:
@@ -150,6 +152,7 @@ class Run:
             status, note = FAILED, f"{type(e).__name__}: {e}"
             (out / "error.txt").write_text(traceback.format_exc())
         finally:
+            beat.set()
             shutil.rmtree(work, ignore_errors=True)
 
         minutes = (time.time() - t0) / 60
@@ -168,6 +171,38 @@ class Run:
         if status == INTERRUPTED:
             raise ResourceLimit(note)
         return status
+
+    def live_rel(self) -> Path:
+        return Path("results") / self.path / self.run_id / "logs" / f"live_{self.account}.txt"
+
+    def _start_heartbeat(self, name: str, out: Path, t0: float, minutes: float | None = None) -> threading.Event:
+        """While a step runs, push its log so far every few minutes to logs/live_<session>.txt.
+        A session that dies without finishing a step (Colab disconnect, killed kernel) then still
+        shows how far it got and what the machine looked like. Returns the stop event."""
+        stop = threading.Event()
+        every = 60 * (minutes if minutes is not None else float(os.environ.get("UNCERTAINSCENE_HEARTBEAT_MIN", 10)))
+        if not self.pub or every <= 0:
+            return stop
+
+        def beat():
+            while not stop.wait(every):
+                try:
+                    tail = ""
+                    lf = out / "step_log.txt"
+                    if lf.exists():
+                        tail = "".join(lf.read_text(errors="replace").splitlines(True)[-300:])
+                    f = self.repo / self.live_rel()
+                    f.parent.mkdir(parents=True, exist_ok=True)
+                    f.write_text(f"session {self.account}, step {name}, running {(time.time() - t0) / 60:.0f} min "
+                                 f"(live log, pushed every {every / 60:.0f} min; the step's own results follow when "
+                                 f"it ends)\nmachine: {self.guard.read().line()}\n\n{tail}")
+                    self.pub.publish([self.live_rel()], f"results({self.path}): live log {self.run_id}/{name} "
+                                     f"({self.account})")
+                except Exception as e:  # noqa: BLE001 - a heartbeat must never stop the step
+                    log.warning("live log push failed: %s", e)
+
+        threading.Thread(target=beat, name="uncertainscene-heartbeat", daemon=True).start()
+        return stop
 
     def close(self) -> None:
         self.guard.stop()

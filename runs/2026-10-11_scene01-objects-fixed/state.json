@@ -27,21 +27,21 @@
       "account": "colab-7e0e",
       "attempts": 3,
       "commit": "e07caea",
-      "expires": 1791921352.7752993,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-13 18:55:15 UTC",
+      "note": "released by hand: session colab-7e0e ended without finishing (Colab stopped); rerun next session",
       "started": "2026-10-13 17:34:52 UTC",
-      "status": "running"
+      "status": "interrupted"
     },
     "2-position_3-clips_no-change_dark-before-a-b-c": {
       "account": "colab-5f93",
       "attempts": 1,
       "commit": "30aa7e2",
-      "expires": 1791924653.0039601,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-13 18:55:15 UTC",
+      "note": "released by hand: session colab-5f93 ended without finishing (Colab stopped); rerun next session",
       "started": "2026-10-13 17:01:23 UTC",
-      "status": "running"
+      "status": "interrupted"
     },
     "summary_session_colab-fa00": {
       "account": "colab-fa00",

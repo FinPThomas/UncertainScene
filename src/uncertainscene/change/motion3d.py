@@ -48,6 +48,7 @@ class MotionConfig:
     k_near: int = 10                # pose-nearest partner frames within a recording
     k_cross: int = 6                # pose-nearest frames of the other recording to match against
     ratio: float = 0.8
+    cross_ratio: float = 0.75       # stricter ratio test for before/after matches (no geometric check possible for moved things)
     min_obs: int = 3                # observations for a track to count
     min_angle_deg: float = 2.0
     max_px: float = 3.0             # reprojection gate
@@ -369,7 +370,7 @@ def measure(rec, objs: list, scale_m_per_unit: float, cfg: MotionConfig = Motion
             dd = (2 - 2 * Da @ Db.T).clamp_min(0).sqrt()
             top = dd.topk(2, dim=1, largest=False)
             nn = top.indices[:, 0]
-            ok = (top.values[:, 0] < cfg.ratio * top.values[:, 1]) & (dd.argmin(0)[nn] == torch.arange(len(nn), device=device))
+            ok = (top.values[:, 0] < cfg.cross_ratio * top.values[:, 1]) & (dd.argmin(0)[nn] == torch.arange(len(nn), device=device))
             ia = torch.nonzero(ok)[:, 0].cpu().numpy()
             ib = nn[ok].cpu().numpy()
             inl = _static_matches(kps[int(a)][ia], kps[b][ib], cfg.f_px)
