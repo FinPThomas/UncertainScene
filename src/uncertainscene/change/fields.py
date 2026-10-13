@@ -180,6 +180,7 @@ def field_stats(f: dict) -> dict:
     cues = f["floor"].get("scale_cues", {})
     extra = {"scale_phone_height": round(cues["phone_height"]["scale"], 4) if "phone_height" in cues else None,
              "scale_objects": round(cues["objects"]["scale"], 4) if "objects" in cues else None,
+             "scale_metric_depth": round(cues["metric_depth"]["scale"], 4) if "metric_depth" in cues else None,
              "scale_objects_n": cues["objects"]["n"] if "objects" in cues else 0,
              "scale_disagreement_sigma": cues.get("combined", {}).get("disagreement_sigma"),
              "gravity_change_deg": f["floor"].get("gravity_change_deg")}

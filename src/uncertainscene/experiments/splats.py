@@ -102,6 +102,9 @@ def analyse_splat(spec: SplatSpec, out: Path, cache: Path, check=None, store=Non
 
     X0, _ = S.init_points(rec, np.nonzero(rec.video == 0)[0], 60000)
     floor = fit_floor(X0, rec.E, RobotModel())
+    from ..change.floor import add_metric_cue
+
+    floor = add_metric_cue(floor, rec)
     cm = floor.scale_m_per_unit * 100
 
     # ---- held-out views: quality and same-view comparison (both directions) ----

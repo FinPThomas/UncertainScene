@@ -7,12 +7,14 @@ normal, so the dominant surface normal within 35 degrees of the guess is taken a
 Floor: the lowest substantial layer of horizontal surface points along "up" (a height
 histogram), not the plane with the most points (which is often a sofa seat or a table).
 
-Scale, from two independent cues combined in log space by inverse variance:
+Scale, from independent cues combined in log space by inverse variance:
 1. phone height: the median camera height above the floor is assumed to be 1.35 m
    (sd ~ 12% for a hand-held sweep that includes close passes);
 2. known object sizes: objects SAM 2 + CLIP labelled with a confident common class (mug,
    guitar, coaster, ...) have a typical size; each gives a scale estimate (object prior size
    / reconstructed size). Their weighted median and spread form the second cue.
+3. a metric depth model (change.metric): its metres-per-unit ratio to VGGT's depth over many
+   frames; works without a visible floor.
 Each estimate is reported, so a wrong floor (e.g. the seat taken as floor) shows up as a
 disagreement between the two cues.
 """
@@ -140,23 +142,49 @@ def object_scale(objects: list[dict], min_prob: float = 0.35) -> dict | None:
             "per_object": [round(float(np.exp(e)), 4) for e in est]}
 
 
-def combine_scale(floor: Floor, obj: dict | None) -> Floor:
-    """Inverse-variance combination (log space) of the phone-height and object-size cues."""
-    ph = floor.scale_cues["phone_height"]
-    if not obj:
+def combine_scale(floor: Floor, obj: dict | None = None, metric: dict | None = None) -> Floor:
+    """Inverse-variance combination (log space) of every scale cue present: phone height,
+    metric depth model and object sizes. Cues already attached to `floor` are kept, so cues can
+    be added one at a time. When cues contradict (more than 2 sigma apart) the range widens to
+    cover them rather than trusting either."""
+    if obj:
+        floor.scale_cues["objects"] = obj
+    if metric:
+        floor.scale_cues["metric_depth"] = metric
+    cues = {k: v for k, v in floor.scale_cues.items() if k in ("phone_height", "metric_depth", "objects")}
+    if len(cues) < 2:
         return floor
-    floor.scale_cues["objects"] = obj
-    l1, v1 = np.log(ph["scale"]), ph["sd_log"] ** 2
-    l2, v2 = np.log(obj["scale"]), obj["sd_log"] ** 2
-    lc = (l1 / v1 + l2 / v2) / (1 / v1 + 1 / v2)
-    sd = np.sqrt(1 / (1 / v1 + 1 / v2))
-    disagree = abs(l1 - l2) / np.sqrt(v1 + v2)
-    if disagree > 2:          # the cues contradict: widen rather than trust either
-        sd = max(sd, abs(l1 - l2) / 2)
+    L = np.array([np.log(v["scale"]) for v in cues.values()])
+    V = np.array([v["sd_log"] ** 2 for v in cues.values()])
+    lc = float(np.sum(L / V) / np.sum(1 / V))
+    sd = float(np.sqrt(1 / np.sum(1 / V)))
+    disagree = max(abs(L[i] - L[j]) / np.sqrt(V[i] + V[j]) for i in range(len(L)) for j in range(i + 1, len(L)))
+    if disagree > 2:
+        sd = max(sd, float(np.max(np.abs(L - lc))))
     floor.scale_m_per_unit = float(np.exp(lc))
     floor.scale_range = [float(np.exp(lc - 1.645 * sd)), float(np.exp(lc + 1.645 * sd))]
-    floor.scale_cues["combined"] = {"scale": floor.scale_m_per_unit, "sd_log": float(sd),
-                                    "disagreement_sigma": round(float(disagree), 2)}
-    log.info("scale: phone height %.3f, objects %.3f (%d: %s), combined %.3f m/unit (cues %.1f sigma apart)",
-             ph["scale"], obj["scale"], obj["n"], ", ".join(obj["labels"][:6]), floor.scale_m_per_unit, disagree)
+    floor.scale_cues["combined"] = {"scale": floor.scale_m_per_unit, "sd_log": sd,
+                                    "disagreement_sigma": round(float(disagree), 2), "cues": list(cues)}
+    log.info("scale: %s -> combined %.3f m/unit (90%% %.3f-%.3f; cues up to %.1f sigma apart)",
+             ", ".join(f"{k} {v['scale']:.3f}" for k, v in cues.items()), floor.scale_m_per_unit,
+             *floor.scale_range, disagree)
+    return floor
+
+
+def add_metric_cue(floor: Floor, rec, stage=None) -> Floor:
+    """Add the metric-depth-model cue (change.metric) to `floor`; any failure (model not
+    downloadable, no usable frames) leaves the other cues as they are."""
+    try:
+        from .metric import metric_scale
+
+        m = metric_scale(rec)
+    except Exception:  # noqa: BLE001 - a missing cue must not lose the step
+        log.exception("metric depth scale failed; keeping the other scale cues")
+        return floor
+    if m is None:
+        return floor
+    floor = combine_scale(floor, metric=m)
+    if stage is not None:
+        stage(f"metric scale (depth model {m['scale']:.3f} m/unit from {m['n']} frames; combined "
+              f"{floor.scale_m_per_unit:.3f}, 90% {floor.scale_range[0]:.3f}-{floor.scale_range[1]:.3f})")
     return floor

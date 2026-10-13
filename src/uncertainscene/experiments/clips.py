@@ -108,7 +108,7 @@ def analyse_clips(spec, out: Path, cache: Path, check=None) -> str:
     from ..change import inventory as inv
     from ..change import position as pos
     from ..change.fields import RobotModel, fit_floor
-    from ..change.floor import combine_scale, object_scale
+    from ..change.floor import add_metric_cue, combine_scale, object_scale
     from ..change.segment import build_objects, effective_voxel, merge_voxel
     from ..viz import position_plots, scene3d
     from .catalog import rec_name
@@ -123,6 +123,7 @@ def analyse_clips(spec, out: Path, cache: Path, check=None) -> str:
     X, C, V = scene_points(rec)
     floor = fit_floor(X, rec.E, RobotModel())
     stage(f"floor ({floor.floor_points} floor points)")
+    floor = add_metric_cue(floor, rec, stage)
     masks = _masks(rec, spec, cache)
     voxel = effective_voxel(rec, masks, 0.012 / floor.scale_m_per_unit)
     struct = 1.2 / floor.scale_m_per_unit
