@@ -76,6 +76,8 @@ def clip_inventory(crops: list, vocab: list[str] = VOCAB_ALL, model_name: str = 
     import torch
     from transformers import CLIPModel, CLIPProcessor
 
+    if not crops:
+        return [], np.zeros((0, 768), np.float32)
     if model_name not in _CACHE:
         _CACHE[model_name] = (CLIPModel.from_pretrained(model_name).to(_device()).eval(),
                               CLIPProcessor.from_pretrained(model_name))

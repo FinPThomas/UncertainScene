@@ -232,3 +232,14 @@ def test_step_log_and_size_guard(tmp_path):
     finally:
         poc.analyse = orig
     assert "inside" in (tmp_path / "step_log.txt").read_text()
+
+
+def test_small_pose_uncertainty_does_not_change_what_is_observed():
+    """Pose weights scale votes; they must not turn 2 views into 'not observed' (review finding:
+    weights just under 1 made min_obs=2 behave like 3)."""
+    rec = make_recon((-0.5, 0.8, 0.0), (0.0, 0.8, 0.0))
+    base = detect(rec, colour_feats(rec), CFG)
+    rec.pose_px = np.full(len(rec.E), 0.1, np.float32)
+    w = detect(rec, colour_feats(rec), CFG)
+    for a, b in ((base.A, w.A), (base.B, w.B)):
+        assert np.mean(a.cls == b.cls) > 0.995

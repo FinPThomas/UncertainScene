@@ -19,11 +19,16 @@ def write(path, spec_name: str, a: str, b: str, m: dict, objs: list, f: dict | N
          f"| Observed in both recordings | {m.get('A_observed_frac', 0):.0%} of A, {m.get('B_observed_frac', 0):.0%} of B |"]
     if fl:
         cues = fl.get("scale_cues", {})
-        how = f"phone height {f['robot']['phone_height_m']} m"
+        parts = []
+        if "metric_depth" in cues:
+            parts.append(f"a metric depth model ({cues['metric_depth']['scale']:.3f} from {cues['metric_depth']['n']} "
+                         "frames)")
         if "objects" in cues:
             o = cues["objects"]
-            how += (f" ({cues['phone_height']['scale']:.3f}) combined with the sizes of {o['n']} recognised objects "
-                    f"({o['scale']:.3f}; {', '.join(sorted(set(o['labels']))[:6])})")
+            parts.append(f"the typical sizes of {o['n']} recognised objects ({o['scale']:.3f}; "
+                         f"{', '.join(sorted(set(o['labels']))[:6])})")
+        how = ("the most likely value given " + " and ".join(parts) if parts else
+               f"an assumed phone height of {f['robot']['phone_height_m']} m (placeholder: no metric depth or object cue)")
         L.append(f"| Metric scale | {fl['scale_m_per_unit']:.3f} m per unit (90% range {fl['scale_range'][0]:.3f}-"
                  f"{fl['scale_range'][1]:.3f}), from {how}; floor from {fl.get('floor_points', '?')} horizontal "
                  f"points |")

@@ -27,6 +27,7 @@ import numpy as np
 from .geometry import cam_centers, up_vector
 
 log = logging.getLogger(__name__)
+_trapz = getattr(np, "trapezoid", None) or np.trapz     # numpy < 2 only has trapz
 
 @dataclass
 class Floor:
@@ -151,7 +152,7 @@ def _posterior(gauss: list, objs: list, outlier: float, half_width: float = 3.0,
         mix += (o["other"] / tot) / span                        # labels with no size: flat
         logp += np.log((1 - outlier) * mix + outlier / span)
     p = np.exp(logp - logp.max())
-    return grid, p / np.trapezoid(p, grid)
+    return grid, p / _trapz(p, grid)
 
 
 def _summary(grid, p) -> dict:
@@ -166,7 +167,8 @@ def _summary(grid, p) -> dict:
 def size_votes(objs) -> list[dict]:
     """object_scale input from SceneObjects (labels, top-3 CLIP labels, sorted extents)."""
     return [{"label": o.label, "label_prob": o.label_prob, "label_top3": getattr(o, "label_top3", None),
-             "extent": [float(x) for x in o.extent], "complete": o.complete} for o in objs if o.extent is not None]
+             "extent": [float(x) for x in o.extent], "complete": o.complete}
+            for o in objs if o.extent is not None and not o.structure]   # wall-sized fragments: no vote
 
 
 def object_scale(objects: list[dict], trim: float = 0.9, recon_sd: float = 0.10, outlier: float = 0.1) -> dict | None:
@@ -229,12 +231,12 @@ def add_metric_cue(floor: Floor, rec, stage=None) -> Floor:
         from .metric import metric_scale
 
         m = metric_scale(rec)
+        if m is None:
+            return floor
+        floor = combine_scale(floor, metric=m)
     except Exception:  # noqa: BLE001 - a missing cue must not lose the step
         log.exception("metric depth scale failed; keeping the other scale cues")
         return floor
-    if m is None:
-        return floor
-    floor = combine_scale(floor, metric=m)
     if stage is not None:
         stage(f"metric scale (depth model {m['scale']:.3f} m/unit from {m['n']} frames; combined "
               f"{floor.scale_m_per_unit:.3f}, 90% {floor.scale_range[0]:.3f}-{floor.scale_range[1]:.3f})")

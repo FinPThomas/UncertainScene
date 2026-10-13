@@ -64,12 +64,12 @@ class Spec:
         n = self.frames_est
         minutes = 4 + n / 40 * 0.8 + 2 * self.n_key * 4 / 60 + n / 60 + 4
         if self.sam_track:
-            minutes += 2 * 12                  # SAM 2 video tracking, ~12 min per recording on a T4
+            minutes += 2 * 30                  # SAM 2 video tracking (run 5: 65 min for both recordings on a T4)
         if self.refine_poses and self.outputs != "light":
             minutes += n / 75                  # SIFT + matching + bundle adjustment (cached per reconstruction)
         if self.motion or (self.motion is None and self.outputs == "full"):
             minutes += n / 120                 # feature motion on every 2nd frame
-        return {"disk_gb": 8, "ram_gb": 3.0 + 0.003 * n, "minutes": round(minutes)}
+        return {"disk_gb": 8, "ram_gb": 3.0 + 0.003 * n + (1.0 if self.sam_track else 0.0), "minutes": round(minutes)}
 
 
 @dataclass
@@ -94,7 +94,7 @@ class ClipsSpec:
         n = len(self.clips) * (self.n_per_video or 370)
         minutes = 4 + n / 40 * 0.8 + len(self.clips) * self.n_key * 4 / 60 + 6 + n / 75   # + pose refinement
         if self.sam_track:
-            minutes += len(self.clips) * 12    # SAM 2 video tracking
+            minutes += len(self.clips) * 30    # SAM 2 video tracking
         return {"disk_gb": 8, "ram_gb": 2.5 + 0.003 * n, "minutes": round(minutes)}   # 0.006/frame never fit beside the main steps
 
 
@@ -241,7 +241,7 @@ def _feats(rec, spec: Spec, cache: Path):
 
 def _masks(rec, spec: Spec, cache: Path) -> dict:
     """SAM 2 masks on key frames of both recordings, cached (packed bits)."""
-    from ..change.segment import key_frames, sam_masks, sam_tracks
+    from ..change.segment import key_frames, release_sam, sam_masks, sam_tracks
 
     f = cache / f"sam2{'t' if spec.sam_track else ''}_{_key(spec)}_k{spec.n_key}_p{spec.sam_points}.npz"
     H, W = rec.depth.shape[1:]
@@ -280,9 +280,13 @@ def _masks(rec, spec: Spec, cache: Path) -> dict:
     if out is None:
         frames = [k for v in np.unique(rec.video) for k in key_frames(rec, int(v), spec.n_key)]
         out = sam_masks(rec.files, frames, (H, W), points_per_side=spec.sam_points)
+    release_sam()
     log.info("SAM 2 (%s): %d masks on %d frames, %d objects tracked, in %.0f s", how, sum(len(v) for v in out.values()),
              len(out), len({m["track"] for v in out.values() for m in v if m.get("track") is not None}), time.time() - t0)
-    # cache (a failure here must never lose masks that took an hour to track)
+    # cache (a failure here must never lose masks that took an hour to track). Per-frame masks
+    # made because tracking failed are not cached under the tracked name: a retry tracks again
+    if spec.sam_track and how != "tracked through each recording":
+        return out
     try:
         f.parent.mkdir(parents=True, exist_ok=True)
         meta, bits = [], []

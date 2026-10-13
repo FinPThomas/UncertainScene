@@ -142,6 +142,21 @@ def sam_masks(files: list[str], frames: list[int], size_hw: tuple[int, int], mod
 
 
 # ---- SAM 2 video tracking (GPU) -----------------------------------------------------------
+def release_sam() -> None:
+    """Free SAM 2 (mask generator and video predictor) from the GPU once masks are made."""
+    if _SAM:
+        import gc
+
+        _SAM.clear()
+        gc.collect()
+        try:
+            import torch
+
+            torch.cuda.empty_cache()
+        except Exception:  # noqa: BLE001
+            pass
+
+
 def load_video_predictor(model_id: str = "facebook/sam2.1-hiera-small"):
     from sam2.sam2_video_predictor import SAM2VideoPredictor
 
@@ -223,12 +238,16 @@ def sam_tracks(files: list[str], frames: list[int], size_hw: tuple[int, int], mo
             with torch.inference_mode():
                 ms = gen(img)
             ms = sorted([m for m in ms if min_area <= m["area"] / (fh * fw) <= max_area], key=lambda m: -m["area"])
-            have = [np.unpackbits(t, count=fh * fw).reshape(fh, fw).astype(bool) for t in tracked[d].values()]
+            # what is new is decided at quarter resolution (16x fewer pixels per comparison;
+            # ~150 candidates x ~150 tracks per discovery frame was minutes at full resolution)
+            have = [np.unpackbits(t, count=fh * fw).reshape(fh, fw)[::4, ::4].astype(bool)
+                    for t in tracked[d].values()]
             new = []
             for m in ms:
                 seg = np.asarray(m["segmentation"], bool)
-                if _is_new(seg, have):
-                    have.append(seg)
+                small = seg[::4, ::4]
+                if _is_new(small, have):
+                    have.append(small)
                     new.append((len(seeds) + len(new), d, seg, float(m["predicted_iou"]) * float(m["stability_score"])))
             for b0 in range(0, len(new), batch):
                 chunk = new[b0:b0 + batch]

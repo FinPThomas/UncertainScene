@@ -115,6 +115,8 @@ def _test(rec: Recon, X: np.ndarray, src_frame: np.ndarray, src_feat: np.ndarray
     w_src = pw[src_frame]
     n_same = np.zeros(n, np.float64)
     n_gone = np.zeros(n, np.float64)
+    raw_same = np.zeros(n, np.int32)        # plain view counts: the min_obs gates count views
+    raw_gone = np.zeros(n, np.int32)
     app_sum = np.zeros(n, np.float32)
     app_cnt = np.zeros(n, np.int32)
     disp_sum = np.zeros(n, np.float64)
@@ -147,6 +149,8 @@ def _test(rec: Recon, X: np.ndarray, src_frame: np.ndarray, src_feat: np.ndarray
         gone = r > tau
         n_same[idx[same]] += w_src[idx[same]] * pw[t]
         n_gone[idx[gone]] += w_src[idx[gone]] * pw[t]
+        raw_same[idx[same]] += 1
+        raw_gone[idx[gone]] += 1
         if feats is not None and src_feat is not None:
             j = idx[same]
             ft = _sample_feat(feats, t, vi[j], ui[j], H, W)
@@ -154,7 +158,8 @@ def _test(rec: Recon, X: np.ndarray, src_frame: np.ndarray, src_feat: np.ndarray
             app_cnt[j] += 1
     app = np.where(app_cnt > 0, app_sum / np.maximum(app_cnt, 1), np.nan)
     r_all = np.concatenate(rs) if rs else np.zeros(0)
-    extra = {"disp": np.where(disp_cnt > 0, disp_sum / np.maximum(disp_cnt, 1), np.nan),
+    extra = {"raw_same": raw_same, "raw_gone": raw_gone,
+             "disp": np.where(disp_cnt > 0, disp_sum / np.maximum(disp_cnt, 1), np.nan),
              "r_std": np.where(rc >= 2, np.sqrt(np.maximum(r2 / np.maximum(rc, 1) - (r1 / np.maximum(rc, 1)) ** 2, 0)), np.nan)}
     if return_extra:
         return n_same, n_gone, app, r_all, extra
@@ -195,9 +200,9 @@ def detect(rec: Recon, feats: np.ndarray | None = None, cfg: DetectConfig | None
     for vid, ps in enumerate(sets):
         same_vid = np.nonzero(rec.video == vid)[0]
         sub = rng.choice(len(ps.X), min(cfg.max_null_points, len(ps.X)), replace=False)
-        ns, ng, app, _ = _test(rec, ps.X[sub], ps.frame[sub], None if ps.feat is None else ps.feat[sub],
-                               same_vid, feats, cfg, tau, conf_thr)
-        obs = ns + ng >= cfg.min_obs
+        ns, ng, app, _, exn = _test(rec, ps.X[sub], ps.frame[sub], None if ps.feat is None else ps.feat[sub],
+                                    same_vid, feats, cfg, tau, conf_thr, return_extra=True)
+        obs = (exn["raw_same"] + exn["raw_gone"] >= cfg.min_obs) & (ns + ng > 0)
         null_gone.append(ng[obs] / (ns[obs] + ng[obs]))
         null_app.append(app[obs & ~np.isnan(app)])
     g0, a0 = np.concatenate(null_gone), np.concatenate(null_app)
@@ -218,12 +223,12 @@ def detect(rec: Recon, feats: np.ndarray | None = None, cfg: DetectConfig | None
         ps.unc = (ex_own["r_std"] * depth_src).astype(np.float32)
         cross_r.append(r[rng.choice(len(r), min(len(r), 200000), replace=False)] if len(r) else r)
         ps.n_same, ps.n_gone, ps.app = ns, ng, app
-        nobs = ns + ng
+        nobs = ns + ng                                   # pose-weighted: decides the gone share
         cls = np.full(len(ps.X), UNKNOWN, np.int8)
-        observed = nobs >= cfg.min_obs
+        observed = (ex["raw_same"] + ex["raw_gone"] >= cfg.min_obs) & (nobs > 0)   # views decide "observed"
         cls[observed] = UNCHANGED
-        frac = np.where(nobs > 0, ng / np.maximum(nobs, 1), 0)
-        cls[observed & (frac > gone_thr) & (ng >= cfg.min_obs)] = GONE
+        frac = np.where(nobs > 0, ng / np.maximum(nobs, 1e-12), 0)
+        cls[observed & (frac > gone_thr) & (ex["raw_gone"] >= cfg.min_obs)] = GONE
         if feats is not None:
             cls[(cls == UNCHANGED) & (np.nan_to_num(app, nan=0) > app_thr)] = APPEARANCE
         if not cfg.use_visibility:     # ablation: naive cloud difference, no unknown class
@@ -236,6 +241,6 @@ def detect(rec: Recon, feats: np.ndarray | None = None, cfg: DetectConfig | None
     sub0 = rng.choice(len(r0), min(len(r0), 200000), replace=False) if len(r0) else []
     null = {"r_within": np.concatenate(null_r)[sub0] if len(r0) else r0, "r_cross": np.concatenate(cross_r),
             "gone_within": g0, "app_within": a0,
-            "gone_cross": np.concatenate([s.n_gone / np.maximum(s.n_same + s.n_gone, 1) for s in sets]),
+            "gone_cross": np.concatenate([s.n_gone / np.maximum(s.n_same + s.n_gone, 1e-12) for s in sets]),
             "app_cross": np.concatenate([s.app[~np.isnan(s.app)] for s in sets])}
     return ChangeResult(sets[0], sets[1], thresholds, null)
