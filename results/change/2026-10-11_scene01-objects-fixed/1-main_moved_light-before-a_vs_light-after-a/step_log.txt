@@ -813,3 +813,158 @@ Traceback (most recent call last):
 UnboundLocalError: cannot access local variable 'frames' where it is not associated with a value
 2026-10-12 17:45:30,283 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] heat maps (120000 points, scale 3.609 m/unit) done in 3937 s | RAM 8.4/12.7 GB, disk free 59.0 GB, GPU 5.4/15.0 GB
 2026-10-12 17:46:25,839 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] figures, viewer and reports done in 56 s | RAM 7.8/12.7 GB, disk free 57.9 GB, GPU 5.8/15.0 GB
+2026-10-13 15:00:42,951 INFO uncertainscene.scene01: step 1-main_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant base
+2026-10-13 15:01:03,711 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-10-13 15:01:03,815 INFO dinov2: using MLP layer as FFN
+2026-10-13 15:04:07,275 INFO uncertainscene.recon.vggt: loaded facebook/VGGT-1B on cuda in 194 s
+2026-10-13 15:04:49,811 INFO uncertainscene.recon.chunked: chunk 2/19: 47 frames, scale 1.006, anchor residual 0.002 (relative to depth)
+2026-10-13 15:05:11,280 INFO uncertainscene.recon.chunked: chunk 3/19: 47 frames, scale 1.017, anchor residual 0.003 (relative to depth)
+2026-10-13 15:05:33,891 INFO uncertainscene.recon.chunked: chunk 4/19: 47 frames, scale 1.012, anchor residual 0.004 (relative to depth)
+2026-10-13 15:05:56,899 INFO uncertainscene.recon.chunked: chunk 5/19: 47 frames, scale 1.025, anchor residual 0.004 (relative to depth)
+2026-10-13 15:06:18,386 INFO uncertainscene.recon.chunked: chunk 6/19: 46 frames, scale 1.024, anchor residual 0.005 (relative to depth)
+2026-10-13 15:06:39,759 INFO uncertainscene.recon.chunked: chunk 7/19: 46 frames, scale 1.032, anchor residual 0.005 (relative to depth)
+2026-10-13 15:07:01,422 INFO uncertainscene.recon.chunked: chunk 8/19: 46 frames, scale 1.034, anchor residual 0.005 (relative to depth)
+2026-10-13 15:07:23,204 INFO uncertainscene.recon.chunked: chunk 9/19: 46 frames, scale 1.028, anchor residual 0.005 (relative to depth)
+2026-10-13 15:07:44,833 INFO uncertainscene.recon.chunked: chunk 10/19: 46 frames, scale 1.027, anchor residual 0.006 (relative to depth)
+2026-10-13 15:08:06,322 INFO uncertainscene.recon.chunked: chunk 11/19: 46 frames, scale 1.038, anchor residual 0.006 (relative to depth)
+2026-10-13 15:08:27,875 INFO uncertainscene.recon.chunked: chunk 12/19: 46 frames, scale 1.029, anchor residual 0.005 (relative to depth)
+2026-10-13 15:08:49,489 INFO uncertainscene.recon.chunked: chunk 13/19: 46 frames, scale 1.015, anchor residual 0.005 (relative to depth)
+2026-10-13 15:09:11,160 INFO uncertainscene.recon.chunked: chunk 14/19: 46 frames, scale 1.015, anchor residual 0.005 (relative to depth)
+2026-10-13 15:09:32,770 INFO uncertainscene.recon.chunked: chunk 15/19: 46 frames, scale 1.011, anchor residual 0.005 (relative to depth)
+2026-10-13 15:09:54,390 INFO uncertainscene.recon.chunked: chunk 16/19: 46 frames, scale 1.006, anchor residual 0.005 (relative to depth)
+2026-10-13 15:10:16,044 INFO uncertainscene.recon.chunked: chunk 17/19: 46 frames, scale 1.009, anchor residual 0.005 (relative to depth)
+2026-10-13 15:10:37,682 INFO uncertainscene.recon.chunked: chunk 18/19: 46 frames, scale 1.011, anchor residual 0.003 (relative to depth)
+2026-10-13 15:10:59,250 INFO uncertainscene.recon.chunked: chunk 19/19: 46 frames, scale 1.005, anchor residual 0.003 (relative to depth)
+2026-10-13 15:10:59,971 INFO uncertainscene.recon.vggt: reconstructed 735 frames (364 + 371) in 19 chunks in 607 s; worst chunk residual 0.006
+2026-10-13 15:11:35,070 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] reconstruction (735 frames, 19 chunks, worst anchor residual 0.0061) done in 652 s | RAM 4.5/12.7 GB, disk free 59.7 GB, GPU 4.5/15.0 GB
+2026-10-13 15:14:45,528 INFO uncertainscene.recon.poses: poses: 5015 of 5259 frame pairs matched
+2026-10-13 15:14:47,579 INFO uncertainscene.recon.poses: poses: 103 of 314 frame pairs matched
+2026-10-13 15:14:47,584 INFO uncertainscene.recon.poses: poses: 11 sparse frames: 314 extra pairs tried, 103 matched
+2026-10-13 15:14:48,242 INFO uncertainscene.recon.poses: poses: 1871 features/frame, 178062 tracks, 965093 observations (193 s)
+2026-10-13 15:14:49,928 INFO uncertainscene.recon.poses: poses: VGGT poses reproject at 8.26 px median (106952 points)
+2026-10-13 15:15:00,464 INFO uncertainscene.recon.poses: poses: round 1: 5.32 px median, 106952 points (205 s)
+2026-10-13 15:15:09,295 INFO uncertainscene.recon.poses: poses: round 2: 1.75 px median, 76154 points (214 s)
+2026-10-13 15:15:22,356 INFO uncertainscene.recon.poses: poses: 159 frames with < 30 points: 117 resected, 42 interpolated from neighbours
+2026-10-13 15:15:28,106 INFO uncertainscene.recon.poses: poses: final 0.66 px median, 1.98 px p90 (VGGT 8.26 px); per-frame median worst 2.33 px; cameras turned 1.15 deg median; 159 weak frames (117 resected, 42 interpolated)
+2026-10-13 15:15:34,206 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] camera poses refined: 8.3 px -> 0.66 px reprojection error (p90 1.98 px, 117 sparse frames resected, 42 interpolated), cameras turned 1.15 deg (median) done in 239 s | RAM 6.2/12.7 GB, disk free 59.7 GB, GPU 5.6/15.0 GB
+2026-10-13 15:15:41,602 INFO numexpr.utils: NumExpr defaulting to 2 threads.
+2026-10-13 15:16:13,810 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] DINOv2 features done in 40 s | RAM 6.3/12.7 GB, disk free 59.2 GB, GPU 5.6/15.0 GB
+2026-10-13 15:32:17,644 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] point-level change detection (1200000 points, tau 0.236) done in 964 s | RAM 6.9/12.7 GB, disk free 59.2 GB, GPU 5.6/15.0 GB
+2026-10-13 15:32:18,460 INFO uncertainscene.change.floor: floor: gravity refined by 3.4 deg, 34 floor points (3% of horizontal), camera 0.374 units above floor -> 3.609 m/unit
+2026-10-13 15:32:18,738 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] floor (34 floor points, gravity refined 3.4 deg) done in 1 s | RAM 6.9/12.7 GB, disk free 59.2 GB, GPU 5.6/15.0 GB
+2026-10-13 15:35:14,712 INFO uncertainscene.change.metric: scale: metric depth 2.491 m/unit from 80 frames (frames spread 10.1%, +-10% 1 sigma)
+2026-10-13 15:35:14,717 INFO uncertainscene.change.floor: scale: most likely 2.491 m/unit (90% 2.109-2.937) from metric_depth 2.491; phone height (not used) 3.609
+2026-10-13 15:35:15,012 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] metric scale (depth model 2.491 m/unit from 80 frames; combined 2.491, 90% 2.109-2.937) done in 176 s | RAM 6.9/12.7 GB, disk free 57.9 GB, GPU 5.8/15.0 GB
+2026-10-13 15:35:21,379 INFO root: Loaded checkpoint sucessfully
+2026-10-13 15:35:22,712 INFO root: Loaded checkpoint sucessfully
+2026-10-13 15:35:22,827 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 15:35:22,961 INFO root: Computing image embeddings for the provided image...
+2026-10-13 15:35:23,151 INFO root: Image embeddings computed.
+2026-10-13 15:44:56,760 INFO uncertainscene.change.segment: SAM 2 tracking: frame 1/88: 20 new objects (20 tracked so far)
+2026-10-13 15:44:56,773 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 15:44:56,821 INFO root: Computing image embeddings for the provided image...
+2026-10-13 15:44:56,835 INFO root: Image embeddings computed.
+2026-10-13 15:47:56,322 INFO uncertainscene.change.segment: SAM 2 tracking: frame 9/88: 6 new objects (26 tracked so far)
+2026-10-13 15:47:56,330 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 15:47:56,362 INFO root: Computing image embeddings for the provided image...
+2026-10-13 15:47:56,378 INFO root: Image embeddings computed.
+2026-10-13 15:50:55,218 INFO uncertainscene.change.segment: SAM 2 tracking: frame 17/88: 6 new objects (32 tracked so far)
+2026-10-13 15:50:55,226 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 15:50:55,263 INFO root: Computing image embeddings for the provided image...
+2026-10-13 15:50:55,277 INFO root: Image embeddings computed.
+2026-10-13 15:53:27,740 INFO uncertainscene.change.segment: SAM 2 tracking: frame 25/88: 5 new objects (37 tracked so far)
+2026-10-13 15:53:27,750 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 15:53:27,784 INFO root: Computing image embeddings for the provided image...
+2026-10-13 15:53:27,797 INFO root: Image embeddings computed.
+2026-10-13 16:01:06,364 INFO uncertainscene.change.segment: SAM 2 tracking: frame 33/88: 16 new objects (53 tracked so far)
+2026-10-13 16:01:06,374 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:01:06,416 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:01:06,433 INFO root: Image embeddings computed.
+2026-10-13 16:02:46,341 INFO uncertainscene.change.segment: SAM 2 tracking: frame 41/88: 3 new objects (56 tracked so far)
+2026-10-13 16:02:46,352 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:02:46,391 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:02:46,405 INFO root: Image embeddings computed.
+2026-10-13 16:04:52,862 INFO uncertainscene.change.segment: SAM 2 tracking: frame 49/88: 4 new objects (60 tracked so far)
+2026-10-13 16:04:52,872 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:04:52,910 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:04:52,924 INFO root: Image embeddings computed.
+2026-10-13 16:09:37,051 INFO uncertainscene.change.segment: SAM 2 tracking: frame 57/88: 10 new objects (70 tracked so far)
+2026-10-13 16:09:37,060 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:09:37,103 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:09:37,117 INFO root: Image embeddings computed.
+2026-10-13 16:11:16,765 INFO uncertainscene.change.segment: SAM 2 tracking: frame 65/88: 3 new objects (73 tracked so far)
+2026-10-13 16:11:16,773 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:11:16,815 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:11:16,829 INFO root: Image embeddings computed.
+2026-10-13 16:12:30,449 INFO uncertainscene.change.segment: SAM 2 tracking: frame 73/88: 2 new objects (75 tracked so far)
+2026-10-13 16:12:30,459 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:12:30,499 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:12:30,514 INFO root: Image embeddings computed.
+2026-10-13 16:15:28,199 INFO uncertainscene.change.segment: SAM 2 tracking: frame 81/88: 6 new objects (81 tracked so far)
+2026-10-13 16:15:28,344 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:15:28,368 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:15:28,383 INFO root: Image embeddings computed.
+2026-10-13 16:25:54,252 INFO uncertainscene.change.segment: SAM 2 tracking: frame 1/88: 22 new objects (22 tracked so far)
+2026-10-13 16:25:54,263 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:25:54,303 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:25:54,319 INFO root: Image embeddings computed.
+2026-10-13 16:29:19,598 INFO uncertainscene.change.segment: SAM 2 tracking: frame 9/88: 7 new objects (29 tracked so far)
+2026-10-13 16:29:19,608 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:29:19,648 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:29:19,665 INFO root: Image embeddings computed.
+2026-10-13 16:34:55,304 INFO uncertainscene.change.segment: SAM 2 tracking: frame 17/88: 12 new objects (41 tracked so far)
+2026-10-13 16:34:55,312 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:34:55,352 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:34:55,370 INFO root: Image embeddings computed.
+2026-10-13 16:38:19,603 INFO uncertainscene.change.segment: SAM 2 tracking: frame 25/88: 7 new objects (48 tracked so far)
+2026-10-13 16:38:19,612 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:38:19,654 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:38:19,675 INFO root: Image embeddings computed.
+2026-10-13 16:39:06,934 INFO uncertainscene.change.segment: SAM 2 tracking: frame 33/88: 1 new objects (49 tracked so far)
+2026-10-13 16:39:06,944 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:39:06,986 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:39:07,004 INFO root: Image embeddings computed.
+2026-10-13 16:39:54,003 INFO uncertainscene.change.segment: SAM 2 tracking: frame 41/88: 1 new objects (50 tracked so far)
+2026-10-13 16:39:54,013 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:39:54,057 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:39:54,078 INFO root: Image embeddings computed.
+2026-10-13 16:41:33,517 INFO uncertainscene.change.segment: SAM 2 tracking: frame 49/88: 3 new objects (53 tracked so far)
+2026-10-13 16:41:33,524 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:41:33,564 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:41:33,579 INFO root: Image embeddings computed.
+2026-10-13 16:42:20,949 INFO uncertainscene.change.segment: SAM 2 tracking: frame 57/88: 1 new objects (54 tracked so far)
+2026-10-13 16:42:20,961 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:42:21,006 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:42:21,022 INFO root: Image embeddings computed.
+2026-10-13 16:42:26,515 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:42:26,545 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:42:26,561 INFO root: Image embeddings computed.
+2026-10-13 16:42:31,943 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-13 16:42:31,971 INFO root: Computing image embeddings for the provided image...
+2026-10-13 16:42:31,988 INFO root: Image embeddings computed.
+2026-10-13 16:44:38,525 INFO uncertainscene.change.segment: SAM 2 tracking: frame 81/88: 4 new objects (58 tracked so far)
+2026-10-13 16:44:39,007 INFO uncertainscene.scene01: SAM 2 (tracked through each recording): 2088 masks on 88 frames, 139 objects tracked, in 4164 s
+2026-10-13 16:45:09,517 INFO uncertainscene.change.segment: recording A: 1192 masks on 44 frames -> 997 fragments -> 56 objects (27 structures), median 14.0 views per object, merge grid 0.0296 units
+2026-10-13 16:45:30,714 INFO uncertainscene.change.segment: recording B: 896 masks on 44 frames -> 747 fragments -> 46 objects (17 structures), median 15.0 views per object, merge grid 0.0296 units
+2026-10-13 16:45:31,144 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] SAM 2 objects (56 in A, 46 in B) done in 4216 s | RAM 8.1/12.7 GB, disk free 57.8 GB, GPU 4.7/15.0 GB
+2026-10-13 16:48:25,893 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] CLIP labels for every object done in 175 s | RAM 8.2/12.7 GB, disk free 56.2 GB, GPU 6.9/15.0 GB
+2026-10-13 16:48:26,336 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] Rigidity Copilot: expected stiffness of 102 objects done in 0 s | RAM 8.2/12.7 GB, disk free 56.2 GB, GPU 6.9/15.0 GB
+2026-10-13 16:48:26,352 INFO uncertainscene.change.floor: scale: most likely 2.048 m/unit (90% 1.799-2.270) from metric_depth 2.491, objects 1.452; phone height (not used) 3.609
+2026-10-13 16:51:10,686 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 81% (RAM 10.3/12.7 GB, disk free 56.2 GB, GPU 6.9/15.0 GB)
+2026-10-13 16:51:26,549 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 81% (RAM 10.2/12.7 GB, disk free 56.2 GB, GPU 6.9/15.0 GB)
+2026-10-13 16:51:42,372 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 80% (RAM 10.2/12.7 GB, disk free 56.2 GB, GPU 6.9/15.0 GB)
+2026-10-13 16:53:13,518 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 81% (RAM 10.3/12.7 GB, disk free 56.2 GB, GPU 6.9/15.0 GB)
+2026-10-13 16:53:29,167 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 81% (RAM 10.2/12.7 GB, disk free 56.2 GB, GPU 6.9/15.0 GB)
+2026-10-13 16:53:44,998 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 82% (RAM 10.4/12.7 GB, disk free 56.2 GB, GPU 6.9/15.0 GB)
+2026-10-13 16:58:17,084 INFO uncertainscene.change.inventory: object changes: {'A:unchanged': 48, 'A:shifted': 4, 'A:removed': 2, 'A:moved': 1, 'A:not seen in other recording': 1, 'B:unchanged': 36, 'B:added': 8, 'B:moved': 1, 'B:shifted': 1}; thresholds gone 0.300 appearance 0.791 shift 0.0906 (from 101 null objects)
+2026-10-13 16:58:17,499 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] object-level changes done in 591 s | RAM 8.2/12.7 GB, disk free 56.2 GB, GPU 6.9/15.0 GB
+2026-10-13 16:59:45,486 INFO uncertainscene.recon.poses: poses: 1020 of 1113 frame pairs matched
+2026-10-13 16:59:47,176 INFO uncertainscene.change.motion3d: motion: recording 0: 24636 3D feature points, pixel noise 11.67 px (89 s)
+2026-10-13 16:59:51,903 INFO uncertainscene.recon.poses: poses: 909 of 1136 frame pairs matched
+2026-10-13 16:59:53,604 INFO uncertainscene.change.motion3d: motion: recording 1: 25054 3D feature points, pixel noise 4.11 px (95 s)
+2026-10-13 16:59:56,815 INFO uncertainscene.change.motion3d: motion: 4036 before/after links; point uncertainty 14.42 cm median (of which recording misalignment 14.09 cm); 12% moved beyond their uncertainty; 98 s
+2026-10-13 16:59:58,584 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] feature motion (4036 matched points, point uncertainty 14.419 cm, 11 objects moved, 4 deformed) done in 101 s | RAM 8.4/12.7 GB, disk free 56.2 GB, GPU 7.0/15.0 GB
+2026-10-13 17:00:02,241 INFO uncertainscene.change.assets: assets: 58 objects exported (0 deformable), 114 contacts
+2026-10-13 17:00:02,637 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] object assets (58 objects, 114 contacts) done in 4 s | RAM 8.4/12.7 GB, disk free 56.2 GB, GPU 7.0/15.0 GB
+2026-10-13 17:00:23,139 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] heat maps (120000 points, scale 2.048 m/unit) done in 21 s | RAM 8.4/12.7 GB, disk free 56.2 GB, GPU 7.0/15.0 GB
+2026-10-13 17:00:59,420 INFO uncertainscene.poc: [1-main_moved_light-before-a_vs_light-after-a] figures, viewer and reports done in 36 s | RAM 8.4/12.7 GB, disk free 56.1 GB, GPU 7.0/15.0 GB

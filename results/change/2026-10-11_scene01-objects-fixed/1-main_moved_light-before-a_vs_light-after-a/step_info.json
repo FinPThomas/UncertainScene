@@ -2,9 +2,9 @@
   "run_id": "2026-10-11_scene01-objects-fixed",
   "step": "1-main_moved_light-before-a_vs_light-after-a",
   "status": "done",
-  "account": "colab-a68c",
-  "commit": "9acd9a8",
-  "minutes": 97.2,
-  "usage_at_end": "RAM 5.5/12.7 GB, disk free 57.9 GB, GPU 5.8/15.0 GB",
-  "note": "change: 0 changed objects of 0 (0%); labels: ; scale 3.609 m/unit; 5813s"
+  "account": "colab-5f93",
+  "commit": "3f10688",
+  "minutes": 120.3,
+  "usage_at_end": "RAM 6.0/12.7 GB, disk free 56.1 GB, GPU 7.0/15.0 GB",
+  "note": "change: 12 changed objects of 32 (39%); labels: wooden crate, skirting board, neck pillow, baseball cap, skirting board; scale 2.048 m/unit; 7188s"
 }

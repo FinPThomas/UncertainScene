@@ -1,18 +1,435 @@
 {
   "summary": {
-    "links": 0,
-    "points_before": 257,
-    "points_after": 315,
+    "links": 4036,
+    "points_before": 24636,
+    "points_after": 25054,
     "pixel_noise_px": [
-      1.24,
-      1.21
+      11.67,
+      4.11
     ],
-    "point_sigma_cm_median": NaN,
-    "misalignment_sigma_cm": 0.0,
-    "links_moved_share": null,
-    "objects_measured": 0,
-    "objects_moved": 0,
-    "objects_deformed": 0
+    "point_sigma_cm_median": 14.419,
+    "misalignment_sigma_cm": 14.094,
+    "links_moved_share": 0.116,
+    "objects_measured": 13,
+    "objects_moved": 11,
+    "objects_deformed": 4
   },
-  "objects": []
+  "objects": [
+    {
+      "recording": "A",
+      "id": 7,
+      "label": "sofa",
+      "status": "unchanged",
+      "links": 65,
+      "rigid_inlier_share": 0.908,
+      "moved_cm": 29.38,
+      "moved_ci_cm": [
+        22.34,
+        34.59
+      ],
+      "moved_beyond_noise": true,
+      "rotation_deg": 39.3,
+      "point_sigma_cm": 14.59,
+      "deform_p90_cm": 32.24,
+      "deform_peak_cm": 46.23,
+      "deform_peak_sigma_cm": 14.62,
+      "deformed_share": 0.154,
+      "deformed": true,
+      "deform_peak_where": "towards one end",
+      "deform_peak_axes": [
+        -0.79,
+        0.11,
+        0.12
+      ],
+      "deform_peak_xyz": [
+        0.0322,
+        -0.0501,
+        0.872
+      ]
+    },
+    {
+      "recording": "A",
+      "id": 18,
+      "label": "cushion",
+      "status": "unchanged",
+      "links": 69,
+      "rigid_inlier_share": 0.971,
+      "moved_cm": 8.8,
+      "moved_ci_cm": [
+        6.27,
+        12.64
+      ],
+      "moved_beyond_noise": true,
+      "rotation_deg": 26.8,
+      "point_sigma_cm": 14.69,
+      "deform_p90_cm": 28.85,
+      "deform_peak_cm": 36.55,
+      "deform_peak_sigma_cm": 17.58,
+      "deformed_share": 0.087,
+      "deformed": true,
+      "deform_peak_where": "along one side",
+      "deform_peak_axes": [
+        0.23,
+        -0.81,
+        -0.75
+      ],
+      "deform_peak_xyz": [
+        0.2425,
+        -0.1694,
+        0.8564
+      ]
+    },
+    {
+      "recording": "A",
+      "id": 25,
+      "label": "wooden crate",
+      "status": "shifted",
+      "links": 9,
+      "rigid_inlier_share": 0.667,
+      "moved_cm": 26.41,
+      "moved_ci_cm": [
+        14.28,
+        43.52
+      ],
+      "moved_beyond_noise": true,
+      "rotation_deg": 61.7,
+      "point_sigma_cm": 14.53,
+      "deform_p90_cm": 26.79,
+      "deform_peak_cm": 61.88,
+      "deform_peak_sigma_cm": 16.29,
+      "deformed_share": 1.0,
+      "deformed": true,
+      "deform_peak_where": "towards one end",
+      "deform_peak_axes": [
+        -0.8,
+        -0.3,
+        0.42
+      ],
+      "deform_peak_xyz": [
+        0.6168,
+        -0.1331,
+        1.2956
+      ]
+    },
+    {
+      "recording": "A",
+      "id": 19,
+      "label": "cushion",
+      "status": "unchanged",
+      "links": 56,
+      "rigid_inlier_share": 0.929,
+      "moved_cm": 25.46,
+      "moved_ci_cm": [
+        20.59,
+        32.48
+      ],
+      "moved_beyond_noise": true,
+      "rotation_deg": 26.8,
+      "point_sigma_cm": 14.69,
+      "deform_p90_cm": 25.95,
+      "deform_peak_cm": 33.69,
+      "deform_peak_sigma_cm": 15.06,
+      "deformed_share": 0.107,
+      "deformed": true,
+      "deform_peak_where": "towards one end",
+      "deform_peak_axes": [
+        0.76,
+        0.27,
+        -0.69
+      ],
+      "deform_peak_xyz": [
+        0.0933,
+        -0.2306,
+        0.8236
+      ]
+    },
+    {
+      "recording": "A",
+      "id": 32,
+      "label": "guitar",
+      "status": "unchanged",
+      "links": 35,
+      "rigid_inlier_share": 0.971,
+      "moved_cm": 26.91,
+      "moved_ci_cm": [
+        19.53,
+        31.57
+      ],
+      "moved_beyond_noise": true,
+      "rotation_deg": 31.5,
+      "point_sigma_cm": 14.4,
+      "deform_p90_cm": 24.44,
+      "deform_peak_cm": 27.3,
+      "deform_peak_sigma_cm": 14.53,
+      "deformed_share": 0.0,
+      "deformed": false,
+      "deform_peak_where": "towards one end",
+      "deform_peak_axes": [
+        -0.63,
+        -0.0,
+        -1.23
+      ],
+      "deform_peak_xyz": [
+        0.2683,
+        -0.14,
+        0.8455
+      ]
+    },
+    {
+      "recording": "A",
+      "id": 15,
+      "label": "table tennis bat",
+      "status": "unchanged",
+      "links": 268,
+      "rigid_inlier_share": 0.993,
+      "moved_cm": 14.11,
+      "moved_ci_cm": [
+        12.07,
+        16.05
+      ],
+      "moved_beyond_noise": true,
+      "rotation_deg": 10.0,
+      "point_sigma_cm": 14.24,
+      "deform_p90_cm": 20.88,
+      "deform_peak_cm": 33.27,
+      "deform_peak_sigma_cm": 14.24,
+      "deformed_share": 0.0,
+      "deformed": false,
+      "deform_peak_where": "towards one end",
+      "deform_peak_axes": [
+        1.5,
+        -0.04,
+        -0.74
+      ],
+      "deform_peak_xyz": [
+        0.3007,
+        -0.1687,
+        0.7909
+      ]
+    },
+    {
+      "recording": "A",
+      "id": 13,
+      "label": "sofa",
+      "status": "unchanged",
+      "links": 14,
+      "rigid_inlier_share": 1.0,
+      "moved_cm": 33.1,
+      "moved_ci_cm": [
+        18.73,
+        44.09
+      ],
+      "moved_beyond_noise": true,
+      "rotation_deg": 42.9,
+      "point_sigma_cm": 14.3,
+      "deform_p90_cm": 19.62,
+      "deform_peak_cm": 20.68,
+      "deform_peak_sigma_cm": 14.38,
+      "deformed_share": 0.0,
+      "deformed": false,
+      "deform_peak_where": "along one side",
+      "deform_peak_axes": [
+        -0.05,
+        -0.72,
+        0.66
+      ],
+      "deform_peak_xyz": [
+        -0.1259,
+        -0.0143,
+        0.7741
+      ]
+    },
+    {
+      "recording": "A",
+      "id": 33,
+      "label": "skirting board",
+      "status": "unchanged",
+      "links": 17,
+      "rigid_inlier_share": 1.0,
+      "moved_cm": 19.63,
+      "moved_ci_cm": [
+        13.44,
+        35.03
+      ],
+      "moved_beyond_noise": true,
+      "rotation_deg": 22.4,
+      "point_sigma_cm": 15.78,
+      "deform_p90_cm": 17.79,
+      "deform_peak_cm": 17.79,
+      "deform_peak_sigma_cm": 14.46,
+      "deformed_share": 0.0,
+      "deformed": false,
+      "deform_peak_where": "at a corner",
+      "deform_peak_axes": [
+        -0.63,
+        1.12,
+        0.26
+      ],
+      "deform_peak_xyz": [
+        0.2473,
+        0.1751,
+        0.7521
+      ]
+    },
+    {
+      "recording": "A",
+      "id": 39,
+      "label": "guitar",
+      "status": "unchanged",
+      "links": 34,
+      "rigid_inlier_share": 0.971,
+      "moved_cm": 33.33,
+      "moved_ci_cm": [
+        28.4,
+        36.9
+      ],
+      "moved_beyond_noise": true,
+      "rotation_deg": 37.4,
+      "point_sigma_cm": 15.49,
+      "deform_p90_cm": 16.76,
+      "deform_peak_cm": 17.46,
+      "deform_peak_sigma_cm": 16.3,
+      "deformed_share": 0.0,
+      "deformed": false,
+      "deform_peak_where": "at a corner",
+      "deform_peak_axes": [
+        0.86,
+        0.61,
+        0.83
+      ],
+      "deform_peak_xyz": [
+        0.5452,
+        0.1991,
+        0.7126
+      ]
+    },
+    {
+      "recording": "A",
+      "id": 31,
+      "label": "book",
+      "status": "unchanged",
+      "links": 53,
+      "rigid_inlier_share": 1.0,
+      "moved_cm": 2.95,
+      "moved_ci_cm": [
+        1.54,
+        7.44
+      ],
+      "moved_beyond_noise": false,
+      "rotation_deg": 18.1,
+      "point_sigma_cm": 14.19,
+      "deform_p90_cm": 16.59,
+      "deform_peak_cm": 20.02,
+      "deform_peak_sigma_cm": 14.34,
+      "deformed_share": 0.0,
+      "deformed": false,
+      "deform_peak_where": "towards one end",
+      "deform_peak_axes": [
+        0.98,
+        0.06,
+        1.5
+      ],
+      "deform_peak_xyz": [
+        -0.2271,
+        -0.085,
+        0.6279
+      ]
+    },
+    {
+      "recording": "A",
+      "id": 44,
+      "label": "cup",
+      "status": "shifted",
+      "links": 23,
+      "rigid_inlier_share": 1.0,
+      "moved_cm": 8.35,
+      "moved_ci_cm": [
+        3.2,
+        17.68
+      ],
+      "moved_beyond_noise": false,
+      "rotation_deg": 53.8,
+      "point_sigma_cm": 14.19,
+      "deform_p90_cm": 15.83,
+      "deform_peak_cm": 15.83,
+      "deform_peak_sigma_cm": 14.39,
+      "deformed_share": 0.0,
+      "deformed": false,
+      "deform_peak_where": "towards one end",
+      "deform_peak_axes": [
+        -0.54,
+        0.26,
+        1.5
+      ],
+      "deform_peak_xyz": [
+        0.4395,
+        -0.0322,
+        0.8271
+      ]
+    },
+    {
+      "recording": "A",
+      "id": 21,
+      "label": "sofa",
+      "status": "unchanged",
+      "links": 45,
+      "rigid_inlier_share": 1.0,
+      "moved_cm": 12.61,
+      "moved_ci_cm": [
+        7.91,
+        16.7
+      ],
+      "moved_beyond_noise": true,
+      "rotation_deg": 11.3,
+      "point_sigma_cm": 14.43,
+      "deform_p90_cm": 15.38,
+      "deform_peak_cm": 36.07,
+      "deform_peak_sigma_cm": 16.54,
+      "deformed_share": 0.0,
+      "deformed": false,
+      "deform_peak_where": "towards one end",
+      "deform_peak_axes": [
+        0.89,
+        0.51,
+        1.09
+      ],
+      "deform_peak_xyz": [
+        -0.3143,
+        -0.0659,
+        0.8945
+      ]
+    },
+    {
+      "recording": "A",
+      "id": 35,
+      "label": "neck pillow",
+      "status": "removed",
+      "links": 9,
+      "rigid_inlier_share": 1.0,
+      "moved_cm": 8.31,
+      "moved_ci_cm": [
+        5.62,
+        21.97
+      ],
+      "moved_beyond_noise": true,
+      "rotation_deg": 19.7,
+      "point_sigma_cm": 14.17,
+      "deform_p90_cm": 8.14,
+      "deform_peak_cm": 14.06,
+      "deform_peak_sigma_cm": 14.17,
+      "deformed_share": 0.0,
+      "deformed": false,
+      "deform_peak_where": "at a corner",
+      "deform_peak_axes": [
+        1.13,
+        -1.5,
+        0.22
+      ],
+      "deform_peak_xyz": [
+        -0.0546,
+        -0.1808,
+        0.6862
+      ]
+    }
+  ]
 }

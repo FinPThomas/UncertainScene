@@ -1,1 +1,1409 @@
-[]
+[
+  {
+    "id": "A25",
+    "recording": "A",
+    "label": "wooden crate",
+    "label_prob": 0.217,
+    "label_top3": [
+      [
+        "wooden crate",
+        0.217
+      ],
+      [
+        "coffee table",
+        0.089
+      ],
+      [
+        "wooden panel",
+        0.057
+      ]
+    ],
+    "status": "shifted",
+    "structure": false,
+    "size_cm": [
+      84.4,
+      40.9,
+      23.7
+    ],
+    "height_m": 0.85,
+    "views": 9,
+    "complete": true,
+    "partner": null,
+    "description": "The wooden crate's surface moved by about 24 cm (squashed, pushed or deformed). Its centre is known to within about 0 cm (90%, from 9 views; one view alone: 1 cm). Matched feature points: moved 26 cm (90%: 14-44 cm), turned 62 deg. Its shape changed: up to 61.9 cm beyond its rigid motion, towards one end (100% of it).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.19,
+        0.03,
+        0.03
+      ],
+      "radius90_cm": 0.14,
+      "radius90_cm_views": 8.43,
+      "n_views": 9,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          115.6282874586798,
+          191.48426959432823
+        ],
+        "a": 0.39618291826005797,
+        "b": 0.06915939784241598,
+        "angle": 67.23330501926792
+      },
+      "single_view_radius90_cm": 1.2,
+      "depth_sd_cm": 4.84,
+      "side_sd_cm": 0.05,
+      "pose_sd_cm": 0.13,
+      "wobble_views": 9,
+      "nis_mean": 11890.22,
+      "trace_cm": [
+        1.6,
+        1.12,
+        0.58,
+        0.33,
+        0.25,
+        0.23,
+        0.18,
+        0.17,
+        0.14
+      ]
+    },
+    "stats": {
+      "counterpart": 15,
+      "counterpart_iou": 0.162,
+      "counterpart_sim": 0.941,
+      "observed": 0.9685,
+      "gone": 0.052,
+      "appearance": 0.4641,
+      "shift_rel": -0.1188,
+      "n_points": 15000,
+      "null_gone": 0.2196,
+      "null_appearance": 0.4453
+    }
+  },
+  {
+    "id": "A34",
+    "recording": "A",
+    "label": "skirting board",
+    "label_prob": 0.299,
+    "label_top3": [
+      [
+        "skirting board",
+        0.299
+      ],
+      [
+        "floor",
+        0.103
+      ],
+      [
+        "table tennis bat",
+        0.064
+      ]
+    ],
+    "status": "shifted",
+    "structure": false,
+    "size_cm": [
+      64.7,
+      28.3,
+      9.4
+    ],
+    "height_m": 0.56,
+    "views": 5,
+    "complete": true,
+    "partner": null,
+    "description": "The skirting board's surface moved by about 29 cm (squashed, pushed or deformed). Its centre is known to within about 0 cm (90%, from 5 views; one view alone: 2 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.38,
+        0.05,
+        0.05
+      ],
+      "radius90_cm": 0.24,
+      "radius90_cm_views": 6.44,
+      "n_views": 5,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          125.26048557317088,
+          214.9382156556996
+        ],
+        "a": 0.8023380133694247,
+        "b": 0.10118096860437135,
+        "angle": 98.4514089789722
+      },
+      "single_view_radius90_cm": 1.76,
+      "depth_sd_cm": 4.61,
+      "side_sd_cm": 0.07,
+      "pose_sd_cm": 0.06,
+      "wobble_views": 5,
+      "nis_mean": 3497.38,
+      "trace_cm": [
+        2.04,
+        1.21,
+        0.3,
+        0.29,
+        0.24
+      ]
+    },
+    "stats": {
+      "counterpart": 15,
+      "counterpart_iou": 0.029,
+      "counterpart_sim": 0.705,
+      "observed": 0.9939,
+      "gone": 0.0,
+      "appearance": 0.5193,
+      "shift_rel": -0.1403,
+      "n_points": 15000,
+      "null_gone": 0.0,
+      "null_appearance": 0.3861
+    }
+  },
+  {
+    "id": "A35",
+    "recording": "A",
+    "label": "neck pillow",
+    "label_prob": 0.998,
+    "label_top3": [
+      [
+        "neck pillow",
+        0.998
+      ],
+      [
+        "pillow",
+        0.001
+      ],
+      [
+        "seat cushion",
+        0.0
+      ]
+    ],
+    "status": "removed",
+    "structure": false,
+    "size_cm": [
+      44.6,
+      25.0,
+      10.1
+    ],
+    "height_m": 1.19,
+    "views": 12,
+    "complete": true,
+    "partner": null,
+    "description": "A neck pillow that was there before is no longer there. Its centre is known to within about 0 cm (90%, from 12 views; one view alone: 1 cm). Matched feature points: moved 8 cm (90%: 6-22 cm), turned 20 deg.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.03,
+        0.01,
+        0.01
+      ],
+      "radius90_cm": 0.03,
+      "radius90_cm_views": 4.64,
+      "n_views": 12,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -36.315967942530946,
+          176.39734336344168
+        ],
+        "a": 0.052720651178204056,
+        "b": 0.021251008689495077,
+        "angle": 107.23732206798427
+      },
+      "single_view_radius90_cm": 0.7,
+      "depth_sd_cm": 3.67,
+      "side_sd_cm": 0.03,
+      "pose_sd_cm": 0.07,
+      "wobble_views": 12,
+      "nis_mean": 86201.03,
+      "trace_cm": [
+        0.18,
+        0.13,
+        0.05,
+        0.05,
+        0.04,
+        0.04,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03
+      ]
+    },
+    "stats": {
+      "counterpart": 25,
+      "counterpart_iou": 0.283,
+      "counterpart_sim": 0.962,
+      "observed": 1.0,
+      "gone": 0.3754,
+      "appearance": 0.6577,
+      "shift_rel": 0.0537,
+      "n_points": 15000,
+      "null_gone": 0.2851,
+      "null_appearance": 0.5448
+    }
+  },
+  {
+    "id": "A36",
+    "recording": "A",
+    "label": "baseball cap",
+    "label_prob": 0.625,
+    "label_top3": [
+      [
+        "cap",
+        0.625
+      ],
+      [
+        "baseball cap",
+        0.256
+      ],
+      [
+        "hat",
+        0.118
+      ]
+    ],
+    "status": "moved",
+    "structure": false,
+    "size_cm": [
+      53.1,
+      14.8,
+      10.4
+    ],
+    "height_m": 1.25,
+    "views": 9,
+    "complete": true,
+    "partner": "B34",
+    "description": "The baseball cap moved to the left and towards the camera by about 42 cm (90% interval 37 to 47). Its centre is known to within about 0 cm (90%, from 9 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "radius90_cm": 0.02,
+      "radius90_cm_views": 2.45,
+      "n_views": 9,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          76.5266348712775,
+          183.33704640734615
+        ],
+        "a": 0.025409142331063568,
+        "b": 0.012050543579111856,
+        "angle": 106.35491057870185
+      },
+      "single_view_radius90_cm": 0.85,
+      "depth_sd_cm": 4.05,
+      "side_sd_cm": 0.0,
+      "pose_sd_cm": 0.08,
+      "wobble_views": 9,
+      "nis_mean": 600165.97,
+      "trace_cm": [
+        0.16,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02
+      ]
+    },
+    "stats": {
+      "counterpart": 34,
+      "counterpart_iou": 0.092,
+      "counterpart_sim": 0.922,
+      "observed": 1.0,
+      "gone": 0.015,
+      "appearance": 0.8747,
+      "shift_rel": -0.0717,
+      "n_points": 15000,
+      "null_gone": 0.0332,
+      "null_appearance": 0.5853,
+      "displacement": [
+        -0.18056021748028683,
+        0.03629951521247665,
+        -0.08915119899000024
+      ],
+      "distance": 0.20461569642269364,
+      "distance_ci": [
+        0.20316502551988908,
+        0.20612770389950338
+      ],
+      "match_similarity": 0.972
+    }
+  },
+  {
+    "id": "A38",
+    "recording": "A",
+    "label": "skirting board",
+    "label_prob": 0.404,
+    "label_top3": [
+      [
+        "skirting board",
+        0.404
+      ],
+      [
+        "shelf",
+        0.04
+      ],
+      [
+        "coffee table",
+        0.038
+      ]
+    ],
+    "status": "shifted",
+    "structure": false,
+    "size_cm": [
+      90.9,
+      19.6,
+      13.2
+    ],
+    "height_m": 0.34,
+    "views": 7,
+    "complete": false,
+    "partner": null,
+    "description": "The skirting board's surface moved by about 25 cm (squashed, pushed or deformed). Its centre is known to within about 0 cm (90%, from 7 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.34,
+        0.03,
+        0.03
+      ],
+      "radius90_cm": 0.16,
+      "radius90_cm_views": 6.37,
+      "n_views": 7,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          16.428117562280757,
+          -42.38560137517731
+        ],
+        "a": 0.7219439334045882,
+        "b": 0.05997059424992203,
+        "angle": 105.19342045743474
+      },
+      "single_view_radius90_cm": 1.15,
+      "depth_sd_cm": 4.75,
+      "side_sd_cm": 0.09,
+      "pose_sd_cm": 0.1,
+      "wobble_views": 7,
+      "nis_mean": 49080.57,
+      "trace_cm": [
+        0.34,
+        0.31,
+        0.2,
+        0.18,
+        0.18,
+        0.17,
+        0.16
+      ]
+    },
+    "stats": {
+      "counterpart": 37,
+      "counterpart_iou": 0.158,
+      "counterpart_sim": 0.791,
+      "observed": 1.0,
+      "gone": 0.0225,
+      "appearance": 0.4148,
+      "shift_rel": -0.1228,
+      "n_points": 4346,
+      "null_gone": 0.0157,
+      "null_appearance": 0.4035
+    }
+  },
+  {
+    "id": "A44",
+    "recording": "A",
+    "label": "cup",
+    "label_prob": 0.435,
+    "label_top3": [
+      [
+        "cup",
+        0.435
+      ],
+      [
+        "mug",
+        0.234
+      ],
+      [
+        "coaster",
+        0.192
+      ]
+    ],
+    "status": "shifted",
+    "structure": false,
+    "size_cm": [
+      25.7,
+      17.6,
+      9.1
+    ],
+    "height_m": 0.62,
+    "views": 11,
+    "complete": true,
+    "partner": null,
+    "description": "The cup's surface moved by about 21 cm (squashed, pushed or deformed). Its centre is known to within about 0 cm (90%, from 11 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.01,
+        0.01,
+        0.0
+      ],
+      "radius90_cm": 0.02,
+      "radius90_cm_views": 4.31,
+      "n_views": 11,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          92.8735637802472,
+          159.18123238811305
+        ],
+        "a": 0.021580547604530296,
+        "b": 0.010917535195741975,
+        "angle": 99.5283444251536
+      },
+      "single_view_radius90_cm": 0.63,
+      "depth_sd_cm": 4.85,
+      "side_sd_cm": 0.01,
+      "pose_sd_cm": 0.03,
+      "wobble_views": 11,
+      "nis_mean": 24168.24,
+      "trace_cm": [
+        1.33,
+        0.58,
+        0.09,
+        0.06,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02
+      ]
+    },
+    "stats": {
+      "counterpart": 36,
+      "counterpart_iou": 0.188,
+      "counterpart_sim": 0.887,
+      "observed": 1.0,
+      "gone": 0.0225,
+      "appearance": 0.7539,
+      "shift_rel": -0.1042,
+      "n_points": 14825,
+      "null_gone": 0.0397,
+      "null_appearance": 0.7164
+    }
+  },
+  {
+    "id": "A51",
+    "recording": "A",
+    "label": "ball",
+    "label_prob": 0.102,
+    "label_top3": [
+      [
+        "ball",
+        0.102
+      ],
+      [
+        "jar",
+        0.05
+      ],
+      [
+        "jumper",
+        0.046
+      ]
+    ],
+    "status": "removed",
+    "structure": false,
+    "size_cm": [
+      31.4,
+      15.7,
+      6.7
+    ],
+    "height_m": 0.99,
+    "views": 10,
+    "complete": true,
+    "partner": null,
+    "description": "A ball that was there before is no longer there. Its centre is known to within about 0 cm (90%, from 10 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.05,
+        0.01,
+        0.01
+      ],
+      "radius90_cm": 0.05,
+      "radius90_cm_views": 4.94,
+      "n_views": 10,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          0.22580499131419057,
+          176.71697763689932
+        ],
+        "a": 0.10002683824849663,
+        "b": 0.02602270165136344,
+        "angle": 88.75041160486748
+      },
+      "single_view_radius90_cm": 1.01,
+      "depth_sd_cm": 3.05,
+      "side_sd_cm": 0.01,
+      "pose_sd_cm": 0.13,
+      "wobble_views": 10,
+      "nis_mean": 21910.52,
+      "trace_cm": [
+        0.99,
+        0.14,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ]
+    },
+    "stats": {
+      "counterpart": 21,
+      "counterpart_iou": 0.037,
+      "counterpart_sim": 0.583,
+      "observed": 1.0,
+      "gone": 0.0232,
+      "appearance": 0.8476,
+      "shift_rel": -0.0532,
+      "n_points": 1593,
+      "null_gone": 0.0073,
+      "null_appearance": 0.8188
+    }
+  },
+  {
+    "id": "B15",
+    "recording": "B",
+    "label": "skirting board",
+    "label_prob": 0.099,
+    "label_top3": [
+      [
+        "skirting board",
+        0.099
+      ],
+      [
+        "table tennis bat",
+        0.07
+      ],
+      [
+        "wooden panel",
+        0.06
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      85.8,
+      43.3,
+      26.6
+    ],
+    "height_m": 0.77,
+    "views": 15,
+    "complete": true,
+    "partner": null,
+    "description": "A skirting board is there now that was not there before. Its centre is known to within about 0 cm (90%, from 15 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.05,
+        0.02,
+        0.01
+      ],
+      "radius90_cm": 0.06,
+      "radius90_cm_views": 7.39,
+      "n_views": 15,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          123.85105426186206,
+          198.30241770892067
+        ],
+        "a": 0.10399558999508081,
+        "b": 0.03241414812927284,
+        "angle": 83.3583636442136
+      },
+      "single_view_radius90_cm": 0.96,
+      "depth_sd_cm": 4.32,
+      "side_sd_cm": 0.04,
+      "pose_sd_cm": 0.09,
+      "wobble_views": 15,
+      "nis_mean": 59698.96,
+      "trace_cm": [
+        1.21,
+        0.7,
+        0.47,
+        0.34,
+        0.33,
+        0.33,
+        0.27,
+        0.16,
+        0.09,
+        0.07,
+        0.06,
+        0.06,
+        0.06,
+        0.06,
+        0.06
+      ]
+    },
+    "stats": {
+      "counterpart": 25,
+      "counterpart_iou": 0.162,
+      "counterpart_sim": 0.941,
+      "observed": 0.8767,
+      "gone": 0.6161,
+      "appearance": 0.508,
+      "shift_rel": 0.1529,
+      "n_points": 15000,
+      "null_gone": 0.1103,
+      "null_appearance": 0.3913
+    }
+  },
+  {
+    "id": "B24",
+    "recording": "B",
+    "label": "wooden panel",
+    "label_prob": 0.272,
+    "label_top3": [
+      [
+        "wooden panel",
+        0.272
+      ],
+      [
+        "table tennis bat",
+        0.249
+      ],
+      [
+        "skirting board",
+        0.133
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      73.9,
+      28.0,
+      27.0
+    ],
+    "height_m": 0.62,
+    "views": 14,
+    "complete": true,
+    "partner": null,
+    "description": "A wooden panel is there now that was not there before. Its centre is known to within about 0 cm (90%, from 14 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.02,
+        0.01,
+        0.01
+      ],
+      "radius90_cm": 0.02,
+      "radius90_cm_views": 5.5,
+      "n_views": 14,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          49.17419274509749,
+          204.74391759837644
+        ],
+        "a": 0.03406047832119236,
+        "b": 0.01161306149914691,
+        "angle": 86.42658427165448
+      },
+      "single_view_radius90_cm": 0.69,
+      "depth_sd_cm": 4.18,
+      "side_sd_cm": 0.01,
+      "pose_sd_cm": 0.04,
+      "wobble_views": 14,
+      "nis_mean": 998702.32,
+      "trace_cm": [
+        0.16,
+        0.04,
+        0.04,
+        0.04,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02
+      ]
+    },
+    "stats": {
+      "counterpart": 7,
+      "counterpart_iou": 0.13,
+      "counterpart_sim": 0.57,
+      "observed": 1.0,
+      "gone": 0.0591,
+      "appearance": 0.8253,
+      "shift_rel": 0.0419,
+      "n_points": 15000,
+      "null_gone": 0.0572,
+      "null_appearance": 0.7253
+    }
+  },
+  {
+    "id": "B30",
+    "recording": "B",
+    "label": "table tennis bat",
+    "label_prob": 0.999,
+    "label_top3": [
+      [
+        "table tennis bat",
+        0.999
+      ],
+      [
+        "table tennis ball",
+        0.0
+      ],
+      [
+        "throw",
+        0.0
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      30.4,
+      18.9,
+      13.5
+    ],
+    "height_m": 0.83,
+    "views": 12,
+    "complete": true,
+    "partner": null,
+    "description": "A table tennis bat is there now that was not there before. Its centre is known to within about 0 cm (90%, from 12 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.04,
+        0.01,
+        0.01
+      ],
+      "radius90_cm": 0.04,
+      "radius90_cm_views": 5.54,
+      "n_views": 12,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -26.16767137079736,
+          183.98097263600948
+        ],
+        "a": 0.07477057556842485,
+        "b": 0.024289775639170428,
+        "angle": 94.70946896234972
+      },
+      "single_view_radius90_cm": 0.91,
+      "depth_sd_cm": 3.67,
+      "side_sd_cm": 0.03,
+      "pose_sd_cm": 0.09,
+      "wobble_views": 12,
+      "nis_mean": 41653.39,
+      "trace_cm": [
+        0.28,
+        0.13,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.05,
+        0.05,
+        0.04,
+        0.04,
+        0.04,
+        0.04
+      ]
+    },
+    "stats": {
+      "counterpart": 15,
+      "counterpart_iou": 0.144,
+      "counterpart_sim": 0.566,
+      "observed": 1.0,
+      "gone": 0.0087,
+      "appearance": 0.8114,
+      "shift_rel": -0.0337,
+      "n_points": 15000,
+      "null_gone": 0.0262,
+      "null_appearance": 0.7941
+    }
+  },
+  {
+    "id": "B34",
+    "recording": "B",
+    "label": "baseball cap",
+    "label_prob": 0.465,
+    "label_top3": [
+      [
+        "cap",
+        0.465
+      ],
+      [
+        "baseball cap",
+        0.429
+      ],
+      [
+        "hat",
+        0.105
+      ]
+    ],
+    "status": "moved",
+    "structure": false,
+    "size_cm": [
+      37.0,
+      25.9,
+      5.2
+    ],
+    "height_m": 1.23,
+    "views": 9,
+    "complete": true,
+    "partner": "A36",
+    "description": "The baseball cap moved to the left and towards the camera by about 42 cm (90% interval 37 to 47). Its centre is known to within about 0 cm (90%, from 9 views; one view alone: 0 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.01,
+        0.0,
+        0.0
+      ],
+      "radius90_cm": 0.02,
+      "radius90_cm_views": 6.01,
+      "n_views": 9,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          27.928597396006246,
+          187.22928110546164
+        ],
+        "a": 0.026096400372319053,
+        "b": 0.009775564640784223,
+        "angle": 114.32787473193787
+      },
+      "single_view_radius90_cm": 0.42,
+      "depth_sd_cm": 3.97,
+      "side_sd_cm": 0.01,
+      "pose_sd_cm": 0.04,
+      "wobble_views": 9,
+      "nis_mean": 1063573.66,
+      "trace_cm": [
+        0.23,
+        0.16,
+        0.04,
+        0.03,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02
+      ]
+    },
+    "stats": {
+      "counterpart": 36,
+      "counterpart_iou": 0.092,
+      "counterpart_sim": 0.922,
+      "observed": 1.0,
+      "gone": 0.3077,
+      "appearance": 0.8352,
+      "shift_rel": 0.0451,
+      "n_points": 5964,
+      "null_gone": 0.1082,
+      "null_appearance": 0.7421,
+      "displacement": [
+        -0.18056021748028683,
+        0.03629951521247665,
+        -0.08915119899000024
+      ],
+      "distance": 0.20461569642269364,
+      "distance_ci": [
+        0.20316502551988908,
+        0.20612770389950338
+      ],
+      "match_similarity": 0.972
+    }
+  },
+  {
+    "id": "B35",
+    "recording": "B",
+    "label": "coaster",
+    "label_prob": 0.318,
+    "label_top3": [
+      [
+        "coaster",
+        0.318
+      ],
+      [
+        "stool",
+        0.133
+      ],
+      [
+        "plate",
+        0.082
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      31.8,
+      18.5,
+      9.5
+    ],
+    "height_m": 0.59,
+    "views": 10,
+    "complete": true,
+    "partner": null,
+    "description": "A coaster is there now that was not there before. Its centre is known to within about 0 cm (90%, from 10 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.02,
+        0.01,
+        0.01
+      ],
+      "radius90_cm": 0.03,
+      "radius90_cm_views": 4.14,
+      "n_views": 10,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          103.09440986279482,
+          164.1896796008018
+        ],
+        "a": 0.04447066516439386,
+        "b": 0.02064116456182645,
+        "angle": 97.15574551480495
+      },
+      "single_view_radius90_cm": 0.76,
+      "depth_sd_cm": 4.11,
+      "side_sd_cm": 0.01,
+      "pose_sd_cm": 0.08,
+      "wobble_views": 10,
+      "nis_mean": 17317.4,
+      "trace_cm": [
+        1.01,
+        0.47,
+        0.23,
+        0.18,
+        0.18,
+        0.18,
+        0.06,
+        0.06,
+        0.06,
+        0.03
+      ]
+    },
+    "stats": {
+      "counterpart": 44,
+      "counterpart_iou": 0.156,
+      "counterpart_sim": 0.852,
+      "observed": 1.0,
+      "gone": 0.4101,
+      "appearance": 0.6932,
+      "shift_rel": 0.0342,
+      "n_points": 8152,
+      "null_gone": 0.1441,
+      "null_appearance": 0.6342
+    }
+  },
+  {
+    "id": "B36",
+    "recording": "B",
+    "label": "cup",
+    "label_prob": 0.535,
+    "label_top3": [
+      [
+        "cup",
+        0.535
+      ],
+      [
+        "mug",
+        0.209
+      ],
+      [
+        "coaster",
+        0.033
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      24.8,
+      15.9,
+      5.2
+    ],
+    "height_m": 0.63,
+    "views": 9,
+    "complete": true,
+    "partner": null,
+    "description": "A cup is there now that was not there before. Its centre is known to within about 0 cm (90%, from 9 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.02,
+        0.01,
+        0.01
+      ],
+      "radius90_cm": 0.03,
+      "radius90_cm_views": 5.18,
+      "n_views": 9,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          103.72316721863044,
+          167.69828572239763
+        ],
+        "a": 0.041374845963695756,
+        "b": 0.019384498699494438,
+        "angle": 95.83555977232328
+      },
+      "single_view_radius90_cm": 0.74,
+      "depth_sd_cm": 4.3,
+      "side_sd_cm": 0.01,
+      "pose_sd_cm": 0.08,
+      "wobble_views": 9,
+      "nis_mean": 35184.98,
+      "trace_cm": [
+        1.05,
+        0.26,
+        0.21,
+        0.2,
+        0.2,
+        0.13,
+        0.05,
+        0.05,
+        0.03
+      ]
+    },
+    "stats": {
+      "counterpart": 44,
+      "counterpart_iou": 0.188,
+      "counterpart_sim": 0.887,
+      "observed": 1.0,
+      "gone": 0.4888,
+      "appearance": 0.7819,
+      "shift_rel": -0.0218,
+      "n_points": 6782,
+      "null_gone": 0.1995,
+      "null_appearance": 0.7687
+    }
+  },
+  {
+    "id": "B37",
+    "recording": "B",
+    "label": "guitar",
+    "label_prob": 0.579,
+    "label_top3": [
+      [
+        "guitar",
+        0.579
+      ],
+      [
+        "acoustic guitar",
+        0.354
+      ],
+      [
+        "ukulele",
+        0.037
+      ]
+    ],
+    "status": "shifted",
+    "structure": false,
+    "size_cm": [
+      45.3,
+      14.7,
+      8.3
+    ],
+    "height_m": 0.29,
+    "views": 3,
+    "complete": false,
+    "partner": null,
+    "description": "The guitar's surface moved by about 20 cm (squashed, pushed or deformed). Its centre is known to within about 2 cm (90%, from 3 views; one view alone: 4 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        1.27,
+        0.6,
+        0.55
+      ],
+      "radius90_cm": 1.87,
+      "radius90_cm_views": null,
+      "n_views": 3,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          52.935685775048995,
+          104.26845745697693
+        ],
+        "a": 2.6370145143942834,
+        "b": 1.2718126946531279,
+        "angle": 82.73334967630034
+      },
+      "single_view_radius90_cm": 4.15,
+      "depth_sd_cm": 4.52,
+      "side_sd_cm": 0.95,
+      "pose_sd_cm": 0.14,
+      "wobble_views": 3,
+      "nis_mean": 514.97,
+      "trace_cm": [
+        3.44,
+        2.44,
+        1.87
+      ]
+    },
+    "stats": {
+      "counterpart": 38,
+      "counterpart_iou": 0.158,
+      "counterpart_sim": 0.791,
+      "observed": 1.0,
+      "gone": 0.0139,
+      "appearance": 0.5514,
+      "shift_rel": -0.0984,
+      "n_points": 1403,
+      "null_gone": 0.0245,
+      "null_appearance": 0.5771
+    }
+  },
+  {
+    "id": "B38",
+    "recording": "B",
+    "label": "skirting board",
+    "label_prob": 0.137,
+    "label_top3": [
+      [
+        "skirting board",
+        0.137
+      ],
+      [
+        "box",
+        0.081
+      ],
+      [
+        "shelf",
+        0.068
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      35.9,
+      14.4,
+      7.1
+    ],
+    "height_m": 0.97,
+    "views": 4,
+    "complete": false,
+    "partner": null,
+    "description": "A skirting board is there now that was not there before. Its centre is known to within about 0 cm (90%, from 4 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.41,
+        0.07,
+        0.07
+      ],
+      "radius90_cm": 0.31,
+      "radius90_cm_views": 6.47,
+      "n_views": 4,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          140.18054863375048,
+          194.6271265914588
+        ],
+        "a": 0.838948099719819,
+        "b": 0.14468850039790931,
+        "angle": 78.89619961329565
+      },
+      "single_view_radius90_cm": 1.07,
+      "depth_sd_cm": 4.11,
+      "side_sd_cm": 0.03,
+      "pose_sd_cm": 0.1,
+      "wobble_views": 4,
+      "nis_mean": 2993.81,
+      "trace_cm": [
+        1.23,
+        0.39,
+        0.31,
+        0.31
+      ]
+    },
+    "stats": {
+      "counterpart": 25,
+      "counterpart_iou": 0.022,
+      "counterpart_sim": 0.724,
+      "observed": 0.3523,
+      "gone": 0.9035,
+      "appearance": 0.525,
+      "shift_rel": 0.2703,
+      "n_points": 1550,
+      "null_gone": 0.0327,
+      "null_appearance": 0.3333
+    }
+  },
+  {
+    "id": "B43",
+    "recording": "B",
+    "label": "sofa",
+    "label_prob": 0.343,
+    "label_top3": [
+      [
+        "sofa arm",
+        0.343
+      ],
+      [
+        "cup",
+        0.058
+      ],
+      [
+        "mug",
+        0.055
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      24.7,
+      5.7,
+      2.5
+    ],
+    "height_m": 0.63,
+    "views": 4,
+    "complete": true,
+    "partner": null,
+    "description": "A sofa is there now that was not there before. Its centre is known to within about 0 cm (90%, from 4 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.19,
+        0.04,
+        0.04
+      ],
+      "radius90_cm": 0.16,
+      "radius90_cm_views": 2.72,
+      "n_views": 4,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          92.27674767473097,
+          152.15320888351957
+        ],
+        "a": 0.4098683312950791,
+        "b": 0.08088560670167494,
+        "angle": 68.13157357017094
+      },
+      "single_view_radius90_cm": 0.95,
+      "depth_sd_cm": 4.22,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.11,
+      "wobble_views": 4,
+      "nis_mean": 2553.03,
+      "trace_cm": [
+        1.22,
+        0.86,
+        0.19,
+        0.16
+      ]
+    },
+    "stats": {
+      "counterpart": 44,
+      "counterpart_iou": 0.03,
+      "counterpart_sim": 0.795,
+      "observed": 1.0,
+      "gone": 0.3697,
+      "appearance": 0.8297,
+      "shift_rel": -0.0333,
+      "n_points": 499,
+      "null_gone": 0.1611,
+      "null_appearance": 0.8418
+    }
+  },
+  {
+    "id": "B45",
+    "recording": "B",
+    "label": "poster",
+    "label_prob": 0.4,
+    "label_top3": [
+      [
+        "poster",
+        0.4
+      ],
+      [
+        "paper bag",
+        0.118
+      ],
+      [
+        "cardboard box",
+        0.043
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      3.0,
+      1.9,
+      0.1
+    ],
+    "height_m": 0.95,
+    "views": 1,
+    "complete": false,
+    "partner": null,
+    "description": "A poster is there now that was not there before. Its centre is known to within about 1 cm (90%, from 1 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        4.33,
+        0.16,
+        0.16
+      ],
+      "radius90_cm": 1.22,
+      "radius90_cm_views": null,
+      "n_views": 1,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          134.08546189434452,
+          167.25999114283317
+        ],
+        "a": 8.816087710202417,
+        "b": 0.35280885012515684,
+        "angle": 56.30812759637052
+      },
+      "single_view_radius90_cm": 1.22,
+      "depth_sd_cm": 4.33,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.16,
+      "wobble_views": 1,
+      "nis_mean": null,
+      "trace_cm": [
+        1.22
+      ]
+    },
+    "stats": {
+      "counterpart": 25,
+      "counterpart_iou": 0.007,
+      "counterpart_sim": 0.681,
+      "observed": 0.4286,
+      "gone": 1.0,
+      "appearance": NaN,
+      "shift_rel": 0.3606,
+      "n_points": 28,
+      "null_gone": 0.0,
+      "null_appearance": null
+    }
+  }
+]
