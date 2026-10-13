@@ -5,7 +5,7 @@ One file for every run so far. *Findings so far* is written by hand; everything 
 <!-- notes -->
 ## Findings so far
 
-Last updated 2026-10-12. No answer key yet, so nothing below is scored against ground truth; no-change pairs (static, lighting only) give the false-change rate.
+Last updated 2026-10-13. No answer key yet, so nothing below is scored against ground truth; no-change pairs (static, lighting only) give the false-change rate.
 
 **Version 1 (run `2026-10-10_scene01-heatmaps`, 28 frames per recording, point-level).**
 
@@ -36,6 +36,27 @@ Last updated 2026-10-12. No answer key yet, so nothing below is scored against g
    from the same camera flagged 2.0% of pixels against 1% when nothing changed. The comparison still highlights the
    table tennis bat cushion and a card added on the sofa. Next run trains 20 000 steps instead of 7 000 and compares
    only views the other recording also saw.
+
+## Run 6: `2026-10-11_scene01-objects-fixed`, main pair again (Colab colab-5f93, 2026-10-13, on 94dfe8c)
+
+The first run where tracking, labels, assets, motion and the new scale cues all ran together. Each object can now be viewed on its own: "Objects one by one (run 6)" in the Scene01 Change Viewer (picture, turnable 3D points and hull, label guesses, match, size, motion, Copilot stiffness).
+
+**Good**
+- **Poses stay fixed:** 0.66 px median reprojection error, 1.98 px p90, worst frame 2.33 px (117 sparse frames solved, 42 from neighbours).
+- **Objects are whole now:** 29 objects per recording (58 in all, plus 44 structures such as sofa frame, walls and floor), against 177 + 221 pieces in run 3. Most pictures show one whole object: cap, cup on its coaster, neck pillow, book stacks, vase, paper bag.
+- **Plausible changes found:** the cap moved 42 cm (90% 37-47 cm), the red table tennis bat, the cup on its coaster and a card on the sofa are added. 12 of 31 compared objects are flagged changed (1 moved, 8 added, 2 removed, 1 shifted). No answer key yet, so none of this is scored.
+- **Assets for every object:** 58 node graphs (96 nodes, about 340 springs each) with hulls, contacts and Copilot stiffness; the materials look sensible (cap fabric, pillow foam, crate wood, cup ceramic).
+- **Both scale cues ran:** metric depth (Depth Anything V2 Metric Indoor on 80 frames) gives 2.49 m/unit; object sizes from 24 before-recording objects give 1.45; combined 2.05 (90% 1.80-2.27). Phone height is shown for reference only (3.61).
+
+**Bad**
+- **Position uncertainty is far too small:** objects claim a 90% radius of 0.06 cm while their views disagree by 5.3 cm; the consistency check is 29058 (3 is honest) and 0% of unchanged objects agree between recordings. The per-view noise model misses most of the real spread.
+- **The two recordings are misaligned by about 14 cm** (feature-point uncertainty 14.4 cm, of which 14.1 cm is misalignment). So unchanged objects "move" 10-30 cm (the sofa 29 cm and 39 deg), and matching across recordings is unreliable. The neck pillow is called removed although a neck pillow is in the after recording.
+- **Some objects are counted more than once:** eight guitar pieces and three book stacks, from SAM 2 rediscovering an object it lost.
+- **Scale cues disagree by 4 sigma:** the object sizes come out inconsistent (cup 25 cm, cap 37-53 cm, book stack 30 cm, guitar 83 cm), so either the labels or the extents are off; the combined 2.05 sits between the two.
+- **Some labels are wrong:** cushions called "sofa" or "skirting board", a card called "poster".
+- **The splat and the other main pairs did not start:** RAM after the main step was 8.4 of 12.7 GB, so their memory check stopped them. Fixed in 9ec002c (networks and heap freed after every step); the fix applies from the next Run all.
+
+**Next:** splat step and remaining pairs on the next session; then fix the overconfident positions and the cross-recording alignment, and merge duplicate tracks. Future runs also save a larger picture per object next to its asset.
 
 ## Run 5: `2026-10-11_scene01-objects-fixed`, rerun of the main pair (Colab colab-a68c, 2026-10-12 16:09-17:46)
 

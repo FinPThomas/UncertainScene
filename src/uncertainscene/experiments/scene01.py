@@ -545,6 +545,7 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     title = (f"{spec.name}: {spec.a} vs {spec.b} ({ptype}, {m['n_per_video']} frames/video, {spec.variant})")
     if objs_a or objs_b:
         objects_plots.inventory_sheet(objs_b + objs_a, rec, out / "objects.png", title)
+        objects_plots.save_crops(objs_a + objs_b, rec, out / "assets")
         objects_plots.mask_overlays(objs_a, objs_b, rec, out / "object_overlays.png")
     if objs_a or objs_b:
         _position_figures(objs_a, objs_b, res, floor, s, m, out, d["title"])

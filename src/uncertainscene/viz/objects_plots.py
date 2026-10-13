@@ -48,6 +48,23 @@ def inventory_sheet(objs: list, rec: Recon, out: Path, title: str = "", max_tile
     return out
 
 
+def save_crops(objs: list, rec: Recon, out_dir: Path, max_side: int = 480) -> int:
+    """One picture per object (best view, background faded), named like its asset file so the
+    viewer can show each object on its own. Structures are skipped. Returns the number saved."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    n = 0
+    for o in objs:
+        if o.structure:
+            continue
+        try:
+            img, _ = masked_crop(o, rec, max_side=max_side)
+            img.save(out_dir / f"{o.recording}{o.id:03d}_{(o.label or 'object').replace(' ', '_')}.jpg", quality=85)
+            n += 1
+        except Exception:  # noqa: BLE001
+            continue
+    return n
+
+
 def mask_overlays(objs_a: list, objs_b: list, rec: Recon, out: Path, n_per_video: int = 3) -> Path:
     """Frames from each recording with every object mask painted in its status colour and
     labelled; frames are chosen where the most changed objects are visible."""
