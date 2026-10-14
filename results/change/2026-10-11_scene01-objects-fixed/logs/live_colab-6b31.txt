@@ -1,5 +1,5 @@
-session colab-6b31, step 1b-splat_moved_light-before-a_vs_light-after-a, running 20 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 5.5/12.7 GB, disk free 59.6 GB, GPU 0.4/15.0 GB
+session colab-6b31, step 1b-splat_moved_light-before-a_vs_light-after-a, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 5.6/12.7 GB, disk free 59.6 GB, GPU 0.4/15.0 GB
 
 2026-10-14 22:50:24,335 INFO uncertainscene.scene01: step 1b-splat_moved_light-before-a_vs_light-after-a: Gaussian splats of scene01_light_before_a and scene01_light_after_a
 2026-10-14 22:50:40,339 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -43,3 +43,25 @@ machine: RAM 5.5/12.7 GB, disk free 59.6 GB, GPU 0.4/15.0 GB
 2026-10-14 23:09:10,589 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 3000, L1 0.0736, 311251 Gaussians, 93 s
 2026-10-14 23:09:41,734 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 4000, L1 0.0731, 305471 Gaussians, 125 s
 2026-10-14 23:10:12,290 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 5000, L1 0.0675, 374355 Gaussians, 155 s
+2026-10-14 23:10:43,704 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 6000, L1 0.0662, 444866 Gaussians, 187 s
+2026-10-14 23:11:15,761 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 7000, L1 0.0634, 400566 Gaussians, 219 s
+2026-10-14 23:11:48,052 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 8000, L1 0.0656, 476561 Gaussians, 251 s
+2026-10-14 23:12:20,912 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 9000, L1 0.0624, 548744 Gaussians, 284 s
+2026-10-14 23:12:53,825 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 10000, L1 0.0601, 478474 Gaussians, 317 s
+2026-10-14 23:13:27,307 INFO uncertainscene.recon.splat: splat scene01_light_before_a: pruned 120271 of 557131 Gaussians at iter 11000 (118500 floating or seen by < 3 views, 0 faint, 1807 huge)
+2026-10-14 23:13:27,314 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 11000, L1 0.0607, 436860 Gaussians, 350 s
+2026-10-14 23:13:59,753 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 12000, L1 0.0624, 518370 Gaussians, 383 s
+2026-10-14 23:14:32,634 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 13000, L1 0.0623, 461242 Gaussians, 415 s
+2026-10-14 23:15:05,767 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 14000, L1 0.0591, 537537 Gaussians, 449 s
+2026-10-14 23:15:38,660 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 15000, L1 0.0569, 537537 Gaussians, 481 s
+2026-10-14 23:16:11,636 INFO uncertainscene.recon.splat: splat scene01_light_before_a: pruned 80687 of 537537 Gaussians at iter 16000 (41472 floating or seen by < 3 views, 44250 faint, 1821 huge)
+2026-10-14 23:16:11,643 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 16000, L1 0.0562, 456850 Gaussians, 514 s
+2026-10-14 23:16:42,001 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 17000, L1 0.0525, 456850 Gaussians, 545 s
+2026-10-14 23:17:12,080 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 18000, L1 0.0545, 456850 Gaussians, 575 s
+2026-10-14 23:17:41,853 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 19000, L1 0.0531, 456850 Gaussians, 605 s
+2026-10-14 23:18:11,400 INFO uncertainscene.splats: stage done: splat of light, before, take a: 456850 Gaussians, 634 s (1667 s)
+2026-10-14 23:18:23,256 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 0, L1 0.1919, 282010 Gaussians, 0 s
+2026-10-14 23:18:55,294 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 1000, L1 0.0838, 258908 Gaussians, 32 s
+2026-10-14 23:19:25,720 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 2000, L1 0.0775, 322573 Gaussians, 63 s
+2026-10-14 23:19:55,618 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 3000, L1 0.0743, 401302 Gaussians, 92 s
+2026-10-14 23:20:27,175 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 4000, L1 0.0714, 412282 Gaussians, 124 s
