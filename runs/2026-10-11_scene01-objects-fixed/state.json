@@ -24,13 +24,13 @@
       "status": "done"
     },
     "1b-splat_moved_light-before-a_vs_light-after-a": {
-      "account": "colab-945e",
-      "attempts": 4,
-      "commit": "80120c9",
-      "expires": 1792007845.3150306,
+      "account": "colab-6b31",
+      "attempts": 5,
+      "commit": "ffb5c46",
+      "expires": 1792026682.8564293,
       "finished": null,
       "note": null,
-      "started": "2026-10-14 17:36:25 UTC",
+      "started": "2026-10-14 22:50:22 UTC",
       "status": "running"
     },
     "2-position_3-clips_no-change_dark-before-a-b-c": {
