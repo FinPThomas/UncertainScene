@@ -1,5 +1,5 @@
-session colab-945e, step 1b-splat_moved_light-before-a_vs_light-after-a, running 10 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 4.4/12.7 GB, disk free 60.0 GB, GPU 7.2/15.0 GB
+session colab-945e, step 1b-splat_moved_light-before-a_vs_light-after-a, running 20 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 5.5/12.7 GB, disk free 59.6 GB, GPU 0.4/15.0 GB
 
 2026-10-14 17:36:27,611 INFO uncertainscene.scene01: step 1b-splat_moved_light-before-a_vs_light-after-a: Gaussian splats of scene01_light_before_a and scene01_light_after_a
 2026-10-14 17:36:40,520 INFO dinov2: using MLP layer as FFN
@@ -16,3 +16,31 @@ machine: RAM 4.4/12.7 GB, disk free 60.0 GB, GPU 7.2/15.0 GB
 2026-10-14 17:45:42,307 INFO uncertainscene.recon.chunked: chunk 10/19: 46 frames, scale 1.027, anchor residual 0.006 (relative to depth)
 2026-10-14 17:46:03,080 INFO uncertainscene.recon.chunked: chunk 11/19: 46 frames, scale 1.038, anchor residual 0.006 (relative to depth)
 2026-10-14 17:46:23,798 INFO uncertainscene.recon.chunked: chunk 12/19: 46 frames, scale 1.029, anchor residual 0.005 (relative to depth)
+2026-10-14 17:46:44,473 INFO uncertainscene.recon.chunked: chunk 13/19: 46 frames, scale 1.015, anchor residual 0.005 (relative to depth)
+2026-10-14 17:47:05,190 INFO uncertainscene.recon.chunked: chunk 14/19: 46 frames, scale 1.015, anchor residual 0.005 (relative to depth)
+2026-10-14 17:47:26,008 INFO uncertainscene.recon.chunked: chunk 15/19: 46 frames, scale 1.011, anchor residual 0.005 (relative to depth)
+2026-10-14 17:47:46,848 INFO uncertainscene.recon.chunked: chunk 16/19: 46 frames, scale 1.006, anchor residual 0.005 (relative to depth)
+2026-10-14 17:48:07,726 INFO uncertainscene.recon.chunked: chunk 17/19: 46 frames, scale 1.009, anchor residual 0.005 (relative to depth)
+2026-10-14 17:48:28,566 INFO uncertainscene.recon.chunked: chunk 18/19: 46 frames, scale 1.011, anchor residual 0.003 (relative to depth)
+2026-10-14 17:48:49,303 INFO uncertainscene.recon.chunked: chunk 19/19: 46 frames, scale 1.005, anchor residual 0.003 (relative to depth)
+2026-10-14 17:48:49,934 INFO uncertainscene.recon.vggt: reconstructed 735 frames (364 + 371) in 19 chunks in 732 s; worst chunk residual 0.006
+2026-10-14 17:49:23,423 INFO uncertainscene.splats: stage done: reconstruction (735 frames) (776 s)
+2026-10-14 17:52:15,854 INFO uncertainscene.recon.poses: poses: 5015 of 5259 frame pairs matched
+2026-10-14 17:52:17,888 INFO uncertainscene.recon.poses: poses: 103 of 314 frame pairs matched
+2026-10-14 17:52:17,892 INFO uncertainscene.recon.poses: poses: 11 sparse frames: 314 extra pairs tried, 103 matched
+2026-10-14 17:52:18,532 INFO uncertainscene.recon.poses: poses: 1871 features/frame, 178062 tracks, 965093 observations (175 s)
+2026-10-14 17:52:19,867 INFO uncertainscene.recon.poses: poses: VGGT poses reproject at 8.26 px median (106952 points)
+2026-10-14 17:52:30,661 INFO uncertainscene.recon.poses: poses: round 1: 5.32 px median, 106952 points (187 s)
+2026-10-14 17:52:45,406 INFO uncertainscene.recon.poses: poses: round 2: 1.12 px median, 76560 points (202 s)
+2026-10-14 17:52:57,333 INFO uncertainscene.recon.poses: poses: 136 frames with < 30 points: 96 resected, 40 interpolated from neighbours
+2026-10-14 17:53:02,824 INFO uncertainscene.recon.poses: poses: final 0.59 px median, 1.71 px p90 (VGGT 8.26 px); per-frame median worst 2.90 px; cameras turned 1.60 deg median; 136 weak frames (96 resected, 40 interpolated)
+2026-10-14 17:53:02,826 INFO uncertainscene.recon.poses: poses: per recording 0.61, 0.57 px median; 1018 points seen in both recordings (1.09 px); 19% of feature observations kept
+2026-10-14 17:53:08,081 INFO uncertainscene.splats: stage done: camera poses refined: 8.3 px -> 0.59 px reprojection error (p90 1.71 px, 96 sparse frames resected, 40 interpolated), cameras turned 1.60 deg (median) (1000 s)
+2026-10-14 17:53:08,394 INFO uncertainscene.splats: stage done: memory freed to 4.0 GB RAM; gsplat ready (built at setup) (1001 s)
+2026-10-14 17:53:19,083 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 0, L1 0.1664, 272771 Gaussians, 0 s
+2026-10-14 17:53:48,894 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 1000, L1 0.0883, 226680 Gaussians, 30 s
+2026-10-14 17:54:15,728 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 2000, L1 0.0794, 259999 Gaussians, 57 s
+2026-10-14 17:54:41,839 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 3000, L1 0.0747, 311024 Gaussians, 83 s
+2026-10-14 17:55:09,079 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 4000, L1 0.0735, 303550 Gaussians, 110 s
+2026-10-14 17:55:36,639 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 5000, L1 0.0679, 374235 Gaussians, 138 s
+2026-10-14 17:56:04,694 INFO uncertainscene.recon.splat: splat scene01_light_before_a: iter 6000, L1 0.0658, 444868 Gaussians, 166 s
