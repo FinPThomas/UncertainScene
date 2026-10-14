@@ -1,0 +1,198 @@
+{
+  "step": "1b-splat_moved_light-before-a_vs_light-after-a",
+  "step_kind": "splat",
+  "version": 2,
+  "a": "scene01_light_before_a",
+  "b": "scene01_light_after_a",
+  "pair_type": "change",
+  "variant": "splat",
+  "title": "Gaussian splats: light, before, take a vs light, after, take a",
+  "question": "Do splats of each recording render well, and does comparing before and after from the exact same camera separate real changes from noise?",
+  "phase_title": "Gaussian splats",
+  "splat_iters": 20000,
+  "splats": [
+    {
+      "recording": "scene01_light_before_a",
+      "train_frames": 319,
+      "train_frames_effective": 298.5,
+      "held_out_frames": 45,
+      "iters": 20000,
+      "gaussians": 456850,
+      "seconds": 634,
+      "image_size": [
+        432,
+        768
+      ],
+      "pose_correction_deg_median": 0.849,
+      "final_l1": 0.0528,
+      "pruned": {
+        "11000": {
+          "floating_or_rarely_seen": 118500,
+          "faint": 0,
+          "huge": 1807,
+          "removed": 120271,
+          "of": 557131
+        },
+        "16000": {
+          "floating_or_rarely_seen": 41472,
+          "faint": 44250,
+          "huge": 1821,
+          "removed": 80687,
+          "of": 537537
+        }
+      },
+      "start_points_adjusted": 22994,
+      "depth_scale_median": 1.0
+    },
+    {
+      "recording": "scene01_light_after_a",
+      "train_frames": 325,
+      "train_frames_effective": 305.4,
+      "held_out_frames": 46,
+      "iters": 20000,
+      "gaussians": 551847,
+      "seconds": 658,
+      "image_size": [
+        432,
+        768
+      ],
+      "pose_correction_deg_median": 0.696,
+      "final_l1": 0.0511,
+      "pruned": {
+        "11000": {
+          "floating_or_rarely_seen": 281782,
+          "faint": 0,
+          "huge": 1935,
+          "removed": 283562,
+          "of": 812785
+        },
+        "16000": {
+          "floating_or_rarely_seen": 108074,
+          "faint": 56791,
+          "huge": 2140,
+          "removed": 154479,
+          "of": 706326
+        }
+      },
+      "start_points_adjusted": 32085,
+      "depth_scale_median": 0.9515
+    }
+  ],
+  "splat_psnr_before": 18.25,
+  "splat_psnr_after": 18.86,
+  "same_view_noise_median": 0.0454,
+  "same_view_diff_median": 0.10689115524291992,
+  "same_view_threshold": 0.5001,
+  "same_view_changed_share": 0.015148493610796133,
+  "same_view_changed_share_reverse": 0.0037703617557128446,
+  "depth_changed_share_5cm": 0.8953884743785562,
+  "scale_m_per_unit": 2.5241,
+  "exported_gaussians": {
+    "before": 456850,
+    "after": 551847
+  },
+  "same_view_views_compared": 30,
+  "same_view_views_compared_reverse": 20,
+  "poses": {
+    "frame_size": [
+      576,
+      1024
+    ],
+    "frame_pairs_tried": 5573,
+    "frame_pairs_matched": 5118,
+    "sparse_frames_rematched": 11,
+    "vggt": {
+      "median_px": 8.256570957732826,
+      "points": 106952,
+      "observations": 442740
+    },
+    "rounds": [
+      {
+        "median_px": 5.3210033503481275,
+        "points": 106952,
+        "observations": 442740
+      },
+      {
+        "median_px": 1.1179509011397366,
+        "points": 76560,
+        "observations": 268612
+      }
+    ],
+    "final": {
+      "median_px": 0.5872717413249403,
+      "p90_px": 1.7148337092085775,
+      "points": 54061,
+      "observations": 187248
+    },
+    "per_frame_median_px": {
+      "median": 0.7044731828946855,
+      "p90": 1.154140390759144,
+      "worst": 2.897350102856449
+    },
+    "pose_px": {
+      "median": 0.375112728441163,
+      "p90": 1.0208384169213087,
+      "frames_unconstrained": 32
+    },
+    "frames_with_few_points": 136,
+    "frames_resected": 96,
+    "frames_interpolated": 40,
+    "frames_without_points": 8,
+    "rotation_change_deg_median": 1.5967265799468124,
+    "rotation_change_deg_p90": 4.884670164741929,
+    "centre_change_median_rel": 0.019711447325281947,
+    "focal_change": [
+      0.9783948708656005,
+      0.9774051865168079
+    ],
+    "per_recording_median_px": [
+      0.614186962550163,
+      0.5711260000469603
+    ],
+    "points_in_both": 1018,
+    "points_in_both_median_px": 1.093777077359355,
+    "observations_kept_share": 0.19402067987230245,
+    "seconds": 246,
+    "depth_scale_median": 0.800000011920929,
+    "depth_scale_p10_p90": [
+      0.800000011920929,
+      0.9880285859107971
+    ]
+  },
+  "frames_total": 735,
+  "stages": [
+    {
+      "stage": "reconstruction (735 frames)",
+      "seconds": 768
+    },
+    {
+      "stage": "camera poses refined: 8.3 px -> 0.59 px reprojection error (p90 1.71 px, 96 sparse frames resected, 40 interpolated), cameras turned 1.60 deg (median)",
+      "seconds": 1020
+    },
+    {
+      "stage": "memory freed to 4.2 GB RAM; gsplat ready (built at setup)",
+      "seconds": 1021
+    },
+    {
+      "stage": "splat of light, before, take a: 456850 Gaussians, 634 s",
+      "seconds": 1667
+    },
+    {
+      "stage": "splat of light, after, take a: 551847 Gaussians, 658 s",
+      "seconds": 2337
+    },
+    {
+      "stage": "held-out renders and same-view comparison",
+      "seconds": 2457
+    },
+    {
+      "stage": "figures",
+      "seconds": 2464
+    },
+    {
+      "stage": "exports",
+      "seconds": 2473
+    }
+  ],
+  "step_seconds": 2473
+}
