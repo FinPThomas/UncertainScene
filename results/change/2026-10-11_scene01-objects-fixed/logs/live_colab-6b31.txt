@@ -1,5 +1,5 @@
-session colab-6b31, step 1b-splat_moved_light-before-a_vs_light-after-a, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 5.6/12.7 GB, disk free 59.6 GB, GPU 0.4/15.0 GB
+session colab-6b31, step 1b-splat_moved_light-before-a_vs_light-after-a, running 40 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 4.7/12.7 GB, disk free 58.3 GB, GPU 2.4/15.0 GB
 
 2026-10-14 22:50:24,335 INFO uncertainscene.scene01: step 1b-splat_moved_light-before-a_vs_light-after-a: Gaussian splats of scene01_light_before_a and scene01_light_after_a
 2026-10-14 22:50:40,339 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -65,3 +65,23 @@ machine: RAM 5.6/12.7 GB, disk free 59.6 GB, GPU 0.4/15.0 GB
 2026-10-14 23:19:25,720 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 2000, L1 0.0775, 322573 Gaussians, 63 s
 2026-10-14 23:19:55,618 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 3000, L1 0.0743, 401302 Gaussians, 92 s
 2026-10-14 23:20:27,175 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 4000, L1 0.0714, 412282 Gaussians, 124 s
+2026-10-14 23:20:59,292 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 5000, L1 0.0657, 516925 Gaussians, 156 s
+2026-10-14 23:21:32,189 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 6000, L1 0.0639, 634971 Gaussians, 189 s
+2026-10-14 23:22:05,970 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 7000, L1 0.0640, 579673 Gaussians, 223 s
+2026-10-14 23:22:40,312 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 8000, L1 0.0632, 699365 Gaussians, 257 s
+2026-10-14 23:23:15,835 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 9000, L1 0.0594, 819159 Gaussians, 293 s
+2026-10-14 23:23:50,705 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 10000, L1 0.0618, 684973 Gaussians, 327 s
+2026-10-14 23:24:26,873 INFO uncertainscene.recon.splat: splat scene01_light_after_a: pruned 283562 of 812785 Gaussians at iter 11000 (281782 floating or seen by < 3 views, 0 faint, 1935 huge)
+2026-10-14 23:24:26,880 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 11000, L1 0.0603, 529223 Gaussians, 364 s
+2026-10-14 23:25:00,271 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 12000, L1 0.0657, 657390 Gaussians, 397 s
+2026-10-14 23:25:33,942 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 13000, L1 0.0625, 591915 Gaussians, 431 s
+2026-10-14 23:26:09,025 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 14000, L1 0.0588, 706326 Gaussians, 466 s
+2026-10-14 23:26:43,329 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 15000, L1 0.0536, 706326 Gaussians, 500 s
+2026-10-14 23:27:17,522 INFO uncertainscene.recon.splat: splat scene01_light_after_a: pruned 154479 of 706326 Gaussians at iter 16000 (108074 floating or seen by < 3 views, 56791 faint, 2140 huge)
+2026-10-14 23:27:17,529 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 16000, L1 0.0511, 551847 Gaussians, 534 s
+2026-10-14 23:27:48,877 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 17000, L1 0.0558, 551847 Gaussians, 566 s
+2026-10-14 23:28:19,846 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 18000, L1 0.0535, 551847 Gaussians, 597 s
+2026-10-14 23:28:50,393 INFO uncertainscene.recon.splat: splat scene01_light_after_a: iter 19000, L1 0.0530, 551847 Gaussians, 627 s
+2026-10-14 23:29:20,944 INFO uncertainscene.splats: stage done: splat of light, after, take a: 551847 Gaussians, 658 s (2337 s)
+2026-10-14 23:29:24,127 INFO uncertainscene.change.floor: floor: gravity refined by 5.0 deg, 28 floor points (3% of horizontal), camera 0.393 units above floor -> 3.435 m/unit
+2026-10-14 23:29:34,586 INFO numexpr.utils: NumExpr defaulting to 2 threads.
