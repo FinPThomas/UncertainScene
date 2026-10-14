@@ -1,0 +1,18 @@
+session colab-945e, step 1b-splat_moved_light-before-a_vs_light-after-a, running 10 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 4.4/12.7 GB, disk free 60.0 GB, GPU 7.2/15.0 GB
+
+2026-10-14 17:36:27,611 INFO uncertainscene.scene01: step 1b-splat_moved_light-before-a_vs_light-after-a: Gaussian splats of scene01_light_before_a and scene01_light_after_a
+2026-10-14 17:36:40,520 INFO dinov2: using MLP layer as FFN
+2026-10-14 17:36:51,888 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-10-14 17:42:16,021 INFO uncertainscene.recon.vggt: loaded facebook/VGGT-1B on cuda in 337 s
+2026-10-14 17:42:56,760 INFO uncertainscene.recon.chunked: chunk 2/19: 47 frames, scale 1.006, anchor residual 0.002 (relative to depth)
+2026-10-14 17:43:16,743 INFO uncertainscene.recon.chunked: chunk 3/19: 47 frames, scale 1.017, anchor residual 0.003 (relative to depth)
+2026-10-14 17:43:37,238 INFO uncertainscene.recon.chunked: chunk 4/19: 47 frames, scale 1.012, anchor residual 0.004 (relative to depth)
+2026-10-14 17:43:58,264 INFO uncertainscene.recon.chunked: chunk 5/19: 47 frames, scale 1.025, anchor residual 0.004 (relative to depth)
+2026-10-14 17:44:19,314 INFO uncertainscene.recon.chunked: chunk 6/19: 46 frames, scale 1.024, anchor residual 0.005 (relative to depth)
+2026-10-14 17:44:40,344 INFO uncertainscene.recon.chunked: chunk 7/19: 46 frames, scale 1.032, anchor residual 0.005 (relative to depth)
+2026-10-14 17:45:00,964 INFO uncertainscene.recon.chunked: chunk 8/19: 46 frames, scale 1.034, anchor residual 0.005 (relative to depth)
+2026-10-14 17:45:21,529 INFO uncertainscene.recon.chunked: chunk 9/19: 46 frames, scale 1.028, anchor residual 0.005 (relative to depth)
+2026-10-14 17:45:42,307 INFO uncertainscene.recon.chunked: chunk 10/19: 46 frames, scale 1.027, anchor residual 0.006 (relative to depth)
+2026-10-14 17:46:03,080 INFO uncertainscene.recon.chunked: chunk 11/19: 46 frames, scale 1.038, anchor residual 0.006 (relative to depth)
+2026-10-14 17:46:23,798 INFO uncertainscene.recon.chunked: chunk 12/19: 46 frames, scale 1.029, anchor residual 0.005 (relative to depth)
