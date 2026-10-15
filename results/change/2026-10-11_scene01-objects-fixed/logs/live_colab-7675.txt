@@ -1,5 +1,5 @@
-session colab-7675, step 1-main_no-change_light-before-a_vs_light-before-b, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 7.6/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
+session colab-7675, step 1-main_no-change_light-before-a_vs_light-before-b, running 40 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 8.6/12.7 GB, disk free 54.5 GB, GPU 10.3/15.0 GB
 
 2026-10-15 15:13:31,367 INFO uncertainscene.scene01: step 1-main_no-change_light-before-a_vs_light-before-b: scene01_light_before_a vs scene01_light_before_b, all frames/video, 44 SAM key frames, variant base
 2026-10-15 15:13:40,823 INFO dinov2: using MLP layer as FFN
@@ -39,3 +39,15 @@ machine: RAM 7.6/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
 2026-10-15 15:42:59,835 INFO uncertainscene.poc: [1-main_no-change_light-before-a_vs_light-before-b] point-level change detection (1200000 points, tau 0.225) done in 991 s | RAM 7.6/12.7 GB, disk free 54.5 GB, GPU 5.6/15.0 GB
 2026-10-15 15:43:00,615 INFO uncertainscene.change.floor: floor: gravity refined by 4.7 deg, 48 floor points (3% of horizontal), camera 0.407 units above floor -> 3.314 m/unit
 2026-10-15 15:43:00,936 INFO uncertainscene.poc: [1-main_no-change_light-before-a_vs_light-before-b] floor (48 floor points, gravity refined 4.7 deg) done in 1 s | RAM 7.6/12.7 GB, disk free 54.5 GB, GPU 5.6/15.0 GB
+2026-10-15 15:44:22,249 INFO uncertainscene.change.metric: scale: metric depth 2.498 m/unit from 80 frames (frames spread 13.5%, +-10% 1 sigma)
+2026-10-15 15:44:22,257 INFO uncertainscene.change.floor: scale: most likely 2.498 m/unit (90% 2.114-2.948) from metric_depth 2.498; phone height (not used) 3.314
+2026-10-15 15:44:22,609 INFO uncertainscene.poc: [1-main_no-change_light-before-a_vs_light-before-b] metric scale (depth model 2.498 m/unit from 80 frames; combined 2.498, 90% 2.114-2.948) done in 82 s | RAM 7.6/12.7 GB, disk free 54.5 GB, GPU 5.8/15.0 GB
+2026-10-15 15:44:30,937 INFO root: Loaded checkpoint sucessfully
+2026-10-15 15:44:31,713 INFO root: Loaded checkpoint sucessfully
+2026-10-15 15:44:31,823 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 15:44:31,872 INFO root: Computing image embeddings for the provided image...
+2026-10-15 15:44:31,921 INFO root: Image embeddings computed.
+2026-10-15 15:52:22,126 INFO uncertainscene.change.segment: SAM 2 tracking: frame 1/88: 16 new objects (16 tracked so far)
+2026-10-15 15:52:22,140 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 15:52:22,184 INFO root: Computing image embeddings for the provided image...
+2026-10-15 15:52:22,227 INFO root: Image embeddings computed.
