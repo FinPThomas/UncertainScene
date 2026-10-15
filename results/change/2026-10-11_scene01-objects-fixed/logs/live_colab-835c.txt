@@ -1,4 +1,4 @@
-session colab-835c, step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a, running 81 min (live log, pushed every 10 min; the step's own results follow when it ends)
+session colab-835c, step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a, running 91 min (live log, pushed every 10 min; the step's own results follow when it ends)
 machine: RAM 8.9/12.7 GB, disk free 56.9 GB, GPU 9.1/15.0 GB
 
 2026-10-15 19:09:37,225 INFO uncertainscene.scene01: step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a: scene01_dark_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects2
@@ -150,3 +150,19 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 2026-10-15 20:22:52,553 INFO root: For numpy array image, we assume (HxWxC) format
 2026-10-15 20:22:52,615 INFO root: Computing image embeddings for the provided image...
 2026-10-15 20:22:52,705 INFO root: Image embeddings computed.
+2026-10-15 20:30:21,700 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 20:33:13,828 INFO uncertainscene.change.segment: SAM 2 tracking: frame 1/88: 21 new objects (21 tracked so far)
+2026-10-15 20:33:13,839 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:33:13,882 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:33:13,924 INFO root: Image embeddings computed.
+2026-10-15 20:36:45,663 INFO uncertainscene.change.segment: SAM 2 tracking: frame 9/88: 7 new objects (28 tracked so far)
+2026-10-15 20:36:45,676 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:36:45,719 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:36:45,747 INFO root: Image embeddings computed.
