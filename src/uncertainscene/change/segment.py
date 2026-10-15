@@ -198,7 +198,7 @@ def _logit_wobble(lg: np.ndarray) -> list | None:
 def sam_tracks(files: list[str], frames: list[int], size_hw: tuple[int, int], model_id: str = "facebook/sam2.1-hiera-small",
                points_per_side: int = 32, min_area: float = 0.0005, max_area: float = 0.5, discover_every: int = 8,
                batch: int = 15, keep_frames=None, gen=None, predictor=None, workdir=None, det=None,
-               part_inside: float = 0.7) -> dict:
+               part_inside: float = 0.7, seed_conf: float = 0.3) -> dict:
     """Objects tracked through `frames` (one recording, in time order) with SAM 2's video
     predictor. Every `discover_every`-th frame the automatic mask generator proposes masks;
     those not already tracked there (`_is_new`) become new objects, followed forwards and
@@ -207,9 +207,10 @@ def sam_tracks(files: list[str], frames: list[int], size_hw: tuple[int, int], mo
 
     `det` (optional, detect2d.Detector): whole-object instances. They seed tracks before the
     automatic masks; automatic masks more than `part_inside` inside an object instance are parts
-    and seed nothing; on kept frames every track collects label votes ("det_votes", summed
-    confidence of instances it matches) and a track that keeps lying inside the instance of
-    another track is joined to it (its masks are added to that track's, "parts")."""
+    and seed nothing (detections below `seed_conf` only vote); on kept frames every track
+    collects label votes ("det_votes", summed confidence x IoU of instances it matches) and a
+    track that keeps lying inside the instance of another track is joined to it (its masks are
+    added to that track's, "parts")."""
     import tempfile
 
     import torch
@@ -254,9 +255,11 @@ def sam_tracks(files: list[str], frames: list[int], size_hw: tuple[int, int], mo
                 found = det(img)
                 if d in keep_idx:
                     dets[d] = _small_dets(found, (W, H))
-                things = [x["mask"][::4, ::4] for x in found if x["object"]]
+                sure = [x for x in found if x["conf"] >= seed_conf]       # weaker detections only vote
+                things = [x["mask"][::4, ::4] for x in sure if x["object"]]
                 # whole objects first (largest first), then the automatic masks
-                cands = [(x["mask"], x["conf"], True) for x in sorted(found, key=lambda x: -x["mask"].sum())] + cands
+                cands = [(x["mask"], x["conf"], True) for x in sorted(sure, key=lambda x: -x["mask"].sum())] + cands
+                del sure
                 del found
             # what is new is decided at quarter resolution (16x fewer pixels per comparison;
             # ~150 candidates x ~150 tracks per discovery frame was minutes at full resolution)

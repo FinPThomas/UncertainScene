@@ -256,7 +256,8 @@ def test_v2_queue_and_summary(tmp_path):
     names = [s if isinstance(s, str) else s.name for s in q]
     assert len(names) == len(set(names)) and names[0] == "1-main_moved_light-before-a_vs_light-after-a"
     assert names[1] == "1b-splat_moved_light-before-a_vs_light-after-a"     # splats reuse the pilot's reconstruction
-    assert names[2] == "1-main_no-change_light-before-a_vs_light-before-b"
+    assert names[2] == "1c-objects_moved_light-before-a_vs_light-after-a"   # whole objects on the pilot pair (2026-10-15)
+    assert names[3] == "1-main_no-change_light-before-a_vs_light-before-b"
     assert any(n.startswith("2-position_") for n in names)
     pairs = {(s.a, s.b) for s in q if isinstance(s, Spec) and s.name.startswith(("1-main", "3-allpairs"))}
     assert len(pairs) == 21                      # every pair of the 7 recordings, once
@@ -581,6 +582,7 @@ def test_full_step_with_real_tracking_poses_motion_and_scale_paths(tmp_path, mon
         return out
 
     monkeypatch.setattr(S, "sam_tracks", fake_tracks)
+    monkeypatch.setattr("uncertainscene.change.detect2d.Detector", lambda **kw: object())   # no weights download
     true_scale = 2.5
     monkeypatch.setattr(metric, "_predictor", lambda model_id: (
         lambda f: rec.depth[rec.files.index(f)] * true_scale))
@@ -597,7 +599,7 @@ def test_full_step_with_real_tracking_poses_motion_and_scale_paths(tmp_path, mon
     assert m["sam_error"] is None and m["obj_total"] > 0
     assert m.get("field_scale_metric_depth") and abs(m["field_scale_metric_depth"] / true_scale - 1) < 0.05
     assert (out / "assets" / "scene_graph.json").exists()
-    assert list((tmp_path / "cache").glob("sam2t_*.npz"))       # tracked masks cached
+    assert list((tmp_path / "cache").glob("sam2td_*.npz"))      # tracked masks (with the detector) cached
     # a second attempt reuses the cached masks and still finishes
     out2 = tmp_path / "out2"
     out2.mkdir()

@@ -114,6 +114,7 @@ def test_tracked_masks_are_cached_and_reloaded(tmp_path, monkeypatch):
                      "wobble_px": None, "track": 1}] for f in kw["keep_frames"]}
 
     monkeypatch.setattr(S, "sam_tracks", fake_tracks)
+    monkeypatch.setattr("uncertainscene.change.detect2d.Detector", lambda **kw: object())   # no weights download
     spec = X.Spec("t", "a", "b", n_key=3)
     out1 = X._masks(rec, spec, tmp_path)
     out2 = X._masks(rec, spec, tmp_path)
