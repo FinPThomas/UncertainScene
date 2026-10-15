@@ -1,5 +1,5 @@
-session colab-7675, step 1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a, running 20 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 8.0/12.7 GB, disk free 53.7 GB, GPU 5.7/15.0 GB
+session colab-7675, step 1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 7.8/12.7 GB, disk free 53.7 GB, GPU 6.9/15.0 GB
 
 2026-10-15 17:20:10,149 INFO uncertainscene.scene01: step 1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a: scene01_dark_before_a vs scene01_light_before_a, all frames/video, 44 SAM key frames, variant base
 2026-10-15 17:20:19,443 INFO dinov2: using MLP layer as FFN
@@ -36,3 +36,6 @@ machine: RAM 8.0/12.7 GB, disk free 53.7 GB, GPU 5.7/15.0 GB
 2026-10-15 17:32:21,431 INFO uncertainscene.recon.poses: poses: per recording 0.74, 0.71 px median; 187 points seen in both recordings (1.31 px); 16% of feature observations kept
 2026-10-15 17:32:27,212 INFO uncertainscene.poc: [1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a] camera poses refined: 8.9 px -> 0.73 px reprojection error (p90 1.95 px, 85 sparse frames resected, 45 interpolated), cameras turned 1.83 deg (median) done in 231 s | RAM 7.0/12.7 GB, disk free 54.1 GB, GPU 5.7/15.0 GB
 2026-10-15 17:32:44,886 INFO uncertainscene.poc: [1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a] DINOv2 features done in 18 s | RAM 7.0/12.7 GB, disk free 53.7 GB, GPU 5.7/15.0 GB
+2026-10-15 17:48:56,379 INFO uncertainscene.poc: [1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a] point-level change detection (1200000 points, tau 0.231) done in 971 s | RAM 7.7/12.7 GB, disk free 53.7 GB, GPU 5.7/15.0 GB
+2026-10-15 17:48:57,287 INFO uncertainscene.change.floor: floor: gravity refined by 2.2 deg, 32 floor points (3% of horizontal), camera 0.417 units above floor -> 3.235 m/unit
+2026-10-15 17:48:57,669 INFO uncertainscene.poc: [1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a] floor (32 floor points, gravity refined 2.2 deg) done in 1 s | RAM 7.8/12.7 GB, disk free 53.7 GB, GPU 5.7/15.0 GB
