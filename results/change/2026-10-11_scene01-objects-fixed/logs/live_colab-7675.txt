@@ -1,4 +1,4 @@
-session colab-7675, step 1-main_no-change_light-before-a_vs_light-before-b, running 100 min (live log, pushed every 10 min; the step's own results follow when it ends)
+session colab-7675, step 1-main_no-change_light-before-a_vs_light-before-b, running 110 min (live log, pushed every 10 min; the step's own results follow when it ends)
 machine: RAM 8.6/12.7 GB, disk free 54.5 GB, GPU 9.7/15.0 GB
 
 2026-10-15 15:13:31,367 INFO uncertainscene.scene01: step 1-main_no-change_light-before-a_vs_light-before-b: scene01_light_before_a vs scene01_light_before_b, all frames/video, 44 SAM key frames, variant base
