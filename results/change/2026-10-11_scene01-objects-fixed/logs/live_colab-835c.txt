@@ -1,5 +1,5 @@
-session colab-835c, step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a, running 121 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 9.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+session colab-835c, step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a, running 131 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 8.9/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
 
 2026-10-15 19:09:37,225 INFO uncertainscene.scene01: step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a: scene01_dark_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects2
 2026-10-15 19:09:51,787 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -235,3 +235,21 @@ hint: have locally. This is usually caused by another repository pushing to
 hint: the same ref. If you want to integrate the remote changes, use
 hint: 'git pull' before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 21:10:45,285 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 21:14:28,970 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] after recording re-aligned on 10 unchanged objects: shift 12.31 cm, 7.031 deg, scale 1.03%, object surface gap 10.15 -> 2.84 cm; objects rebuilt done in 910 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:15:04,829 INFO uncertainscene.change.segment: recording A: 927 masks on 44 frames -> 802 fragments -> 60 objects (21 structures), median 11.0 views per object, merge grid 0.0801 units
+2026-10-15 21:15:40,309 INFO uncertainscene.change.segment: recording B: 870 masks on 44 frames -> 782 fragments -> 47 objects (13 structures), median 15.0 views per object, merge grid 0.0801 units
+2026-10-15 21:15:40,938 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] SAM 2 objects (60 in A, 47 in B) done in 72 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:16:05,909 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] labels for every object (detector votes, CLIP as fallback) done in 25 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:16:06,349 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] names that cannot fit the object's size replaced: 23 done in 0 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:16:09,366 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] pieces joined to the touching object of the same name: 8 (59 objects in A, 40 in B) done in 3 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:16:09,810 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] unsure objects dropped: 39 (A11 sofa (clip 0.38, 11 views); A15 cushion (clip 0.32, 17 views); A16 wooden crate (clip 0.28, 6 views); A20 sofa (clip 0.33, 10 views); A25 guitar (clip 0.31, 3 views); A28 skirting board (clip 0.10, 5 views); A29 skirting board (clip 0.50, 16 views); A31 skirting board (clip 0.20, 5 views) ...) done in 0 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:16:10,296 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] Rigidity Copilot: expected stiffness of 60 objects done in 0 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:16:10,304 INFO uncertainscene.change.floor: scale: most likely 2.502 m/unit (90% 2.237-2.772) from metric_depth 2.763, objects 0.904; phone height (not used) 3.766
