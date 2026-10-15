@@ -1,5 +1,5 @@
-session colab-7675, step 1-main_no-change_light-before-a_vs_light-before-b, running 20 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 7.8/12.7 GB, disk free 54.5 GB, GPU 5.6/15.0 GB
+session colab-7675, step 1-main_no-change_light-before-a_vs_light-before-b, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 7.6/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
 
 2026-10-15 15:13:31,367 INFO uncertainscene.scene01: step 1-main_no-change_light-before-a_vs_light-before-b: scene01_light_before_a vs scene01_light_before_b, all frames/video, 44 SAM key frames, variant base
 2026-10-15 15:13:40,823 INFO dinov2: using MLP layer as FFN
@@ -36,3 +36,6 @@ machine: RAM 7.8/12.7 GB, disk free 54.5 GB, GPU 5.6/15.0 GB
 2026-10-15 15:25:26,367 INFO uncertainscene.recon.poses: poses: per recording 0.84, 0.83 px median; 2073 points seen in both recordings (1.14 px); 18% of feature observations kept
 2026-10-15 15:25:32,287 INFO uncertainscene.poc: [1-main_no-change_light-before-a_vs_light-before-b] camera poses refined: 8.2 px -> 0.83 px reprojection error (p90 2.05 px, 100 sparse frames resected, 45 interpolated), cameras turned 1.87 deg (median) done in 221 s | RAM 6.7/12.7 GB, disk free 54.9 GB, GPU 5.6/15.0 GB
 2026-10-15 15:26:29,217 INFO uncertainscene.poc: [1-main_no-change_light-before-a_vs_light-before-b] DINOv2 features done in 57 s | RAM 6.7/12.7 GB, disk free 54.5 GB, GPU 5.6/15.0 GB
+2026-10-15 15:42:59,835 INFO uncertainscene.poc: [1-main_no-change_light-before-a_vs_light-before-b] point-level change detection (1200000 points, tau 0.225) done in 991 s | RAM 7.6/12.7 GB, disk free 54.5 GB, GPU 5.6/15.0 GB
+2026-10-15 15:43:00,615 INFO uncertainscene.change.floor: floor: gravity refined by 4.7 deg, 48 floor points (3% of horizontal), camera 0.407 units above floor -> 3.314 m/unit
+2026-10-15 15:43:00,936 INFO uncertainscene.poc: [1-main_no-change_light-before-a_vs_light-before-b] floor (48 floor points, gravity refined 4.7 deg) done in 1 s | RAM 7.6/12.7 GB, disk free 54.5 GB, GPU 5.6/15.0 GB
