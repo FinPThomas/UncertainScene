@@ -1,0 +1,683 @@
+{
+  "title": "Objects moved, same lighting: light, before, take a vs light, after, take a (whole objects found by a detector, then tracked)",
+  "question": "Does it find the objects that really moved, were added or removed?",
+  "phase_title": "Whole objects",
+  "pair_type": "change",
+  "a": "scene01_light_before_a",
+  "b": "scene01_light_after_a",
+  "pair": "lightBa_vs_lightAa",
+  "n_per_video": 364,
+  "requested_per_video": null,
+  "offset": 0,
+  "n_key": 44,
+  "variant": "objects",
+  "version": 2,
+  "detect_config": {
+    "stride": 2,
+    "conf_quantile": 0.35,
+    "min_obs": 2,
+    "null_quantile": 0.99,
+    "min_gone_frac": 0.5,
+    "use_visibility": true,
+    "use_appearance": true,
+    "max_null_points": 60000,
+    "max_points": 600000,
+    "seed": 0
+  },
+  "robot": {
+    "phone_height_m": 1.35,
+    "phone_height_range_m": [
+      1.1,
+      1.6
+    ],
+    "shoulder_height_m": 0.75,
+    "reach_m": 1.0,
+    "mobile": true,
+    "base_offset_m": 0.0,
+    "footprint_m": 0.25,
+    "gripper_clearance_m": 0.12,
+    "gripper_radius_m": 0.03,
+    "uncertainty_ok_cm": 3.0
+  },
+  "fields_on": "B",
+  "recon_seconds": 468.4,
+  "recon_chunks": 19,
+  "chunk_residual_max": 0.0061,
+  "chunks_dropped": [],
+  "gpu_peak_gb": 8.73,
+  "recon_cached": false,
+  "frames_total": 735,
+  "sam_error": null,
+  "scale_cues": {
+    "phone_height": {
+      "scale": 3.6647182764730157,
+      "sd_log": 0.11388858645635583,
+      "assumed_m": 1.35
+    },
+    "metric_depth": {
+      "scale": 2.5241392200638177,
+      "sd_log": 0.10088814762495375,
+      "n": 80,
+      "between_sd_log": 0.1195,
+      "bias_sd_log": 0.1,
+      "model": "depth-anything/Depth-Anything-V2-Metric-Indoor-Large-hf",
+      "per_frame": [
+        2.338,
+        2.3681,
+        2.8555,
+        2.7314,
+        3.3025,
+        3.1496,
+        3.7041,
+        3.1708,
+        2.4676,
+        2.9927,
+        1.7933,
+        2.1985,
+        2.4246,
+        2.2878,
+        2.3174,
+        2.5958,
+        2.8342,
+        2.4065,
+        1.9573,
+        2.1982,
+        2.0422,
+        1.9377,
+        2.8404,
+        2.7409,
+        1.8567,
+        2.2357,
+        2.5241,
+        2.4265,
+        2.4768,
+        2.4248,
+        2.3743,
+        2.1863,
+        2.3416,
+        2.2776,
+        2.4072,
+        2.2545,
+        2.5859,
+        2.3987,
+        2.3249,
+        2.2431,
+        2.2671,
+        2.5345,
+        2.6887,
+        2.4158,
+        2.4174,
+        2.4239,
+        2.434,
+        2.5426,
+        2.5815,
+        2.6126,
+        2.9542,
+        2.9811,
+        2.9969,
+        2.7286,
+        3.2135,
+        2.4557,
+        2.757,
+        2.4907,
+        2.2918,
+        2.8057,
+        3.2728,
+        2.2534,
+        2.3708,
+        2.083,
+        2.8878,
+        2.6726,
+        2.4057,
+        2.602,
+        2.8541,
+        2.9626,
+        2.7074,
+        2.5947,
+        2.4826,
+        2.7938,
+        3.1913,
+        2.5351,
+        2.62,
+        2.6547,
+        2.6096,
+        2.577
+      ]
+    },
+    "combined": {
+      "scale": 1.9207655711565335,
+      "range": [
+        1.7287180999830134,
+        2.1691831990054706
+      ],
+      "sd_log": 0.06898800593557072,
+      "cues": [
+        "metric_depth",
+        "objects"
+      ],
+      "disagreement_sigma": 3.51
+    },
+    "objects": {
+      "scale": 1.6216507429554776,
+      "range": [
+        1.4358550494122277,
+        1.8398806804038974
+      ],
+      "sd_log": 0.07536176197603567,
+      "n": 15,
+      "labels": [
+        "sofa",
+        "cushion",
+        "cushion",
+        "cushion",
+        "sofa",
+        "skirting board",
+        "neck pillow",
+        "baseball cap",
+        "plate",
+        "paper bag",
+        "sofa",
+        "ball",
+        "table tennis bat",
+        "table tennis bat",
+        "paper bag"
+      ],
+      "votes": [
+        {
+          "label": "sofa",
+          "terms": [
+            [
+              1.278954216786878,
+              0.18027756377319945,
+              0.472
+            ],
+            [
+              0.18655318811804678,
+              0.18027756377319945,
+              0.124
+            ],
+            [
+              1.278954216786878,
+              0.18027756377319945,
+              0.115
+            ]
+          ],
+          "other": 0.28900000000000003
+        },
+        {
+          "label": "cushion",
+          "terms": [
+            [
+              0.4573057890634097,
+              0.18027756377319945,
+              0.13
+            ],
+            [
+              0.4573057890634097,
+              0.18027756377319945,
+              0.08
+            ]
+          ],
+          "other": 0.7899999999999999
+        },
+        {
+          "label": "cushion",
+          "terms": [
+            [
+              0.26805836331631483,
+              0.18027756377319945,
+              1.0
+            ]
+          ],
+          "other": 0.0
+        },
+        {
+          "label": "cushion",
+          "terms": [
+            [
+              0.6803379790469948,
+              0.18027756377319945,
+              0.71
+            ],
+            [
+              0.7896825795294096,
+              0.15620499351813308,
+              0.097
+            ],
+            [
+              0.6803379790469948,
+              0.18027756377319945,
+              0.063
+            ]
+          ],
+          "other": 0.13000000000000012
+        },
+        {
+          "label": "sofa",
+          "terms": [
+            [
+              1.5870463603561276,
+              0.18027756377319945,
+              0.275
+            ],
+            [
+              0.5360891615901803,
+              0.2692582403567252,
+              0.048
+            ],
+            [
+              0.9942345275272577,
+              0.2692582403567252,
+              0.044
+            ]
+          ],
+          "other": 0.633
+        },
+        {
+          "label": "skirting board",
+          "terms": [
+            [
+              -0.1926598382545155,
+              0.1118033988749895,
+              0.064
+            ]
+          ],
+          "other": 0.9359999999999999
+        },
+        {
+          "label": "neck pillow",
+          "terms": [
+            [
+              0.47647006145175563,
+              0.15620499351813308,
+              0.997
+            ],
+            [
+              1.0257762057858104,
+              0.15620499351813308,
+              0.001
+            ],
+            [
+              0.9164316053033957,
+              0.18027756377319945,
+              0.0
+            ]
+          ],
+          "other": 0.0020000000000000018
+        },
+        {
+          "label": "baseball cap",
+          "terms": [
+            [
+              0.4888993006658721,
+              0.15620499351813308,
+              1.0
+            ]
+          ],
+          "other": 0.0
+        },
+        {
+          "label": "plate",
+          "terms": [
+            [
+              0.5869220029280218,
+              0.1414213562373095,
+              0.133
+            ],
+            [
+              0.6507203314803758,
+              0.2692582403567252,
+              0.074
+            ],
+            [
+              0.31189883446838573,
+              0.1118033988749895,
+              0.055
+            ]
+          ],
+          "other": 0.738
+        },
+        {
+          "label": "paper bag",
+          "terms": [
+            [
+              0.8010267135936933,
+              0.2692582403567252,
+              0.572
+            ],
+            [
+              0.8662437901986644,
+              0.5099019513592785,
+              0.042
+            ],
+            [
+              1.024170264907903,
+              0.41231056256176607,
+              0.036
+            ]
+          ],
+          "other": 0.35
+        },
+        {
+          "label": "sofa",
+          "terms": [
+            [
+              2.0651085744607207,
+              0.18027756377319945,
+              0.221
+            ]
+          ],
+          "other": 0.779
+        },
+        {
+          "label": "ball",
+          "terms": [
+            [
+              0.6783217285136467,
+              0.31622776601683794,
+              0.102
+            ],
+            [
+              -0.1305466291107511,
+              0.31622776601683794,
+              0.05
+            ],
+            [
+              1.590463058980454,
+              0.31622776601683794,
+              0.046
+            ]
+          ],
+          "other": 0.802
+        },
+        {
+          "label": "table tennis bat",
+          "terms": [
+            [
+              0.9076696276665746,
+              0.1118033988749895,
+              0.084
+            ],
+            [
+              1.0156387114630443,
+              0.31622776601683794,
+              0.076
+            ],
+            [
+              0.20677035383864661,
+              0.31622776601683794,
+              0.061
+            ]
+          ],
+          "other": 0.779
+        },
+        {
+          "label": "table tennis bat",
+          "terms": [
+            [
+              2.9575690250361464,
+              0.1118033988749895,
+              0.403
+            ],
+            [
+              1.385185098678907,
+              0.12806248474865697,
+              0.077
+            ]
+          ],
+          "other": 0.52
+        },
+        {
+          "label": "paper bag",
+          "terms": [
+            [
+              2.804703611610895,
+              0.2692582403567252,
+              0.06
+            ],
+            [
+              2.190858946139269,
+              0.223606797749979,
+              0.051
+            ]
+          ],
+          "other": 0.889
+        }
+      ],
+      "outlier": 0.1,
+      "per_object": [
+        3.5929,
+        1.5798,
+        1.3074,
+        1.9745,
+        4.8893,
+        0.8248,
+        1.6104,
+        1.6305,
+        1.7984,
+        2.2278,
+        7.8862,
+        1.9706,
+        2.4785,
+        19.2511,
+        16.5222
+      ]
+    }
+  },
+  "A_points": 600000,
+  "A_observed_frac": 0.9928,
+  "A_changed_frac": 0.04865,
+  "A_gone_frac": 0.01926,
+  "A_appearance_frac": 0.02939,
+  "B_points": 600000,
+  "B_observed_frac": 0.9849,
+  "B_changed_frac": 0.06017,
+  "B_gone_frac": 0.03499,
+  "B_appearance_frac": 0.02518,
+  "changed_frac": 0.05441,
+  "alignment_residual_cross": 0.1038,
+  "alignment_residual_within": 0.0835,
+  "n_removed": 3,
+  "n_added": 6,
+  "n_moved": 0,
+  "n_appearance": 2,
+  "n_changes": 11,
+  "n_background_labelled": 0,
+  "thr_tau_rel_depth": 0.25214,
+  "thr_gone_frac": 0.52987,
+  "thr_appearance": 0.85114,
+  "thr_scene_scale_median_depth": 0.46502,
+  "objects_one_unbroken_track": 0.133,
+  "objects_tracks_median": 1.0,
+  "objects_runs_median": 4.0,
+  "objects_labelled_by_detector": 27,
+  "objects_parts_joined": 12,
+  "unc_cm_A_median": 8.002,
+  "unc_cm_B_median": 6.61,
+  "field_scale_phone_height": 3.6647,
+  "field_scale_objects": 1.6217,
+  "field_scale_metric_depth": 2.5241,
+  "field_scale_objects_n": 15,
+  "field_scale_disagreement_sigma": 3.51,
+  "field_gravity_change_deg": 3.4,
+  "field_floor_inlier_frac": 0.033,
+  "field_scale_m_per_unit": 1.9208,
+  "field_scale_range": [
+    1.7287,
+    2.1692
+  ],
+  "field_uncertainty_cm_median": 7.035,
+  "field_uncertainty_cm_p90": 15.857,
+  "field_shift_cm_median_abs": 7.302,
+  "field_shift_cm_p99_abs": 37.524,
+  "field_reachable_frac": 0.819,
+  "field_approachable_frac": 0.048,
+  "field_interactable_frac": 0.001,
+  "field_grasp_frac": 0.0,
+  "field_push_frac": 0.0,
+  "field_place_frac": 0.015,
+  "field_points_on_objects": 0.764,
+  "field_base_standable_frac": 0.053,
+  "field_base_best_score": 0.752,
+  "field_base_best_score_changed": 0.557,
+  "field_base_best_from_operator_m": 0.24,
+  "obj_total": 30,
+  "obj_A": 19,
+  "obj_B": 26,
+  "obj_compared": 28,
+  "obj_changed": 10,
+  "obj_changed_frac": 0.3571,
+  "obj_labelled_confident": 23,
+  "obj_moved": 1,
+  "obj_added": 6,
+  "obj_removed": 3,
+  "obj_changed_in_place": 0,
+  "obj_shifted": 0,
+  "obj_thr_gone": 0.3,
+  "obj_thr_appearance": 0.7631144778509333,
+  "obj_thr_shift": 0.08053746897660918,
+  "obj_thr_null_objects": 93,
+  "obj_thr_null_quantile": 0.975,
+  "poses": {
+    "frame_size": [
+      576,
+      1024
+    ],
+    "frame_pairs_tried": 5573,
+    "frame_pairs_matched": 5118,
+    "sparse_frames_rematched": 11,
+    "vggt": {
+      "median_px": 8.256570957732826,
+      "points": 106952,
+      "observations": 442740
+    },
+    "rounds": [
+      {
+        "median_px": 5.3210033503481275,
+        "points": 106952,
+        "observations": 442740
+      },
+      {
+        "median_px": 1.1179509011397366,
+        "points": 76560,
+        "observations": 268612
+      }
+    ],
+    "final": {
+      "median_px": 0.5872717413249403,
+      "p90_px": 1.7148337092085775,
+      "points": 54061,
+      "observations": 187248
+    },
+    "per_frame_median_px": {
+      "median": 0.7044731828946855,
+      "p90": 1.154140390759144,
+      "worst": 2.897350102856449
+    },
+    "pose_px": {
+      "median": 0.375112728441163,
+      "p90": 1.0208384169213087,
+      "frames_unconstrained": 32
+    },
+    "frames_with_few_points": 136,
+    "frames_resected": 96,
+    "frames_interpolated": 40,
+    "frames_without_points": 8,
+    "rotation_change_deg_median": 1.5967265799468124,
+    "rotation_change_deg_p90": 4.884670164741929,
+    "centre_change_median_rel": 0.019711447325281947,
+    "focal_change": [
+      0.9783948708656005,
+      0.9774051865168079
+    ],
+    "per_recording_median_px": [
+      0.614186962550163,
+      0.5711260000469603
+    ],
+    "points_in_both": 1018,
+    "points_in_both_median_px": 1.093777077359355,
+    "observations_kept_share": 0.19402067987230245,
+    "seconds": 214,
+    "depth_scale_median": 0.800000011920929,
+    "depth_scale_p10_p90": [
+      0.800000011920929,
+      0.9880285859107971
+    ]
+  },
+  "assets_objects": 45,
+  "assets_deformable": 0,
+  "assets_contacts": 67,
+  "motion_links": 43,
+  "motion_points_before": 4238,
+  "motion_points_after": 7567,
+  "motion_pixel_noise_px": [
+    0.44,
+    0.45
+  ],
+  "motion_point_sigma_cm_median": 10.931,
+  "motion_misalignment_sigma_cm": 10.921,
+  "motion_alignment": {
+    "static_links": 41,
+    "applied": true,
+    "shift_cm": 12.58,
+    "rotation_deg": 8.561,
+    "scale_change_pct": 14.33,
+    "inlier_share": 0.341
+  },
+  "motion_links_moved_share": 0.279,
+  "motion_objects_measured": 0,
+  "motion_objects_moved": 0,
+  "motion_objects_deformed": 0,
+  "pos_method": "model (VGGT confidence + SAM 2 wobble, fused)",
+  "pos_radius90_cm_median": 0.05,
+  "pos_radius90_cm_views_median": 4.9,
+  "pos_single_view_radius90_cm_median": 0.82,
+  "pos_depth_sd_cm_median": 3.77,
+  "pos_side_sd_cm_median": 0.03,
+  "pos_nis_median": 57371.49,
+  "pos_views_median": 11,
+  "pos_wobble_share": 1.0,
+  "pos_views_curve": {
+    "1": {
+      "median_radius90_cm": 15.75,
+      "objects": 38
+    },
+    "2": {
+      "median_radius90_cm": 11.92,
+      "objects": 38
+    },
+    "4": {
+      "median_radius90_cm": 8.75,
+      "objects": 29
+    },
+    "8": {
+      "median_radius90_cm": 7.29,
+      "objects": 12
+    }
+  },
+  "pos_model_curve": {
+    "1": {
+      "median_radius90_cm": 0.43,
+      "objects": 45
+    },
+    "2": {
+      "median_radius90_cm": 0.22,
+      "objects": 42
+    },
+    "4": {
+      "median_radius90_cm": 0.12,
+      "objects": 38
+    },
+    "8": {
+      "median_radius90_cm": 0.05,
+      "objects": 30
+    },
+    "16": {
+      "median_radius90_cm": 0.05,
+      "objects": 13
+    }
+  },
+  "pos_unchanged_pairs": 4,
+  "pos_coverage90_unchanged": 0.0,
+  "step_seconds": 6575.5
+}

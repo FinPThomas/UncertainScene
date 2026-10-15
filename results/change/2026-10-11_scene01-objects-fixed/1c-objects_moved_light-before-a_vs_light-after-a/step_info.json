@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-11_scene01-objects-fixed",
+  "step": "1c-objects_moved_light-before-a_vs_light-after-a",
+  "status": "done",
+  "account": "colab-7675",
+  "commit": "428baf9",
+  "minutes": 110.1,
+  "usage_at_end": "RAM 4.3/12.7 GB, disk free 55.4 GB, GPU 0.3/15.0 GB",
+  "note": "change: 10 changed objects of 30 (36%); labels: skirting board, neck pillow, baseball cap, skirting board, ball; scale 1.921 m/unit; 6576s"
+}

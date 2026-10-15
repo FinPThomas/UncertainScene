@@ -47,11 +47,11 @@
       "account": "colab-7675",
       "attempts": 1,
       "commit": "428baf9",
-      "expires": 1792085622.7626982,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-15 15:13:22 UTC",
+      "note": "change: 10 changed objects of 30 (36%); labels: skirting board, neck pillow, baseball cap, skirting board, ball; scale 1.921 m/unit; 6576s",
       "started": "2026-10-15 13:23:12 UTC",
-      "status": "running"
+      "status": "done"
     },
     "2-position_3-clips_no-change_dark-before-a-b-c": {
       "account": "colab-5f93",
