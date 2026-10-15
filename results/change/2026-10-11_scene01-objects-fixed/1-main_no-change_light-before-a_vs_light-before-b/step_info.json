@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-11_scene01-objects-fixed",
+  "step": "1-main_no-change_light-before-a_vs_light-before-b",
+  "status": "done",
+  "account": "colab-7675",
+  "commit": "a1b115a",
+  "minutes": 126.5,
+  "usage_at_end": "RAM 4.6/12.7 GB, disk free 54.5 GB, GPU 0.3/15.0 GB",
+  "note": "static: 13 changed objects of 40 (33%); labels: ball, table tennis bat, table tennis bat, glass vase, skirting board; scale 1.900 m/unit; 7557s"
+}

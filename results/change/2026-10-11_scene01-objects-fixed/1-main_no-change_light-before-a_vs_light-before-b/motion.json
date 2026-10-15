@@ -1,0 +1,26 @@
+{
+  "summary": {
+    "links": 33,
+    "points_before": 3576,
+    "points_after": 7710,
+    "pixel_noise_px": [
+      0.64,
+      0.73
+    ],
+    "point_sigma_cm_median": 6.025,
+    "misalignment_sigma_cm": 5.95,
+    "alignment": {
+      "static_links": 33,
+      "applied": true,
+      "shift_cm": 10.46,
+      "rotation_deg": 11.898,
+      "scale_change_pct": 4.616,
+      "inlier_share": 0.879
+    },
+    "links_moved_share": 0.121,
+    "objects_measured": 0,
+    "objects_moved": 0,
+    "objects_deformed": 0
+  },
+  "objects": []
+}

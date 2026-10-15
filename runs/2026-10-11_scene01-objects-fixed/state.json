@@ -17,11 +17,11 @@
       "account": "colab-7675",
       "attempts": 2,
       "commit": "a1b115a",
-      "expires": 1792092239.9238343,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-15 17:20:00 UTC",
+      "note": "static: 13 changed objects of 40 (33%); labels: ball, table tennis bat, table tennis bat, glass vase, skirting board; scale 1.900 m/unit; 7557s",
       "started": "2026-10-15 15:13:29 UTC",
-      "status": "running"
+      "status": "done"
     },
     "1-main_summary": {
       "account": "colab-5f93",

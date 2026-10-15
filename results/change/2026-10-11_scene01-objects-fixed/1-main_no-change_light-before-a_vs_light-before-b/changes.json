@@ -1,0 +1,1417 @@
+[
+  {
+    "id": "A44",
+    "recording": "A",
+    "label": "ball",
+    "label_prob": 0.102,
+    "label_top3": [
+      [
+        "ball",
+        0.102
+      ],
+      [
+        "jar",
+        0.05
+      ],
+      [
+        "jumper",
+        0.046
+      ]
+    ],
+    "status": "removed",
+    "structure": false,
+    "size_cm": [
+      24.3,
+      13.6,
+      4.3
+    ],
+    "height_m": 0.86,
+    "views": 10,
+    "complete": true,
+    "partner": null,
+    "description": "A ball that was there before is no longer there. Its centre is known to within about 0 cm (90%, from 10 views; one view alone: 1 cm). It is on top of the cushion and next to the cushion, the cushion, the cushion.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.02,
+        0.01,
+        0.01
+      ],
+      "radius90_cm": 0.03,
+      "radius90_cm_views": 3.7,
+      "n_views": 10,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -7.626546087095926,
+          172.46066282001556
+        ],
+        "a": 0.05022761592959749,
+        "b": 0.015184382202374168,
+        "angle": 86.74982277286708
+      },
+      "single_view_radius90_cm": 0.57,
+      "depth_sd_cm": 2.82,
+      "side_sd_cm": 0.01,
+      "pose_sd_cm": 0.04,
+      "wobble_views": 10,
+      "nis_mean": 59323.0,
+      "trace_cm": [
+        0.16,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {},
+    "continuity": {
+      "tracks": 1,
+      "runs": 4,
+      "frames_seen": 10,
+      "frames_total": 44,
+      "span_share": 0.323
+    },
+    "affordance": null,
+    "context": {
+      "on_top_of": {
+        "object": "cushion A14",
+        "share": 1.0
+      },
+      "next_to": [
+        {
+          "object": "cushion A11",
+          "gap_cm": 0.1
+        },
+        {
+          "object": "cushion A16",
+          "gap_cm": 0.1
+        },
+        {
+          "object": "cushion A20",
+          "gap_cm": 0.1
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": 21,
+      "counterpart_iou": 0.054,
+      "counterpart_sim": 0.77,
+      "observed": 1.0,
+      "gone": 0.0421,
+      "appearance": 0.813,
+      "shift_rel": -0.0511,
+      "n_points": 1593,
+      "null_gone": 0.0048,
+      "null_appearance": 0.8052
+    }
+  },
+  {
+    "id": "A48",
+    "recording": "A",
+    "label": "table tennis bat",
+    "label_prob": 0.403,
+    "label_top3": [
+      [
+        "table tennis bat",
+        0.403
+      ],
+      [
+        "skirting board",
+        0.11
+      ],
+      [
+        "pen",
+        0.077
+      ]
+    ],
+    "status": "removed",
+    "structure": false,
+    "size_cm": [
+      3.2,
+      0.7,
+      0.1
+    ],
+    "height_m": 1.1,
+    "views": 1,
+    "complete": true,
+    "partner": null,
+    "description": "A table tennis bat that was there before is no longer there. Its centre is known to within about 0 cm (90%, from 1 views; one view alone: 0 cm). It is on top of the sofa and next to the baseball cap, the sofa, the skirting board.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        4.22,
+        0.02,
+        0.02
+      ],
+      "radius90_cm": 0.3,
+      "radius90_cm_views": null,
+      "n_views": 1,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -28.000988996657245,
+          181.608898385967
+        ],
+        "a": 9.046844817964791,
+        "b": 0.04319659577674407,
+        "angle": 74.60577380343018
+      },
+      "single_view_radius90_cm": 0.3,
+      "depth_sd_cm": 4.22,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.01,
+      "wobble_views": 1,
+      "nis_mean": null,
+      "trace_cm": [
+        0.3
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {},
+    "continuity": {
+      "tracks": 1,
+      "runs": 1,
+      "frames_seen": 1,
+      "frames_total": 44,
+      "span_share": 1.0
+    },
+    "affordance": null,
+    "context": {
+      "on_top_of": {
+        "object": "sofa A2",
+        "share": 1.0
+      },
+      "next_to": [
+        {
+          "object": "baseball cap A34",
+          "gap_cm": 0.0
+        },
+        {
+          "object": "sofa A8",
+          "gap_cm": 0.0
+        },
+        {
+          "object": "skirting board A35",
+          "gap_cm": 7.3
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": 49,
+      "counterpart_iou": 0.032,
+      "counterpart_sim": 0.754,
+      "observed": 1.0,
+      "gone": 0.0,
+      "appearance": 0.8795,
+      "shift_rel": -0.055,
+      "n_points": 70,
+      "null_gone": 0.0,
+      "null_appearance": 0.5036
+    }
+  },
+  {
+    "id": "B28",
+    "recording": "B",
+    "label": "table tennis bat",
+    "label_prob": 0.99,
+    "label_top3": [
+      [
+        "table tennis bat",
+        0.99
+      ],
+      [
+        "mirror",
+        0.003
+      ],
+      [
+        "plate",
+        0.003
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      29.6,
+      16.1,
+      14.1
+    ],
+    "height_m": 0.69,
+    "views": 17,
+    "complete": true,
+    "partner": null,
+    "description": "A table tennis bat is there now that was not there before. Its centre is known to within about 0 cm (90%, from 17 views; one view alone: 1 cm). It is on top of the cushion and next to the guitar, the neck pillow, the paper bag. Resting on it: the blanket, the cup.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "radius90_cm": 0.02,
+      "radius90_cm_views": 3.54,
+      "n_views": 17,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -20.64644742046672,
+          157.84631493795527
+        ],
+        "a": 0.024485547199870925,
+        "b": 0.011010690980298157,
+        "angle": 81.16378916159664
+      },
+      "single_view_radius90_cm": 0.53,
+      "depth_sd_cm": 3.44,
+      "side_sd_cm": 0.03,
+      "pose_sd_cm": 0.04,
+      "wobble_views": 17,
+      "nis_mean": 138692.22,
+      "trace_cm": [
+        0.33,
+        0.23,
+        0.09,
+        0.09,
+        0.09,
+        0.07,
+        0.07,
+        0.04,
+        0.03,
+        0.03,
+        0.03,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {
+      "baseball cap": 0.658,
+      "bowl": 0.535,
+      "cup": 0.18
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 7,
+      "frames_seen": 17,
+      "frames_total": 44,
+      "span_share": 0.5
+    },
+    "affordance": {
+      "grasp": 0.0,
+      "push": 0.001,
+      "place_on": 0.0,
+      "points": 859,
+      "best": "none"
+    },
+    "context": {
+      "on_top_of": {
+        "object": "cushion B13",
+        "share": 1.0
+      },
+      "next_to": [
+        {
+          "object": "guitar B21",
+          "gap_cm": 0.0
+        },
+        {
+          "object": "neck pillow B11",
+          "gap_cm": 0.0
+        },
+        {
+          "object": "paper bag B29",
+          "gap_cm": 0.1
+        }
+      ],
+      "supports": [
+        "blanket B14",
+        "cup B32"
+      ]
+    },
+    "stats": {
+      "counterpart": 14,
+      "counterpart_iou": 0.17,
+      "counterpart_sim": 0.614,
+      "observed": 1.0,
+      "gone": 0.0079,
+      "appearance": 0.7879,
+      "shift_rel": 0.0007,
+      "n_points": 15000,
+      "null_gone": 0.071,
+      "null_appearance": 0.7644
+    }
+  },
+  {
+    "id": "B44",
+    "recording": "B",
+    "label": "glass vase",
+    "label_prob": 0.184,
+    "label_top3": [
+      [
+        "glass vase",
+        0.184
+      ],
+      [
+        "bottle",
+        0.142
+      ],
+      [
+        "vase",
+        0.136
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      18.4,
+      14.6,
+      5.9
+    ],
+    "height_m": 0.79,
+    "views": 8,
+    "complete": true,
+    "partner": null,
+    "description": "A glass vase is there now that was not there before. Its centre is known to within about 0 cm (90%, from 8 views; one view alone: 1 cm). It is on top of the book and next to the cup, the soft toy, the chair. Resting on it: the paper bag, the cup.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.09,
+        0.01,
+        0.01
+      ],
+      "radius90_cm": 0.06,
+      "radius90_cm_views": 4.14,
+      "n_views": 8,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -48.759524877948316,
+          149.1146930327297
+        ],
+        "a": 0.1944433617106505,
+        "b": 0.027500209448133205,
+        "angle": 93.84321564787474
+      },
+      "single_view_radius90_cm": 0.74,
+      "depth_sd_cm": 3.42,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.08,
+      "wobble_views": 8,
+      "nis_mean": 24852.31,
+      "trace_cm": [
+        0.87,
+        0.32,
+        0.19,
+        0.17,
+        0.13,
+        0.13,
+        0.11,
+        0.06
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {
+      "paper bag": 0.219
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 2,
+      "frames_seen": 8,
+      "frames_total": 44,
+      "span_share": 0.25
+    },
+    "affordance": {
+      "grasp": 0.0,
+      "push": 0.026,
+      "place_on": 0.0,
+      "points": 152,
+      "best": "none"
+    },
+    "context": {
+      "on_top_of": {
+        "object": "book B23",
+        "share": 1.0
+      },
+      "next_to": [
+        {
+          "object": "cup B32",
+          "gap_cm": 0.0
+        },
+        {
+          "object": "soft toy B36",
+          "gap_cm": 0.0
+        },
+        {
+          "object": "chair B3",
+          "gap_cm": 0.4
+        }
+      ],
+      "supports": [
+        "paper bag B29",
+        "cup B43"
+      ]
+    },
+    "stats": {
+      "counterpart": 39,
+      "counterpart_iou": 0.116,
+      "counterpart_sim": 0.906,
+      "observed": 1.0,
+      "gone": 0.0761,
+      "appearance": 0.7695,
+      "shift_rel": -0.0166,
+      "n_points": 8196,
+      "null_gone": 0.0925,
+      "null_appearance": 0.6076
+    }
+  },
+  {
+    "id": "B46",
+    "recording": "B",
+    "label": "skirting board",
+    "label_prob": 0.648,
+    "label_top3": [
+      [
+        "skirting board",
+        0.648
+      ],
+      [
+        "door frame",
+        0.051
+      ],
+      [
+        "table tennis bat",
+        0.03
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      29.8,
+      23.1,
+      4.2
+    ],
+    "height_m": -0.1,
+    "views": 4,
+    "complete": false,
+    "partner": null,
+    "description": "A skirting board is there now that was not there before. Its centre is known to within about 0 cm (90%, from 4 views; one view alone: 1 cm). It is next to the rug, the rug, the sunglasses. Resting on it: the table tennis bat.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.33,
+        0.04,
+        0.03
+      ],
+      "radius90_cm": 0.19,
+      "radius90_cm_views": 3.99,
+      "n_views": 4,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -74.28299099218597,
+          136.1357079868959
+        ],
+        "a": 0.5953011487134963,
+        "b": 0.07539152674680322,
+        "angle": 154.81482525285557
+      },
+      "single_view_radius90_cm": 0.86,
+      "depth_sd_cm": 4.5,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.1,
+      "wobble_views": 4,
+      "nis_mean": 3414.45,
+      "trace_cm": [
+        1.38,
+        0.76,
+        0.27,
+        0.19
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {},
+    "continuity": {
+      "tracks": 1,
+      "runs": 1,
+      "frames_seen": 4,
+      "frames_total": 44,
+      "span_share": 1.0
+    },
+    "affordance": {
+      "grasp": 0.0,
+      "push": 0.0,
+      "place_on": 0.0,
+      "points": 88,
+      "best": "none"
+    },
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "rug B7",
+          "gap_cm": 0.1
+        },
+        {
+          "object": "rug B15",
+          "gap_cm": 0.2
+        },
+        {
+          "object": "sunglasses B59",
+          "gap_cm": 0.7
+        }
+      ],
+      "supports": [
+        "table tennis bat B33"
+      ]
+    },
+    "stats": {
+      "counterpart": 5,
+      "counterpart_iou": 0.009,
+      "counterpart_sim": 0.52,
+      "observed": 0.9933,
+      "gone": 0.0,
+      "appearance": 0.894,
+      "shift_rel": -0.0622,
+      "n_points": 1796,
+      "null_gone": 0.0,
+      "null_appearance": 0.7285
+    }
+  },
+  {
+    "id": "B51",
+    "recording": "B",
+    "label": "table tennis bat",
+    "label_prob": 0.88,
+    "label_top3": [
+      [
+        "table tennis bat",
+        0.88
+      ],
+      [
+        "skirting board",
+        0.045
+      ],
+      [
+        "pen",
+        0.011
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      32.5,
+      18.6,
+      3.0
+    ],
+    "height_m": 0.57,
+    "views": 2,
+    "complete": true,
+    "partner": null,
+    "description": "A table tennis bat is there now that was not there before. Its centre is known to within about 1 cm (90%, from 2 views; one view alone: 1 cm). It is next to the shelf, the table tennis bat, the side table.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        3.0,
+        0.05,
+        0.05
+      ],
+      "radius90_cm": 0.51,
+      "radius90_cm_views": null,
+      "n_views": 2,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -92.94913931945824,
+          183.49420205177685
+        ],
+        "a": 6.4285870407689325,
+        "b": 0.11511938435585933,
+        "angle": 147.71557439668874
+      },
+      "single_view_radius90_cm": 1.28,
+      "depth_sd_cm": 4.56,
+      "side_sd_cm": 0.18,
+      "pose_sd_cm": 0.05,
+      "wobble_views": 2,
+      "nis_mean": 6585.54,
+      "trace_cm": [
+        0.61,
+        0.51
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {},
+    "continuity": {
+      "tracks": 1,
+      "runs": 1,
+      "frames_seen": 2,
+      "frames_total": 44,
+      "span_share": 1.0
+    },
+    "affordance": {
+      "grasp": 0.004,
+      "push": 0.0,
+      "place_on": 0.0,
+      "points": 19,
+      "best": "none"
+    },
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "shelf B6",
+          "gap_cm": 0.0
+        },
+        {
+          "object": "table tennis bat B52",
+          "gap_cm": 1.3
+        },
+        {
+          "object": "side table B8",
+          "gap_cm": 3.9
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": 21,
+      "counterpart_iou": 0.011,
+      "counterpart_sim": 0.529,
+      "observed": 1.0,
+      "gone": 0.3095,
+      "appearance": 0.8463,
+      "shift_rel": 0.1213,
+      "n_points": 1268,
+      "null_gone": 0.4573,
+      "null_appearance": 0.3599
+    }
+  },
+  {
+    "id": "B52",
+    "recording": "B",
+    "label": "table tennis bat",
+    "label_prob": 0.421,
+    "label_top3": [
+      [
+        "table tennis bat",
+        0.421
+      ],
+      [
+        "floor lamp",
+        0.153
+      ],
+      [
+        "pen",
+        0.13
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      36.8,
+      17.0,
+      2.7
+    ],
+    "height_m": 0.46,
+    "views": 3,
+    "complete": true,
+    "partner": null,
+    "description": "A table tennis bat is there now that was not there before. Its centre is known to within about 0 cm (90%, from 3 views; one view alone: 1 cm). It is next to the shelf, the table tennis bat, the side table.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        0.73,
+        0.04,
+        0.04
+      ],
+      "radius90_cm": 0.27,
+      "radius90_cm_views": null,
+      "n_views": 3,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -122.08702590595928,
+          178.4151342899627
+        ],
+        "a": 1.556867014793736,
+        "b": 0.0872256020018549,
+        "angle": 149.66737810160444
+      },
+      "single_view_radius90_cm": 0.65,
+      "depth_sd_cm": 4.13,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.06,
+      "wobble_views": 3,
+      "nis_mean": 52447.58,
+      "trace_cm": [
+        1.2,
+        0.37,
+        0.27
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {},
+    "continuity": {
+      "tracks": 1,
+      "runs": 1,
+      "frames_seen": 3,
+      "frames_total": 44,
+      "span_share": 1.0
+    },
+    "affordance": {
+      "grasp": 0.027,
+      "push": 0.0,
+      "place_on": 0.0,
+      "points": 3,
+      "best": "none"
+    },
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "shelf B6",
+          "gap_cm": 0.0
+        },
+        {
+          "object": "table tennis bat B51",
+          "gap_cm": 1.3
+        },
+        {
+          "object": "side table B8",
+          "gap_cm": 5.7
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": 21,
+      "counterpart_iou": 0.004,
+      "counterpart_sim": 0.518,
+      "observed": 1.0,
+      "gone": 0.4225,
+      "appearance": 0.8234,
+      "shift_rel": 0.2203,
+      "n_points": 746,
+      "null_gone": 0.5292,
+      "null_appearance": 0.517
+    }
+  },
+  {
+    "id": "B53",
+    "recording": "B",
+    "label": "sock",
+    "label_prob": 0.17,
+    "label_top3": [
+      [
+        "sock",
+        0.17
+      ],
+      [
+        "plate",
+        0.078
+      ],
+      [
+        "mug",
+        0.059
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      6.3,
+      4.1,
+      0.5
+    ],
+    "height_m": 0.05,
+    "views": 1,
+    "complete": true,
+    "partner": null,
+    "description": "A sock is there now that was not there before. Its centre is known to within about 0 cm (90%, from 1 views; one view alone: 0 cm). It is next to the book, the rug, the skirting board.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        4.91,
+        0.04,
+        0.04
+      ],
+      "radius90_cm": 0.5,
+      "radius90_cm_views": null,
+      "n_views": 1,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -27.72767492111094,
+          110.37772254316431
+        ],
+        "a": 9.133783074302254,
+        "b": 0.08546802783528597,
+        "angle": 161.33905854514884
+      },
+      "single_view_radius90_cm": 0.5,
+      "depth_sd_cm": 4.91,
+      "side_sd_cm": 0.01,
+      "pose_sd_cm": 0.04,
+      "wobble_views": 1,
+      "nis_mean": null,
+      "trace_cm": [
+        0.5
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {},
+    "continuity": {
+      "tracks": 1,
+      "runs": 1,
+      "frames_seen": 1,
+      "frames_total": 44,
+      "span_share": 1.0
+    },
+    "affordance": null,
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "book B58",
+          "gap_cm": 6.5
+        },
+        {
+          "object": "rug B7",
+          "gap_cm": 10.0
+        },
+        {
+          "object": "skirting board B46",
+          "gap_cm": 11.1
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": 5,
+      "counterpart_iou": 0.004,
+      "counterpart_sim": 0.376,
+      "observed": 1.0,
+      "gone": 0.0,
+      "appearance": 0.8955,
+      "shift_rel": 0.0393,
+      "n_points": 322,
+      "null_gone": 0.1561,
+      "null_appearance": 0.8214
+    }
+  },
+  {
+    "id": "B55",
+    "recording": "B",
+    "label": "skirting board",
+    "label_prob": 0.22,
+    "label_top3": [
+      [
+        "skirting board",
+        0.22
+      ],
+      [
+        "door frame",
+        0.096
+      ],
+      [
+        "wall",
+        0.052
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      21.3,
+      5.8,
+      0.5
+    ],
+    "height_m": 0.04,
+    "views": 2,
+    "complete": false,
+    "partner": null,
+    "description": "A skirting board is there now that was not there before. Its centre is known to within about 1 cm (90%, from 2 views; one view alone: 1 cm). It is next to the shelf, the skirting board, the side table.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        1.65,
+        0.12,
+        0.12
+      ],
+      "radius90_cm": 0.72,
+      "radius90_cm_views": null,
+      "n_views": 2,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          28.566624144929563,
+          105.95470798556482
+        ],
+        "a": 3.387844119135127,
+        "b": 0.2581633057845034,
+        "angle": 172.0050090223469
+      },
+      "single_view_radius90_cm": 1.29,
+      "depth_sd_cm": 4.62,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.17,
+      "wobble_views": 2,
+      "nis_mean": 2754.43,
+      "trace_cm": [
+        1.38,
+        0.72
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {},
+    "continuity": {
+      "tracks": 1,
+      "runs": 1,
+      "frames_seen": 2,
+      "frames_total": 44,
+      "span_share": 1.0
+    },
+    "affordance": {
+      "grasp": 0.014,
+      "push": 0.0,
+      "place_on": 0.0,
+      "points": 4,
+      "best": "none"
+    },
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "shelf B6",
+          "gap_cm": 0.4
+        },
+        {
+          "object": "skirting board B57",
+          "gap_cm": 4.8
+        },
+        {
+          "object": "side table B8",
+          "gap_cm": 7.4
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": 5,
+      "counterpart_iou": 0.003,
+      "counterpart_sim": 0.476,
+      "observed": 1.0,
+      "gone": 0.1882,
+      "appearance": 0.8418,
+      "shift_rel": 0.0361,
+      "n_points": 144,
+      "null_gone": 0.3503,
+      "null_appearance": 0.6331
+    }
+  },
+  {
+    "id": "B57",
+    "recording": "B",
+    "label": "skirting board",
+    "label_prob": 0.254,
+    "label_top3": [
+      [
+        "skirting board",
+        0.254
+      ],
+      [
+        "door frame",
+        0.211
+      ],
+      [
+        "table tennis bat",
+        0.11
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      28.0,
+      5.7,
+      0.8
+    ],
+    "height_m": 0.13,
+    "views": 2,
+    "complete": false,
+    "partner": null,
+    "description": "A skirting board is there now that was not there before. Its centre is known to within about 0 cm (90%, from 2 views; one view alone: 1 cm). It is next to the shelf, the skirting board.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        2.44,
+        0.05,
+        0.05
+      ],
+      "radius90_cm": 0.43,
+      "radius90_cm_views": null,
+      "n_views": 2,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          34.51423514509358,
+          78.8298292393084
+        ],
+        "a": 4.94791348393268,
+        "b": 0.0974713005403496,
+        "angle": 174.77800599332616
+      },
+      "single_view_radius90_cm": 0.86,
+      "depth_sd_cm": 4.69,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.09,
+      "wobble_views": 2,
+      "nis_mean": 25989.01,
+      "trace_cm": [
+        1.17,
+        0.43
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {},
+    "continuity": {
+      "tracks": 1,
+      "runs": 1,
+      "frames_seen": 2,
+      "frames_total": 44,
+      "span_share": 1.0
+    },
+    "affordance": {
+      "grasp": 0.02,
+      "push": 0.0,
+      "place_on": 0.0,
+      "points": 1,
+      "best": "none"
+    },
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "shelf B6",
+          "gap_cm": 0.0
+        },
+        {
+          "object": "skirting board B55",
+          "gap_cm": 4.8
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": null,
+      "counterpart_iou": 0.0,
+      "counterpart_sim": null,
+      "observed": 1.0,
+      "gone": 0.1256,
+      "appearance": 0.906,
+      "shift_rel": 0.0945,
+      "n_points": 107,
+      "null_gone": 0.6097,
+      "null_appearance": 0.3839
+    }
+  },
+  {
+    "id": "B58",
+    "recording": "B",
+    "label": "book",
+    "label_prob": 1.0,
+    "label_top3": [
+      [
+        "book",
+        1.0
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      3.3,
+      1.1,
+      0.2
+    ],
+    "height_m": 0.08,
+    "views": 1,
+    "complete": false,
+    "partner": null,
+    "description": "A book is there now that was not there before. Its centre is known to within about 1 cm (90%, from 1 views; one view alone: 1 cm). It is next to the sock.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        4.93,
+        0.05,
+        0.05
+      ],
+      "radius90_cm": 0.56,
+      "radius90_cm_views": null,
+      "n_views": 1,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -29.95364521177833,
+          100.54122000170909
+        ],
+        "a": 9.269152532678955,
+        "b": 0.1034211279951626,
+        "angle": 166.2428299257854
+      },
+      "single_view_radius90_cm": 0.56,
+      "depth_sd_cm": 4.93,
+      "side_sd_cm": 0.03,
+      "pose_sd_cm": 0.04,
+      "wobble_views": 1,
+      "nis_mean": null,
+      "trace_cm": [
+        0.56
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "book": 0.503
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 1,
+      "frames_seen": 1,
+      "frames_total": 44,
+      "span_share": 1.0
+    },
+    "affordance": null,
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "sock B53",
+          "gap_cm": 6.5
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": null,
+      "counterpart_iou": 0.0,
+      "counterpart_sim": null,
+      "observed": 1.0,
+      "gone": 0.1194,
+      "appearance": 0.9611,
+      "shift_rel": 0.0887,
+      "n_points": 56,
+      "null_gone": 1.0,
+      "null_appearance": null
+    }
+  },
+  {
+    "id": "B59",
+    "recording": "B",
+    "label": "sunglasses",
+    "label_prob": 0.125,
+    "label_top3": [
+      [
+        "sunglasses",
+        0.125
+      ],
+      [
+        "game controller",
+        0.076
+      ],
+      [
+        "glasses",
+        0.055
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      10.7,
+      3.1,
+      0.2
+    ],
+    "height_m": -0.11,
+    "views": 1,
+    "complete": false,
+    "partner": null,
+    "description": "A sunglasses is there now that was not there before. Its centre is known to within about 1 cm (90%, from 1 views; one view alone: 1 cm). It is next to the rug, the rug, the skirting board.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        4.53,
+        0.15,
+        0.15
+      ],
+      "radius90_cm": 1.18,
+      "radius90_cm_views": null,
+      "n_views": 1,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -24.050250790177834,
+          116.78623156917537
+        ],
+        "a": 8.634447520374085,
+        "b": 0.32734412069888014,
+        "angle": 168.5743948327812
+      },
+      "single_view_radius90_cm": 1.18,
+      "depth_sd_cm": 4.53,
+      "side_sd_cm": 0.04,
+      "pose_sd_cm": 0.15,
+      "wobble_views": 1,
+      "nis_mean": null,
+      "trace_cm": [
+        1.18
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {},
+    "continuity": {
+      "tracks": 1,
+      "runs": 1,
+      "frames_seen": 1,
+      "frames_total": 44,
+      "span_share": 1.0
+    },
+    "affordance": {
+      "grasp": 0.0,
+      "push": 0.0,
+      "place_on": 0.0,
+      "points": 5,
+      "best": "none"
+    },
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "rug B15",
+          "gap_cm": 0.4
+        },
+        {
+          "object": "rug B7",
+          "gap_cm": 0.4
+        },
+        {
+          "object": "skirting board B46",
+          "gap_cm": 0.7
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": null,
+      "counterpart_iou": 0.0,
+      "counterpart_sim": null,
+      "observed": 1.0,
+      "gone": 0.0,
+      "appearance": 0.9867,
+      "shift_rel": -0.0512,
+      "n_points": 26,
+      "null_gone": 0.0,
+      "null_appearance": 0.7589
+    }
+  },
+  {
+    "id": "B60",
+    "recording": "B",
+    "label": "glass vase",
+    "label_prob": 1.0,
+    "label_top3": [
+      [
+        "glass vase",
+        1.0
+      ]
+    ],
+    "status": "shifted",
+    "structure": false,
+    "size_cm": [
+      2.1,
+      0.9,
+      0.1
+    ],
+    "height_m": 1.09,
+    "views": 1,
+    "complete": false,
+    "partner": null,
+    "description": "The glass vase's surface moved by about 45 cm (squashed, pushed or deformed). Its centre is known to within about 0 cm (90%, from 1 views; one view alone: 0 cm). It is on top of the poster and next to the book, the shelf.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        4.36,
+        0.02,
+        0.02
+      ],
+      "radius90_cm": 0.34,
+      "radius90_cm_views": null,
+      "n_views": 1,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          127.0480270614822,
+          206.4758191354261
+        ],
+        "a": 9.177444153486721,
+        "b": 0.05165180381463679,
+        "angle": 95.11053453923336
+      },
+      "single_view_radius90_cm": 0.34,
+      "depth_sd_cm": 4.36,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.02,
+      "wobble_views": 1,
+      "nis_mean": null,
+      "trace_cm": [
+        0.34
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "glass vase": 0.662
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 1,
+      "frames_seen": 1,
+      "frames_total": 44,
+      "span_share": 1.0
+    },
+    "affordance": null,
+    "context": {
+      "on_top_of": {
+        "object": "poster B40",
+        "share": 1.0
+      },
+      "next_to": [
+        {
+          "object": "book B47",
+          "gap_cm": 11.2
+        },
+        {
+          "object": "shelf B6",
+          "gap_cm": 11.2
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": null,
+      "counterpart_iou": 0.0,
+      "counterpart_sim": null,
+      "observed": 1.0,
+      "gone": 0.0,
+      "appearance": 0.5547,
+      "shift_rel": -0.2344,
+      "n_points": 40,
+      "null_gone": 0.0,
+      "null_appearance": null
+    }
+  }
+]
