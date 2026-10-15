@@ -83,6 +83,16 @@
       "started": "2026-10-15 19:07:44 UTC",
       "status": "running"
     },
+    "1d-objects_no-change_dark-before-a_vs_dark-before-b": {
+      "account": "colab-835c",
+      "attempts": 1,
+      "commit": "820bc6a",
+      "expires": 1792120312.998592,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-15 21:46:22 UTC",
+      "status": "running"
+    },
     "2-position_3-clips_no-change_dark-before-a-b-c": {
       "account": "colab-5f93",
       "attempts": 1,
