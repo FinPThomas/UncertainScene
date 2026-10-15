@@ -175,6 +175,8 @@ def from_analysis(res, objs_a: list, objs_b: list, fields: dict | None = None, n
             sel = np.sort(rng.choice(len(sel), n_heat, replace=False))
         t = pts.add(fields["X"][sel])
         for name, (ttl, cmap, vmin, vmax) in FIELD_STYLE.items():
+            if name not in fields:
+                continue
             val = np.nan_to_num(fields[name][sel].astype(float), nan=0.0)
             if name == "shift_cm":
                 m = float(np.quantile(np.abs(val), 0.99)) or 1.0

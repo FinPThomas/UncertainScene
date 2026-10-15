@@ -121,3 +121,128 @@ def test_tracked_masks_are_cached_and_reloaded(tmp_path, monkeypatch):
     assert sorted(out1) == sorted(out2) and len(out1) == 6
     assert {m["track"] for v in out1.values() for m in v} == {1, 100001}
     assert all((a["mask"] == b["mask"]).all() for k in out1 for a, b in zip(out1[k], out2[k]))
+
+
+# ---- whole-object detector (YOLOE) seeds, part suppression, label votes, part joining ----
+LABELS = ["cup", "book", "baseball cap"]
+
+
+class ShiftTracker(FakeTracker):
+    """Follows the seeded mask itself (a part stays a part), moving 2 px per frame like OBJ."""
+
+    def add_new_mask(self, st, frame_idx, obj_id, mask):
+        k = max(range(len(OBJ)), key=lambda k: (np.asarray(mask) & _mask(k, frame_idx)).sum())
+        st["seeds"][obj_id] = (np.asarray(mask, bool), frame_idx, OBJ[k][0])
+
+    def propagate_in_video(self, st, start_frame_idx=0, reverse=False):
+        import torch
+
+        order = range(start_frame_idx, -1, -1) if reverse else range(start_frame_idx, st["n"])
+        ids = list(st["seeds"])
+        for f in order:
+            lg = []
+            for i in ids:
+                m, f0, start = st["seeds"][i]
+                lg.append(np.where(np.roll(m, 2 * (f - f0), axis=1) & (f >= start), 5.0, -5.0))
+            yield f, ids, torch.as_tensor(np.stack(lg)[:, None])
+
+
+def _frames(tmp_path):
+    files = []
+    rng = np.random.default_rng(0)
+    for f in range(N):
+        p = tmp_path / f"{f}.png"
+        Image.fromarray(rng.integers(0, 255, (H, W, 3), dtype=np.uint8)).save(p)
+        files.append(str(p))
+    return files
+
+
+def _frame_of(files, img):
+    return next(i for i, p in enumerate(files) if np.array_equal(np.asarray(Image.open(p).convert("RGB")), img))
+
+
+def _det_for(files, first=0):
+    def det(img):
+        f = _frame_of(files, img)
+        return [{"mask": _mask(k, f), "label": LABELS[k], "conf": 0.8, "object": True}
+                for k in range(len(OBJ)) if _mask(k, f).any() and f >= first]
+    return det
+
+
+def _which(m, f):
+    big = np.asarray(Image.fromarray(m["mask"]).resize((W, H)))
+    return max(range(len(OBJ)), key=lambda k: (big & _mask(k, f)).sum())
+
+
+def test_detector_seeds_whole_objects_and_votes_labels(tmp_path):
+    pytest.importorskip("torch")
+    files = _frames(tmp_path)
+    out = S.sam_tracks(files, list(range(N)), (H // 2, W // 2), gen=_gen_for(files), predictor=ShiftTracker(),
+                       discover_every=4, min_area=0.005, workdir=str(tmp_path), det=_det_for(files))
+    tracks = {}
+    for f, ms in out.items():
+        for m in ms:
+            k = _which(m, f)
+            tracks.setdefault(k, set()).add(m["track"])
+            assert max(m["det_votes"], key=m["det_votes"].get) == LABELS[k]
+    # the generator's part masks (inside a detected object) never become tracks of their own
+    assert {k: len(v) for k, v in tracks.items()} == {0: 1, 1: 1, 2: 1}
+
+
+def test_parts_found_before_the_detector_are_joined(tmp_path):
+    """Run 6 had the guitar in up to 8 tracked pieces. A piece seeded before the whole object
+    is detected must end up in the whole object's track, with its masks added to it."""
+    pytest.importorskip("torch")
+    files = _frames(tmp_path)
+
+    def gen(img):                                  # only a quarter of object 1, every discovery frame
+        f = _frame_of(files, img)
+        m = _mask(1, f)
+        q = np.zeros_like(m)
+        ys, xs = np.nonzero(m)
+        q[ys.min():ys.min() + 8, xs.min():xs.min() + 8] = True
+        return [{"segmentation": q, "area": int(q.sum()), "predicted_iou": 0.9, "stability_score": 0.9}]
+
+    def det(img):                                  # the whole object, only from frame 4
+        f = _frame_of(files, img)
+        return [{"mask": _mask(1, f), "label": "guitar", "conf": 0.7, "object": True}] if f >= 4 else []
+
+    out = S.sam_tracks(files, list(range(N)), (H // 2, W // 2), gen=gen, predictor=ShiftTracker(),
+                       discover_every=4, min_area=0.002, workdir=str(tmp_path), det=det)
+    ids = {m["track"] for ms in out.values() for m in ms}
+    assert len(ids) == 1                                          # piece joined to the whole object
+    m0 = out[0][0]
+    assert m0["parts"] and m0["det_votes"].get("guitar", 0) > 0
+    assert m0["mask"].sum() > 0                                   # frame 0: the piece's mask, now in the object
+
+
+def test_detector_label_needs_enough_agreeing_votes():
+    from uncertainscene.change.inventory import detector_label
+
+    assert detector_label({}) is None
+    assert detector_label({"cup": 0.3}) is None                   # one weak view
+    assert detector_label({"cup": 0.6, "glass": 0.7}) is None     # split
+    lab, share, top = detector_label({"guitar": 2.4, "table tennis bat": 0.3})
+    assert lab == "guitar" and share > 0.85 and top[0][0] == "guitar"
+
+
+def test_tracks_of_one_named_object_rejoin_after_leaving_view():
+    """An object that leaves the view and comes back gets a new SAM 2 track. If the detector
+    names both tracks the same, a weaker 3D overlap is enough to join them (continuity); two
+    tracks named differently are never joined, however much they overlap."""
+    big = {(0, 0, k) for k in range(10)}
+    part = {(0, 0, k) for k in range(4)} | {(5, 5, k) for k in range(6)}       # 4 of 10 cells shared
+    fr = lambda f, t, vox, lab: {"frame": f, "track": t, "vox": vox, "voxc": vox, "rgb": np.zeros(3),
+                                 "det_votes": {lab: 2.0} if lab else {}}
+    same = [fr(0, 0, big, "cup"), fr(8, 1, part, "cup")]
+    assert len(S.merge(same)) == 1
+    unnamed = [fr(0, 0, big, None), fr(8, 1, part, None)]
+    assert len(S.merge(unnamed)) == 2
+    differ = [fr(0, 0, big, "cup"), fr(8, 1, big, "book")]
+    assert len(S.merge(differ)) == 2
+
+
+def test_continuity_counts_tracks_and_breaks():
+    fs = [{"frame": f, "track": 7} for f in (10, 12, 14)] + [{"frame": f, "track": 9} for f in (20, 22)]
+    c = S.continuity(fs, [10, 12, 14, 16, 18, 20, 22])
+    assert c["tracks"] == 2 and c["runs"] == 2 and c["frames_seen"] == 5 and c["positions"] == [0, 1, 2, 5, 6]

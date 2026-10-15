@@ -194,7 +194,7 @@ def load_step(d: Path, with_3d: bool = True) -> dict:
 
 
 # sessions the results write-up (RESULTS.md) refers to by number
-RUN_NAMES = {"colab-a68c": "Run 5", "colab-5f93": "Run 6"}
+RUN_NAMES = {"colab-a68c": "Run 5", "colab-5f93": "Run 6", "colab-945e": "Run 8", "colab-6b31": "Run 9"}
 
 
 def _when(d: Path) -> tuple[str, str]:

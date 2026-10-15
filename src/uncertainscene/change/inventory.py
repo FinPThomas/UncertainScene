@@ -106,6 +106,41 @@ def counterparts(objs: list[SceneObject], others: list[SceneObject]) -> None:
         o.stats["counterpart_sim"] = round(_sim(o, others[best]), 3) if best is not None else None
 
 
+def _det_named(o: SceneObject) -> bool:
+    return o.extra.get("label_source") == "detector"
+
+
+def _det_labels_differ(a: SceneObject, b: SceneObject) -> bool:
+    return _det_named(a) and _det_named(b) and a.label != b.label
+
+
+def consistent_partners(objs_a: list[SceneObject], objs_b: list[SceneObject], same_sim: float = 0.8,
+                        min_iou: float = 0.5) -> int:
+    """Make same-object links agree in both directions. Run 6: the neck pillow in A was
+    "removed" while the neck pillow in B was "unchanged" with A's pillow as its partner. When an
+    object is unchanged and points at an object of the other recording that lies in the same
+    place (voxel IoU >= min_iou), looks alike (>= same_sim) and is not named differently by the
+    detector, that object is still there: both are unchanged partners. Otherwise the one-sided
+    link is dropped. Returns how many statuses were corrected."""
+    fixed = 0
+    for objs, others in ((objs_a, objs_b), (objs_b, objs_a)):
+        for o in objs:
+            if o.status != "unchanged" or o.partner is None:
+                continue
+            p = others[o.partner]
+            if p.status == "unchanged" and p.partner == o.id:
+                continue
+            strong = (o.stats.get("counterpart_iou", 0) >= min_iou and (o.stats.get("counterpart_sim") or 0) >= same_sim
+                      and not _det_labels_differ(o, p))
+            if strong and p.status in ("removed", "added", "unchanged") and (p.partner is None or p.partner == o.id):
+                if p.status != "unchanged":
+                    fixed += 1
+                p.status, p.partner = "unchanged", o.id
+            else:
+                o.partner = None
+    return fixed
+
+
 def classify(objs_a: list[SceneObject], objs_b: list[SceneObject], rec: Recon, feats, res: ChangeResult,
              cfg: DetectConfig | None = None, null_q: float = 0.975, min_observed: float = 0.25,
              same_sim: float = 0.8, move_sim: float = 0.75) -> dict:
@@ -151,6 +186,7 @@ def classify(objs_a: list[SceneObject], objs_b: list[SceneObject], rec: Recon, f
                 o.status = "unchanged"
             if o.status == "unchanged" and cp is not None:
                 o.partner = cp
+    consistent_partners(objs_a, objs_b, same_sim)
     # moved = removed in A + added in B that look alike
     rem = [o for o in objs_a if o.status == "removed" and not o.structure]
     add = [o for o in objs_b if o.status == "added" and not o.structure]
@@ -160,8 +196,11 @@ def classify(objs_a: list[SceneObject], objs_b: list[SceneObject], rec: Recon, f
             sim = _sim(a, b)
             ratio = (a.extent[0] + 1e-9) / (b.extent[0] + 1e-9)
             same_label = a.label is not None and a.label == b.label
+            if _det_labels_differ(a, b):
+                continue                        # both named by the detector, and differently: not one object
+            bonus = 0.1 if same_label and _det_named(a) and _det_named(b) else 0.05 * same_label
             if sim >= move_sim and (same_label or 1 / 1.6 < ratio < 1.6):
-                cand.append((sim + 0.05 * same_label, a, b))
+                cand.append((sim + bonus, a, b))
     used = set()
     for sim, a, b in sorted(cand, key=lambda t: -t[0]):
         if a.id in used or ("B", b.id) in used:
@@ -257,6 +296,11 @@ def object_rows(objs: list[SceneObject], scale: float, floor_up: np.ndarray, flo
                      "partner": None if o.partner is None else f"{'B' if o.recording == 'A' else 'A'}{o.partner}",
                      "description": o.extra.get("description"),
                      "position_cm": o.extra.get("position_cm"),
+                     "label_source": o.extra.get("label_source"), "detector_votes": o.extra.get("det_votes"),
+                     "continuity": {k: v for k, v in (o.extra.get("continuity") or {}).items()
+                                    if k in ("tracks", "runs", "frames_seen", "frames_total", "span_share")} or None,
+                     "affordance": o.extra.get("affordance"),
+                     "context": {k: v for k, v in (o.extra.get("context") or {}).items() if k != "sentence"} or None,
                      "stats": {k: v for k, v in o.stats.items() if not isinstance(v, np.ndarray)}})
     return rows
 
@@ -301,6 +345,18 @@ def label_views(o: SceneObject, n: int = 4) -> list[int]:
     return [o.best_frame] + sorted(set(pick))
 
 
+def detector_label(votes: dict, min_votes: float = 0.5, min_share: float = 0.6):
+    """(label, share of votes, top 3) from detector votes {label: summed confidence x IoU over
+    views}, or None when they are too few (about two confident views) or split."""
+    tot = sum(votes.values())
+    if tot < min_votes:
+        return None
+    top = sorted(votes.items(), key=lambda kv: -kv[1])[:3]
+    if top[0][1] < min_share * tot:
+        return None
+    return top[0][0], round(top[0][1] / tot, 3), [(lab, round(v / tot, 3)) for lab, v in top]
+
+
 def label_all(objs: list[SceneObject], rec: Recon, crop_dir=None, n_views: int = 4) -> None:
     """CLIP label (top 3) and image embedding for every object, from the mean embedding of up to
     `n_views` masked views of it (the Rigidity Copilot reads the same whole-object embedding)."""
@@ -328,11 +384,19 @@ def label_all(objs: list[SceneObject], rec: Recon, crop_dir=None, n_views: int =
         groups.append(g)
         o.extra["label_views"] = len(g)
     tops, embs = clip_inventory(crops, groups=groups)
+    from .detect2d import SUPPORT
+
     for o, top, e, img in zip(objs, tops, embs, best):
         o.label, o.label_prob = canonical(top[0][0]), top[0][1]
         o.label_top3 = [(lab, round(p, 3)) for lab, p in top]
+        o.extra["clip_top3"] = o.label_top3
+        o.extra["label_source"] = "clip"
+        det = detector_label(o.extra.get("det_votes") or {})
+        if det is not None:             # whole-object detector votes over many views beat one CLIP crop
+            o.label, o.label_prob, o.label_top3 = det
+            o.extra["label_source"] = "detector"
         o.extra["clip"] = e
-        o.extra["background"] = o.label in BACKGROUND or o.structure
+        o.extra["background"] = o.label in BACKGROUND or o.label in SUPPORT or o.structure
         if crop_dir is not None:
             crop_dir.mkdir(parents=True, exist_ok=True)
             img.save(crop_dir / f"{o.recording}{o.id:03d}_{(o.label or 'object').replace(' ', '_')}.jpg", quality=82)

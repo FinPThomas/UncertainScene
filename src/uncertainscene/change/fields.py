@@ -165,6 +165,7 @@ def compute_fields(res: ChangeResult, rec: Recon, robot: RobotModel | None = Non
     shift_cm = ps.disp[idx] * s * 100
 
     return {"which": which, "idx": idx, "X": X, "rgb": ps.rgb[idx], "floor": asdict(floor), "robot": asdict(robot),
+            "up_dot": (normals @ up).astype(np.float32),
             "base": base, "shoulder": shoulder, "bases": bases if bases is not None else np.zeros((0, 3)),
             "uncertainty_cm": unc_cm.astype(np.float32), "shift_cm": shift_cm.astype(np.float32),
             "height_m": height.astype(np.float32), "reach": reach.astype(np.float32),
@@ -222,6 +223,73 @@ def object_fields(objs: list, res: ChangeResult, f: dict) -> None:
             o.extra["metric"]["distance_cm"] = round(o.distance * s * 100, 1)
             o.extra["metric"]["distance_cm_ci"] = [round(o.distance_ci[0] * lo_s * 100, 1),
                                                    round(o.distance_ci[1] * hi_s * 100, 1)]
+
+
+def object_affordance(f: dict, objs: list, gripper_open_m: float = 0.12, max_lift_m: float = 0.6,
+                      near_vox: float = 2.0, place_clear_m: float = 0.08) -> dict:
+    """What the robot could do at each surface point, from the segmented objects (SceneObjects
+    of the field's recording, labelled, with context and rigidity when available):
+
+    - grasp: the point belongs to a movable object that fits the gripper (smallest size <=
+      `gripper_open_m`, largest <= `max_lift_m`) with nothing resting on it, times
+      interactability (reach x approach x certainty); rigid objects score higher (a soft
+      object deforms in the fingers: x (0.5 + 0.5 rigidity));
+    - push: movable objects too big to grasp (cushions, blankets), times interactability;
+    - place: upward-facing surface (normal within ~25 deg of up) of a support or the floor with no
+      object within `place_clear_m`, times reach.
+    Adds f["object_id"] (index into objs, -1 none), f["grasp"], f["push"], f["place"] and sets
+    o.extra["affordance"] (mean scores over the object's points, best action). Returns counts."""
+    from scipy.spatial import cKDTree
+
+    s = f["floor"]["scale_m_per_unit"]
+    rec = "B" if f["which"] == "B" else "A"
+    X = f["X"]
+    n = len(X)
+    owner = np.full(n, -1)
+    if len(X) > 1:
+        spacing = float(np.median(cKDTree(X).query(X[:: max(1, n // 2000)], k=2)[0][:, 1]))
+    else:
+        spacing = 1.0
+    best = np.full(n, np.inf)
+    mine = [(i, o) for i, o in enumerate(objs) if o.recording == rec]
+    for i, o in mine:
+        d, _ = cKDTree(np.asarray(o.X, float)).query(X, k=1, distance_upper_bound=near_vox * spacing)
+        win = d < best
+        owner[win], best[win] = i, d[win]
+    grasp, push, place = (np.zeros(n, np.float32) for _ in range(3))
+    movable = np.zeros(len(objs), bool)
+    for i, o in mine:
+        sel = owner == i
+        if not sel.any():
+            continue
+        size = np.sort(np.asarray(o.extent, float) * s)[::-1]
+        ctx = o.extra.get("context") or {}
+        bg = bool(o.extra.get("background") or o.structure)
+        movable[i] = not bg
+        rig = (o.extra.get("rigidity") or {}).get("rigidity", 0.5)
+        fits = size[-1] <= gripper_open_m and size[0] <= max_lift_m
+        if not bg and fits and not ctx.get("supports"):
+            grasp[sel] = f["interact"][sel] * (0.5 + 0.5 * rig)
+        elif not bg:
+            push[sel] = f["interact"][sel]
+    up_ok = f.get("up_dot", np.ones(n)) > 0.9
+    support = (owner < 0) | ~movable[np.clip(owner, 0, None)]
+    occupied = np.zeros(n, bool)
+    mv = owner >= 0
+    mv[mv] = movable[owner[mv]]
+    if mv.any():
+        occupied = cKDTree(X[mv]).query(X, k=1)[0] * s < place_clear_m
+    place[:] = (f["reach"] * (up_ok & support & ~occupied)).astype(np.float32)
+    f.update({"object_id": owner, "grasp": grasp, "push": push, "place": place})
+    for i, o in mine:
+        sel = owner == i
+        if sel.any():
+            a = {"grasp": round(float(grasp[sel].mean()), 3), "push": round(float(push[sel].mean()), 3),
+                 "place_on": round(float(place[sel].mean()), 3), "points": int(sel.sum())}
+            a["best"] = max(("grasp", "push", "place_on"), key=lambda k: a[k]) if max(a["grasp"], a["push"], a["place_on"]) > 0.2 else "none"
+            o.extra["affordance"] = a
+    return {"grasp_frac": round(float((grasp > 0.5).mean()), 3), "push_frac": round(float((push > 0.5).mean()), 3),
+            "place_frac": round(float((place > 0.5).mean()), 3), "points_on_objects": round(float((owner >= 0).mean()), 3)}
 
 
 def base_placement(f: dict, grid_m: float = 0.1, footprint_m: float = 0.25, max_targets: int = 20000) -> dict:

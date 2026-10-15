@@ -87,12 +87,15 @@ def write_html(res: ChangeResult, objs: list, out: Path, title: str = "", n_bg: 
         sel = rng.choice(len(fields["X"]), min(n_field, len(fields["X"])), replace=False)
         Xf = fields["X"][sel]
         for name, (ttl, cmap, vmin, vmax) in FIELD_STYLE.items():
+            if name not in fields:
+                continue
             val = np.nan_to_num(fields[name][sel], nan=0.0)
             if name == "shift_cm":
                 m = float(np.quantile(np.abs(val), 0.99)) or 1.0
                 vmin, vmax = -m, m
             vmax = vmax if vmax is not None else float(np.quantile(val, 0.95)) or 1.0
-            plotly_cmap = {"magma": "Magma", "coolwarm": "RdBu_r", "viridis": "Viridis", "RdYlGn": "RdYlGn"}[cmap]
+            plotly_cmap = {"magma": "Magma", "coolwarm": "RdBu_r", "viridis": "Viridis", "RdYlGn": "RdYlGn",
+                           "Greens": "Greens", "Oranges": "Oranges", "Blues": "Blues"}[cmap]
             traces.append(go.Scatter3d(x=Xf[:, 0].round(3), y=Xf[:, 1].round(3), z=Xf[:, 2].round(3), mode="markers",
                                        marker=dict(size=2, color=val.round(3), colorscale=plotly_cmap, cmin=vmin,
                                                    cmax=vmax, showscale=False),
@@ -121,7 +124,8 @@ def write_html(res: ChangeResult, objs: list, out: Path, title: str = "", n_bg: 
 def write_fields_ply(f: dict, out: Path, max_mb: float = 4.5) -> Path:
     """Voxelised cloud of recording B with every heat-map field as a float property
     (subsampled to stay under max_mb)."""
-    names = ["uncertainty_cm", "shift_cm", "height_m", "reach", "approach", "interact"]
+    names = [n for n in ("uncertainty_cm", "shift_cm", "height_m", "reach", "approach", "interact", "grasp", "push",
+                         "place") if n in f]
     cap = int(max_mb * 1024**2 / (15 + 4 * len(names)))
     if len(f["X"]) > cap:
         sel = np.sort(np.random.default_rng(0).choice(len(f["X"]), cap, replace=False))

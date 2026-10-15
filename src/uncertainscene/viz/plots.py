@@ -180,6 +180,9 @@ FIELD_STYLE = {  # field -> (title, colormap, vmin, vmax or None for 99th percen
     "reach": ("Robot reachability (0-1)", "RdYlGn", 0, 1),
     "approach": ("Gripper approachability (0-1)", "RdYlGn", 0, 1),
     "interact": ("Interactability = reach x approach x certainty", "RdYlGn", 0, 1),
+    "grasp": ("Grasp: objects that fit the gripper, nothing on top (x rigidity)", "Greens", 0, 1),
+    "push": ("Push: movable objects too big to grasp", "Oranges", 0, 1),
+    "place": ("Place: free upward surfaces in reach", "Blues", 0, 1),
 }
 
 
@@ -191,8 +194,9 @@ def field_maps(f: dict, rec: Recon, out: Path, title: str = "") -> Path:
     fwd /= np.linalg.norm(fwd)
     right = np.cross(fwd, up)
     X = f["X"]
-    names = list(FIELD_STYLE)
-    fig, axes = plt.subplots(3, 4, figsize=(22, 17))
+    names = [k for k in FIELD_STYLE if k in f]
+    rows = (2 * len(names) + 3) // 4
+    fig, axes = plt.subplots(rows, 4, figsize=(22, 17 * rows / 3), squeeze=False)
     for k, name in enumerate(names):
         val = f[name]
         ttl, cmap, vmin, vmax = FIELD_STYLE[name]

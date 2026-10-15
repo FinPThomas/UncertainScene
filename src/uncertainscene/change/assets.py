@@ -171,8 +171,41 @@ def contacts(graphs: list[dict], up: np.ndarray, contact: float) -> list[dict]:
     return out
 
 
+def object_pose(X_m: np.ndarray, up: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Object frame (metres): origin at the median point, z along the floor's up vector, x along
+    the object's longest horizontal direction. world = R @ local + t."""
+    up = np.asarray(up, float) / np.linalg.norm(up)
+    t = np.median(X_m, 0)
+    D = X_m - t
+    H = D - np.outer(D @ up, up)
+    if len(H) >= 3 and np.linalg.norm(H) > 0:
+        _, _, vt = np.linalg.svd(H, full_matrices=False)
+        x = vt[0] - (vt[0] @ up) * up
+    else:
+        x = np.cross(up, [1.0, 0, 0]) if abs(up[0]) < 0.9 else np.cross(up, [0, 1.0, 0])
+    x /= np.linalg.norm(x)
+    R = np.stack([x, np.cross(up, x), up], 1)               # columns: local x, y, z in world
+    return R, t
+
+
+def write_ply(path: Path, X: np.ndarray, rgb: np.ndarray | None) -> None:
+    rgb = np.full((len(X), 3), 180, np.uint8) if rgb is None else np.asarray(rgb, np.uint8)
+    dt = np.dtype([("x", "<f4"), ("y", "<f4"), ("z", "<f4"), ("red", "u1"), ("green", "u1"), ("blue", "u1")])
+    arr = np.empty(len(X), dt)
+    for i, c in enumerate("xyz"):
+        arr[c] = X[:, i]
+    for i, c in enumerate(("red", "green", "blue")):
+        arr[c] = rgb[:, i]
+    head = (f"ply\nformat binary_little_endian 1.0\nelement vertex {len(arr)}\nproperty float x\nproperty float y\n"
+            "property float z\nproperty uchar red\nproperty uchar green\nproperty uchar blue\nend_header\n")
+    with open(path, "wb") as fh:
+        fh.write(head.encode())
+        fh.write(arr.tobytes())
+
+
 def build(objs: list, scale_m: float, up: np.ndarray, out_dir: Path, motion: dict | None = None,
-          motion_objs: list | None = None, n_nodes: int = 96, max_objects: int = 60, contact_m: float = 0.015) -> dict:
+          motion_objs: list | None = None, n_nodes: int = 96, max_objects: int = 60, contact_m: float = 0.015,
+          rec=None) -> dict:
     """Write out_dir/<name>.json (+ .obj hull) per object and out_dir/scene_graph.json.
     Exported: every changed object and its partner, then the largest others up to max_objects."""
     from scipy.spatial import cKDTree
@@ -219,7 +252,24 @@ def build(objs: list, scale_m: float, up: np.ndarray, out_dir: Path, motion: dic
                   "strained": None if not m else bool(x)}
                  for (a, b), l, kk, kl, kh, s, sg, x, m in zip(g["edges"], L0, k, klo, khi, st["strain"],
                                                               st["strain_sigma"], strained, measured)]
+        # the object's own points as a coloured cloud in its own frame, with the pose that puts it
+        # back: move or turn the object by changing pose (world = R @ local + t)
+        Xm = np.asarray(o.X, float) * scale_m
+        R, t = object_pose(Xm, up)
+        rgb = None
+        if rec is not None and getattr(o, "frame", None) is not None and getattr(o, "pix", None) is not None:
+            try:
+                rgb = np.asarray(rec.images)[o.frame, o.pix[:, 0], o.pix[:, 1]]
+            except Exception:  # noqa: BLE001 - colours are a bonus
+                rgb = None
+        write_ply(out_dir / f"{name}.ply", (Xm - t) @ R, rgb)
         doc = {"name": name, "label": o.label, "label_top3": o.label_top3, "recording": o.recording, "id": int(o.id),
+               "label_source": o.extra.get("label_source"),
+               "points_file": f"{name}.ply", "points": int(len(Xm)),
+               "pose": {"t_m": np.round(t, 4).tolist(), "R": np.round(R, 5).tolist(),
+                        "meaning": "world = R @ local + t; the .ply holds local coordinates in metres"},
+               "context": {k: v for k, v in (o.extra.get("context") or {}).items() if k != "sentence"} or None,
+               "affordance": o.extra.get("affordance"),
                "status": o.status, "partner": None if o.partner is None else f"{'B' if o.recording == 'A' else 'A'}{o.partner}",
                "units": "metres, world frame of the reconstruction", "up": np.round(up, 4).tolist(),
                "nodes": [{"xyz": np.round(p * scale_m, 4).tolist(), "weight": round(float(w), 4)}

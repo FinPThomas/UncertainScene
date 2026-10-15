@@ -46,6 +46,7 @@ class Spec:
     n_key: int = 44                    # SAM 2 key frames per recording
     sam_points: int = 32               # SAM 2 points per side (32x32 grid finds smaller objects than 24x24)
     sam_track: bool = True             # follow objects through the video (run 3: per-frame masks split objects)
+    detector: bool = True              # YOLOE whole objects seed tracks and vote labels (run 6: guitar in 8 pieces)
     variant: str = "base"
     detect: dict = field(default_factory=dict)
     robot: dict = field(default_factory=dict)
@@ -65,6 +66,8 @@ class Spec:
         minutes = 4 + n / 40 * 0.8 + 2 * self.n_key * 4 / 60 + n / 60 + 4
         if self.sam_track:
             minutes += 2 * 30                  # SAM 2 video tracking (run 5: 65 min for both recordings on a T4)
+            if self.detector:
+                minutes += 2 * 15              # more whole-object tracks + detector on every kept frame
         if self.refine_poses and self.outputs != "light":
             minutes += n / 75                  # SIFT + matching + bundle adjustment (cached per reconstruction)
         if self.motion or (self.motion is None and self.outputs == "full"):
@@ -117,6 +120,8 @@ def queue() -> list:
             q.append(SplatSpec(step_name("1b-splat", a, b), a, b,
                                title=f"Gaussian splats: {rec_name(a)} vs {rec_name(b)}",
                                question=PHASES["1b-splat"][1]))
+            # the pilot pair again with whole-object segmentation (Fin, 2026-10-15: objects first)
+            q.append(Spec(step_name("1c-objects", a, b), a, b, variant="objects"))
     q.append("1-main_summary")
 
     q.append(ClipsSpec("2-position_3-clips_no-change_dark-before-a-b-c", (DB, DBb, DBc), ("before",) * 3,
@@ -243,7 +248,8 @@ def _masks(rec, spec: Spec, cache: Path) -> dict:
     """SAM 2 masks on key frames of both recordings, cached (packed bits)."""
     from ..change.segment import key_frames, release_sam, sam_masks, sam_tracks
 
-    f = cache / f"sam2{'t' if spec.sam_track else ''}_{_key(spec)}_k{spec.n_key}_p{spec.sam_points}.npz"
+    use_det = spec.sam_track and getattr(spec, "detector", False)
+    f = cache / f"sam2{'t' if spec.sam_track else ''}{'d' if use_det else ''}_{_key(spec)}_k{spec.n_key}_p{spec.sam_points}.npz"
     H, W = rec.depth.shape[1:]
     if f.exists():
         try:
@@ -259,33 +265,44 @@ def _masks(rec, spec: Spec, cache: Path) -> dict:
         except Exception as e:  # noqa: BLE001
             log.warning("SAM cache unreadable (%s); recomputing", e)
     t0 = time.time()
-    out, how = None, "masks per key frame"
+    out, how, det, how_det = None, "masks per key frame", None, ""
     if spec.sam_track:
         # follow every object through the recording (2x the key-frame rate); masks are kept on the
         # key frames (every 2nd tracked frame), so views and 3D points stay as dense as before
+        if use_det:
+            try:
+                from ..change.detect2d import Detector
+
+                det = Detector(weights=None)
+                how_det = "with YOLOE whole objects"
+            except Exception as e:  # noqa: BLE001 - objects from SAM 2 alone, as in run 6
+                log.exception("YOLOE detector unavailable (%s); objects from SAM 2 alone", e)
+                how_det = "without YOLOE (unavailable)"
         try:
             out = {}
             for v in np.unique(rec.video):
                 tf = key_frames(rec, int(v), 2 * spec.n_key)
                 tr = sam_tracks(rec.files, tf, (H, W), points_per_side=spec.sam_points, keep_frames=tf[::2],
-                                workdir=str(cache))
+                                workdir=str(cache), det=det)
                 for ms in tr.values():                  # track ids unique across recordings
                     for m in ms:
                         m["track"] += 100000 * int(v)
                 out.update(tr)
-            how = "tracked through each recording"
+            how = "tracked through each recording" + (f", {how_det}" if use_det else "")
         except Exception as e:  # noqa: BLE001 - fall back to independent masks per key frame
             log.exception("SAM 2 video tracking failed (%s); using masks per key frame", e)
             out = None
     if out is None:
         frames = [k for v in np.unique(rec.video) for k in key_frames(rec, int(v), spec.n_key)]
         out = sam_masks(rec.files, frames, (H, W), points_per_side=spec.sam_points)
+    no_det = use_det and det is None             # never cache masks made without the detector under its name
+    det = None
     release_sam()
     log.info("SAM 2 (%s): %d masks on %d frames, %d objects tracked, in %.0f s", how, sum(len(v) for v in out.values()),
              len(out), len({m["track"] for v in out.values() for m in v if m.get("track") is not None}), time.time() - t0)
     # cache (a failure here must never lose masks that took an hour to track). Per-frame masks
     # made because tracking failed are not cached under the tracked name: a retry tracks again
-    if spec.sam_track and how != "tracked through each recording":
+    if spec.sam_track and (no_det or not how.startswith("tracked through each recording")):
         return out
     try:
         f.parent.mkdir(parents=True, exist_ok=True)
@@ -416,6 +433,20 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         if pc and not o.structure and not pc["too_few_views"]:
             o.extra["description"] += (f" Its centre is known to within about {pc['radius90_cm']:.0f} cm (90%, from "
                                        f"{pc['n_views']} views; one view alone: {pc['single_view_radius90_cm']:.0f} cm).")
+    rels = []
+    try:                                       # context: on top of / next to, from the point clouds
+        from ..change.relations import relations
+
+        rels = relations(objs_a + objs_b, s, np.array(floor.up))
+        for o in objs_a + objs_b:
+            if o.extra["context"]["sentence"]:
+                o.extra["description"] += " " + o.extra["context"]["sentence"]
+        stage(f"object context ({sum(r['relation'] == 'on top of' for r in rels)} on top of, "
+              f"{sum(r['relation'] == 'next to' for r in rels)} next to)")
+    except Exception as e:  # noqa: BLE001
+        if type(e).__name__ == "ResourceLimit":
+            raise
+        log.exception("object context failed; continuing without it")
 
     # ---- distance moved and deformation from matched feature points ----
     mot = None
@@ -445,22 +476,6 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
             (out / "motion_error.txt").write_text(f"{type(e).__name__}: {e}\n")
             mot = None
 
-    # ---- node-structured object assets; objects kept for later steps (per-object splats) ----
-    assets_scene = None
-    if objs_a or objs_b:
-        try:
-            from ..change import assets
-
-            assets.save_objects(objs_a + objs_b, cache / f"objects_{_key(spec)}.npz")
-            if spec.outputs == "full":
-                assets_scene = assets.build(objs_a + objs_b, s, np.array(floor.up), out / "assets", mot, motion_objs=objs_a)
-                stage(f"object assets ({len(assets_scene['objects'])} objects, {len(assets_scene['contacts'])} contacts)")
-        except Exception as e:  # noqa: BLE001
-            if type(e).__name__ == "ResourceLimit":
-                raise
-            log.exception("object assets failed; continuing without them")
-            (out / "assets_error.txt").write_text(f"{type(e).__name__}: {e}\n")
-
     # ---- heat maps ----
     f = fstats = None
     bm = {}
@@ -468,6 +483,13 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         f = compute_fields(res, rec, robot, which=spec.fields_on,
                            voxel_m=spec.voxel_m if spec.outputs != "light" else max(spec.voxel_m, 0.015), floor=floor)
         fstats = field_stats(f)
+        if objs_a or objs_b:
+            try:                               # grasp / push / place maps from the segmented objects
+                from ..change.fields import object_affordance
+
+                fstats.update(object_affordance(f, objs_a + objs_b))
+            except Exception:  # noqa: BLE001
+                log.exception("object affordance maps failed; continuing without them")
         bm = base_placement(f) if spec.outputs != "light" else {}
         if bm:
             fstats.update({"base_standable_frac": round(bm["standable_frac"], 3),
@@ -482,6 +504,23 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
             raise
         log.exception("heat maps failed; continuing without them")
         (out / "fields_error.txt").write_text(f"{type(e).__name__}: {e}\n")
+
+    # ---- node-structured object assets; objects kept for later steps (per-object splats) ----
+    assets_scene = None
+    if objs_a or objs_b:
+        try:
+            from ..change import assets
+
+            assets.save_objects(objs_a + objs_b, cache / f"objects_{_key(spec)}.npz")
+            if spec.outputs == "full":
+                assets_scene = assets.build(objs_a + objs_b, s, np.array(floor.up), out / "assets", mot, motion_objs=objs_a,
+                                            rec=rec)
+                stage(f"object assets ({len(assets_scene['objects'])} objects, {len(assets_scene['contacts'])} contacts)")
+        except Exception as e:  # noqa: BLE001
+            if type(e).__name__ == "ResourceLimit":
+                raise
+            log.exception("object assets failed; continuing without them")
+            (out / "assets_error.txt").write_text(f"{type(e).__name__}: {e}\n")
 
     # ---- change objects for the report (SAM objects, else point clusters) ----
     if objs_a or objs_b:
@@ -512,6 +551,13 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
          "recon_cached": rinfo.get("cached", False), "frames_total": int(len(rec.images)),
          "sam_error": sam_error, "scale_cues": floor.scale_cues}
     m.update(M.label_free(res, changes_objs))
+    cont = [o.extra["continuity"] for o in objs_a + objs_b if not o.structure and o.extra.get("continuity")]
+    if cont:                                   # object continuity through the videos
+        m.update({"objects_one_unbroken_track": round(sum(c["tracks"] == 1 and c["runs"] == 1 for c in cont) / len(cont), 3),
+                  "objects_tracks_median": float(np.median([c["tracks"] for c in cont])),
+                  "objects_runs_median": float(np.median([c["runs"] for c in cont])),
+                  "objects_labelled_by_detector": sum(o.extra.get("label_source") == "detector" for o in objs_a + objs_b),
+                  "objects_parts_joined": sum(len(o.extra.get("parts") or []) for o in objs_a + objs_b)})
     for side, ps in (("A", res.A), ("B", res.B)):
         u = ps.unc[np.isfinite(ps.unc)] * s * 100
         m[f"unc_cm_{side}_median"] = round(float(np.median(u)), 3) if len(u) else None
@@ -539,6 +585,7 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     m["step_seconds"] = round(time.time() - t0, 1)
     (out / "metrics.json").write_text(json.dumps(m, indent=2, default=float) + "\n")
     (out / "objects.json").write_text(json.dumps(rows, indent=2, default=float) + "\n")
+    (out / "relations.json").write_text(json.dumps(rels, indent=2, default=float) + "\n")
     (out / "changes.json").write_text(json.dumps(changes, indent=2, default=float) + "\n")
 
     # ---- figures, viewer, reports ----
@@ -547,6 +594,10 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         objects_plots.inventory_sheet(objs_b + objs_a, rec, out / "objects.png", title)
         objects_plots.save_crops(objs_a + objs_b, rec, out / "assets")
         objects_plots.mask_overlays(objs_a, objs_b, rec, out / "object_overlays.png")
+        try:
+            objects_plots.continuity_timeline(objs_a, objs_b, out / "object_continuity.png", title)
+        except Exception:  # noqa: BLE001
+            log.exception("continuity figure failed")
     if objs_a or objs_b:
         _position_figures(objs_a, objs_b, res, floor, s, m, out, d["title"])
     if mot is not None:

@@ -197,12 +197,19 @@ def _logit_wobble(lg: np.ndarray) -> list | None:
 
 def sam_tracks(files: list[str], frames: list[int], size_hw: tuple[int, int], model_id: str = "facebook/sam2.1-hiera-small",
                points_per_side: int = 32, min_area: float = 0.0005, max_area: float = 0.5, discover_every: int = 8,
-               batch: int = 15, keep_frames=None, gen=None, predictor=None, workdir=None) -> dict:
+               batch: int = 15, keep_frames=None, gen=None, predictor=None, workdir=None, det=None,
+               part_inside: float = 0.7) -> dict:
     """Objects tracked through `frames` (one recording, in time order) with SAM 2's video
     predictor. Every `discover_every`-th frame the automatic mask generator proposes masks;
     those not already tracked there (`_is_new`) become new objects, followed forwards and
     backwards through all frames in batches of `batch` objects. Returns {frame: [dict(mask,
-    full_bbox, score, full_hw, wobble_px, track)]} for `keep_frames` (default all)."""
+    full_bbox, score, full_hw, wobble_px, track)]} for `keep_frames` (default all).
+
+    `det` (optional, detect2d.Detector): whole-object instances. They seed tracks before the
+    automatic masks; automatic masks more than `part_inside` inside an object instance are parts
+    and seed nothing; on kept frames every track collects label votes ("det_votes", summed
+    confidence of instances it matches) and a track that keeps lying inside the instance of
+    another track is joined to it (its masks are added to that track's, "parts")."""
     import tempfile
 
     import torch
@@ -233,22 +240,40 @@ def sam_tracks(files: list[str], frames: list[int], size_hw: tuple[int, int], mo
                 Image.open(files[s]).convert("RGB").save(dst, quality=95)
         fh, fw = np.asarray(Image.open(files[frames[0]])).shape[:2]
         state = None
+        dets: dict = {}                                    # frame index -> instances (masks at rec size)
+        n_parts = 0
         for d in list(range(0, n, discover_every)):
             img = np.asarray(Image.open(files[frames[d]]).convert("RGB"))
             with torch.inference_mode():
                 ms = gen(img)
             ms = sorted([m for m in ms if min_area <= m["area"] / (fh * fw) <= max_area], key=lambda m: -m["area"])
+            cands = [(np.asarray(m["segmentation"], bool), float(m["predicted_iou"]) * float(m["stability_score"]), False)
+                     for m in ms]
+            things = []
+            if det is not None:
+                found = det(img)
+                if d in keep_idx:
+                    dets[d] = _small_dets(found, (W, H))
+                things = [x["mask"][::4, ::4] for x in found if x["object"]]
+                # whole objects first (largest first), then the automatic masks
+                cands = [(x["mask"], x["conf"], True) for x in sorted(found, key=lambda x: -x["mask"].sum())] + cands
+                del found
             # what is new is decided at quarter resolution (16x fewer pixels per comparison;
             # ~150 candidates x ~150 tracks per discovery frame was minutes at full resolution)
             have = [np.unpackbits(t, count=fh * fw).reshape(fh, fw)[::4, ::4].astype(bool)
                     for t in tracked[d].values()]
             new = []
-            for m in ms:
-                seg = np.asarray(m["segmentation"], bool)
+            for seg, sc, whole in cands:
                 small = seg[::4, ::4]
+                a = small.sum()
+                if not whole and any(t.sum() > 1.5 * a and np.logical_and(small, t).sum() > part_inside * a
+                                     for t in things):
+                    n_parts += 1                           # a part of a detected object
+                    continue
                 if _is_new(small, have):
                     have.append(small)
-                    new.append((len(seeds) + len(new), d, seg, float(m["predicted_iou"]) * float(m["stability_score"])))
+                    new.append((len(seeds) + len(new), d, seg, sc))
+            del cands
             for b0 in range(0, len(new), batch):
                 chunk = new[b0:b0 + batch]
                 if state is None:
@@ -282,14 +307,111 @@ def sam_tracks(files: list[str], frames: list[int], size_hw: tuple[int, int], mo
         if state is not None:
             predictor.reset_state(state)
     score = {t: sc for t, _, _, sc in seeds}
+    votes: dict = {}
+    root = {t: t for t in score}
+    if det is not None:
+        for i in sorted(keep_idx):
+            if i not in dets:
+                with torch.inference_mode():
+                    dets[i] = _small_dets(det(np.asarray(Image.open(files[frames[i]]).convert("RGB"))), (W, H))
+        votes, parents = track_votes(kept, dets)
+        root = join_parts(parents, score)
+        log.info("SAM 2 tracking + detector: %d part masks not seeded, %d tracks joined to the object they lie in, "
+                 "%d of %d tracks labelled by the detector", n_parts, sum(root[t] != t for t in root),
+                 sum(1 for t in score if votes.get(t)), len(score))
+    tot: dict = {}                                         # votes of each joined object
+    for t, r in root.items():
+        for lab, v in votes.get(t, {}).items():
+            tot.setdefault(r, {})[lab] = tot.setdefault(r, {}).get(lab, 0.0) + v
+    parts = {}
+    for t, r in root.items():
+        if r != t:
+            parts.setdefault(r, []).append(int(t))
     out: dict = {}
     for i, s in enumerate(frames):
-        if i in keep_idx:
-            out[s] = [{"mask": mk, "full_bbox": bb, "score": score[tid], "full_hw": (fh, fw), "wobble_px": wb,
-                       "track": int(tid)} for tid, (mk, bb, wb) in kept[i].items()]
+        if i not in keep_idx:
+            continue
+        by: dict = {}
+        for tid, (mk, bb, wb) in kept[i].items():
+            r = root.get(tid, tid)
+            if r not in by:
+                by[r] = [mk.copy(), list(bb), wb if r == tid else None]
+            else:
+                g = by[r]
+                g[0] |= mk
+                g[1] = [min(g[1][0], bb[0]), min(g[1][1], bb[1]), max(g[1][2], bb[2]), max(g[1][3], bb[3])]
+                g[2] = wb if r == tid else g[2]
+        out[s] = [{"mask": mk, "full_bbox": tuple(bb), "score": score[r], "full_hw": (fh, fw), "wobble_px": wb,
+                   "track": int(r), "det_votes": {k: round(v, 3) for k, v in tot.get(r, {}).items()},
+                   "parts": parts.get(r, [])} for r, (mk, bb, wb) in by.items()]
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
     return out
+
+
+def _small_dets(found: list[dict], size_wh: tuple[int, int]) -> list[dict]:
+    """Detector instances with masks at reconstruction size (to compare with kept track masks)."""
+    from PIL import Image
+
+    return [{**x, "mask": np.asarray(Image.fromarray(x["mask"].astype(np.uint8) * 255).resize(size_wh, Image.Resampling.NEAREST))
+             > 127} for x in found]
+
+
+def track_votes(kept: list[dict], dets: dict, min_iou: float = 0.5, part_inside: float = 0.7) -> tuple[dict, dict]:
+    """Per frame index, match tracked masks (kept[i]: track -> (mask, bbox, wobble)) with detector
+    instances (dets[i]). Returns label votes {track: {label: summed confidence}} from instances a
+    track matches (IoU > min_iou), and part evidence {(part, parent): [frames inside, frames both
+    seen]}: the part lies more than `part_inside` inside an object instance that the parent track
+    matches, and the instance is clearly larger than the part."""
+    from .detect2d import inside, iou
+
+    votes: dict = {}
+    parents: dict = {}
+    for i, ds in dets.items():
+        ts = {t: v[0] for t, v in kept[i].items()}
+        if not ts:
+            continue
+        match = {}                                         # instance index -> best matching track
+        for j, x in enumerate(ds):
+            best = max(ts, key=lambda t: iou(ts[t], x["mask"]))
+            q = iou(ts[best], x["mask"])
+            if q > min_iou:
+                match[j] = best
+                votes.setdefault(best, {})
+                votes[best][x["label"]] = votes[best].get(x["label"], 0.0) + x["conf"] * q
+        for t, mk in ts.items():
+            a = mk.sum()
+            for j, x in enumerate(ds):
+                p = match.get(j)
+                if p is None or p == t or not x["object"] or x["mask"].sum() < 1.5 * a:
+                    continue
+                if inside(mk, x["mask"]) > part_inside:
+                    parents.setdefault((t, p), [0, 0])[0] += 1
+    seen: dict = {}
+    for i in dets:
+        for t in kept[i]:
+            seen.setdefault(t, set()).add(i)
+    for (t, p), c in parents.items():
+        c[1] = len(seen[t] & seen[p])
+    return votes, parents
+
+
+def join_parts(parents: dict, tracks, min_frames: int = 2, min_share: float = 0.5) -> dict:
+    """{track: track it belongs to}: a part is joined to the parent it lies in on at least
+    `min_frames` frames and on at least `min_share` of the frames where both are seen (the
+    parent with most such frames, if several). Chains resolve to the outermost object."""
+    best: dict = {}
+    for (t, p), (k, both) in parents.items():
+        if k >= min_frames and k >= min_share * max(both, 1) and k > best.get(t, (None, 0))[1]:
+            best[t] = (p, k)
+    root = {}
+    for t in tracks:
+        r, seen = t, {t}
+        while r in best and best[r][0] not in seen:
+            r = best[r][0]
+            seen.add(r)
+        root[t] = r
+    return root
 
 
 # ---- lifting and merging (numpy) ----------------------------------------------------------
@@ -374,16 +496,29 @@ def lift(rec: Recon, masks: dict, voxel: float, conf_quantile: float = 0.3, max_
             border = x0 <= 2 or y0 <= 2 or x1 >= fw - 3 or y1 >= fh - 3
             frags.append({"frame": s, "track": m.get("track"), "X": X, "pix": np.stack([v, u], 1), "mask": m["mask"], "full_bbox": m["full_bbox"],
                           "area": int(m["mask"].sum()), "border": border, "score": m["score"],
-                          "vox": vox, "voxc": voxc, "rgb": rgb, "meas": view_measurement(rec, s, X, v, u, m)})
+                          "vox": vox, "voxc": voxc, "rgb": rgb, "meas": view_measurement(rec, s, X, v, u, m),
+                          "det_votes": m.get("det_votes") or {}, "parts": m.get("parts") or []})
     return frags
 
 
+def _det_label(f: dict):
+    from .inventory import detector_label
+
+    d = detector_label(f.get("det_votes") or {})
+    return None if d is None else d[0]
+
+
 def merge(frags: list[dict], min_over_small: float = 0.5, min_over_large: float = 0.25,
-          max_colour: float = 60.0) -> list[list[int]]:
+          max_colour: float = 60.0, same_label_relax: float = 0.5) -> list[list[int]]:
     """Union-find groups of fragments: the same SAM 2 track (when tracked), or overlapping in
     3D on the merge grid ("voxc", sized to the depth uncertainty so two views of one object
     share cells) and alike in colour (mean within `max_colour` of 255). Two groups that are
-    both visible in one frame are never merged (they are two objects)."""
+    both visible in one frame are never merged (they are two objects).
+
+    Continuity: when an object leaves the view and comes back, SAM 2 starts a new track. Two
+    tracks the detector names the same (detector_label) are joined with overlap thresholds
+    relaxed by `same_label_relax` and a looser colour test (lighting changes along the video);
+    two tracks it names differently are never joined."""
     key = "voxc" if frags and "voxc" in frags[0] else "vox"
     parent = list(range(len(frags)))
     frames_of = {i: {f["frame"]} for i, f in enumerate(frags)}
@@ -421,13 +556,18 @@ def merge(frags: list[dict], min_over_small: float = 0.5, min_over_large: float 
                 i, j = ids[a], ids[b]
                 if frags[i]["frame"] != frags[j]["frame"]:
                     pairs[(i, j)] = pairs.get((i, j), 0) + 1
+    lab = [_det_label(f) for f in frags]
     for (i, j), n in sorted(pairs.items(), key=lambda kv: -kv[1]):
         ni, nj = len(frags[i][key]), len(frags[j][key])
-        if "rgb" in frags[i] and np.linalg.norm(frags[i]["rgb"] - frags[j]["rgb"]) > max_colour:
+        same = lab[i] is not None and lab[i] == lab[j]
+        if lab[i] is not None and lab[j] is not None and lab[i] != lab[j]:
+            continue
+        k = same_label_relax if same else 1.0
+        if "rgb" in frags[i] and np.linalg.norm(frags[i]["rgb"] - frags[j]["rgb"]) > max_colour * (1.5 if same else 1.0):
             continue
         if find(i) == find(j) or frames_of[find(i)] & frames_of[find(j)]:
             continue
-        if n / min(ni, nj) > min_over_small and n / max(ni, nj) > min_over_large:
+        if n / min(ni, nj) > k * min_over_small and n / max(ni, nj) > k * min_over_large:
             union(i, j)
     groups: dict = {}
     for i in range(len(frags)):
@@ -504,6 +644,13 @@ def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structu
         o.extra["views"] = [dict(frame=int(k), **views[k][1]) for k in sorted(views)]
         o.extra["full_bbox"] = best["full_bbox"]
         o.extra["tracks"] = sorted({int(f["track"]) for f in fs if f.get("track") is not None})
+        dv: dict = {}                                  # detector label votes, once per track
+        for t, f in {f.get("track"): f for f in fs}.items():
+            for lab, v in f.get("det_votes", {}).items():
+                dv[lab] = dv.get(lab, 0.0) + v
+        o.extra["det_votes"] = dv
+        o.extra["parts"] = sorted({p for f in fs for p in f.get("parts", [])})
+        o.extra["continuity"] = continuity(fs, sorted(masks))
         o.extra["voxel"] = merge_vox            # size of the cells in o.voxels
         o.extra["fine_voxel"] = voxel
         o.extra["fine_vox"] = vox
@@ -524,6 +671,24 @@ def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structu
              len(keep), sum(o.structure for o in keep),
              float(np.median([o.extra["n_views"] for o in keep])) if keep else 0, merge_vox)
     return keep
+
+
+def continuity(fs: list[dict], frames: list[int]) -> dict:
+    """How continuously one object is followed through its recording: on which of the
+    recording's mask frames it has a mask, by which tracks, and how many separate stretches
+    ("runs") that makes. One track over one run = followed without a break."""
+    pos = {s: i for i, s in enumerate(frames)}
+    by: dict = {}
+    for f in fs:
+        by.setdefault(f["frame"], set()).add(f.get("track"))
+    seen = sorted(pos[s] for s in by if s in pos)
+    runs = 1 + sum(1 for a, b in zip(seen, seen[1:]) if b > a + 1) if seen else 0
+    tracks = sorted({t for v in by.values() for t in v if t is not None})
+    return {"frames": [int(frames[i]) for i in seen], "positions": seen, "track_of_frame": {int(s): sorted(int(t) for t in v if t is not None)
+                                                                          for s, v in by.items()},
+            "tracks": len(tracks), "runs": runs, "first": seen[0] if seen else None, "last": seen[-1] if seen else None,
+            "frames_seen": len(seen), "frames_total": len(frames),
+            "span_share": round(len(seen) / max(seen[-1] - seen[0] + 1, 1), 3) if seen else 0.0}
 
 
 def key_frames(rec: Recon, vid: int, n: int) -> list[int]:

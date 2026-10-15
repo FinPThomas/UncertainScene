@@ -108,3 +108,43 @@ def mask_overlays(objs_a: list, objs_b: list, rec: Recon, out: Path, n_per_video
     fig.savefig(out, dpi=95)
     plt.close(fig)
     return out
+
+
+def continuity_timeline(objs_a: list, objs_b: list, out: Path, title: str = "", max_rows: int = 45) -> Path | None:
+    """One row per object, one column per mask frame of its recording: where the object has a
+    mask, coloured by track (one colour = followed without re-identification). Gaps and
+    several colours in one row show where continuity failed."""
+    import datetime
+
+    groups = [(lab, [o for o in objs if not o.structure and o.extra.get("continuity")]) for lab, objs in
+              (("before (A)", objs_a), ("after (B)", objs_b))]
+    groups = [(lab, sorted(g, key=lambda o: -len(o.voxels))[:max_rows]) for lab, g in groups if g]
+    if not groups:
+        return None
+    rows = max(len(g) for _, g in groups)
+    fig, axes = plt.subplots(1, len(groups), figsize=(9 * len(groups), 0.28 * rows + 2.5), squeeze=False)
+    cmap = plt.get_cmap("tab10")
+    for ax, (lab, g) in zip(axes[0], groups):
+        n = g[0].extra["continuity"]["frames_total"]
+        for r, o in enumerate(g):
+            c = o.extra["continuity"]
+            tr = {int(k): v for k, v in c["track_of_frame"].items()}
+            col = {t: cmap(k % 10) for k, t in enumerate(sorted({t for v in tr.values() for t in v}))}
+            for s, x in zip(c["frames"], c["positions"]):
+                ts = tr.get(int(s)) or []
+                ax.barh(r, 1, left=x, height=0.7, color=col[ts[0]] if ts else "0.6", linewidth=0)
+            ax.text(-0.5, r, f"{o.recording}{o.id} {o.label or '?'}  ({c['tracks']} track{'s' * (c['tracks'] != 1)}, "
+                    f"{c['runs']} run{'s' * (c['runs'] != 1)})", ha="right", va="center", fontsize=7.5)
+        ax.set_xlim(0, n)
+        ax.set_ylim(len(g) - 0.5, -0.5)
+        ax.set_yticks([])
+        ax.set_xlabel("mask frame (in time order)")
+        one = sum(o.extra["continuity"]["tracks"] == 1 and o.extra["continuity"]["runs"] == 1 for o in g)
+        ax.set_title(f"{lab}: {one}/{len(g)} objects followed in one unbroken track", fontsize=10)
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    fig.suptitle(f"{title}\nObject continuity through each video (colour = track; gap = no mask). Made {stamp}",
+                 fontsize=10)
+    fig.tight_layout(rect=(0.14, 0, 1, 0.93))
+    fig.savefig(out, dpi=110)
+    plt.close(fig)
+    return out
