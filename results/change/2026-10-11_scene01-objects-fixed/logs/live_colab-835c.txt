@@ -1,5 +1,5 @@
-session colab-835c, step 1d-objects_no-change_dark-before-a_vs_dark-before-b, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 8.4/12.7 GB, disk free 54.5 GB, GPU 6.3/15.0 GB
+session colab-835c, step 1d-objects_no-change_dark-before-a_vs_dark-before-b, running 40 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 9.1/12.7 GB, disk free 54.5 GB, GPU 9.5/15.0 GB
 
 2026-10-15 21:46:24,279 INFO uncertainscene.scene01: step 1d-objects_no-change_dark-before-a_vs_dark-before-b: scene01_dark_before_a vs scene01_dark_before_b, all frames/video, 44 SAM key frames, variant objects2
 2026-10-15 21:46:33,026 INFO dinov2: using MLP layer as FFN
@@ -38,3 +38,14 @@ machine: RAM 8.4/12.7 GB, disk free 54.5 GB, GPU 6.3/15.0 GB
 2026-10-15 22:00:24,104 INFO uncertainscene.recon.poses: poses: per recording 0.90, 0.96 px median; 1714 points seen in both recordings (1.54 px); 13% of feature observations kept
 2026-10-15 22:00:30,130 INFO uncertainscene.poc: [1d-objects_no-change_dark-before-a_vs_dark-before-b] camera poses refined: 9.0 px -> 0.92 px reprojection error (p90 2.53 px, 52 sparse frames resected, 25 interpolated), cameras turned 1.71 deg (median) done in 335 s | RAM 7.4/12.7 GB, disk free 54.9 GB, GPU 6.3/15.0 GB
 2026-10-15 22:00:58,732 INFO uncertainscene.poc: [1d-objects_no-change_dark-before-a_vs_dark-before-b] DINOv2 features done in 29 s | RAM 7.3/12.7 GB, disk free 54.5 GB, GPU 6.3/15.0 GB
+2026-10-15 22:16:39,107 INFO uncertainscene.poc: [1d-objects_no-change_dark-before-a_vs_dark-before-b] point-level change detection (1200000 points, tau 0.243) done in 940 s | RAM 8.2/12.7 GB, disk free 54.5 GB, GPU 6.3/15.0 GB
+2026-10-15 22:16:39,911 INFO uncertainscene.change.floor: floor: gravity refined by 1.9 deg, 38 floor points (4% of horizontal), camera 0.373 units above floor -> 3.616 m/unit
+2026-10-15 22:16:40,239 INFO uncertainscene.poc: [1d-objects_no-change_dark-before-a_vs_dark-before-b] floor (38 floor points, gravity refined 1.9 deg) done in 1 s | RAM 8.2/12.7 GB, disk free 54.5 GB, GPU 6.3/15.0 GB
+2026-10-15 22:18:05,018 INFO uncertainscene.change.metric: scale: metric depth 2.707 m/unit from 80 frames (frames spread 20.9%, +-10% 1 sigma)
+2026-10-15 22:18:05,024 INFO uncertainscene.change.floor: scale: most likely 2.707 m/unit (90% 2.285-3.203) from metric_depth 2.707; phone height (not used) 3.616
+2026-10-15 22:18:05,358 INFO uncertainscene.poc: [1d-objects_no-change_dark-before-a_vs_dark-before-b] metric scale (depth model 2.707 m/unit from 80 frames; combined 2.707, 90% 2.285-3.203) done in 85 s | RAM 8.1/12.7 GB, disk free 54.5 GB, GPU 5.9/15.0 GB
+2026-10-15 22:18:13,188 INFO root: Loaded checkpoint sucessfully
+2026-10-15 22:18:13,917 INFO root: Loaded checkpoint sucessfully
+2026-10-15 22:18:14,018 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 22:18:14,065 INFO root: Computing image embeddings for the provided image...
+2026-10-15 22:18:14,121 INFO root: Image embeddings computed.
