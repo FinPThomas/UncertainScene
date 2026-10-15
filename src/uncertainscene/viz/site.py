@@ -27,6 +27,8 @@ IMAGES = [("motion_map.png", "Distance moved and deformation, from matched featu
           ("position_closeups.png", "Close-ups of each object's range as clips are added"),
           ("position_precision.png", "How the range shrinks with more views and clips"),
           ("objects.png", "Every object"), ("object_overlays.png", "Object boundaries in the frames"),
+          ("object_continuity.png", "Object continuity through each video"),
+          ("rigidity.png", "Rigidity Copilot: what each object is made of and how stiff"),
           ("heatmaps.png", "Heat maps"), ("base_placement.png", "Where a robot could stand"),
           ("overlays.png", "Changes in the frames"), ("crops.png", "Changed objects")]
 
@@ -216,7 +218,7 @@ def _when(d: Path) -> tuple[str, str]:
     return " · ".join(p for p in parts if p), b
 
 
-FEATURED = ("p1_", "p1b_", "1-main_", "1b-splat_", "2-position_")
+FEATURED = ("p1_", "p1b_", "1-main_", "1b-splat_", "1c-objects_", "1d-objects_", "2-position_")
 
 
 def decimate(scene: dict, keep: float) -> dict:

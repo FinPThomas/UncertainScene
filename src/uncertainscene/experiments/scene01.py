@@ -407,7 +407,10 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         objs_b = build_objects(rec, B, "B", voxel, struct, adapt_voxel=False, merge_vox=mvox)
         stage(f"SAM 2 objects ({len(objs_a)} in A, {len(objs_b)} in B)")
         inv.label_all(objs_a + objs_b, rec)
-        stage("CLIP labels for every object")
+        stage("labels for every object (detector votes, CLIP as fallback)")
+        n_join = inv.group_pieces(objs_a, floor.scale_m_per_unit) + inv.group_pieces(objs_b, floor.scale_m_per_unit)
+        stage(f"pieces joined to the touching object of the same name: {n_join} "
+              f"({len(objs_a)} objects in A, {len(objs_b)} in B)")
         try:
             from ..change.rigidity import copilot
 

@@ -400,3 +400,63 @@ def label_all(objs: list[SceneObject], rec: Recon, crop_dir=None, n_views: int =
         if crop_dir is not None:
             crop_dir.mkdir(parents=True, exist_ok=True)
             img.save(crop_dir / f"{o.recording}{o.id:03d}_{(o.label or 'object').replace(' ', '_')}.jpg", quality=82)
+
+
+def _diag(o) -> float:
+    X = np.asarray(o.X, float)
+    return float(np.linalg.norm(np.quantile(X, 0.95, axis=0) - np.quantile(X, 0.05, axis=0))) if len(X) else 0.0
+
+
+def group_pieces(objs: list[SceneObject], scale_m: float, gap_m: float = 0.03) -> int:
+    """Join pieces of one object that tracking left apart (run 10: the guitar in after was six
+    objects, one labelled guitar by the detector, four more labelled guitar by CLIP, all touching).
+    A piece is a non-structure object labelled by CLIP only; it joins a touching (closest points
+    within `gap_m`) non-structure object of the same recording that the detector named with the
+    same label and that is larger. Two detector-named objects are never joined (the detector saw
+    them as separate instances, e.g. two cushions). Updates objs in place (ids renumbered per
+    recording); returns how many pieces were joined."""
+    from scipy.spatial import cKDTree
+
+    from .segment import _extent
+
+    joined = 0
+    for rec in sorted({o.recording for o in objs}):
+        mine = [o for o in objs if o.recording == rec]
+        named = [o for o in mine if not o.structure and o.extra.get("label_source") == "detector"]
+        trees = {id(q): cKDTree(np.asarray(q.X, float)) for q in named}
+        gone = set()
+        for p in sorted(mine, key=_diag):
+            if p.structure or p.extra.get("label_source") == "detector" or p.label is None:
+                continue
+            best, best_d = None, np.inf
+            for q in named:
+                if q.label != p.label or _diag(q) <= _diag(p) or id(q) in gone:
+                    continue
+                d = float(trees[id(q)].query(np.asarray(p.X, float), k=1)[0].min()) * scale_m
+                if d < gap_m and d < best_d:
+                    best, best_d = q, d
+            if best is None:
+                continue
+            q = best
+            q.X = np.concatenate([q.X, p.X])
+            q.frame = np.concatenate([q.frame, p.frame])
+            q.pix = np.concatenate([q.pix, p.pix])
+            q.voxels = q.voxels | p.voxels
+            for s, m in p.masks.items():
+                q.masks[s] = (q.masks[s] | m) if s in q.masks else m
+            for k in ("fine_vox",):
+                if k in q.extra and k in p.extra:
+                    q.extra[k] = q.extra[k] | p.extra[k]
+            q.extra["tracks"] = sorted(set(q.extra.get("tracks", [])) | set(p.extra.get("tracks", [])))
+            q.extra["pieces_joined"] = q.extra.get("pieces_joined", []) + [f"{p.recording}{p.id} ({p.label}, CLIP)"]
+            q.extra["n_views"] = len(q.masks)
+            q.centroid, q.extent = _extent(q.X)
+            trees[id(q)] = cKDTree(np.asarray(q.X, float))
+            gone.add(id(p))
+            joined += 1
+        if gone:
+            keep = [o for o in mine if id(o) not in gone]
+            for i, o in enumerate(keep):
+                o.id = i
+            objs[:] = [o for o in objs if o.recording != rec or id(o) not in gone]
+    return joined

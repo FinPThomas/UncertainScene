@@ -148,3 +148,39 @@ def continuity_timeline(objs_a: list, objs_b: list, out: Path, title: str = "", 
     fig.savefig(out, dpi=110)
     plt.close(fig)
     return out
+
+
+def rigidity_chart(rows: list[dict], out: Path, title: str = "") -> Path | None:
+    """Rigidity Copilot per object: expected Young's modulus (dot) with its range (bar), coloured
+    by rigidity (0 soft .. 1 rigid), top material named. rows: dicts with name, rigidity,
+    youngs_modulus_pa, youngs_modulus_range_pa, material, behaviour (measured, or None)."""
+    import datetime
+
+    rows = [r for r in rows if r.get("youngs_modulus_pa")]
+    if not rows:
+        return None
+    rows = sorted(rows, key=lambda r: r["youngs_modulus_pa"])
+    fig, ax = plt.subplots(figsize=(11, 0.26 * len(rows) + 2.2))
+    cmap = plt.get_cmap("coolwarm")
+    for i, r in enumerate(rows):
+        lo, hi = r["youngs_modulus_range_pa"]
+        c = cmap(r["rigidity"])
+        ax.plot([lo, hi], [i, i], color=c, lw=4, alpha=0.45, solid_capstyle="butt")
+        ax.plot(r["youngs_modulus_pa"], i, "o", color=c, ms=6)
+        meas = f", measured {r['behaviour']}" if r.get("behaviour") else ""
+        ax.text(hi * 1.4, i, f"{r['material']} · rigidity {r['rigidity']:.2f}{meas}", va="center", fontsize=7.5)
+    ax.set_xscale("log")
+    ax.set_yticks(range(len(rows)), [r["name"] for r in rows], fontsize=7.5)
+    ax.set_xlim(3e3, 1e14)
+    for e, lab in ((1e5, "foam"), (1e7, "cloth"), (1e9, "plastic"), (1e10, "wood"), (7e10, "glass"), (2e11, "steel")):
+        ax.axvline(e, color="0.85", lw=0.8, zorder=0)
+        ax.text(e, len(rows) - 0.3, lab, fontsize=7, color="0.5", ha="center")
+    ax.set_xlabel("expected Young's modulus, Pa (dot) and range over likely materials (bar)")
+    ax.set_ylim(-0.7, len(rows) + 0.3)
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    ax.set_title(f"{title}\nRigidity Copilot (CLIP asked what each whole object is made of; blue soft, red rigid). "
+                 f"Made {stamp}", fontsize=9)
+    fig.tight_layout()
+    fig.savefig(out, dpi=110)
+    plt.close(fig)
+    return out

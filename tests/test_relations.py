@@ -89,3 +89,24 @@ def test_partner_links_agree_both_ways():
     assert consistent_partners(a, b) == 1
     assert (a[0].status, a[0].partner) == ("unchanged", 0)
     assert b[1].partner is None and a[1].status == "removed"
+
+
+def test_clip_pieces_join_touching_detector_object_of_same_name():
+    """Run 10: the guitar in after was one detector-named guitar plus CLIP-labelled guitar pieces
+    touching it. Pieces join; a detector-named cushion next to another cushion stays separate."""
+    from uncertainscene.change.inventory import group_pieces
+
+    def o(i, label, X, src):
+        return SimpleNamespace(id=i, recording="B", label=label, X=X, frame=np.zeros(len(X), int),
+                               pix=np.zeros((len(X), 2), int), voxels={(i, 0, 0)}, masks={0: np.zeros((2, 2), bool)},
+                               structure=False, extra={"label_source": src, "tracks": [i]}, centroid=None, extent=None)
+    body = o(0, "guitar", _box([0, 0, 0], [0.4, 0.3, 0.1], seed=1), "detector")
+    neck = o(1, "guitar", _box([0.41, 0.1, 0], [0.8, 0.15, 0.05], seed=2), "clip")
+    far = o(2, "guitar", _box([2, 2, 0], [2.1, 2.1, 0.05], seed=3), "clip")
+    c1 = o(3, "cushion", _box([0, 1, 0], [0.4, 1.4, 0.1], seed=4), "detector")
+    c2 = o(4, "cushion", _box([0.41, 1, 0], [0.8, 1.4, 0.1], seed=5), "detector")
+    objs = [body, neck, far, c1, c2]
+    assert group_pieces(objs, 1.0) == 1
+    ids = {id(x) for x in objs}
+    assert id(neck) not in ids and {id(body), id(far), id(c1), id(c2)} <= ids
+    assert body.extra["tracks"] == [0, 1] and [x.id for x in objs] == [0, 1, 2, 3]

@@ -227,7 +227,7 @@ def build(objs: list, scale_m: float, up: np.ndarray, out_dir: Path, motion: dic
             sel = motion["obj_of"] == j
             links_of[int(j)] = {"XA": motion["links_XA"][sel], "XB": motion["links_XB"][sel], "C": motion["C"][sel]}
     index = {id(o): i for i, o in enumerate(motion_objs if motion_objs is not None else objs)}
-    graphs, files = [], []
+    graphs, files, by_name = [], [], {}
     for o in pick:
         name = f"{o.recording}{o.id:03d}_{(o.label or 'object').replace(' ', '_')}"
         g = node_graph(o.X, n_nodes)
@@ -287,6 +287,7 @@ def build(objs: list, scale_m: float, up: np.ndarray, out_dir: Path, motion: dic
                                 "rigid at this precision")},
                "rigidity_copilot": rig,
                "motion": o.extra.get("motion")}
+        by_name[name] = rig
         beh = doc["deformation"]["behaviour"]
         if rig is not None and beh is not None:          # does the measured strain agree with the expectation?
             expect_soft = rig["rigidity"] < 0.5
@@ -307,6 +308,15 @@ def build(objs: list, scale_m: float, up: np.ndarray, out_dir: Path, motion: dic
                       "youngs_modulus_pa": None if rig is None else float(f"{rig['youngs_modulus_pa']:.3g}"),
                       "copilot_check": doc["deformation"].get("copilot_check"),
                       "edges_strained": doc["deformation"]["edges_strained"]})
+    try:                                  # one chart of the Copilot's answers for every exported object
+        from ..viz.objects_plots import rigidity_chart
+
+        rigidity_chart([{"name": f["name"], "rigidity": f["rigidity"], "youngs_modulus_pa": f["youngs_modulus_pa"],
+                         "youngs_modulus_range_pa": (by_name[f["name"]] or {}).get("youngs_modulus_range_pa"),
+                         "material": f["material"], "behaviour": f["behaviour"]} for f in files if f["rigidity"] is not None],
+                       out_dir.parent / "rigidity.png", title=out_dir.parent.name)
+    except Exception:  # noqa: BLE001 - a figure must not lose the assets
+        log.exception("rigidity chart failed")
     con = contacts(graphs, np.asarray(up, float), contact_m) if graphs else []
     scene = {"objects": files, "contacts": con, "scale_m_per_unit": scale_m, "up": np.round(up, 4).tolist()}
     (out_dir / "scene_graph.json").write_text(json.dumps(scene, indent=1, default=float))
