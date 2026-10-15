@@ -133,6 +133,17 @@ def test_concurrent_publishers_both_land(remote):
     assert (c / "results" / "x" / "m.json").exists() and (c / "results" / "y" / "m.json").exists()
 
 
+def test_check_push_access_syncs_when_remote_advances(remote):
+    a, b = remote("a"), remote("b")
+    (b / "remote.txt").write_text("advanced\n")
+    Publisher(b, "main").publish(["remote.txt"], "docs: advance remote")
+
+    pub = Publisher(a, "main")
+    pub.check_push_access()
+
+    assert pub.git("rev-parse", "HEAD").stdout.strip() == pub.git("rev-parse", "origin/main").stdout.strip()
+
+
 def test_publish_only_stages_given_paths(remote):
     repo = remote("a")
     (repo / "stray.txt").write_text("not mine")

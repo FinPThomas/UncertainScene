@@ -75,7 +75,17 @@ class Publisher:
 
     def check_push_access(self) -> None:
         """Dry-run push; fails fast at setup instead of after hours of compute."""
-        self.git("push", "--dry-run", self.remote, f"HEAD:refs/heads/{self.branch}")
+        ref = f"HEAD:refs/heads/{self.branch}"
+        proc = self.git("push", "--dry-run", self.remote, ref, check=False)
+        if proc.returncode == 0:
+            return
+
+        error = proc.stderr.strip() or proc.stdout.strip()
+        if not any(message in error.lower() for message in ("fetch first", "non-fast-forward")):
+            raise PublishError(self._redact(f"git push failed: {error}"))
+
+        self.sync()
+        self.git("push", "--dry-run", self.remote, ref)
 
     def sync(self) -> None:
         """Bring in what other sessions pushed (claims, results) before reading state."""
