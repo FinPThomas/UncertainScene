@@ -1,5 +1,5 @@
-session colab-835c, step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a, running 20 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 7.1/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
+session colab-835c, step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 7.3/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
 
 2026-10-15 19:09:37,225 INFO uncertainscene.scene01: step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a: scene01_dark_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects2
 2026-10-15 19:09:51,787 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -46,3 +46,11 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 2026-10-15 19:27:19,939 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] camera poses refined: 8.5 px -> 0.73 px reprojection error (p90 1.94 px, 38 sparse frames resected, 17 interpolated), cameras turned 1.89 deg (median) done in 363 s | RAM 6.7/12.7 GB, disk free 59.5 GB, GPU 6.3/15.0 GB
 2026-10-15 19:27:27,893 INFO numexpr.utils: NumExpr defaulting to 2 threads.
 2026-10-15 19:27:49,543 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] DINOv2 features done in 30 s | RAM 6.2/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
+2026-10-15 19:29:45,167 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
