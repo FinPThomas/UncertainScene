@@ -77,11 +77,11 @@
       "account": "colab-b769",
       "attempts": 1,
       "commit": "835c461",
-      "expires": 1792110794.6960292,
+      "expires": null,
       "finished": null,
-      "note": null,
+      "note": "session colab-b769 lost at 21:28 UTC (RAM 80%, second re-alignment); released for a rerun",
       "started": "2026-10-15 19:07:44 UTC",
-      "status": "running"
+      "status": "failed"
     },
     "1d-objects_no-change_dark-before-a_vs_dark-before-b": {
       "account": "colab-835c",

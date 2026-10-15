@@ -471,7 +471,19 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
                 stage(f"recordings already aligned on {d['pairs']} unchanged objects (shift {d['shift_cm']} cm, "
                       f"{d['rotation_deg']} deg, scale {d['scale_change_pct']}%)")
                 break
+            import gc
+
+            import psutil
+
+            if it >= 1 and psutil.virtual_memory().percent > 72:   # run 11's light stream died in round 2 at 80% RAM
+                stage(f"recordings not re-aligned again: RAM at {psutil.virtual_memory().percent:.0f}% "
+                      f"(correction {d['shift_cm']} cm, {d['rotation_deg']} deg kept for the next run)")
+                break
             rec = align.apply_to_b(rec, fit)
+            # the old points and objects go before the new ones are built (two copies of the
+            # 1.2M-point change detection do not fit beside the models in 12.7 GB)
+            res = objs_a = objs_b = None
+            gc.collect()
             res = detect(rec, feats, cfg)
             stage(f"after recording re-aligned on {d['pairs']} unchanged objects: shift {d['shift_cm']} cm, "
                   f"{d['rotation_deg']} deg, scale {d['scale_change_pct']}%, object surface gap "

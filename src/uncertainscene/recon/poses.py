@@ -58,6 +58,7 @@ class PoseConfig:
     min_frame_points: int = 30      # frames with fewer adjusted points are resected afterwards
     min_resect: int = 8             # 2D-3D inliers needed to trust a resected pose
     resect_px: float = 4.0          # PnP inlier gate (px)
+    resect_max_steps: float = 3.0   # a resected camera moves at most this many median frame steps
     sparse_obs: int = 150           # frames with fewer track observations get a wider second match
     min_inliers_sparse: int = 15
     prune_rounds: int = 8           # up to this many rounds of: re-place frames whose own points reproject badly, adjust again
@@ -408,9 +409,11 @@ def _interpolate_weak(E_new, E_old, video, weak):
     return out
 
 
-def _resect(E_init, K, X, uv, gate, min_inliers):
+def _resect(E_init, K, X, uv, gate, min_inliers, max_move: float = np.inf):
     """One frame's pose from 2D-3D matches (PnP + RANSAC from `E_init`, then Levenberg-Marquardt
-    on the inliers). Returns the pose and the inlier mask, or None if it is not trustworthy."""
+    on the inliers). Returns the pose and the inlier mask, or None if it is not trustworthy: it
+    turned over 10 deg or its centre moved over `max_move` from the guess (run 11: resected
+    frames off the camera path made 23-25 jumps per recording, VGGT's path had 0-2)."""
     import cv2
 
     if len(X) < min_inliers:
@@ -433,6 +436,9 @@ def _resect(E_init, K, X, uv, gate, min_inliers):
     # a resected pose far from the interpolated guess is a wrong solution, not a correction
     turn = np.degrees(np.arccos(np.clip((np.trace(R @ E_init[:, :3].T) - 1) / 2, -1, 1)))
     if turn > 10:
+        return None
+    c_new, c_old = -R.T @ E[:, 3], -E_init[:, :3].T @ E_init[:, 3]
+    if np.linalg.norm(c_new - c_old) > max_move:
         return None
     Xc = obj @ R.T + E[:, 3]
     z = Xc[:, 2]
@@ -459,10 +465,19 @@ def _place_weak_frames(Ec, Kc, E, video, t_, frame, uv, weak, gate, cfg):
     okobs = strong & (err < gate) & (z > 0)
     cnt = np.bincount(t_[okobs], minlength=T)
     good_t = (cnt >= 2) & (np.r_[ang, np.zeros(T - len(ang))] >= cfg.min_angle_deg)
+    # a phone moves smoothly: a resected camera may move from its interpolated place by at most
+    # a few typical steps between neighbouring frames of its recording
+    cen = _centres_dirs(Ec)[0]
+    step = np.zeros(len(Ec))
+    for v in np.unique(video):
+        idx = np.nonzero(video == v)[0]
+        if len(idx) > 1:
+            step[idx] = float(np.median(np.linalg.norm(np.diff(cen[idx], axis=0), axis=1)))
     resected, extra = 0, []
     for w in np.nonzero(weak)[0]:
         o = np.nonzero((frame == w) & good_t[t_])[0]
-        r = _resect(Ec[w], Kc[w], X[t_[o]], uv[o], gate, cfg.min_resect)
+        r = _resect(Ec[w], Kc[w], X[t_[o]], uv[o], gate, cfg.min_resect,
+                    max_move=cfg.resect_max_steps * step[w] if step[w] > 0 else np.inf)
         if r is None:
             continue
         Ec[w], m = r
