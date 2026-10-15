@@ -207,9 +207,11 @@ def test_unsure_objects_dropped_sure_ones_kept():
         return SimpleNamespace(id=i, recording="A", label=label, label_prob=prob, structure=structure,
                                extra={"label_source": src, "n_views": views})
     objs = [o(0, "ball", "clip", 0.10, 10), o(1, "cushion", "clip", 0.13, 26), o(2, "cup", "detector", 0.6, 5),
-            o(3, "bat", "clip", 0.4, 1), o(4, "wall", "clip", 0.05, 2, structure=True), o(5, "book", "clip", 0.5, 4)]
+            o(3, "bat", "clip", 0.4, 1), o(4, "wall", "clip", 0.05, 2, structure=True), o(5, "book", "clip", 0.55, 4),
+            o(6, "vase", "clip", 0.4, 12)]
     dropped = prune_unsure(objs)
-    assert [x.label for x in objs] == ["cushion", "cup", "wall", "book"] and len(dropped) == 2
+    assert [x.label for x in objs] == ["cushion", "cup", "wall", "book"] and len(dropped) == 3
+    assert objs[0].extra["unsure"] and not objs[1].extra["unsure"]
     assert [x.id for x in objs] == [0, 1, 2, 3]
 
 

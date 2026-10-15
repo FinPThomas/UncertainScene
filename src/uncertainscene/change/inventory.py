@@ -457,18 +457,21 @@ def label_all(objs: list[SceneObject], rec: Recon, crop_dir=None, n_views: int =
             img.save(crop_dir / f"{o.recording}{o.id:03d}_{(o.label or 'object').replace(' ', '_')}.jpg", quality=82)
 
 
-def prune_unsure(objs: list[SceneObject], min_views: int = 3, min_prob: float = 0.2, sure_views: int = 15) -> list[str]:
+def prune_unsure(objs: list[SceneObject], min_views: int = 3, min_prob: float = 0.5, sure_views: int = 20) -> list[str]:
     """Drop objects the pipeline is not sure are objects (Fin, 2026-10-15: "ball" in run 10 was
-    a CLIP guess at 0.10 from 10 views): non-structure objects seen in fewer than `min_views`
-    frames, or named only by CLIP below `min_prob` and seen in fewer than `sure_views` frames (a
-    well-tracked object with a weak name stays: it is still one thing). Detector-named objects
-    stay. Updates objs in place (ids renumbered per recording); returns what was dropped."""
+    a CLIP guess at 0.10 from 10 views; "want to be sure on the object to act on it"):
+    non-structure objects seen in fewer than `min_views` frames, or named only by CLIP below
+    `min_prob` and seen in fewer than `sure_views` frames. A well-tracked object with a weak name
+    stays (it is still one thing, and dropping it would leave a hole) but is marked unsure and
+    gets no robot actions. Detector-named objects stay. Updates objs in place (ids renumbered
+    per recording); returns what was dropped."""
     gone, names = set(), []
     for o in objs:
         if o.structure:
             continue
         views = o.extra.get("n_views", len(getattr(o, "masks", {}) or {}))
         sure_name = o.extra.get("label_source") == "detector" or (o.label_prob or 0) >= min_prob
+        o.extra["unsure"] = not sure_name
         if views < min_views or (not sure_name and views < sure_views):
             gone.add(id(o))
             names.append(f"{o.recording}{o.id} {o.label} ({o.extra.get('label_source')} {o.label_prob or 0:.2f}, "

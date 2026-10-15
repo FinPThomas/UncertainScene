@@ -299,6 +299,9 @@ def object_affordance(f: dict, objs: list, gripper_open_m: float = 0.12, max_lif
         size = np.sort(np.asarray(o.extent, float) * s)[::-1]
         ctx = o.extra.get("context") or {}
         bg = bool(o.extra.get("background") or o.structure)
+        if o.extra.get("unsure"):              # not sure what it is: the robot does not act on it
+            movable[i] = False
+            continue
         movable[i] = not bg
         rig = (o.extra.get("rigidity") or {}).get("rigidity", 0.5)
         fits = size[-1] <= gripper_open_m and size[0] <= max_lift_m
