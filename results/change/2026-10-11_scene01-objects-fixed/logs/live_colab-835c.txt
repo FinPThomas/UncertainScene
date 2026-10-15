@@ -1,5 +1,5 @@
-session colab-835c, step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 7.3/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
+session colab-835c, step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a, running 40 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 8.7/12.7 GB, disk free 56.9 GB, GPU 9.6/15.0 GB
 
 2026-10-15 19:09:37,225 INFO uncertainscene.scene01: step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a: scene01_dark_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects2
 2026-10-15 19:09:51,787 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -54,3 +54,22 @@ hint: have locally. This is usually caused by another repository pushing to
 hint: the same ref. If you want to integrate the remote changes, use
 hint: 'git pull' before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 19:39:52,520 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 19:41:05,458 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] point-level change detection (1200000 points, tau 0.235) done in 796 s | RAM 6.9/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
+2026-10-15 19:41:06,212 INFO uncertainscene.change.floor: floor: gravity refined by 2.2 deg, 30 floor points (3% of horizontal), camera 0.358 units above floor -> 3.766 m/unit
+2026-10-15 19:41:06,518 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] floor (30 floor points, gravity refined 2.2 deg) done in 1 s | RAM 6.9/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
+2026-10-15 19:43:39,907 INFO uncertainscene.change.metric: scale: metric depth 2.763 m/unit from 80 frames (frames spread 18.2%, +-10% 1 sigma)
+2026-10-15 19:43:39,911 INFO uncertainscene.change.floor: scale: most likely 2.763 m/unit (90% 2.334-3.266) from metric_depth 2.763; phone height (not used) 3.766
+2026-10-15 19:43:40,191 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] metric scale (depth model 2.763 m/unit from 80 frames; combined 2.763, 90% 2.334-3.266) done in 154 s | RAM 6.9/12.7 GB, disk free 57.7 GB, GPU 5.9/15.0 GB
+2026-10-15 19:44:14,257 INFO root: Loaded checkpoint sucessfully
+2026-10-15 19:44:15,125 INFO root: Loaded checkpoint sucessfully
+2026-10-15 19:44:15,214 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 19:44:15,267 INFO root: Computing image embeddings for the provided image...
+2026-10-15 19:44:15,461 INFO root: Image embeddings computed.
