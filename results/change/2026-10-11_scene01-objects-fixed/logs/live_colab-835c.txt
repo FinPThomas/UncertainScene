@@ -1,5 +1,5 @@
-session colab-835c, step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a, running 71 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 8.9/12.7 GB, disk free 56.9 GB, GPU 9.6/15.0 GB
+session colab-835c, step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a, running 81 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 8.9/12.7 GB, disk free 56.9 GB, GPU 9.1/15.0 GB
 
 2026-10-15 19:09:37,225 INFO uncertainscene.scene01: step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a: scene01_dark_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects2
 2026-10-15 19:09:51,787 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -133,3 +133,20 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 2026-10-15 20:20:12,150 INFO root: For numpy array image, we assume (HxWxC) format
 2026-10-15 20:20:12,191 INFO root: Computing image embeddings for the provided image...
 2026-10-15 20:20:12,219 INFO root: Image embeddings computed.
+2026-10-15 20:20:17,442 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 20:21:55,372 INFO uncertainscene.change.segment: SAM 2 tracking: frame 73/88: 3 new objects (74 tracked so far)
+2026-10-15 20:21:55,380 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:21:55,423 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:21:55,446 INFO root: Image embeddings computed.
+2026-10-15 20:22:44,473 INFO uncertainscene.change.segment: SAM 2 tracking: frame 81/88: 1 new objects (75 tracked so far)
+2026-10-15 20:22:52,362 INFO uncertainscene.change.segment: SAM 2 tracking + detector: 18 part masks not seeded, 2 tracks joined to the object they lie in, 40 of 75 tracks labelled by the detector
+2026-10-15 20:22:52,553 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:22:52,615 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:22:52,705 INFO root: Image embeddings computed.
