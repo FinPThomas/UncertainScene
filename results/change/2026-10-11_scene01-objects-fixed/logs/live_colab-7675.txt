@@ -1,5 +1,5 @@
-session colab-7675, step 1c-objects_moved_light-before-a_vs_light-after-a, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 6.7/12.7 GB, disk free 57.8 GB, GPU 6.9/15.0 GB
+session colab-7675, step 1c-objects_moved_light-before-a_vs_light-after-a, running 40 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 9.0/12.7 GB, disk free 57.0 GB, GPU 10.2/15.0 GB
 
 2026-10-15 13:23:14,065 INFO uncertainscene.scene01: step 1c-objects_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects
 2026-10-15 13:23:28,392 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -41,3 +41,15 @@ machine: RAM 6.7/12.7 GB, disk free 57.8 GB, GPU 6.9/15.0 GB
 2026-10-15 13:51:45,727 INFO uncertainscene.poc: [1c-objects_moved_light-before-a_vs_light-after-a] point-level change detection (1200000 points, tau 0.252) done in 937 s | RAM 6.7/12.7 GB, disk free 59.0 GB, GPU 5.6/15.0 GB
 2026-10-15 13:51:46,493 INFO uncertainscene.change.floor: floor: gravity refined by 3.4 deg, 37 floor points (3% of horizontal), camera 0.368 units above floor -> 3.665 m/unit
 2026-10-15 13:51:46,785 INFO uncertainscene.poc: [1c-objects_moved_light-before-a_vs_light-after-a] floor (37 floor points, gravity refined 3.4 deg) done in 1 s | RAM 6.7/12.7 GB, disk free 59.0 GB, GPU 5.6/15.0 GB
+2026-10-15 13:54:23,224 INFO uncertainscene.change.metric: scale: metric depth 2.524 m/unit from 80 frames (frames spread 11.9%, +-10% 1 sigma)
+2026-10-15 13:54:23,229 INFO uncertainscene.change.floor: scale: most likely 2.524 m/unit (90% 2.137-2.978) from metric_depth 2.524; phone height (not used) 3.665
+2026-10-15 13:54:23,520 INFO uncertainscene.poc: [1c-objects_moved_light-before-a_vs_light-after-a] metric scale (depth model 2.524 m/unit from 80 frames; combined 2.524, 90% 2.137-2.978) done in 157 s | RAM 6.7/12.7 GB, disk free 57.8 GB, GPU 5.8/15.0 GB
+2026-10-15 13:54:55,350 INFO root: Loaded checkpoint sucessfully
+2026-10-15 13:54:56,252 INFO root: Loaded checkpoint sucessfully
+2026-10-15 13:54:56,341 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 13:54:56,396 INFO root: Computing image embeddings for the provided image...
+2026-10-15 13:54:56,599 INFO root: Image embeddings computed.
+2026-10-15 14:02:33,368 INFO uncertainscene.change.segment: SAM 2 tracking: frame 1/88: 16 new objects (16 tracked so far)
+2026-10-15 14:02:33,377 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 14:02:33,444 INFO root: Computing image embeddings for the provided image...
+2026-10-15 14:02:33,469 INFO root: Image embeddings computed.
