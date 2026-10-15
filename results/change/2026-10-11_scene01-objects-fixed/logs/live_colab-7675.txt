@@ -1,5 +1,5 @@
-session colab-7675, step 1-main_no-change_light-before-a_vs_light-before-b, running 110 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 8.6/12.7 GB, disk free 54.5 GB, GPU 9.7/15.0 GB
+session colab-7675, step 1-main_no-change_light-before-a_vs_light-before-b, running 120 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 8.9/12.7 GB, disk free 54.5 GB, GPU 6.9/15.0 GB
 
 2026-10-15 15:13:31,367 INFO uncertainscene.scene01: step 1-main_no-change_light-before-a_vs_light-before-b: scene01_light_before_a vs scene01_light_before_b, all frames/video, 44 SAM key frames, variant base
 2026-10-15 15:13:40,823 INFO dinov2: using MLP layer as FFN
@@ -136,3 +136,16 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 2026-10-15 16:53:23,711 INFO root: For numpy array image, we assume (HxWxC) format
 2026-10-15 16:53:23,756 INFO root: Computing image embeddings for the provided image...
 2026-10-15 16:53:23,799 INFO root: Image embeddings computed.
+2026-10-15 17:04:05,235 INFO uncertainscene.change.segment: SAM 2 tracking: frame 73/88: 23 new objects (88 tracked so far)
+2026-10-15 17:04:05,244 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 17:04:05,286 INFO root: Computing image embeddings for the provided image...
+2026-10-15 17:04:05,325 INFO root: Image embeddings computed.
+2026-10-15 17:05:45,713 INFO uncertainscene.change.segment: SAM 2 tracking: frame 81/88: 3 new objects (91 tracked so far)
+2026-10-15 17:05:55,470 INFO uncertainscene.change.segment: SAM 2 tracking + detector: 26 part masks not seeded, 4 tracks joined to the object they lie in, 49 of 91 tracks labelled by the detector
+2026-10-15 17:05:56,028 INFO uncertainscene.scene01: SAM 2 (tracked through each recording, with YOLOE whole objects): 2116 masks on 88 frames, 151 objects tracked, in 4893 s
+2026-10-15 17:06:25,749 INFO uncertainscene.change.segment: recording A: 1031 masks on 44 frames -> 857 fragments -> 49 objects (28 structures), median 17.0 views per object, merge grid 0.0293 units
+2026-10-15 17:06:51,097 INFO uncertainscene.change.segment: recording B: 1085 masks on 44 frames -> 860 fragments -> 61 objects (24 structures), median 12.0 views per object, merge grid 0.0293 units
+2026-10-15 17:06:51,629 INFO uncertainscene.poc: [1-main_no-change_light-before-a_vs_light-before-b] SAM 2 objects (49 in A, 61 in B) done in 4949 s | RAM 7.6/12.7 GB, disk free 54.5 GB, GPU 4.6/15.0 GB
+2026-10-15 17:07:23,401 INFO uncertainscene.poc: [1-main_no-change_light-before-a_vs_light-before-b] CLIP labels for every object done in 32 s | RAM 7.6/12.7 GB, disk free 54.5 GB, GPU 6.9/15.0 GB
+2026-10-15 17:07:23,952 INFO uncertainscene.poc: [1-main_no-change_light-before-a_vs_light-before-b] Rigidity Copilot: expected stiffness of 110 objects done in 1 s | RAM 7.6/12.7 GB, disk free 54.5 GB, GPU 6.9/15.0 GB
+2026-10-15 17:07:23,964 INFO uncertainscene.change.floor: scale: most likely 1.900 m/unit (90% 1.719-2.106) from metric_depth 2.498, objects 1.637; phone height (not used) 3.314
