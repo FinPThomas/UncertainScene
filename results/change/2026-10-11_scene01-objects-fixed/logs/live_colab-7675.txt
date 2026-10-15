@@ -1,5 +1,5 @@
-session colab-7675, step 1c-objects_moved_light-before-a_vs_light-after-a, running 90 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 8.8/12.7 GB, disk free 57.0 GB, GPU 9.1/15.0 GB
+session colab-7675, step 1c-objects_moved_light-before-a_vs_light-after-a, running 100 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 10.0/12.7 GB, disk free 55.4 GB, GPU 6.9/15.0 GB
 
 2026-10-15 13:23:14,065 INFO uncertainscene.scene01: step 1c-objects_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects
 2026-10-15 13:23:28,392 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -114,3 +114,30 @@ machine: RAM 8.8/12.7 GB, disk free 57.0 GB, GPU 9.1/15.0 GB
 2026-10-15 14:53:20,229 INFO root: For numpy array image, we assume (HxWxC) format
 2026-10-15 14:53:20,270 INFO root: Computing image embeddings for the provided image...
 2026-10-15 14:53:20,306 INFO root: Image embeddings computed.
+2026-10-15 14:55:00,997 INFO uncertainscene.change.segment: SAM 2 tracking: frame 41/88: 3 new objects (48 tracked so far)
+2026-10-15 14:55:01,005 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 14:55:01,045 INFO root: Computing image embeddings for the provided image...
+2026-10-15 14:55:01,075 INFO root: Image embeddings computed.
+2026-10-15 14:56:15,557 INFO uncertainscene.change.segment: SAM 2 tracking: frame 49/88: 2 new objects (50 tracked so far)
+2026-10-15 14:56:15,570 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 14:56:15,619 INFO root: Computing image embeddings for the provided image...
+2026-10-15 14:56:15,661 INFO root: Image embeddings computed.
+2026-10-15 14:56:21,917 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 14:56:21,950 INFO root: Computing image embeddings for the provided image...
+2026-10-15 14:56:21,978 INFO root: Image embeddings computed.
+2026-10-15 14:56:27,859 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 14:56:27,893 INFO root: Computing image embeddings for the provided image...
+2026-10-15 14:56:27,921 INFO root: Image embeddings computed.
+2026-10-15 14:57:15,684 INFO uncertainscene.change.segment: SAM 2 tracking: frame 73/88: 1 new objects (51 tracked so far)
+2026-10-15 14:57:15,696 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 14:57:15,738 INFO root: Computing image embeddings for the provided image...
+2026-10-15 14:57:15,771 INFO root: Image embeddings computed.
+2026-10-15 14:58:56,731 INFO uncertainscene.change.segment: SAM 2 tracking: frame 81/88: 3 new objects (54 tracked so far)
+2026-10-15 14:59:04,719 INFO uncertainscene.change.segment: SAM 2 tracking + detector: 15 part masks not seeded, 3 tracks joined to the object they lie in, 35 of 54 tracks labelled by the detector
+2026-10-15 14:59:05,293 INFO uncertainscene.scene01: SAM 2 (tracked through each recording, with YOLOE whole objects): 1901 masks on 88 frames, 115 objects tracked, in 3882 s
+2026-10-15 14:59:36,311 INFO uncertainscene.change.segment: recording A: 1031 masks on 44 frames -> 861 fragments -> 49 objects (30 structures), median 15.0 views per object, merge grid 0.0298 units
+2026-10-15 15:00:00,465 INFO uncertainscene.change.segment: recording B: 870 masks on 44 frames -> 742 fragments -> 44 objects (18 structures), median 15.0 views per object, merge grid 0.0298 units
+2026-10-15 15:00:00,962 INFO uncertainscene.poc: [1c-objects_moved_light-before-a_vs_light-after-a] SAM 2 objects (49 in A, 44 in B) done in 3937 s | RAM 8.0/12.7 GB, disk free 57.0 GB, GPU 4.7/15.0 GB
+2026-10-15 15:00:46,862 INFO uncertainscene.poc: [1c-objects_moved_light-before-a_vs_light-after-a] CLIP labels for every object done in 46 s | RAM 8.1/12.7 GB, disk free 55.4 GB, GPU 6.9/15.0 GB
+2026-10-15 15:00:47,426 INFO uncertainscene.poc: [1c-objects_moved_light-before-a_vs_light-after-a] Rigidity Copilot: expected stiffness of 93 objects done in 1 s | RAM 8.1/12.7 GB, disk free 55.4 GB, GPU 6.9/15.0 GB
+2026-10-15 15:00:47,441 INFO uncertainscene.change.floor: scale: most likely 1.921 m/unit (90% 1.729-2.169) from metric_depth 2.524, objects 1.622; phone height (not used) 3.665
