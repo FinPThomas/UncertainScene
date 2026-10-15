@@ -129,6 +129,27 @@ def ekf(views: list[dict]) -> dict:
     return {"mean": mu, "cov": P, "trace": trace, "nis": nis, "n_views": len(views)}
 
 
+def independent_views(frames, block: int = 48) -> int:
+    """How many views carry independent errors: views from the same stretch of video (`block`
+    frames, ~8 s) look at the object along nearly the same ray, so they share the depth model's
+    bias for that surface and drifting pose errors; they count once (run 10: 12 views fused as if independent gave "within 0 cm", while unchanged objects
+    were found ~12 cm apart; position coverage 0%)."""
+    f = np.asarray(list(frames), int)
+    return max(1, len(np.unique(f // block))) if len(f) else 1
+
+
+def honest_cov(views: list[dict], cov_view: np.ndarray | None, n_eff: int) -> np.ndarray:
+    """Fused covariance when errors are shared within a chunk: the typical single-view
+    covariance over the independent views, or the views' own scatter over them when that is
+    larger (whichever has the larger volume). Shrinks only with more independent views."""
+    Rm = np.mean([measurement_cov(v) for v in views], 0) / n_eff
+    if cov_view is None:
+        return Rm
+    Cv = np.asarray(cov_view, float) / n_eff
+    vol = lambda C: float(np.prod(np.clip(np.linalg.eigvalsh(C), 1e-30, None)))
+    return Cv if vol(Cv) > vol(Rm) else Rm
+
+
 def all_views(objs: list) -> list[dict]:
     """Every view measurement of the same physical object over one or more clips, in order."""
     return [v for o in objs for v in o.extra.get("views", [])]
@@ -144,6 +165,11 @@ def annotate(objs: list, scale: float, up: np.ndarray) -> None:
         emp["cov_view"] = np.cov(P.T) + np.eye(3) * 1e-12 if len(P) >= 3 else emp["cov"]
         views = o.extra.get("views") or []
         main = ekf(views) if views else None
+        if main:
+            n_eff = independent_views(v.get("frame", i) for i, v in enumerate(views))
+            main["cov_independent_views"] = main["cov"]
+            main["cov"] = honest_cov(views, emp["cov_view"] if len(P) >= 3 else None, n_eff)
+            main["n_independent"] = n_eff
         o.extra["position_views"] = emp
         o.extra["position"] = main if main else emp
         est = o.extra["position"]
@@ -151,7 +177,8 @@ def annotate(objs: list, scale: float, up: np.ndarray) -> None:
               "sd_axes_cm": (axes_sd(est["cov"]) * k).round(2).tolist(),
               "radius90_cm": round(radius90(est["cov"]) * k, 2),
               "radius90_cm_views": None if emp.get("too_few_views") else round(radius90(emp["cov"]) * k, 2),
-              "n_views": int(est["n_views"]), "too_few_views": bool(emp.get("too_few_views") and not main),
+              "n_views": int(est["n_views"]), "n_independent_views": int(est.get("n_independent", est["n_views"])),
+              "too_few_views": bool(emp.get("too_few_views") and not main),
               "floor": floor_ellipse(est["mean"] * k, est["cov"] * k * k, up)}
         if main:
             Rs = [measurement_cov(v) for v in views]

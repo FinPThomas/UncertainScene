@@ -232,7 +232,7 @@ def train(rec, video: int, cfg: SplatConfig = SplatConfig(), check=None, points:
     Ks[:, 1] *= wh[1] / h0
 
     PX = None if points is None else points["X"]
-    ks = np.array([depth_scale(rec, s, PX) for s in tr])
+    ks = np.nan_to_num(np.array([depth_scale(rec, s, PX) for s in tr]), nan=1.0)
     X, C = init_points(rec, tr, cfg.max_init, seed=cfg.seed, depth_scale=dict(zip(tr.tolist(), ks)))
     if PX is not None and len(PX):
         X = np.concatenate([X, PX.astype(np.float32)])

@@ -55,6 +55,7 @@ class Spec:
     outputs: str = "full"              # full | standard | light
     refine_poses: bool = True          # bundle adjustment of the VGGT poses (not for light steps)
     motion: bool | None = None         # feature-matched distance moved + deformation; None = full outputs only
+    align_rounds: int = 0              # re-align B onto A on unchanged objects and rebuild, up to this many times
 
     @property
     def frames_est(self) -> int:
@@ -69,7 +70,8 @@ class Spec:
             if self.detector:
                 minutes += 2 * 15              # more whole-object tracks + detector on every kept frame
         if self.refine_poses and self.outputs != "light":
-            minutes += n / 75                  # SIFT + matching + bundle adjustment (cached per reconstruction)
+            minutes += n / 25                  # SIFT (more points) + cross-recording matching + bundle adjustment
+        minutes += self.align_rounds * 15      # each re-alignment rebuilds points, objects, labels and matches
         if self.motion or (self.motion is None and self.outputs == "full"):
             minutes += n / 120                 # feature motion on every 2nd frame
         return {"disk_gb": 8, "ram_gb": 3.0 + 0.003 * n + (1.0 if self.sam_track else 0.0), "minutes": round(minutes)}
@@ -101,8 +103,25 @@ class ClipsSpec:
         return {"disk_gb": 8, "ram_gb": 2.5 + 0.003 * n, "minutes": round(minutes)}   # 0.006/frame never fit beside the main steps
 
 
-def queue() -> list:
-    """Order (Fin, 2026-10-10): the light before/after pair first as the pilot, then the other
+STREAMS = ("light", "dark")
+
+
+def _stream_of(item) -> str:
+    """light: every recording in the step is a light one; dark: any recording is a dark one."""
+    if isinstance(item, str):
+        return "both"
+    recs = getattr(item, "clips", None) or (item.a, item.b)
+    return "dark" if any("_dark_" in r for r in recs) else "light"
+
+
+def queue(stream: str | None = None) -> list:
+    """Two Colab sessions can run side by side (Fin, 2026-10-15): stream "light" (light before vs
+    light after, objects re-aligned on unchanged objects) and stream "dark" (the same with the
+    dark before recording). Each stream starts with its objects steps, then the rest of the
+    queue that belongs to it; None = everything. Steps are claimed by name, so the streams
+    never run one step twice.
+
+    Order (Fin, 2026-10-10): the light before/after pair first as the pilot, then the other
     main pairs, then where objects are and how that improves with more clips, then every
     remaining pair, how many frames are enough, robot variants and repeats.
 
@@ -122,8 +141,6 @@ def queue() -> list:
                                question=PHASES["1b-splat"][1]))
             # the pilot pair again with whole-object segmentation (Fin, 2026-10-15: objects first)
             q.append(Spec(step_name("1c-objects", a, b), a, b, variant="objects"))
-            # again after run 10's fixes (pieces inside one detected object joined, grasp map, .ply assets)
-            q.append(Spec(step_name("1d-objects", a, b), a, b, variant="objects2"))
     q.append("1-main_summary")
 
     q.append(ClipsSpec("2-position_3-clips_no-change_dark-before-a-b-c", (DB, DBb, DBc), ("before",) * 3,
@@ -173,7 +190,17 @@ def queue() -> list:
         q.append(f"6-repeat_summary-{off}")
     q.append(Spec(step_name("6-repeat", LA, LB, "reversed"), LA, LB, variant="reversed", outputs="standard"))
     q.append("6-repeat_summary")
-    return q
+
+    # whole objects after run 10, recordings re-aligned on unchanged objects (Fin, 2026-10-15),
+    # per stream: the changed pair first, then the pairs where nothing moved (false changes)
+    objects = {"light": [(LB, LA), (LB, LBb), (LBb, LAb)], "dark": [(DB, LA), (DB, DBb), (DB, LB)]}
+    first = {st: [Spec(step_name("1d-objects", a, b), a, b, variant="objects2", align_rounds=2) for a, b in prs]
+             + [f"1d-objects_summary-{st}"] for st, prs in objects.items()}
+    if stream is None:
+        return first["light"] + first["dark"] + q
+    if stream not in STREAMS:
+        raise ValueError(f"stream must be one of {STREAMS} or None, not {stream!r}")
+    return first[stream] + [x for x in q if _stream_of(x) in (stream, "both")]
 
 
 # ---- cached stages ------------------------------------------------------------------------
@@ -395,36 +422,60 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
 
     # ---- objects: SAM 2 + CLIP, or point clusters as a fallback ----
     objs_a = objs_b = []
-    obj_thr, sam_error = {}, None
+    obj_thr, sam_error, alignments, pruned = {}, None, [], []
     try:
         masks = _masks(rec, spec, cache)
         voxel = effective_voxel(rec, masks, 0.012 / floor.scale_m_per_unit)   # one grid for both recordings
         struct = 1.2 / floor.scale_m_per_unit
         A = {s: m for s, m in masks.items() if rec.video[s] == 0}
         B = {s: m for s, m in masks.items() if rec.video[s] == 1}
-        mvox = merge_voxel(rec, masks, voxel)                                 # one merge grid for both
-        objs_a = build_objects(rec, A, "A", voxel, struct, adapt_voxel=False, merge_vox=mvox)
-        objs_b = build_objects(rec, B, "B", voxel, struct, adapt_voxel=False, merge_vox=mvox)
-        stage(f"SAM 2 objects ({len(objs_a)} in A, {len(objs_b)} in B)")
-        inv.label_all(objs_a + objs_b, rec)
-        stage("labels for every object (detector votes, CLIP as fallback)")
-        n_size = inv.check_label_sizes(objs_a + objs_b, floor.scale_m_per_unit)
-        stage(f"names that cannot fit the object's size replaced: {n_size}")
-        n_join = inv.group_pieces(objs_a, floor.scale_m_per_unit) + inv.group_pieces(objs_b, floor.scale_m_per_unit)
-        stage(f"pieces joined to the touching object of the same name: {n_join} "
-              f"({len(objs_a)} objects in A, {len(objs_b)} in B)")
-        try:
-            from ..change.rigidity import copilot
+        for it in range(1 + spec.align_rounds):
+            mvox = merge_voxel(rec, masks, voxel)                                 # one merge grid for both
+            objs_a = build_objects(rec, A, "A", voxel, struct, adapt_voxel=False, merge_vox=mvox)
+            objs_b = build_objects(rec, B, "B", voxel, struct, adapt_voxel=False, merge_vox=mvox)
+            stage(f"SAM 2 objects ({len(objs_a)} in A, {len(objs_b)} in B)")
+            inv.label_all(objs_a + objs_b, rec)
+            stage("labels for every object (detector votes, CLIP as fallback)")
+            n_size = inv.check_label_sizes(objs_a + objs_b, floor.scale_m_per_unit)
+            stage(f"names that cannot fit the object's size replaced: {n_size}")
+            n_join = inv.group_pieces(objs_a, floor.scale_m_per_unit) + inv.group_pieces(objs_b, floor.scale_m_per_unit)
+            stage(f"pieces joined to the touching object of the same name: {n_join} "
+                  f"({len(objs_a)} objects in A, {len(objs_b)} in B)")
+            pruned = inv.prune_unsure(objs_a) + inv.prune_unsure(objs_b)
+            stage(f"unsure objects dropped: {len(pruned)} ({'; '.join(pruned[:8])}{' ...' if len(pruned) > 8 else ''})")
+            try:
+                from ..change.rigidity import copilot
 
-            n_rig = copilot(objs_a + objs_b)
-            stage(f"Rigidity Copilot: expected stiffness of {n_rig} objects")
-        except Exception:  # noqa: BLE001 - stiffness priors are a bonus
-            log.exception("Rigidity Copilot failed; assets get no stiffness")
-        # objects of the before recording only: most objects appear in both, and voting twice
-        # would make the scale look twice as certain as it is
-        floor = combine_scale(floor, object_scale(size_votes(objs_a)))
-        obj_thr = inv.classify(objs_a, objs_b, rec, feats, res, cfg)
-        stage("object-level changes")
+                n_rig = copilot(objs_a + objs_b)
+                stage(f"Rigidity Copilot: expected stiffness of {n_rig} objects")
+            except Exception:  # noqa: BLE001 - stiffness priors are a bonus
+                log.exception("Rigidity Copilot failed; assets get no stiffness")
+            # objects of the before recording only: most objects appear in both, and voting twice
+            # would make the scale look twice as certain as it is
+            floor = combine_scale(floor, object_scale(size_votes(objs_a)))
+            obj_thr = inv.classify(objs_a, objs_b, rec, feats, res, cfg)
+            stage("object-level changes")
+            # objects both recordings agree did not move line B up with A; then everything is
+            # rebuilt on the corrected poses (Fin: matched objects should make the poses better)
+            if it == spec.align_rounds:
+                break
+            from ..change import align
+
+            fit = align.fit_b_to_a(align.static_pairs(objs_a, objs_b))
+            if fit is None:
+                stage("recordings not re-aligned: fewer than 3 unchanged object pairs")
+                break
+            d = align.describe(fit, np.concatenate([res.A.X, res.B.X]).mean(0), floor.scale_m_per_unit)
+            alignments.append(d)
+            if not align.worth_applying(d):
+                stage(f"recordings already aligned on {d['pairs']} unchanged objects (shift {d['shift_cm']} cm, "
+                      f"{d['rotation_deg']} deg, scale {d['scale_change_pct']}%)")
+                break
+            rec = align.apply_to_b(rec, fit)
+            res = detect(rec, feats, cfg)
+            stage(f"after recording re-aligned on {d['pairs']} unchanged objects: shift {d['shift_cm']} cm, "
+                  f"{d['rotation_deg']} deg, scale {d['scale_change_pct']}%, object surface gap "
+                  f"{d['median_gap_cm_before']} -> {d['median_gap_cm_after']} cm; objects rebuilt")
     except Exception as e:  # noqa: BLE001 - SAM 2 missing or failing must not lose the rest
         if type(e).__name__ == "ResourceLimit":
             raise
@@ -556,7 +607,8 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
          "recon_chunks": rinfo.get("chunks"), "chunk_residual_max": rinfo.get("chunk_residual_max"),
          "chunks_dropped": rinfo.get("chunks_dropped"), "gpu_peak_gb": rinfo.get("gpu_peak_gb"),
          "recon_cached": rinfo.get("cached", False), "frames_total": int(len(rec.images)),
-         "sam_error": sam_error, "scale_cues": floor.scale_cues}
+         "sam_error": sam_error, "scale_cues": floor.scale_cues, "recording_alignment": alignments, "objects_pruned_unsure": pruned,
+         "objects_paired_both_ways": sum(o.partner is not None for o in objs_a)}
     m.update(M.label_free(res, changes_objs))
     cont = [o.extra["continuity"] for o in objs_a + objs_b if not o.structure and o.extra.get("continuity")]
     if cont:                                   # object continuity through the videos

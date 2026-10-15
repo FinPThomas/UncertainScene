@@ -235,7 +235,9 @@ def test_full_step_end_to_end(tmp_path, monkeypatch):
     m = json.loads((out / "metrics.json").read_text())
     assert m["obj_moved"] == 1 and m["version"] == 2 and m["sam_error"] is None
     assert m["title"].startswith("Objects moved, same lighting") and m["question"]
-    assert m["pos_radius90_cm_median"] > 0 and m["pos_single_view_radius90_cm_median"] >= m["pos_radius90_cm_median"]
+    # fused ranges count views from one stretch of video once, and never undercut how much the
+    # views really disagree, so they can be wider than one view's model range (2026-10-15)
+    assert m["pos_radius90_cm_median"] > 0 and m["pos_single_view_radius90_cm_median"] > 0
     from uncertainscene.viz import scene3d
 
     sc = scene3d.load(out)
@@ -252,13 +254,20 @@ def test_v2_queue_and_summary(tmp_path):
     from uncertainscene.eval import summarize
     from uncertainscene.experiments.scene01 import Spec, queue
 
+    # two streams (Fin, 2026-10-15): each starts with its re-aligned objects steps
+    light = [s if isinstance(s, str) else s.name for s in queue("light")]
+    dark = [s if isinstance(s, str) else s.name for s in queue("dark")]
+    assert light[0] == "1d-objects_moved_light-before-a_vs_light-after-a"
+    assert dark[0] == "1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a"
+    assert not any("dark" in n for n in light) and all("dark" in n or "summary" in n for n in dark)
+    assert all(queue("light")[i].align_rounds == 2 for i in range(3))
     q = queue()
     names = [s if isinstance(s, str) else s.name for s in q]
-    assert len(names) == len(set(names)) and names[0] == "1-main_moved_light-before-a_vs_light-after-a"
-    assert names[1] == "1b-splat_moved_light-before-a_vs_light-after-a"     # splats reuse the pilot's reconstruction
-    assert names[2] == "1c-objects_moved_light-before-a_vs_light-after-a"   # whole objects on the pilot pair (2026-10-15)
-    assert names[3] == "1d-objects_moved_light-before-a_vs_light-after-a"
-    assert names[4] == "1-main_no-change_light-before-a_vs_light-before-b"
+    assert len(names) == len(set(names)) and names[0] == light[0]
+    i0 = names.index("1-main_moved_light-before-a_vs_light-after-a")
+    assert names[i0 + 1] == "1b-splat_moved_light-before-a_vs_light-after-a"     # splats reuse the pilot's reconstruction
+    assert names[i0 + 2] == "1c-objects_moved_light-before-a_vs_light-after-a"   # whole objects on the pilot pair
+    assert names[i0 + 3] == "1-main_no-change_light-before-a_vs_light-before-b"
     assert any(n.startswith("2-position_") for n in names)
     pairs = {(s.a, s.b) for s in q if isinstance(s, Spec) and s.name.startswith(("1-main", "3-allpairs"))}
     assert len(pairs) == 21                      # every pair of the 7 recordings, once
@@ -605,4 +614,8 @@ def test_full_step_with_real_tracking_poses_motion_and_scale_paths(tmp_path, mon
     out2 = tmp_path / "out2"
     out2.mkdir()
     monkeypatch.setattr(S, "sam_tracks", lambda *a, **k: (_ for _ in ()).throw(AssertionError("re-tracked")))
-    assert "changed objects" in scene01.step_fn(spec, tmp_path / "cache")(out2, tmp_path)
+    # ... also with the re-alignment on unchanged objects (objects rebuilt on the moved recording)
+    from dataclasses import replace as _replace
+    assert "changed objects" in scene01.step_fn(_replace(spec, align_rounds=2), tmp_path / "cache")(out2, tmp_path)
+    m2 = json.loads((out2 / "metrics.json").read_text())
+    assert isinstance(m2["recording_alignment"], list) and m2["sam_error"] is None

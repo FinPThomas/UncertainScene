@@ -598,7 +598,8 @@ def _extent(X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 
 
 def clean_points(X: np.ndarray, frame: np.ndarray, voxel: float, pose_px: np.ndarray | None = None,
-                 min_views: int = 2, k: int = 8, far: float = 3.0, min_keep: float = 0.3) -> np.ndarray:
+                 min_views: int = 2, k: int = 8, far: float = 3.0, min_keep: float = 0.3,
+                 min_piece: float = 0.15) -> np.ndarray:
     """Mask of an object's points worth keeping. Its cloud is the union of every view's depth
     points, so one weak view (a pose that sits off, depth bleeding past the mask edge) adds a
     shell or a spike that distorts the hull. Kept:
@@ -606,7 +607,9 @@ def clean_points(X: np.ndarray, frame: np.ndarray, voxel: float, pose_px: np.nda
       twice the median of its frames), when it has other views;
     - points in cells (`voxel`, the merge grid) that at least `min_views` frames put a point in,
       when the object was seen in that many frames: a surface is where the views agree;
-    - points whose k-th neighbour is within `far` times the typical distance (no stray points).
+    - points whose k-th neighbour is within `far` times the typical distance (no stray points);
+    - the largest connected piece and pieces at least `min_piece` of its size (no small
+      detached clusters).
     Falls back to the previous stage when a stage would keep under `min_keep` of the points."""
     from scipy.spatial import cKDTree
 
@@ -633,6 +636,23 @@ def clean_points(X: np.ndarray, frame: np.ndarray, voxel: float, pose_px: np.nda
         m = d <= far * np.median(d) + 1e-12
         if m.sum() >= min_keep * len(X):
             keep[idx[~m]] = False
+    # small detached clusters (a bit of the wall or sofa caught at a mask edge) bend the hull:
+    # keep the largest connected piece and any piece at least `min_piece` of its size
+    idx = np.nonzero(keep)[0]
+    if len(idx) > 50:
+        from scipy.sparse.csgraph import connected_components
+
+        sub = idx if len(idx) <= 60_000 else np.sort(np.random.default_rng(0).choice(idx, 60_000, replace=False))
+        tree = cKDTree(X[sub])
+        r = 2.5 * float(np.median(tree.query(X[sub], k=2)[0][:, 1])) + 1e-12
+        _, lab = connected_components(tree.sparse_distance_matrix(tree, r, output_type="coo_matrix"), directed=False)
+        size = np.bincount(lab)
+        ok_lab = size >= min_piece * size.max()
+        good_sub = sub[ok_lab[lab]]
+        if len(good_sub) >= min_keep * len(sub):
+            # points not in the subsample follow their nearest subsampled neighbour
+            _, j = tree.query(X[idx], k=1)
+            keep[idx[~ok_lab[lab[j]]]] = False
     return keep
 
 

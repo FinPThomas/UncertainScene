@@ -457,6 +457,30 @@ def label_all(objs: list[SceneObject], rec: Recon, crop_dir=None, n_views: int =
             img.save(crop_dir / f"{o.recording}{o.id:03d}_{(o.label or 'object').replace(' ', '_')}.jpg", quality=82)
 
 
+def prune_unsure(objs: list[SceneObject], min_views: int = 3, min_prob: float = 0.2, sure_views: int = 15) -> list[str]:
+    """Drop objects the pipeline is not sure are objects (Fin, 2026-10-15: "ball" in run 10 was
+    a CLIP guess at 0.10 from 10 views): non-structure objects seen in fewer than `min_views`
+    frames, or named only by CLIP below `min_prob` and seen in fewer than `sure_views` frames (a
+    well-tracked object with a weak name stays: it is still one thing). Detector-named objects
+    stay. Updates objs in place (ids renumbered per recording); returns what was dropped."""
+    gone, names = set(), []
+    for o in objs:
+        if o.structure:
+            continue
+        views = o.extra.get("n_views", len(getattr(o, "masks", {}) or {}))
+        sure_name = o.extra.get("label_source") == "detector" or (o.label_prob or 0) >= min_prob
+        if views < min_views or (not sure_name and views < sure_views):
+            gone.add(id(o))
+            names.append(f"{o.recording}{o.id} {o.label} ({o.extra.get('label_source')} {o.label_prob or 0:.2f}, "
+                         f"{views} views)")
+    if gone:
+        for rec in sorted({o.recording for o in objs}):
+            for i, o in enumerate([o for o in objs if o.recording == rec and id(o) not in gone]):
+                o.id = i
+        objs[:] = [o for o in objs if id(o) not in gone]
+    return names
+
+
 def check_label_sizes(objs: list[SceneObject], scale_m: float, slack: float = 1.25) -> int:
     """Drop names that cannot fit the object's size: when the largest size is over `slack` times
     the class's largest plausible size (detect2d.MAX_SIZE_M), take the first CLIP guess that

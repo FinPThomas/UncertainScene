@@ -250,6 +250,12 @@ def object_fields(objs: list, res: ChangeResult, f: dict) -> None:
                                                    round(o.distance_ci[1] * hi_s * 100, 1)]
 
 
+def _p95(v: np.ndarray) -> float:
+    v = np.asarray(v, float)
+    v = v[np.isfinite(v) & (v > 0)]
+    return float(np.quantile(v, 0.95)) if len(v) else 1.0
+
+
 def object_affordance(f: dict, objs: list, gripper_open_m: float = 0.12, max_lift_m: float = 0.6,
                       near_vox: float = 2.0, place_clear_m: float = 0.08) -> dict:
     """What the robot could do at each surface point, from the segmented objects (SceneObjects
@@ -299,30 +305,48 @@ def object_affordance(f: dict, objs: list, gripper_open_m: float = 0.12, max_lif
         # reach x certainty, not x the per-point approach score: run 10 (1c-objects) had only 5% of
         # points "approachable" (normals of cluttered soft surfaces), which zeroed every object
         doable = f["reach"][sel] * f.get("certainty", np.ones(n))[sel] * f.get("support", np.ones(n))[sel]
+        thin = (2 + f.get("thin", np.zeros(n))[sel]) / 3   # handles, rims: up to +50% over the body
         if not bg and fits and not ctx.get("supports"):
-            # thin parts (a mug handle, a rim) are where fingers close: up to +50% over the body
-            grasp[sel] = doable * (0.5 + 0.5 * rig) * (2 + f.get("thin", np.zeros(n))[sel]) / 3
+            grasp[sel] = doable * (0.5 + 0.5 * rig) * thin
         elif not bg:
             push[sel] = doable
+            # a soft object too thick for the fingers can still be pinched at an edge (a cushion
+            # corner), if it is light enough to lift: the softer, the easier
+            if size[0] <= max_lift_m * 1.5 and rig < 0.5 and not ctx.get("supports"):
+                grasp[sel] = doable * (1 - rig) * 0.6 * thin
     up_ok = f.get("up_dot", np.ones(n)) > 0.9
-    support = (owner < 0) | ~movable[np.clip(owner, 0, None)]
+    # anything big enough to hold something is a support (furniture, floor, a cushion's top);
+    # small objects the gripper picks up are not
+    small = np.zeros(len(objs), bool)
+    for i, o in mine:
+        small[i] = movable[i] and float(np.max(o.extent)) * s <= 0.3
+    support = (owner < 0) | ~small[np.clip(owner, 0, None)]
     occupied = np.zeros(n, bool)
     mv = owner >= 0
-    mv[mv] = movable[owner[mv]]
+    mv[mv] = small[owner[mv]]
     if mv.any():
         occupied = cKDTree(X[mv]).query(X, k=1)[0] * s < place_clear_m
-    place[:] = (f["reach"] * (up_ok & support & ~occupied)).astype(np.float32)
+    place[:] = (f["reach"] * f.get("certainty", np.ones(n)) * (up_ok & support & ~occupied)).astype(np.float32)
     f.update({"object_id": owner, "grasp": grasp, "push": push, "place": place})
     # interactability: the better of a free approach to a solid surface and an object to act on,
     # so objects stand out from the sofa and walls around them
     if "interact" in f:
         f["interact"] = np.maximum(f["interact"], np.maximum(grasp, 0.8 * push)).astype(np.float32)
+    # each action's scores relative to how doable that action is anywhere in this scene (95th
+    # percentile of its positive values = 1): reach x certainty is small everywhere when the
+    # surfaces are uncertain (run 10: every cushion 0.00-0.01), which hid the ranking. The best
+    # action compares the raw scores, which share one scale
+    top = {k: _p95(v) for k, v in (("grasp", grasp), ("push", push), ("place_on", place))}
     for i, o in mine:
         sel = owner == i
         if sel.any():
-            a = {"grasp": round(float(grasp[sel].mean()), 3), "push": round(float(push[sel].mean()), 3),
-                 "place_on": round(float(place[sel].mean()), 3), "points": int(sel.sum())}
-            a["best"] = max(("grasp", "push", "place_on"), key=lambda k: a[k]) if max(a["grasp"], a["push"], a["place_on"]) > 0.2 else "none"
+            raw = {"grasp": float(grasp[sel].mean()), "push": float(push[sel].mean()),
+                   "place_on": float(place[sel].mean())}
+            a = {k: round(min(raw[k] / top[k], 1.0), 3) for k in raw}
+            a.update({f"{k}_raw": round(v, 4) for k, v in raw.items()})
+            a["points"] = int(sel.sum())
+            best = max(("grasp", "push", "place_on"), key=lambda k: raw[k])   # same units: reach x certainty
+            a["best"] = best if a[best] >= 0.2 else "none"
             o.extra["affordance"] = a
     return {"grasp_frac": round(float((grasp > 0.5).mean()), 3), "push_frac": round(float((push > 0.5).mean()), 3),
             "place_frac": round(float((place > 0.5).mean()), 3), "points_on_objects": round(float((owner >= 0).mean()), 3)}

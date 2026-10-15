@@ -60,6 +60,10 @@ class PoseConfig:
     resect_px: float = 4.0          # PnP inlier gate (px)
     sparse_obs: int = 150           # frames with fewer track observations get a wider second match
     min_inliers_sparse: int = 15
+    prune_rounds: int = 8           # up to this many rounds of: re-place frames whose own points reproject badly, adjust again
+    prune_min_gain: float = 0.01    # a round must lower the median error by 1% or the rounds stop
+    prune_factor: float = 3.0       # ... worse than this many times the overall median
+    prune_min_px: float = 2.0       # ... and worse than this
     group_link: int = 50            # frames tied to the main group by fewer shared points get a wider match
     polish_iters: int = 150         # final joint adjustment over every frame
     polish_always: bool = True
@@ -543,6 +547,35 @@ def refine_tracks(E: np.ndarray, Kf: np.ndarray, video: np.ndarray, t_: np.ndarr
             X, tn, fr, uvn = _filter(Ec, Kc, t_, frame, uv, final_gate, cfg.min_angle_deg, cfg.max_points)
             # the polish can only help: refit points once more with the kept poses
             X, _ = triangulate(Ec, Kc, tn, fr, uvn)
+    # prune and redo the worst poses, repeatedly: a frame whose own points reproject far worse
+    # than the rest sits on a wrong pose and drags its points. Each round re-places those frames
+    # from the good ones (resection), adjusts everything again and re-gates the points with the
+    # better poses; rounds continue while the error keeps falling and bad frames remain
+    pruned, prune_log = 0, []
+    for _ in range(cfg.prune_rounds):
+        err_p, _ = reproject(Ec, Kc, X, tn, fr, uvn)
+        pf = np.array([np.median(err_p[fr == s]) if (fr == s).sum() >= cfg.min_resect else 0.0 for s in range(len(E))])
+        bad = pf > max(cfg.prune_factor * float(np.median(err_p)), cfg.prune_min_px)
+        if not bad.any() or bad.mean() > 0.5:
+            break
+        Et, _, _ = _place_weak_frames(Ec, Kc, Ec.copy(), video, t_, frame, uv, bad, max(final_gate, cfg.resect_px), cfg)
+        X2, tn2, fr2, uvn2 = _filter(Et, Kc, t_, frame, uv, final_gate, cfg.min_angle_deg, cfg.max_points)
+        if len(X2) < 100:
+            break
+        e_before = float(np.median(reproject(Ec, Kc, *_filter(Ec, Kc, t_, frame, uv, final_gate, cfg.min_angle_deg,
+                                                                   cfg.max_points))[0]))
+        Ep, Kp, _ = bundle_adjust(Et, Kc, video, X2, tn2, fr2, uvn2, replace(cfg, iters=cfg.polish_iters), device)
+        Xp, tnp, frp, uvp = _filter(Ep, Kp, t_, frame, uv, final_gate, cfg.min_angle_deg, cfg.max_points)
+        e_after = float(np.median(reproject(Ep, Kp, Xp, tnp, frp, uvp)[0])) if len(Xp) >= 100 else np.inf
+        prune_log.append({"frames": int(bad.sum()), "median_px_before": round(e_before, 3),
+                          "median_px_after": round(e_after, 3)})
+        log.info("poses: prune round %d: %d frames with poor own reprojection re-placed (%.3f -> %.3f px median)",
+                 len(prune_log), int(bad.sum()), e_before, e_after)
+        if not (np.isfinite(e_after) and e_after < e_before * (1 - cfg.prune_min_gain)):
+            break                                   # no longer improving: keep the last good poses
+        Ec, Kc = Ep, Kp
+        X, tn, fr, uvn = Xp, tnp, frp, uvp
+        pruned += int(bad.sum())
     Ec, X = _to_frame(Ec, X, E.astype(np.float64))
     err, _ = reproject(Ec, Kc, X, tn, fr, uvn)
     seen = np.bincount(fr, minlength=len(E))
@@ -569,7 +602,8 @@ def refine_tracks(E: np.ndarray, Kf: np.ndarray, video: np.ndarray, t_: np.ndarr
                                 "worst": float(per_frame[fin].max()) if fin.any() else None},
         "pose_px": {"median": float(np.median(pose_px)), "p90": float(np.quantile(pose_px, 0.9)),
                     "frames_unconstrained": int((pose_px >= before["median_px"] / 1.1774 - 1e-9).sum())},
-        "frames_with_few_points": n_weak, "frames_resected": int(resected),
+        "frames_with_few_points": n_weak, "frames_pruned_and_replaced": pruned,
+        "prune_rounds": prune_log, "frames_resected": int(resected),
         "frames_interpolated": int(n_weak - resected), "frames_without_points": int((seen == 0).sum()),
         "rotation_change_deg_median": float(np.median(rot)), "rotation_change_deg_p90": float(np.quantile(rot, 0.9)),
         "centre_change_median_rel": float(np.median(np.linalg.norm(c1 - c0, axis=1)) / (spread + 1e-12)),
@@ -726,9 +760,12 @@ def refine_recon(rec, cache=None, key: str = "", cfg: PoseConfig = PoseConfig())
     # pose uncertainty in pixels of the model-size depth maps (the size rec.K describes)
     pose_px = (pts["pose_px"] * w0 / w).astype(np.float32)
     out = replace(rec, E=E, K=K, pose_px=pose_px)
-    ks = np.array([depth_scale(out, s, pts["X"][seen[:, out.video[s]]]) for s in range(len(E))], np.float32)
+    ks = fill_scales(np.array([depth_scale(out, s, pts["X"][seen[:, out.video[s]]]) for s in range(len(E))],
+                              np.float64), out.video,
+                     None if out.scale is None else np.round(np.asarray(out.scale, float), 6)).astype(np.float32)
     report["depth_scale_median"] = float(np.median(ks))
     report["depth_scale_p10_p90"] = [float(np.quantile(ks, 0.1)), float(np.quantile(ks, 0.9))]
+    report["depth_scale_per_recording"] = [float(np.median(ks[out.video == v])) for v in np.unique(out.video)]
     if f is not None:
         tmp = f.with_name(f.stem + "_tmp.npz")
         np.savez_compressed(tmp, E=E, K=K, X=pts["X"], rgb=rgb, seen=seen, ks=ks, pose_px=pose_px,
@@ -737,24 +774,50 @@ def refine_recon(rec, cache=None, key: str = "", cfg: PoseConfig = PoseConfig())
     return _aligned(out, ks), {"X": pts["X"], "rgb": rgb, "seen": seen}, report
 
 
-def depth_scale(rec, s: int, X: np.ndarray, min_points: int = 20) -> float:
+def fill_scales(ks: np.ndarray, video: np.ndarray, chunk: np.ndarray | None = None) -> np.ndarray:
+    """Frames without a measured depth factor (nan) take the median of their reconstruction
+    chunk's measured frames (VGGT's depth scale is set per chunk), else interpolate their
+    nearest measured neighbours in time (same recording), else 1. Run 10 left them at 1 while
+    the measured frames sat at 0.8: two depth scales side by side, the camera groups that sit
+    apart and a before/after cloud ~14% apart in scale."""
+    out = ks.copy()
+    if chunk is not None:
+        for c in np.unique(chunk):
+            sel = chunk == c
+            m = sel & np.isfinite(ks)
+            if m.sum() >= 3:
+                out[sel & ~np.isfinite(ks)] = np.median(ks[m])
+        ks = out.copy()
+    for v in np.unique(video):
+        idx = np.nonzero(video == v)[0]
+        ok = np.isfinite(ks[idx])
+        if not ok.any():
+            out[idx] = 1.0
+        elif not ok.all():
+            out[idx[~ok]] = np.interp(idx[~ok], idx[ok], ks[idx[ok]])
+    return out
+
+
+def depth_scale(rec, s: int, X: np.ndarray, min_points: int = 20, lo: float = 0.5, hi: float = 2.0) -> float:
     """Factor that lines frame s's VGGT depth up with bundle-adjusted 3D points X (median ratio of
-    the points' camera depth to VGGT's depth at their pixels); 1 when too few points are seen."""
+    the points' camera depth to VGGT's depth at their pixels); nan when too few points are seen
+    (fill_scales fills it from neighbouring frames). Clipped to [lo, hi] only against blunders:
+    run 10's [0.8, 1.25] clipped most frames (median exactly 0.80)."""
     from ..change.geometry import project
 
     if X is None or not len(X):
-        return 1.0
+        return float("nan")
     u, v, z = project(X, rec.K[s], rec.E[s])
     u, v = np.round(u), np.round(v)
     h, w = rec.depth.shape[1:]
     ok = (z > 0) & (u >= 0) & (u < w) & (v >= 0) & (v < h)
     if ok.sum() < min_points:
-        return 1.0
+        return float("nan")
     d = rec.depth[s][v[ok].astype(int), u[ok].astype(int)]
     good = d > 0
     if good.sum() < min_points:
-        return 1.0
-    return float(np.clip(np.median(z[ok][good] / d[good]), 0.8, 1.25))
+        return float("nan")
+    return float(np.clip(np.median(z[ok][good] / d[good]), lo, hi))
 
 
 def _aligned(rec, ks: np.ndarray):
