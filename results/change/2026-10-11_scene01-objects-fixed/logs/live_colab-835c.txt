@@ -1,5 +1,5 @@
-session colab-835c, step 1d-objects_no-change_dark-before-a_vs_dark-before-b, running 90 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 9.2/12.7 GB, disk free 54.5 GB, GPU 9.8/15.0 GB
+session colab-835c, step 1d-objects_no-change_dark-before-a_vs_dark-before-b, running 100 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 9.1/12.7 GB, disk free 54.5 GB, GPU 9.8/15.0 GB
 
 2026-10-15 21:46:24,279 INFO uncertainscene.scene01: step 1d-objects_no-change_dark-before-a_vs_dark-before-b: scene01_dark_before_a vs scene01_dark_before_b, all frames/video, 44 SAM key frames, variant objects2
 2026-10-15 21:46:33,026 INFO dinov2: using MLP layer as FFN
@@ -102,3 +102,19 @@ machine: RAM 9.2/12.7 GB, disk free 54.5 GB, GPU 9.8/15.0 GB
 2026-10-15 23:12:04,739 INFO root: For numpy array image, we assume (HxWxC) format
 2026-10-15 23:12:04,781 INFO root: Computing image embeddings for the provided image...
 2026-10-15 23:12:04,824 INFO root: Image embeddings computed.
+2026-10-15 23:16:59,415 INFO uncertainscene.change.segment: SAM 2 tracking: frame 17/88: 10 new objects (41 tracked so far)
+2026-10-15 23:16:59,423 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 23:16:59,472 INFO root: Computing image embeddings for the provided image...
+2026-10-15 23:16:59,523 INFO root: Image embeddings computed.
+2026-10-15 23:19:11,353 INFO uncertainscene.change.segment: SAM 2 tracking: frame 25/88: 4 new objects (45 tracked so far)
+2026-10-15 23:19:11,364 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 23:19:11,406 INFO root: Computing image embeddings for the provided image...
+2026-10-15 23:19:11,448 INFO root: Image embeddings computed.
+2026-10-15 23:22:43,667 INFO uncertainscene.change.segment: SAM 2 tracking: frame 33/88: 7 new objects (52 tracked so far)
+2026-10-15 23:22:43,678 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 23:22:43,731 INFO root: Computing image embeddings for the provided image...
+2026-10-15 23:22:43,792 INFO root: Image embeddings computed.
+2026-10-15 23:24:55,604 INFO uncertainscene.change.segment: SAM 2 tracking: frame 41/88: 4 new objects (56 tracked so far)
+2026-10-15 23:24:55,615 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 23:24:55,659 INFO root: Computing image embeddings for the provided image...
+2026-10-15 23:24:55,702 INFO root: Image embeddings computed.
