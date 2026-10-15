@@ -170,7 +170,8 @@ def compute_fields(res: ChangeResult, rec: Recon, robot: RobotModel | None = Non
             "uncertainty_cm": unc_cm.astype(np.float32), "shift_cm": shift_cm.astype(np.float32),
             "height_m": height.astype(np.float32), "reach": reach.astype(np.float32),
             "approach": approach.astype(np.float32),
-            "interact": (reach * approach * conf_term).astype(np.float32), "cls": ps.cls[idx]}
+            "interact": (reach * approach * conf_term).astype(np.float32), "certainty": conf_term.astype(np.float32),
+            "cls": ps.cls[idx]}
 
 
 def field_stats(f: dict) -> dict:
@@ -232,9 +233,10 @@ def object_affordance(f: dict, objs: list, gripper_open_m: float = 0.12, max_lif
 
     - grasp: the point belongs to a movable object that fits the gripper (smallest size <=
       `gripper_open_m`, largest <= `max_lift_m`) with nothing resting on it, times
-      interactability (reach x approach x certainty); rigid objects score higher (a soft
-      object deforms in the fingers: x (0.5 + 0.5 rigidity));
-    - push: movable objects too big to grasp (cushions, blankets), times interactability;
+      reach and certainty; rigid objects score higher (a soft
+      object deforms in the fingers: x (0.5 + 0.5 rigidity)); reach x certainty, as the
+      per-point approach score is too sparse on cluttered soft surfaces;
+    - push: movable objects too big to grasp (cushions, blankets), times reach and certainty;
     - place: upward-facing surface (normal within ~25 deg of up) of a support or the floor with no
       object within `place_clear_m`, times reach.
     Adds f["object_id"] (index into objs, -1 none), f["grasp"], f["push"], f["place"] and sets
@@ -268,10 +270,13 @@ def object_affordance(f: dict, objs: list, gripper_open_m: float = 0.12, max_lif
         movable[i] = not bg
         rig = (o.extra.get("rigidity") or {}).get("rigidity", 0.5)
         fits = size[-1] <= gripper_open_m and size[0] <= max_lift_m
+        # reach x certainty, not x the per-point approach score: run 10 (1c-objects) had only 5% of
+        # points "approachable" (normals of cluttered soft surfaces), which zeroed every object
+        doable = f["reach"][sel] * f.get("certainty", np.ones(n))[sel]
         if not bg and fits and not ctx.get("supports"):
-            grasp[sel] = f["interact"][sel] * (0.5 + 0.5 * rig)
+            grasp[sel] = doable * (0.5 + 0.5 * rig)
         elif not bg:
-            push[sel] = f["interact"][sel]
+            push[sel] = doable
     up_ok = f.get("up_dot", np.ones(n)) > 0.9
     support = (owner < 0) | ~movable[np.clip(owner, 0, None)]
     occupied = np.zeros(n, bool)

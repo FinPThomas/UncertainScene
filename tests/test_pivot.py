@@ -257,7 +257,8 @@ def test_v2_queue_and_summary(tmp_path):
     assert len(names) == len(set(names)) and names[0] == "1-main_moved_light-before-a_vs_light-after-a"
     assert names[1] == "1b-splat_moved_light-before-a_vs_light-after-a"     # splats reuse the pilot's reconstruction
     assert names[2] == "1c-objects_moved_light-before-a_vs_light-after-a"   # whole objects on the pilot pair (2026-10-15)
-    assert names[3] == "1-main_no-change_light-before-a_vs_light-before-b"
+    assert names[3] == "1d-objects_moved_light-before-a_vs_light-after-a"
+    assert names[4] == "1-main_no-change_light-before-a_vs_light-before-b"
     assert any(n.startswith("2-position_") for n in names)
     pairs = {(s.a, s.b) for s in q if isinstance(s, Spec) and s.name.startswith(("1-main", "3-allpairs"))}
     assert len(pairs) == 21                      # every pair of the 7 recordings, once

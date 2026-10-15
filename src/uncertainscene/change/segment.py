@@ -360,12 +360,14 @@ def _small_dets(found: list[dict], size_wh: tuple[int, int]) -> list[dict]:
              > 127} for x in found]
 
 
-def track_votes(kept: list[dict], dets: dict, min_iou: float = 0.5, part_inside: float = 0.7) -> tuple[dict, dict]:
+def track_votes(kept: list[dict], dets: dict, min_iou: float = 0.5, part_inside: float = 0.6) -> tuple[dict, dict]:
     """Per frame index, match tracked masks (kept[i]: track -> (mask, bbox, wobble)) with detector
     instances (dets[i]). Returns label votes {track: {label: summed confidence}} from instances a
     track matches (IoU > min_iou), and part evidence {(part, parent): [frames inside, frames both
     seen]}: the part lies more than `part_inside` inside an object instance that the parent track
-    matches, and the instance is clearly larger than the part."""
+    matches, and the instance is clearly larger than the part. When no track matches the
+    instance (it was seeded in pieces, e.g. guitar body and neck), the tracks inside it count as
+    parts of the largest of them."""
     from .detect2d import inside, iou
 
     votes: dict = {}
@@ -382,14 +384,21 @@ def track_votes(kept: list[dict], dets: dict, min_iou: float = 0.5, part_inside:
                 match[j] = best
                 votes.setdefault(best, {})
                 votes[best][x["label"]] = votes[best].get(x["label"], 0.0) + x["conf"] * q
-        for t, mk in ts.items():
-            a = mk.sum()
-            for j, x in enumerate(ds):
-                p = match.get(j)
-                if p is None or p == t or not x["object"] or x["mask"].sum() < 1.5 * a:
-                    continue
-                if inside(mk, x["mask"]) > part_inside:
+        for j, x in enumerate(ds):
+            if not x["object"]:
+                continue
+            p = match.get(j)
+            inner = [t for t, mk in ts.items() if t != p and x["mask"].sum() >= 1.5 * mk.sum()
+                     and inside(mk, x["mask"]) > part_inside]
+            if p is not None:
+                for t in inner:
                     parents.setdefault((t, p), [0, 0])[0] += 1
+            else:
+                # no track covers the whole instance (it was seeded in pieces, e.g. guitar body and
+                # neck): the pieces inside it are parts of one object, joined to the largest
+                inner.sort(key=lambda t: -ts[t].sum())
+                for t in inner[1:]:
+                    parents.setdefault((t, inner[0]), [0, 0])[0] += 1
     seen: dict = {}
     for i in dets:
         for t in kept[i]:

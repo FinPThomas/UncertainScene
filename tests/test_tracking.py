@@ -247,3 +247,31 @@ def test_continuity_counts_tracks_and_breaks():
     fs = [{"frame": f, "track": 7} for f in (10, 12, 14)] + [{"frame": f, "track": 9} for f in (20, 22)]
     c = S.continuity(fs, [10, 12, 14, 16, 18, 20, 22])
     assert c["tracks"] == 2 and c["runs"] == 2 and c["frames_seen"] == 5 and c["positions"] == [0, 1, 2, 5, 6]
+
+
+def test_pieces_inside_one_unmatched_instance_are_joined(tmp_path):
+    """1c-objects run: the guitar stayed in pieces because no track covered the whole instance,
+    so there was no parent to join them to. Pieces lying inside one detected instance that no
+    track matches are joined to each other."""
+    pytest.importorskip("torch")
+    files = _frames(tmp_path)
+
+    def gen(img):                                  # two separate quarters of object 1
+        f = _frame_of(files, img)
+        m = _mask(1, f)
+        ys, xs = np.nonzero(m)
+        out = []
+        for dy, dx in ((0, 0), (8, 8)):
+            q = np.zeros_like(m)
+            q[ys.min() + dy:ys.min() + dy + 8, xs.min() + dx:xs.min() + dx + 8] = True
+            out.append({"segmentation": q, "area": int(q.sum()), "predicted_iou": 0.9, "stability_score": 0.9})
+        return out
+
+    def det(img):                                  # the whole object, never on a discovery frame
+        f = _frame_of(files, img)
+        return [{"mask": _mask(1, f), "label": "guitar", "conf": 0.7, "object": True}] if f % 4 else []
+
+    out = S.sam_tracks(files, list(range(N)), (H // 2, W // 2), gen=gen, predictor=ShiftTracker(),
+                       discover_every=4, min_area=0.002, workdir=str(tmp_path), det=det)
+    assert len({m["track"] for ms in out.values() for m in ms}) == 1
+    assert all(len(ms) == 1 for ms in out.values())               # one mask per frame: the pieces together

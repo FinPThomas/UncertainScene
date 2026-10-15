@@ -35,6 +35,9 @@ PHASES = {
     "1c-objects": ("Whole objects",
                    "With a detector that finds whole objects and names them, is every object one piece in the point "
                    "cloud, correctly labelled, and matched as the same object across recordings?"),
+    "1d-objects": ("Whole objects, second pass",
+                   "After run 10: are guitar-like objects seeded in pieces now one object, are grasp maps filled, "
+                   "and does every object come with its point cloud?"),
     "2-position": ("Where objects are, and how sure",
                    "How precisely is each object located, and does the range shrink with more clips of the same scene?"),
     "3-allpairs": ("Every other pair",
@@ -70,6 +73,7 @@ VARIANT = {
     "no_appearance": "without the appearance test", "naive_nn": "plain nearest-point comparison, no visibility test",
     "short_operator": "assuming the phone was held lower", "tall_operator": "assuming the phone was held higher",
     "objects": "whole objects found by a detector, then tracked",
+    "objects2": "whole objects, second pass (pieces joined, grasp maps, point clouds)",
 }
 
 

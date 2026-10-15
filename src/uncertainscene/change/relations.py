@@ -49,8 +49,8 @@ def relations(objs: list, scale: float, up: np.ndarray, foot_m: float = 0.03, ga
         o.extra["context"] = {"on_top_of": None, "next_to": [], "supports": []}
     for i, a in enumerate(objs):
         for j, b in enumerate(objs):
-            if j <= i or a.recording != b.recording:
-                continue
+            if j <= i or a.recording != b.recording or (getattr(a, "structure", False) and getattr(b, "structure", False)):
+                continue                                  # (wall-sized structures only as supports)
             if np.any(P[i].min(0) > P[j].max(0) + near_m) or np.any(P[j].min(0) > P[i].max(0) + near_m):
                 continue
             d, _ = trees3[j].query(P[i], k=1, distance_upper_bound=near_m)

@@ -262,10 +262,11 @@ def build(objs: list, scale_m: float, up: np.ndarray, out_dir: Path, motion: dic
                 rgb = np.asarray(rec.images)[o.frame, o.pix[:, 0], o.pix[:, 1]]
             except Exception:  # noqa: BLE001 - colours are a bonus
                 rgb = None
-        write_ply(out_dir / f"{name}.ply", (Xm - t) @ R, rgb)
+        keep = slice(None, None, max(1, len(Xm) // 8000))     # <= ~8000 points, ~120 kB per object
+        write_ply(out_dir / f"{name}.ply", ((Xm - t) @ R)[keep], None if rgb is None else rgb[keep])
         doc = {"name": name, "label": o.label, "label_top3": o.label_top3, "recording": o.recording, "id": int(o.id),
                "label_source": o.extra.get("label_source"),
-               "points_file": f"{name}.ply", "points": int(len(Xm)),
+               "points_file": f"{name}.ply", "points": int(len(Xm[keep])),
                "pose": {"t_m": np.round(t, 4).tolist(), "R": np.round(R, 5).tolist(),
                         "meaning": "world = R @ local + t; the .ply holds local coordinates in metres"},
                "context": {k: v for k, v in (o.extra.get("context") or {}).items() if k != "sentence"} or None,

@@ -122,6 +122,8 @@ def queue() -> list:
                                question=PHASES["1b-splat"][1]))
             # the pilot pair again with whole-object segmentation (Fin, 2026-10-15: objects first)
             q.append(Spec(step_name("1c-objects", a, b), a, b, variant="objects"))
+            # again after run 10's fixes (pieces inside one detected object joined, grasp map, .ply assets)
+            q.append(Spec(step_name("1d-objects", a, b), a, b, variant="objects2"))
     q.append("1-main_summary")
 
     q.append(ClipsSpec("2-position_3-clips_no-change_dark-before-a-b-c", (DB, DBb, DBc), ("before",) * 3,

@@ -6,6 +6,7 @@ outputs/
 *.mov
 *.MOV
 *.ply
+!results/**/assets/*.ply
 *.splat
 *.pt
 *.pth
