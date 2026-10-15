@@ -1,5 +1,5 @@
-session colab-b769, step 1d-objects_moved_light-before-a_vs_light-after-a, running 10 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 4.4/12.7 GB, disk free 59.5 GB, GPU 4.5/15.0 GB
+session colab-b769, step 1d-objects_moved_light-before-a_vs_light-after-a, running 20 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 7.4/12.7 GB, disk free 59.0 GB, GPU 6.3/15.0 GB
 
 2026-10-15 19:07:46,153 INFO uncertainscene.scene01: step 1d-objects_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects2
 2026-10-15 19:07:58,890 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -25,3 +25,27 @@ machine: RAM 4.4/12.7 GB, disk free 59.5 GB, GPU 4.5/15.0 GB
 2026-10-15 19:16:41,377 INFO uncertainscene.recon.chunked: chunk 19/19: 46 frames, scale 1.005, anchor residual 0.003 (relative to depth)
 2026-10-15 19:16:41,974 INFO uncertainscene.recon.vggt: reconstructed 735 frames (364 + 371) in 19 chunks in 524 s; worst chunk residual 0.006
 2026-10-15 19:17:15,683 INFO uncertainscene.poc: [1d-objects_moved_light-before-a_vs_light-after-a] reconstruction (735 frames, 19 chunks, worst anchor residual 0.0061) done in 569 s | RAM 4.3/12.7 GB, disk free 59.5 GB, GPU 4.5/15.0 GB
+2026-10-15 19:17:48,035 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 19:21:45,457 INFO uncertainscene.recon.poses: poses: 7339 of 7968 frame pairs matched
+2026-10-15 19:21:48,843 INFO uncertainscene.recon.poses: poses: 8 of 53 frame pairs matched
+2026-10-15 19:21:48,847 INFO uncertainscene.recon.poses: poses: 2 sparse frames, 0 frames outside the main group: 53 extra pairs tried, 8 matched
+2026-10-15 19:21:50,754 INFO uncertainscene.recon.poses: poses: 0 frames still outside the main group
+2026-10-15 19:21:50,801 INFO uncertainscene.recon.poses: poses: 3612 features/frame, 330916 tracks, 1834236 observations (275 s)
+2026-10-15 19:21:53,363 INFO uncertainscene.recon.poses: poses: VGGT poses reproject at 8.31 px median (195595 points)
+2026-10-15 19:22:07,227 INFO uncertainscene.recon.poses: poses: round 1: 5.45 px median, 195595 points (292 s)
+2026-10-15 19:22:21,001 INFO uncertainscene.recon.poses: poses: round 2: 1.99 px median, 140997 points (305 s)
+2026-10-15 19:22:31,422 INFO uncertainscene.recon.poses: poses: 65 frames with < 30 points: 58 resected, 7 interpolated from neighbours
+2026-10-15 19:22:51,636 INFO uncertainscene.recon.poses: poses: prune round 1: 1 frames with poor own reprojection re-placed (0.797 -> 0.676 px median)
+2026-10-15 19:23:01,156 INFO uncertainscene.recon.poses: poses: prune round 2: 6 frames with poor own reprojection re-placed (0.676 -> 0.680 px median)
+2026-10-15 19:23:01,793 INFO uncertainscene.recon.poses: poses: final 0.68 px median, 2.20 px p90 (VGGT 8.31 px); per-frame median worst 2.41 px; cameras turned 1.35 deg median; 65 weak frames (58 resected, 7 interpolated)
+2026-10-15 19:23:01,794 INFO uncertainscene.recon.poses: poses: per recording 0.62, 0.72 px median; 2085 points seen in both recordings (1.38 px); 17% of feature observations kept
+2026-10-15 19:23:08,920 INFO uncertainscene.poc: [1d-objects_moved_light-before-a_vs_light-after-a] camera poses refined: 8.3 px -> 0.68 px reprojection error (p90 2.20 px, 58 sparse frames resected, 7 interpolated), cameras turned 1.35 deg (median) done in 353 s | RAM 6.5/12.7 GB, disk free 59.5 GB, GPU 6.3/15.0 GB
+2026-10-15 19:23:16,601 INFO numexpr.utils: NumExpr defaulting to 2 threads.
+2026-10-15 19:23:48,814 INFO uncertainscene.poc: [1d-objects_moved_light-before-a_vs_light-after-a] DINOv2 features done in 40 s | RAM 6.5/12.7 GB, disk free 59.0 GB, GPU 6.3/15.0 GB
