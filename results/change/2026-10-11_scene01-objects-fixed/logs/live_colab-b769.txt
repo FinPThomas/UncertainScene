@@ -1,4 +1,4 @@
-session colab-b769, step 1d-objects_moved_light-before-a_vs_light-after-a, running 60 min (live log, pushed every 10 min; the step's own results follow when it ends)
+session colab-b769, step 1d-objects_moved_light-before-a_vs_light-after-a, running 71 min (live log, pushed every 10 min; the step's own results follow when it ends)
 machine: RAM 9.5/12.7 GB, disk free 56.9 GB, GPU 10.3/15.0 GB
 
 2026-10-15 19:07:46,153 INFO uncertainscene.scene01: step 1d-objects_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects2
@@ -116,3 +116,27 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 2026-10-15 20:06:46,813 INFO root: For numpy array image, we assume (HxWxC) format
 2026-10-15 20:06:46,851 INFO root: Computing image embeddings for the provided image...
 2026-10-15 20:06:46,876 INFO root: Image embeddings computed.
+2026-10-15 20:08:15,730 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 20:09:03,676 INFO uncertainscene.change.segment: SAM 2 tracking: frame 49/88: 4 new objects (54 tracked so far)
+2026-10-15 20:09:03,688 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:09:03,718 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:09:03,745 INFO root: Image embeddings computed.
+2026-10-15 20:13:42,150 INFO uncertainscene.change.segment: SAM 2 tracking: frame 57/88: 9 new objects (63 tracked so far)
+2026-10-15 20:13:42,165 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:13:42,203 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:13:42,229 INFO root: Image embeddings computed.
+2026-10-15 20:15:29,885 INFO uncertainscene.change.segment: SAM 2 tracking: frame 65/88: 3 new objects (66 tracked so far)
+2026-10-15 20:15:29,900 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:15:29,940 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:15:29,968 INFO root: Image embeddings computed.
+2026-10-15 20:16:21,442 INFO uncertainscene.change.segment: SAM 2 tracking: frame 73/88: 1 new objects (67 tracked so far)
+2026-10-15 20:16:21,455 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:16:21,496 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:16:21,519 INFO root: Image embeddings computed.
