@@ -1,5 +1,5 @@
-session colab-835c, step 1d-objects_no-change_dark-before-a_vs_dark-before-b, running 120 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 9.2/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
+session colab-835c, step 1d-objects_no-change_dark-before-a_vs_dark-before-b, running 130 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 9.3/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
 
 2026-10-15 21:46:24,279 INFO uncertainscene.scene01: step 1d-objects_no-change_dark-before-a_vs_dark-before-b: scene01_dark_before_a vs scene01_dark_before_b, all frames/video, 44 SAM key frames, variant objects2
 2026-10-15 21:46:33,026 INFO dinov2: using MLP layer as FFN
