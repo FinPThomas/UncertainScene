@@ -1,5 +1,5 @@
-session colab-b769, step 1d-objects_moved_light-before-a_vs_light-after-a, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 8.2/12.7 GB, disk free 58.4 GB, GPU 6.3/15.0 GB
+session colab-b769, step 1d-objects_moved_light-before-a_vs_light-after-a, running 40 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 9.5/12.7 GB, disk free 56.9 GB, GPU 10.3/15.0 GB
 
 2026-10-15 19:07:46,153 INFO uncertainscene.scene01: step 1d-objects_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects2
 2026-10-15 19:07:58,890 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -60,3 +60,19 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 2026-10-15 19:37:44,253 INFO uncertainscene.poc: [1d-objects_moved_light-before-a_vs_light-after-a] point-level change detection (1200000 points, tau 0.266) done in 835 s | RAM 7.4/12.7 GB, disk free 59.0 GB, GPU 6.3/15.0 GB
 2026-10-15 19:37:45,038 INFO uncertainscene.change.floor: floor: gravity refined by 3.5 deg, 35 floor points (3% of horizontal), camera 0.444 units above floor -> 3.037 m/unit
 2026-10-15 19:37:45,338 INFO uncertainscene.poc: [1d-objects_moved_light-before-a_vs_light-after-a] floor (35 floor points, gravity refined 3.5 deg) done in 1 s | RAM 7.4/12.7 GB, disk free 59.0 GB, GPU 6.3/15.0 GB
+2026-10-15 19:37:58,106 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 19:39:56,760 INFO uncertainscene.change.metric: scale: metric depth 2.627 m/unit from 80 frames (frames spread 15.0%, +-10% 1 sigma)
+2026-10-15 19:39:56,765 INFO uncertainscene.change.floor: scale: most likely 2.627 m/unit (90% 2.222-3.101) from metric_depth 2.627; phone height (not used) 3.037
+2026-10-15 19:39:57,057 INFO uncertainscene.poc: [1d-objects_moved_light-before-a_vs_light-after-a] metric scale (depth model 2.627 m/unit from 80 frames; combined 2.627, 90% 2.222-3.101) done in 132 s | RAM 7.4/12.7 GB, disk free 57.7 GB, GPU 5.9/15.0 GB
+2026-10-15 19:40:24,182 INFO root: Loaded checkpoint sucessfully
+2026-10-15 19:40:25,141 INFO root: Loaded checkpoint sucessfully
+2026-10-15 19:40:25,237 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 19:40:25,296 INFO root: Computing image embeddings for the provided image...
+2026-10-15 19:40:25,509 INFO root: Image embeddings computed.
