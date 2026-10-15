@@ -1,5 +1,5 @@
-session colab-7675, step 1c-objects_moved_light-before-a_vs_light-after-a, running 50 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 9.0/12.7 GB, disk free 57.0 GB, GPU 10.2/15.0 GB
+session colab-7675, step 1c-objects_moved_light-before-a_vs_light-after-a, running 60 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 8.8/12.7 GB, disk free 57.0 GB, GPU 10.2/15.0 GB
 
 2026-10-15 13:23:14,065 INFO uncertainscene.scene01: step 1c-objects_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects
 2026-10-15 13:23:28,392 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -65,3 +65,15 @@ machine: RAM 9.0/12.7 GB, disk free 57.0 GB, GPU 10.2/15.0 GB
 2026-10-15 14:11:06,417 INFO root: For numpy array image, we assume (HxWxC) format
 2026-10-15 14:11:06,447 INFO root: Computing image embeddings for the provided image...
 2026-10-15 14:11:06,472 INFO root: Image embeddings computed.
+2026-10-15 14:17:36,583 INFO uncertainscene.change.segment: SAM 2 tracking: frame 33/88: 14 new objects (47 tracked so far)
+2026-10-15 14:17:36,591 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 14:17:36,632 INFO root: Computing image embeddings for the provided image...
+2026-10-15 14:17:36,658 INFO root: Image embeddings computed.
+2026-10-15 14:19:16,946 INFO uncertainscene.change.segment: SAM 2 tracking: frame 41/88: 3 new objects (50 tracked so far)
+2026-10-15 14:19:16,955 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 14:19:16,986 INFO root: Computing image embeddings for the provided image...
+2026-10-15 14:19:17,016 INFO root: Image embeddings computed.
+2026-10-15 14:21:24,158 INFO uncertainscene.change.segment: SAM 2 tracking: frame 49/88: 4 new objects (54 tracked so far)
+2026-10-15 14:21:24,168 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 14:21:24,211 INFO root: Computing image embeddings for the provided image...
+2026-10-15 14:21:24,243 INFO root: Image embeddings computed.
