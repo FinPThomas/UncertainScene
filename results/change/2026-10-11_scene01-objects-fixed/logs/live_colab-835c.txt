@@ -1,5 +1,5 @@
-session colab-835c, step 1d-objects_no-change_dark-before-a_vs_dark-before-b, running 70 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 9.2/12.7 GB, disk free 54.5 GB, GPU 9.5/15.0 GB
+session colab-835c, step 1d-objects_no-change_dark-before-a_vs_dark-before-b, running 80 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 9.2/12.7 GB, disk free 54.5 GB, GPU 9.8/15.0 GB
 
 2026-10-15 21:46:24,279 INFO uncertainscene.scene01: step 1d-objects_no-change_dark-before-a_vs_dark-before-b: scene01_dark_before_a vs scene01_dark_before_b, all frames/video, 44 SAM key frames, variant objects2
 2026-10-15 21:46:33,026 INFO dinov2: using MLP layer as FFN
@@ -89,3 +89,12 @@ machine: RAM 9.2/12.7 GB, disk free 54.5 GB, GPU 9.5/15.0 GB
 2026-10-15 22:55:53,605 INFO root: For numpy array image, we assume (HxWxC) format
 2026-10-15 22:55:53,644 INFO root: Computing image embeddings for the provided image...
 2026-10-15 22:55:53,683 INFO root: Image embeddings computed.
+2026-10-15 22:56:42,848 INFO uncertainscene.change.segment: SAM 2 tracking: frame 81/88: 1 new objects (75 tracked so far)
+2026-10-15 22:56:50,484 INFO uncertainscene.change.segment: SAM 2 tracking + detector: 18 part masks not seeded, 2 tracks joined to the object they lie in, 40 of 75 tracks labelled by the detector
+2026-10-15 22:56:50,654 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 22:56:50,698 INFO root: Computing image embeddings for the provided image...
+2026-10-15 22:56:50,742 INFO root: Image embeddings computed.
+2026-10-15 23:05:21,198 INFO uncertainscene.change.segment: SAM 2 tracking: frame 1/88: 17 new objects (17 tracked so far)
+2026-10-15 23:05:21,210 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 23:05:21,256 INFO root: Computing image embeddings for the provided image...
+2026-10-15 23:05:21,301 INFO root: Image embeddings computed.
