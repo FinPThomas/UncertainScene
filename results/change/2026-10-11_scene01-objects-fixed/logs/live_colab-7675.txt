@@ -1,5 +1,5 @@
-session colab-7675, step 1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 7.8/12.7 GB, disk free 53.7 GB, GPU 6.9/15.0 GB
+session colab-7675, step 1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a, running 40 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 8.9/12.7 GB, disk free 53.7 GB, GPU 9.4/15.0 GB
 
 2026-10-15 17:20:10,149 INFO uncertainscene.scene01: step 1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a: scene01_dark_before_a vs scene01_light_before_a, all frames/video, 44 SAM key frames, variant base
 2026-10-15 17:20:19,443 INFO dinov2: using MLP layer as FFN
@@ -39,3 +39,19 @@ machine: RAM 7.8/12.7 GB, disk free 53.7 GB, GPU 6.9/15.0 GB
 2026-10-15 17:48:56,379 INFO uncertainscene.poc: [1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a] point-level change detection (1200000 points, tau 0.231) done in 971 s | RAM 7.7/12.7 GB, disk free 53.7 GB, GPU 5.7/15.0 GB
 2026-10-15 17:48:57,287 INFO uncertainscene.change.floor: floor: gravity refined by 2.2 deg, 32 floor points (3% of horizontal), camera 0.417 units above floor -> 3.235 m/unit
 2026-10-15 17:48:57,669 INFO uncertainscene.poc: [1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a] floor (32 floor points, gravity refined 2.2 deg) done in 1 s | RAM 7.8/12.7 GB, disk free 53.7 GB, GPU 5.7/15.0 GB
+2026-10-15 17:50:15,138 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 17:50:20,349 INFO uncertainscene.change.metric: scale: metric depth 2.682 m/unit from 80 frames (frames spread 16.1%, +-10% 1 sigma)
+2026-10-15 17:50:20,354 INFO uncertainscene.change.floor: scale: most likely 2.682 m/unit (90% 2.268-3.168) from metric_depth 2.682; phone height (not used) 3.235
+2026-10-15 17:50:20,795 INFO uncertainscene.poc: [1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a] metric scale (depth model 2.682 m/unit from 80 frames; combined 2.682, 90% 2.268-3.168) done in 83 s | RAM 7.8/12.7 GB, disk free 53.7 GB, GPU 5.8/15.0 GB
+2026-10-15 17:50:28,259 INFO root: Loaded checkpoint sucessfully
+2026-10-15 17:50:29,033 INFO root: Loaded checkpoint sucessfully
+2026-10-15 17:50:29,150 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 17:50:29,201 INFO root: Computing image embeddings for the provided image...
+2026-10-15 17:50:29,248 INFO root: Image embeddings computed.
