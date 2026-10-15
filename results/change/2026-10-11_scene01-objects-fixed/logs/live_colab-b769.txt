@@ -1,5 +1,5 @@
-session colab-b769, step 1d-objects_moved_light-before-a_vs_light-after-a, running 131 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 9.6/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+session colab-b769, step 1d-objects_moved_light-before-a_vs_light-after-a, running 141 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 10.0/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
 
 2026-10-15 19:07:46,153 INFO uncertainscene.scene01: step 1d-objects_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects2
 2026-10-15 19:07:58,890 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -262,3 +262,20 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 2026-10-15 21:14:57,047 INFO uncertainscene.poc: [1d-objects_moved_light-before-a_vs_light-after-a] unsure objects dropped: 18 (A19 sofa (clip 0.27, 18 views); A22 book (clip 0.25, 14 views); A23 wooden crate (clip 0.19, 9 views); A26 skirting board (clip 0.44, 19 views); A27 skirting board (clip 0.30, 5 views); A30 skirting board (clip 0.40, 7 views); A34 plate (clip 0.13, 11 views); A36 sofa (clip 0.22, 4 views) ...) done in 0 s | RAM 8.9/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
 2026-10-15 21:14:57,539 INFO uncertainscene.poc: [1d-objects_moved_light-before-a_vs_light-after-a] Rigidity Copilot: expected stiffness of 64 objects done in 0 s | RAM 8.9/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
 2026-10-15 21:14:57,545 INFO uncertainscene.change.floor: scale: most likely 2.285 m/unit (90% 2.040-2.534) from metric_depth 2.627, objects 2.032; phone height (not used) 3.037
+2026-10-15 21:18:50,252 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 21:19:50,861 INFO uncertainscene.change.inventory: objects: 2 one-sided objects paired with the same named object in the other recording
+2026-10-15 21:19:51,125 INFO uncertainscene.change.inventory: object changes: {'A:unchanged': 30, 'A:moved': 1, 'A:removed': 1, 'B:unchanged': 25, 'B:added': 5, 'B:moved': 1, 'B:not seen in other recording': 1}; thresholds gone 0.300 appearance 0.766 shift 0.1050 (from 64 null objects)
+2026-10-15 21:19:51,613 INFO uncertainscene.poc: [1d-objects_moved_light-before-a_vs_light-after-a] object-level changes done in 294 s | RAM 8.9/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:21:47,235 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.5/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB)
+2026-10-15 21:22:47,854 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 80% (RAM 10.1/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB)
+2026-10-15 21:23:18,434 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 80% (RAM 10.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB)
+2026-10-15 21:26:34,384 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 80% (RAM 10.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB)
+2026-10-15 21:28:05,256 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 81% (RAM 10.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB)
+2026-10-15 21:28:20,824 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 80% (RAM 10.1/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB)
