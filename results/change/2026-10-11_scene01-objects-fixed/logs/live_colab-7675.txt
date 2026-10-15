@@ -1,5 +1,5 @@
-session colab-7675, step 1-main_no-change_light-before-a_vs_light-before-b, running 10 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 6.2/12.7 GB, disk free 54.9 GB, GPU 4.5/15.0 GB
+session colab-7675, step 1-main_no-change_light-before-a_vs_light-before-b, running 20 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 7.8/12.7 GB, disk free 54.5 GB, GPU 5.6/15.0 GB
 
 2026-10-15 15:13:31,367 INFO uncertainscene.scene01: step 1-main_no-change_light-before-a_vs_light-before-b: scene01_light_before_a vs scene01_light_before_b, all frames/video, 44 SAM key frames, variant base
 2026-10-15 15:13:40,823 INFO dinov2: using MLP layer as FFN
@@ -24,3 +24,15 @@ machine: RAM 6.2/12.7 GB, disk free 54.9 GB, GPU 4.5/15.0 GB
 2026-10-15 15:21:14,702 INFO uncertainscene.recon.chunked: chunk 19/19: 46 frames, scale 1.004, anchor residual 0.002 (relative to depth)
 2026-10-15 15:21:15,211 INFO uncertainscene.recon.vggt: reconstructed 736 frames (364 + 372) in 19 chunks in 455 s; worst chunk residual 0.006
 2026-10-15 15:21:51,716 INFO uncertainscene.poc: [1-main_no-change_light-before-a_vs_light-before-b] reconstruction (736 frames, 19 chunks, worst anchor residual 0.0058) done in 500 s | RAM 6.2/12.7 GB, disk free 54.9 GB, GPU 4.5/15.0 GB
+2026-10-15 15:24:39,371 INFO uncertainscene.recon.poses: poses: 5079 of 5246 frame pairs matched
+2026-10-15 15:24:40,686 INFO uncertainscene.recon.poses: poses: 57 of 220 frame pairs matched
+2026-10-15 15:24:40,689 INFO uncertainscene.recon.poses: poses: 9 sparse frames: 220 extra pairs tried, 57 matched
+2026-10-15 15:24:41,399 INFO uncertainscene.recon.poses: poses: 1849 features/frame, 174483 tracks, 924982 observations (170 s)
+2026-10-15 15:24:42,793 INFO uncertainscene.recon.poses: poses: VGGT poses reproject at 8.15 px median (102469 points)
+2026-10-15 15:25:04,421 INFO uncertainscene.recon.poses: poses: round 1: 2.48 px median, 102469 points (193 s)
+2026-10-15 15:25:07,489 INFO uncertainscene.recon.poses: poses: round 2: 1.28 px median, 65196 points (196 s)
+2026-10-15 15:25:22,992 INFO uncertainscene.recon.poses: poses: 145 frames with < 30 points: 100 resected, 45 interpolated from neighbours
+2026-10-15 15:25:26,365 INFO uncertainscene.recon.poses: poses: final 0.83 px median, 2.05 px p90 (VGGT 8.15 px); per-frame median worst 2.85 px; cameras turned 1.87 deg median; 145 weak frames (100 resected, 45 interpolated)
+2026-10-15 15:25:26,367 INFO uncertainscene.recon.poses: poses: per recording 0.84, 0.83 px median; 2073 points seen in both recordings (1.14 px); 18% of feature observations kept
+2026-10-15 15:25:32,287 INFO uncertainscene.poc: [1-main_no-change_light-before-a_vs_light-before-b] camera poses refined: 8.2 px -> 0.83 px reprojection error (p90 2.05 px, 100 sparse frames resected, 45 interpolated), cameras turned 1.87 deg (median) done in 221 s | RAM 6.7/12.7 GB, disk free 54.9 GB, GPU 5.6/15.0 GB
+2026-10-15 15:26:29,217 INFO uncertainscene.poc: [1-main_no-change_light-before-a_vs_light-before-b] DINOv2 features done in 57 s | RAM 6.7/12.7 GB, disk free 54.5 GB, GPU 5.6/15.0 GB
