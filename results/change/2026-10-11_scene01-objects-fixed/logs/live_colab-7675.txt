@@ -1,4 +1,4 @@
-session colab-7675, step 1-main_no-change_light-before-a_vs_light-before-b, running 80 min (live log, pushed every 10 min; the step's own results follow when it ends)
+session colab-7675, step 1-main_no-change_light-before-a_vs_light-before-b, running 90 min (live log, pushed every 10 min; the step's own results follow when it ends)
 machine: RAM 8.6/12.7 GB, disk free 54.5 GB, GPU 9.7/15.0 GB
 
 2026-10-15 15:13:31,367 INFO uncertainscene.scene01: step 1-main_no-change_light-before-a_vs_light-before-b: scene01_light_before_a vs scene01_light_before_b, all frames/video, 44 SAM key frames, variant base
@@ -100,3 +100,19 @@ machine: RAM 8.6/12.7 GB, disk free 54.5 GB, GPU 9.7/15.0 GB
 2026-10-15 16:33:16,500 INFO root: For numpy array image, we assume (HxWxC) format
 2026-10-15 16:33:16,545 INFO root: Computing image embeddings for the provided image...
 2026-10-15 16:33:16,589 INFO root: Image embeddings computed.
+2026-10-15 16:36:16,861 INFO uncertainscene.change.segment: SAM 2 tracking: frame 17/88: 6 new objects (31 tracked so far)
+2026-10-15 16:36:16,873 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 16:36:16,915 INFO root: Computing image embeddings for the provided image...
+2026-10-15 16:36:16,958 INFO root: Image embeddings computed.
+2026-10-15 16:39:16,437 INFO uncertainscene.change.segment: SAM 2 tracking: frame 25/88: 6 new objects (37 tracked so far)
+2026-10-15 16:39:16,448 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 16:39:16,493 INFO root: Computing image embeddings for the provided image...
+2026-10-15 16:39:16,535 INFO root: Image embeddings computed.
+2026-10-15 16:41:24,005 INFO uncertainscene.change.segment: SAM 2 tracking: frame 33/88: 4 new objects (41 tracked so far)
+2026-10-15 16:41:24,016 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 16:41:24,066 INFO root: Computing image embeddings for the provided image...
+2026-10-15 16:41:24,115 INFO root: Image embeddings computed.
+2026-10-15 16:43:31,287 INFO uncertainscene.change.segment: SAM 2 tracking: frame 41/88: 4 new objects (45 tracked so far)
+2026-10-15 16:43:31,297 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 16:43:31,339 INFO root: Computing image embeddings for the provided image...
+2026-10-15 16:43:31,381 INFO root: Image embeddings computed.
