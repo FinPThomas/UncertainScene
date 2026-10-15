@@ -1,0 +1,651 @@
+{
+  "title": "Objects moved and lighting changed: dark, before, take a vs light, after, take a (whole objects, recordings re-aligned on unchanged objects (clean clouds, one verdict per object))",
+  "question": "Does it still find the real changes when the lighting also changes?",
+  "phase_title": "Whole objects, recordings re-aligned",
+  "pair_type": "change+lighting",
+  "a": "scene01_dark_before_a",
+  "b": "scene01_light_after_a",
+  "pair": "darkBa_vs_lightAa",
+  "n_per_video": 382,
+  "requested_per_video": null,
+  "offset": 0,
+  "n_key": 44,
+  "variant": "objects2",
+  "version": 2,
+  "detect_config": {
+    "stride": 2,
+    "conf_quantile": 0.35,
+    "min_obs": 2,
+    "null_quantile": 0.99,
+    "min_gone_frac": 0.5,
+    "use_visibility": true,
+    "use_appearance": true,
+    "max_null_points": 60000,
+    "max_points": 600000,
+    "seed": 0
+  },
+  "robot": {
+    "phone_height_m": 1.35,
+    "phone_height_range_m": [
+      1.1,
+      1.6
+    ],
+    "shoulder_height_m": 0.75,
+    "reach_m": 0.85,
+    "mobile": true,
+    "base_offset_m": 0.0,
+    "footprint_m": 0.25,
+    "gripper_clearance_m": 0.12,
+    "gripper_radius_m": 0.03,
+    "uncertainty_ok_cm": 3.0
+  },
+  "fields_on": "B",
+  "recon_seconds": 652.2,
+  "recon_chunks": 19,
+  "chunk_residual_max": 0.0083,
+  "chunks_dropped": [],
+  "gpu_peak_gb": 8.77,
+  "recon_cached": false,
+  "frames_total": 753,
+  "sam_error": null,
+  "scale_cues": {
+    "phone_height": {
+      "scale": 3.7664038992316033,
+      "sd_log": 0.11388858645635583,
+      "assumed_m": 1.35
+    },
+    "metric_depth": {
+      "scale": 2.7630621531138657,
+      "sd_log": 0.10205941852800071,
+      "n": 80,
+      "between_sd_log": 0.1825,
+      "bias_sd_log": 0.1,
+      "model": "depth-anything/Depth-Anything-V2-Metric-Indoor-Large-hf",
+      "per_frame": [
+        2.5331,
+        2.307,
+        2.3327,
+        2.2262,
+        2.5206,
+        1.9422,
+        2.8434,
+        2.3506,
+        2.9024,
+        2.0983,
+        2.2036,
+        2.597,
+        2.7403,
+        2.8145,
+        2.7396,
+        2.5369,
+        2.3643,
+        2.5513,
+        2.3735,
+        2.3974,
+        2.7493,
+        3.3828,
+        3.7826,
+        3.9369,
+        4.6635,
+        3.0998,
+        3.4266,
+        3.884,
+        3.342,
+        2.9782,
+        2.8233,
+        2.2476,
+        2.8521,
+        2.2732,
+        2.7505,
+        2.2145,
+        2.0958,
+        2.2142,
+        2.184,
+        2.2121,
+        2.4391,
+        2.532,
+        2.4489,
+        2.6833,
+        2.6563,
+        2.6044,
+        2.5899,
+        2.6043,
+        2.7631,
+        2.9161,
+        2.857,
+        2.8875,
+        3.2305,
+        3.5853,
+        3.7883,
+        3.5756,
+        3.3557,
+        3.3163,
+        2.7606,
+        3.1198,
+        2.9703,
+        2.7882,
+        2.8106,
+        2.2649,
+        2.4792,
+        3.0428,
+        2.5043,
+        3.1305,
+        2.2901,
+        2.1815,
+        3.5681,
+        3.1445,
+        3.146,
+        3.9582,
+        4.0723,
+        2.8984,
+        2.92,
+        2.965,
+        2.7768,
+        2.8028
+      ]
+    },
+    "combined": {
+      "scale": 2.5019957013926475,
+      "range": [
+        2.2372453463630126,
+        2.771635465508157
+      ],
+      "sd_log": 0.0651040163288923,
+      "cues": [
+        "metric_depth",
+        "objects"
+      ],
+      "disagreement_sigma": 3.02
+    },
+    "objects": {
+      "scale": 0.9040123514382187,
+      "range": [
+        0.7859453921409989,
+        2.5353631364764575
+      ],
+      "sd_log": 0.35598931322224064,
+      "n": 11,
+      "labels": [
+        "towel",
+        "guitar",
+        "box",
+        "book",
+        "neck pillow",
+        "cup",
+        "lamp",
+        "cup",
+        "picture frame",
+        "greeting card",
+        "speaker"
+      ],
+      "votes": [
+        {
+          "label": "towel",
+          "terms": [
+            [
+              1.726215319862005,
+              0.18027756377319945,
+              0.058
+            ],
+            [
+              0.6338142911931739,
+              0.18027756377319945,
+              0.056
+            ]
+          ],
+          "other": 0.886
+        },
+        {
+          "label": "guitar",
+          "terms": [
+            [
+              1.0085821365834342,
+              0.11661903789690602,
+              0.854
+            ],
+            [
+              -0.5304030493120473,
+              0.223606797749979,
+              0.146
+            ]
+          ],
+          "other": 0.0
+        },
+        {
+          "label": "box",
+          "terms": [
+            [
+              0.1797213792439612,
+              0.6082762530298219,
+              0.701
+            ],
+            [
+              0.3031514182097241,
+              0.2692582403567252,
+              0.299
+            ]
+          ],
+          "other": 0.0
+        },
+        {
+          "label": "book",
+          "terms": [
+            [
+              0.21619725172093135,
+              0.223606797749979,
+              0.953
+            ],
+            [
+              0.46062061024453904,
+              0.6082762530298219,
+              0.047
+            ]
+          ],
+          "other": 0.0
+        },
+        {
+          "label": "neck pillow",
+          "terms": [
+            [
+              0.8215781443115862,
+              0.15620499351813308,
+              0.974
+            ],
+            [
+              1.2615396881632261,
+              0.18027756377319945,
+              0.005
+            ],
+            [
+              1.370884288645641,
+              0.15620499351813308,
+              0.004
+            ]
+          ],
+          "other": 0.017000000000000015
+        },
+        {
+          "label": "cup",
+          "terms": [
+            [
+              -0.15100995646726756,
+              0.223606797749979,
+              0.621
+            ],
+            [
+              0.9739776148936066,
+              0.1414213562373095,
+              0.201
+            ],
+            [
+              0.9798715927696275,
+              0.2692582403567252,
+              0.124
+            ]
+          ],
+          "other": 0.05399999999999994
+        },
+        {
+          "label": "lamp",
+          "terms": [
+            [
+              1.2099994117597141,
+              0.3640054944640259,
+              0.648
+            ],
+            [
+              1.8745673853996851,
+              0.18027756377319945,
+              0.352
+            ]
+          ],
+          "other": 0.0
+        },
+        {
+          "label": "cup",
+          "terms": [
+            [
+              0.2680995194322577,
+              0.223606797749979,
+              0.968
+            ],
+            [
+              0.8944810036799418,
+              0.1414213562373095,
+              0.032
+            ]
+          ],
+          "other": 0.0
+        },
+        {
+          "label": "picture frame",
+          "terms": [
+            [
+              -0.1948346360136585,
+              0.223606797749979,
+              1.0
+            ]
+          ],
+          "other": 0.0
+        },
+        {
+          "label": "greeting card",
+          "terms": [
+            [
+              -0.6087738609560016,
+              0.223606797749979,
+              0.955
+            ],
+            [
+              0.17155001317633267,
+              0.41231056256176607,
+              0.011
+            ],
+            [
+              -0.3070063500208725,
+              0.15620499351813308,
+              0.006
+            ]
+          ],
+          "other": 0.028000000000000025
+        },
+        {
+          "label": "speaker",
+          "terms": [
+            [
+              0.22065190576098195,
+              0.41231056256176607,
+              1.0
+            ]
+          ],
+          "other": 0.0
+        }
+      ],
+      "outlier": 0.1,
+      "per_object": [
+        5.6193,
+        2.7417,
+        1.1969,
+        1.2413,
+        2.2741,
+        0.8598,
+        3.3535,
+        1.3075,
+        0.823,
+        0.544,
+        1.2469
+      ]
+    }
+  },
+  "recording_alignment": [
+    {
+      "shift_cm": 12.31,
+      "rotation_deg": 7.031,
+      "scale_change_pct": 1.03,
+      "pairs": 10,
+      "points": 30000,
+      "median_gap_cm_before": 10.15,
+      "median_gap_cm_after": 2.84
+    },
+    {
+      "shift_cm": 2.7,
+      "rotation_deg": 2.305,
+      "scale_change_pct": -0.01,
+      "pairs": 13,
+      "points": 36874,
+      "median_gap_cm_before": 4.37,
+      "median_gap_cm_after": 3.01
+    }
+  ],
+  "objects_pruned_unsure": [
+    "A11 sofa (clip 0.38, 11 views)",
+    "A15 cushion (clip 0.32, 17 views)",
+    "A16 wooden crate (clip 0.28, 6 views)",
+    "A20 sofa (clip 0.33, 10 views)",
+    "A25 guitar (clip 0.31, 3 views)",
+    "A28 skirting board (clip 0.10, 5 views)",
+    "A29 skirting board (clip 0.50, 16 views)",
+    "A31 skirting board (clip 0.20, 5 views)",
+    "A32 jumper (clip 0.17, 15 views)",
+    "A33 neck pillow (clip 0.08, 10 views)",
+    "A37 skirting board (clip 0.07, 16 views)",
+    "A38 tissue box (clip 0.23, 5 views)",
+    "A40 skirting board (clip 0.16, 19 views)",
+    "A41 tablet (clip 0.45, 7 views)",
+    "A43 chair (size check 0.07, 2 views)",
+    "A44 table tennis bat (clip 0.15, 3 views)",
+    "A45 picture frame (detector 1.00, 1 views)",
+    "A47 plate (clip 0.16, 12 views)",
+    "A48 skirting board (clip 0.45, 2 views)",
+    "A50 skirting board (clip 0.09, 4 views)",
+    "A52 cushion (clip 0.09, 1 views)",
+    "A54 pen (clip 0.23, 1 views)",
+    "A55 sock (clip 0.11, 2 views)",
+    "A56 table tennis bat (clip 0.26, 1 views)",
+    "A57 clock (clip 0.06, 1 views)",
+    "A58 table tennis bat (clip 0.25, 1 views)",
+    "B10 side table (clip 0.26, 16 views)",
+    "B18 skirting board (clip 0.25, 7 views)",
+    "B19 skirting board (clip 0.15, 11 views)",
+    "B20 vase (clip 0.08, 7 views)",
+    "B25 extension lead (clip 0.17, 6 views)",
+    "B32 large surface (size check 0.00, 7 views)",
+    "B34 stool (size check 0.12, 11 views)",
+    "B35 picture frame (detector 1.00, 2 views)",
+    "B36 skirting board (clip 0.13, 2 views)",
+    "B37 neck pillow (clip 0.07, 4 views)",
+    "B38 poster (clip 0.07, 4 views)"
+  ],
+  "objects_paired_both_ways": 15,
+  "A_points": 600000,
+  "A_observed_frac": 0.9702,
+  "A_changed_frac": 0.06155,
+  "A_gone_frac": 0.01105,
+  "A_appearance_frac": 0.0505,
+  "B_points": 600000,
+  "B_observed_frac": 0.9951,
+  "B_changed_frac": 0.07755,
+  "B_gone_frac": 0.04272,
+  "B_appearance_frac": 0.03482,
+  "changed_frac": 0.06955,
+  "alignment_residual_cross": 0.1051,
+  "alignment_residual_within": 0.0785,
+  "n_removed": 0,
+  "n_added": 3,
+  "n_moved": 1,
+  "n_appearance": 2,
+  "n_changes": 6,
+  "n_background_labelled": 0,
+  "thr_tau_rel_depth": 0.2352,
+  "thr_gone_frac": 0.54064,
+  "thr_appearance": 0.85231,
+  "thr_scene_scale_median_depth": 0.41191,
+  "objects_one_unbroken_track": 0.0,
+  "objects_tracks_median": 1.0,
+  "objects_runs_median": 4.0,
+  "objects_labelled_by_detector": 25,
+  "objects_parts_joined": 4,
+  "unc_cm_A_median": 7.888,
+  "unc_cm_B_median": 8.963,
+  "field_scale_phone_height": 3.7664,
+  "field_scale_objects": 0.904,
+  "field_scale_metric_depth": 2.7631,
+  "field_scale_objects_n": 11,
+  "field_scale_disagreement_sigma": 3.02,
+  "field_gravity_change_deg": 2.2,
+  "field_floor_inlier_frac": 0.03,
+  "field_scale_m_per_unit": 2.502,
+  "field_scale_range": [
+    2.2372,
+    2.7716
+  ],
+  "field_uncertainty_cm_median": 9.743,
+  "field_uncertainty_cm_p90": 20.608,
+  "field_shift_cm_median_abs": 9.915,
+  "field_shift_cm_p99_abs": 40.044,
+  "field_reachable_frac": 0.17,
+  "field_approachable_frac": 0.023,
+  "field_interactable_frac": 0.0,
+  "field_grasp_frac": 0.0,
+  "field_push_frac": 0.001,
+  "field_place_frac": 0.0,
+  "field_points_on_objects": 0.458,
+  "field_base_standable_frac": 0.007,
+  "field_base_best_score": 0.174,
+  "field_base_best_score_changed": 0.185,
+  "field_base_best_from_operator_m": 0.77,
+  "obj_total": 17,
+  "obj_A": 12,
+  "obj_B": 16,
+  "obj_compared": 16,
+  "obj_changed": 6,
+  "obj_changed_frac": 0.375,
+  "obj_labelled_confident": 16,
+  "obj_moved": 2,
+  "obj_added": 3,
+  "obj_removed": 0,
+  "obj_changed_in_place": 1,
+  "obj_shifted": 0,
+  "obj_thr_gone": 0.3,
+  "obj_thr_appearance": 0.7548644498958862,
+  "obj_thr_shift": 0.06038870463573757,
+  "obj_thr_null_objects": 62,
+  "obj_thr_null_quantile": 0.975,
+  "poses": {
+    "frame_size": [
+      576,
+      1024
+    ],
+    "frame_pairs_tried": 8068,
+    "frame_pairs_matched": 6718,
+    "sparse_frames_rematched": 1,
+    "frames_outside_main_group": 0,
+    "frames_outside_main_group_after": 0,
+    "trajectory_jumps_vggt": [
+      2,
+      0
+    ],
+    "vggt": {
+      "median_px": 8.515538696548756,
+      "points": 215252,
+      "observations": 807311
+    },
+    "rounds": [
+      {
+        "median_px": 3.977914849073732,
+        "points": 215252,
+        "observations": 807311
+      },
+      {
+        "median_px": 1.06676923591646,
+        "points": 139667,
+        "observations": 445661
+      }
+    ],
+    "final": {
+      "median_px": 0.7286335372190984,
+      "p90_px": 1.9438058282616215,
+      "points": 101452,
+      "observations": 307646
+    },
+    "per_frame_median_px": {
+      "median": 0.8557721243635623,
+      "p90": 1.345391110252686,
+      "worst": 2.6419227856742893
+    },
+    "pose_px": {
+      "median": 0.40343381525270394,
+      "p90": 1.017409876341878,
+      "frames_unconstrained": 9
+    },
+    "frames_with_few_points": 55,
+    "frames_pruned_and_replaced": 0,
+    "prune_rounds": [],
+    "frames_resected": 38,
+    "frames_interpolated": 17,
+    "frames_without_points": 1,
+    "rotation_change_deg_median": 1.8938818613762336,
+    "rotation_change_deg_p90": 6.431249426156393,
+    "centre_change_median_rel": 0.025402851032940703,
+    "focal_change": [
+      1.0128947492721219,
+      1.0022398862759851
+    ],
+    "per_recording_median_px": [
+      0.7554865918858626,
+      0.704820570813609
+    ],
+    "points_in_both": 258,
+    "trajectory_jumps": [
+      25,
+      23
+    ],
+    "points_in_both_median_px": 1.2275065762896613,
+    "observations_kept_share": 0.15649523437456284,
+    "seconds": 356,
+    "depth_scale_median": 0.9110032320022583,
+    "depth_scale_p10_p90": [
+      0.7450547814369202,
+      1.1107709407806396
+    ],
+    "depth_scale_per_recording": [
+      0.9577033519744873,
+      0.822591245174408
+    ]
+  },
+  "assets_objects": 28,
+  "assets_deformable": 0,
+  "assets_contacts": 18,
+  "pos_method": "model (VGGT confidence + SAM 2 wobble, fused)",
+  "pos_radius90_cm_median": 7.0,
+  "pos_radius90_cm_views_median": 5.75,
+  "pos_single_view_radius90_cm_median": 1.46,
+  "pos_depth_sd_cm_median": 13.68,
+  "pos_side_sd_cm_median": 0.04,
+  "pos_nis_median": 56977.88,
+  "pos_views_median": 12,
+  "pos_wobble_share": 1.0,
+  "pos_views_curve": {
+    "1": {
+      "median_radius90_cm": 15.42,
+      "objects": 22
+    },
+    "2": {
+      "median_radius90_cm": 11.47,
+      "objects": 22
+    },
+    "4": {
+      "median_radius90_cm": 8.51,
+      "objects": 13
+    },
+    "8": {
+      "median_radius90_cm": 10.12,
+      "objects": 2
+    }
+  },
+  "pos_model_curve": {
+    "1": {
+      "median_radius90_cm": 0.86,
+      "objects": 28
+    },
+    "2": {
+      "median_radius90_cm": 0.32,
+      "objects": 28
+    },
+    "4": {
+      "median_radius90_cm": 0.13,
+      "objects": 27
+    },
+    "8": {
+      "median_radius90_cm": 0.08,
+      "objects": 22
+    },
+    "16": {
+      "median_radius90_cm": 0.04,
+      "objects": 8
+    }
+  },
+  "pos_unchanged_pairs": 5,
+  "pos_coverage90_unchanged": 0.0,
+  "step_seconds": 9302.8
+}

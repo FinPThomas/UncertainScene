@@ -1,0 +1,1253 @@
+[
+  {
+    "a": "sofa A0",
+    "b": "towel A11",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa A0",
+    "b": "guitar A13",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "sofa A0",
+    "b": "box A15",
+    "relation": "next to",
+    "gap_cm": 1.7
+  },
+  {
+    "a": "sofa A0",
+    "b": "book A17",
+    "relation": "next to",
+    "gap_cm": 1.0
+  },
+  {
+    "a": "sofa A0",
+    "b": "neck pillow A19",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "sofa A0",
+    "b": "cup A22",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "sofa A0",
+    "b": "lamp A24",
+    "relation": "next to",
+    "gap_cm": 3.5
+  },
+  {
+    "a": "cup A25",
+    "b": "sofa A0",
+    "relation": "on top of",
+    "share": 1.0,
+    "gap_cm": 0.2
+  },
+  {
+    "a": "sofa A1",
+    "b": "towel A11",
+    "relation": "on top of",
+    "share": 0.52,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa A1",
+    "b": "guitar A13",
+    "relation": "next to",
+    "gap_cm": 0.4
+  },
+  {
+    "a": "sofa A1",
+    "b": "box A15",
+    "relation": "next to",
+    "gap_cm": 0.4
+  },
+  {
+    "a": "sofa A1",
+    "b": "book A17",
+    "relation": "next to",
+    "gap_cm": 0.3
+  },
+  {
+    "a": "sofa A1",
+    "b": "lamp A24",
+    "relation": "next to",
+    "gap_cm": 8.7
+  },
+  {
+    "a": "sofa A1",
+    "b": "cup A25",
+    "relation": "next to",
+    "gap_cm": 2.2
+  },
+  {
+    "a": "sofa A2",
+    "b": "towel A11",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa A2",
+    "b": "guitar A13",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa A2",
+    "b": "book A17",
+    "relation": "next to",
+    "gap_cm": 0.4
+  },
+  {
+    "a": "sofa A2",
+    "b": "lamp A24",
+    "relation": "next to",
+    "gap_cm": 4.7
+  },
+  {
+    "a": "sofa A3",
+    "b": "neck pillow A19",
+    "relation": "next to",
+    "gap_cm": 1.3
+  },
+  {
+    "a": "rug A4",
+    "b": "guitar A13",
+    "relation": "next to",
+    "gap_cm": 1.9
+  },
+  {
+    "a": "sofa A5",
+    "b": "box A15",
+    "relation": "next to",
+    "gap_cm": 14.1
+  },
+  {
+    "a": "sofa A5",
+    "b": "book A17",
+    "relation": "next to",
+    "gap_cm": 8.0
+  },
+  {
+    "a": "sofa A5",
+    "b": "neck pillow A19",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "sofa A5",
+    "b": "cup A22",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "sofa A5",
+    "b": "lamp A24",
+    "relation": "next to",
+    "gap_cm": 5.4
+  },
+  {
+    "a": "coffee table A6",
+    "b": "towel A11",
+    "relation": "next to",
+    "gap_cm": 13.2
+  },
+  {
+    "a": "coffee table A6",
+    "b": "guitar A13",
+    "relation": "next to",
+    "gap_cm": 11.7
+  },
+  {
+    "a": "sofa A7",
+    "b": "towel A11",
+    "relation": "next to",
+    "gap_cm": 0.6
+  },
+  {
+    "a": "sofa A7",
+    "b": "guitar A13",
+    "relation": "next to",
+    "gap_cm": 0.9
+  },
+  {
+    "a": "sofa A7",
+    "b": "box A15",
+    "relation": "next to",
+    "gap_cm": 0.3
+  },
+  {
+    "a": "sofa A7",
+    "b": "book A17",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "cup A22",
+    "b": "sofa A7",
+    "relation": "on top of",
+    "share": 0.72,
+    "gap_cm": 0.1
+  },
+  {
+    "a": "lamp A24",
+    "b": "sofa A7",
+    "relation": "on top of",
+    "share": 0.99,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa A7",
+    "b": "cup A25",
+    "relation": "next to",
+    "gap_cm": 0.4
+  },
+  {
+    "a": "sofa A7",
+    "b": "picture frame A26",
+    "relation": "next to",
+    "gap_cm": 7.1
+  },
+  {
+    "a": "sofa A8",
+    "b": "guitar A13",
+    "relation": "next to",
+    "gap_cm": 0.3
+  },
+  {
+    "a": "sofa A8",
+    "b": "box A15",
+    "relation": "next to",
+    "gap_cm": 2.6
+  },
+  {
+    "a": "sofa A8",
+    "b": "cup A25",
+    "relation": "next to",
+    "gap_cm": 7.4
+  },
+  {
+    "a": "sofa A8",
+    "b": "picture frame A26",
+    "relation": "next to",
+    "gap_cm": 2.7
+  },
+  {
+    "a": "large surface A9",
+    "b": "towel A11",
+    "relation": "next to",
+    "gap_cm": 1.4
+  },
+  {
+    "a": "large surface A9",
+    "b": "guitar A13",
+    "relation": "next to",
+    "gap_cm": 0.2
+  },
+  {
+    "a": "large surface A9",
+    "b": "box A15",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "large surface A9",
+    "b": "book A17",
+    "relation": "next to",
+    "gap_cm": 0.2
+  },
+  {
+    "a": "large surface A9",
+    "b": "cup A22",
+    "relation": "next to",
+    "gap_cm": 0.6
+  },
+  {
+    "a": "large surface A9",
+    "b": "lamp A24",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "large surface A9",
+    "b": "cup A25",
+    "relation": "next to",
+    "gap_cm": 0.8
+  },
+  {
+    "a": "large surface A9",
+    "b": "picture frame A26",
+    "relation": "next to",
+    "gap_cm": 5.5
+  },
+  {
+    "a": "guitar A10",
+    "b": "towel A11",
+    "relation": "next to",
+    "gap_cm": 12.2
+  },
+  {
+    "a": "guitar A10",
+    "b": "guitar A13",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "towel A11",
+    "b": "guitar A14",
+    "relation": "next to",
+    "gap_cm": 12.6
+  },
+  {
+    "a": "towel A11",
+    "b": "book A17",
+    "relation": "next to",
+    "gap_cm": 15.0
+  },
+  {
+    "a": "towel A11",
+    "b": "guitar A18",
+    "relation": "next to",
+    "gap_cm": 8.4
+  },
+  {
+    "a": "towel A11",
+    "b": "sofa A20",
+    "relation": "next to",
+    "gap_cm": 12.0
+  },
+  {
+    "a": "towel A11",
+    "b": "lamp A24",
+    "relation": "next to",
+    "gap_cm": 8.5
+  },
+  {
+    "a": "skirting board A12",
+    "b": "guitar A13",
+    "relation": "next to",
+    "gap_cm": 11.6
+  },
+  {
+    "a": "skirting board A12",
+    "b": "book A17",
+    "relation": "next to",
+    "gap_cm": 4.9
+  },
+  {
+    "a": "skirting board A12",
+    "b": "neck pillow A19",
+    "relation": "next to",
+    "gap_cm": 1.3
+  },
+  {
+    "a": "cup A22",
+    "b": "skirting board A12",
+    "relation": "on top of",
+    "share": 0.91,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "skirting board A12",
+    "b": "lamp A24",
+    "relation": "next to",
+    "gap_cm": 2.3
+  },
+  {
+    "a": "guitar A18",
+    "b": "guitar A13",
+    "relation": "on top of",
+    "share": 0.75,
+    "gap_cm": 0.1
+  },
+  {
+    "a": "guitar A13",
+    "b": "cup A25",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "skirting board A32",
+    "b": "guitar A13",
+    "relation": "on top of",
+    "share": 0.89,
+    "gap_cm": 3.0
+  },
+  {
+    "a": "box A15",
+    "b": "plant A23",
+    "relation": "next to",
+    "gap_cm": 9.3
+  },
+  {
+    "a": "box A15",
+    "b": "cup A25",
+    "relation": "next to",
+    "gap_cm": 12.0
+  },
+  {
+    "a": "picture frame A26",
+    "b": "box A15",
+    "relation": "on top of",
+    "share": 0.68,
+    "gap_cm": 0.1
+  },
+  {
+    "a": "box A15",
+    "b": "greeting card A27",
+    "relation": "next to",
+    "gap_cm": 0.2
+  },
+  {
+    "a": "hat A16",
+    "b": "neck pillow A19",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "hat A16",
+    "b": "cup A22",
+    "relation": "next to",
+    "gap_cm": 3.1
+  },
+  {
+    "a": "book A17",
+    "b": "guitar A18",
+    "relation": "next to",
+    "gap_cm": 5.4
+  },
+  {
+    "a": "book A17",
+    "b": "cup A22",
+    "relation": "next to",
+    "gap_cm": 5.0
+  },
+  {
+    "a": "book A17",
+    "b": "lamp A24",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "book A17",
+    "b": "skirting board A28",
+    "relation": "next to",
+    "gap_cm": 6.2
+  },
+  {
+    "a": "book A17",
+    "b": "skirting board A30",
+    "relation": "next to",
+    "gap_cm": 6.3
+  },
+  {
+    "a": "guitar A18",
+    "b": "neck pillow A19",
+    "relation": "next to",
+    "gap_cm": 2.2
+  },
+  {
+    "a": "cup A22",
+    "b": "guitar A18",
+    "relation": "on top of",
+    "share": 1.0,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "guitar A18",
+    "b": "lamp A24",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "guitar A18",
+    "b": "cup A25",
+    "relation": "next to",
+    "gap_cm": 8.2
+  },
+  {
+    "a": "neck pillow A19",
+    "b": "cup A22",
+    "relation": "next to",
+    "gap_cm": 2.2
+  },
+  {
+    "a": "neck pillow A19",
+    "b": "skirting board A28",
+    "relation": "next to",
+    "gap_cm": 11.2
+  },
+  {
+    "a": "neck pillow A19",
+    "b": "skirting board A29",
+    "relation": "next to",
+    "gap_cm": 10.8
+  },
+  {
+    "a": "neck pillow A19",
+    "b": "skirting board A30",
+    "relation": "next to",
+    "gap_cm": 11.0
+  },
+  {
+    "a": "skirting board A21",
+    "b": "speaker A31",
+    "relation": "next to",
+    "gap_cm": 11.0
+  },
+  {
+    "a": "cup A22",
+    "b": "lamp A24",
+    "relation": "next to",
+    "gap_cm": 2.5
+  },
+  {
+    "a": "cup A22",
+    "b": "skirting board A28",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "cup A22",
+    "b": "skirting board A30",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "plant A23",
+    "b": "picture frame A26",
+    "relation": "on top of",
+    "share": 0.35,
+    "gap_cm": 0.8
+  },
+  {
+    "a": "plant A23",
+    "b": "greeting card A27",
+    "relation": "next to",
+    "gap_cm": 0.8
+  },
+  {
+    "a": "lamp A24",
+    "b": "skirting board A28",
+    "relation": "next to",
+    "gap_cm": 10.3
+  },
+  {
+    "a": "lamp A24",
+    "b": "skirting board A30",
+    "relation": "next to",
+    "gap_cm": 10.5
+  },
+  {
+    "a": "picture frame A26",
+    "b": "greeting card A27",
+    "relation": "next to",
+    "gap_cm": 2.5
+  },
+  {
+    "a": "sofa B0",
+    "b": "cushion B7",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "cushion B8",
+    "b": "sofa B0",
+    "relation": "on top of",
+    "share": 0.74,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa B0",
+    "b": "cabinet B11",
+    "relation": "next to",
+    "gap_cm": 0.2
+  },
+  {
+    "a": "sofa B0",
+    "b": "skirting board B12",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa B0",
+    "b": "guitar B13",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "book B16",
+    "b": "sofa B0",
+    "relation": "on top of",
+    "share": 0.37,
+    "gap_cm": 1.3
+  },
+  {
+    "a": "book B17",
+    "b": "sofa B0",
+    "relation": "on top of",
+    "share": 0.49,
+    "gap_cm": 0.3
+  },
+  {
+    "a": "sofa B0",
+    "b": "neck pillow B18",
+    "relation": "next to",
+    "gap_cm": 1.7
+  },
+  {
+    "a": "cup B19",
+    "b": "sofa B0",
+    "relation": "on top of",
+    "share": 0.51,
+    "gap_cm": 0.1
+  },
+  {
+    "a": "baseball cap B20",
+    "b": "sofa B0",
+    "relation": "on top of",
+    "share": 0.36,
+    "gap_cm": 0.5
+  },
+  {
+    "a": "sofa B0",
+    "b": "table tennis bat B21",
+    "relation": "next to",
+    "gap_cm": 1.0
+  },
+  {
+    "a": "book B22",
+    "b": "sofa B0",
+    "relation": "on top of",
+    "share": 0.97,
+    "gap_cm": 0.1
+  },
+  {
+    "a": "cup B25",
+    "b": "sofa B0",
+    "relation": "on top of",
+    "share": 0.36,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "book B26",
+    "b": "sofa B0",
+    "relation": "on top of",
+    "share": 0.78,
+    "gap_cm": 0.2
+  },
+  {
+    "a": "sofa B0",
+    "b": "book B27",
+    "relation": "next to",
+    "gap_cm": 12.8
+  },
+  {
+    "a": "large surface B1",
+    "b": "cushion B7",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "large surface B1",
+    "b": "cushion B8",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "large surface B1",
+    "b": "cabinet B11",
+    "relation": "next to",
+    "gap_cm": 11.9
+  },
+  {
+    "a": "large surface B1",
+    "b": "guitar B13",
+    "relation": "next to",
+    "gap_cm": 0.2
+  },
+  {
+    "a": "large surface B1",
+    "b": "book B16",
+    "relation": "next to",
+    "gap_cm": 0.3
+  },
+  {
+    "a": "large surface B1",
+    "b": "cup B19",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "large surface B1",
+    "b": "table tennis bat B21",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "large surface B1",
+    "b": "book B22",
+    "relation": "next to",
+    "gap_cm": 1.4
+  },
+  {
+    "a": "large surface B1",
+    "b": "cup B25",
+    "relation": "next to",
+    "gap_cm": 2.4
+  },
+  {
+    "a": "large surface B1",
+    "b": "book B26",
+    "relation": "next to",
+    "gap_cm": 0.4
+  },
+  {
+    "a": "rug B2",
+    "b": "cushion B8",
+    "relation": "next to",
+    "gap_cm": 14.2
+  },
+  {
+    "a": "rug B2",
+    "b": "skirting board B12",
+    "relation": "next to",
+    "gap_cm": 5.3
+  },
+  {
+    "a": "rug B2",
+    "b": "guitar B13",
+    "relation": "next to",
+    "gap_cm": 2.2
+  },
+  {
+    "a": "skirting board B3",
+    "b": "cushion B8",
+    "relation": "next to",
+    "gap_cm": 0.4
+  },
+  {
+    "a": "skirting board B3",
+    "b": "skirting board B12",
+    "relation": "next to",
+    "gap_cm": 0.4
+  },
+  {
+    "a": "skirting board B3",
+    "b": "guitar B13",
+    "relation": "next to",
+    "gap_cm": 5.7
+  },
+  {
+    "a": "sofa B4",
+    "b": "cushion B7",
+    "relation": "next to",
+    "gap_cm": 3.1
+  },
+  {
+    "a": "sofa B4",
+    "b": "cushion B8",
+    "relation": "next to",
+    "gap_cm": 6.7
+  },
+  {
+    "a": "sofa B4",
+    "b": "neck pillow B18",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "sofa B4",
+    "b": "baseball cap B20",
+    "relation": "next to",
+    "gap_cm": 1.1
+  },
+  {
+    "a": "sofa B4",
+    "b": "speaker B28",
+    "relation": "next to",
+    "gap_cm": 1.3
+  },
+  {
+    "a": "sofa B5",
+    "b": "cushion B7",
+    "relation": "next to",
+    "gap_cm": 5.6
+  },
+  {
+    "a": "sofa B5",
+    "b": "cushion B8",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa B5",
+    "b": "skirting board B12",
+    "relation": "on top of",
+    "share": 0.56,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa B5",
+    "b": "guitar B13",
+    "relation": "next to",
+    "gap_cm": 1.2
+  },
+  {
+    "a": "sofa B5",
+    "b": "book B16",
+    "relation": "next to",
+    "gap_cm": 12.8
+  },
+  {
+    "a": "sofa B5",
+    "b": "book B17",
+    "relation": "next to",
+    "gap_cm": 2.7
+  },
+  {
+    "a": "sofa B5",
+    "b": "table tennis bat B21",
+    "relation": "next to",
+    "gap_cm": 1.0
+  },
+  {
+    "a": "sofa B5",
+    "b": "book B22",
+    "relation": "next to",
+    "gap_cm": 7.2
+  },
+  {
+    "a": "sofa B5",
+    "b": "book B26",
+    "relation": "next to",
+    "gap_cm": 10.2
+  },
+  {
+    "a": "sofa B6",
+    "b": "cushion B7",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa B6",
+    "b": "cushion B8",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa B6",
+    "b": "book B16",
+    "relation": "on top of",
+    "share": 0.49,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa B6",
+    "b": "neck pillow B18",
+    "relation": "next to",
+    "gap_cm": 2.8
+  },
+  {
+    "a": "baseball cap B20",
+    "b": "sofa B6",
+    "relation": "on top of",
+    "share": 0.69,
+    "gap_cm": 0.1
+  },
+  {
+    "a": "sofa B6",
+    "b": "table tennis bat B21",
+    "relation": "next to",
+    "gap_cm": 0.9
+  },
+  {
+    "a": "sofa B6",
+    "b": "book B22",
+    "relation": "on top of",
+    "share": 0.82,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa B6",
+    "b": "cup B25",
+    "relation": "next to",
+    "gap_cm": 12.0
+  },
+  {
+    "a": "sofa B6",
+    "b": "book B26",
+    "relation": "on top of",
+    "share": 0.89,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "cushion B7",
+    "b": "cushion B8",
+    "relation": "next to",
+    "gap_cm": 0.3
+  },
+  {
+    "a": "sofa B9",
+    "b": "cushion B7",
+    "relation": "on top of",
+    "share": 0.72,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "cushion B7",
+    "b": "large surface B14",
+    "relation": "next to",
+    "gap_cm": 7.7
+  },
+  {
+    "a": "cushion B7",
+    "b": "wall B15",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "cushion B7",
+    "b": "book B16",
+    "relation": "next to",
+    "gap_cm": 0.2
+  },
+  {
+    "a": "cushion B7",
+    "b": "book B17",
+    "relation": "next to",
+    "gap_cm": 7.5
+  },
+  {
+    "a": "cushion B7",
+    "b": "neck pillow B18",
+    "relation": "next to",
+    "gap_cm": 0.3
+  },
+  {
+    "a": "baseball cap B20",
+    "b": "cushion B7",
+    "relation": "on top of",
+    "share": 0.7,
+    "gap_cm": 0.1
+  },
+  {
+    "a": "cushion B7",
+    "b": "table tennis bat B21",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "cushion B7",
+    "b": "book B22",
+    "relation": "next to",
+    "gap_cm": 9.8
+  },
+  {
+    "a": "cushion B7",
+    "b": "book B26",
+    "relation": "next to",
+    "gap_cm": 3.9
+  },
+  {
+    "a": "sofa B9",
+    "b": "cushion B8",
+    "relation": "on top of",
+    "share": 0.31,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "cushion B8",
+    "b": "guitar B10",
+    "relation": "next to",
+    "gap_cm": 0.5
+  },
+  {
+    "a": "cushion B8",
+    "b": "cabinet B11",
+    "relation": "next to",
+    "gap_cm": 10.9
+  },
+  {
+    "a": "cushion B8",
+    "b": "skirting board B12",
+    "relation": "next to",
+    "gap_cm": 0.9
+  },
+  {
+    "a": "cushion B8",
+    "b": "guitar B13",
+    "relation": "next to",
+    "gap_cm": 0.2
+  },
+  {
+    "a": "cushion B8",
+    "b": "large surface B14",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "cushion B8",
+    "b": "wall B15",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "cushion B8",
+    "b": "book B17",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "cushion B8",
+    "b": "cup B19",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "cushion B8",
+    "b": "baseball cap B20",
+    "relation": "next to",
+    "gap_cm": 1.7
+  },
+  {
+    "a": "cushion B8",
+    "b": "hat B23",
+    "relation": "next to",
+    "gap_cm": 8.6
+  },
+  {
+    "a": "cushion B8",
+    "b": "skirting board B24",
+    "relation": "next to",
+    "gap_cm": 11.4
+  },
+  {
+    "a": "cushion B8",
+    "b": "cup B25",
+    "relation": "next to",
+    "gap_cm": 0.5
+  },
+  {
+    "a": "sofa B9",
+    "b": "guitar B13",
+    "relation": "next to",
+    "gap_cm": 11.4
+  },
+  {
+    "a": "sofa B9",
+    "b": "book B16",
+    "relation": "next to",
+    "gap_cm": 6.7
+  },
+  {
+    "a": "sofa B9",
+    "b": "neck pillow B18",
+    "relation": "next to",
+    "gap_cm": 2.5
+  },
+  {
+    "a": "baseball cap B20",
+    "b": "sofa B9",
+    "relation": "on top of",
+    "share": 0.73,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "sofa B9",
+    "b": "table tennis bat B21",
+    "relation": "next to",
+    "gap_cm": 0.9
+  },
+  {
+    "a": "sofa B9",
+    "b": "cup B25",
+    "relation": "next to",
+    "gap_cm": 12.0
+  },
+  {
+    "a": "sofa B9",
+    "b": "book B26",
+    "relation": "next to",
+    "gap_cm": 13.8
+  },
+  {
+    "a": "guitar B10",
+    "b": "skirting board B12",
+    "relation": "next to",
+    "gap_cm": 0.2
+  },
+  {
+    "a": "guitar B10",
+    "b": "guitar B13",
+    "relation": "next to",
+    "gap_cm": 5.4
+  },
+  {
+    "a": "cabinet B11",
+    "b": "cup B25",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "book B27",
+    "b": "cabinet B11",
+    "relation": "on top of",
+    "share": 0.7,
+    "gap_cm": 0.9
+  },
+  {
+    "a": "skirting board B12",
+    "b": "book B17",
+    "relation": "next to",
+    "gap_cm": 10.6
+  },
+  {
+    "a": "skirting board B12",
+    "b": "skirting board B24",
+    "relation": "next to",
+    "gap_cm": 0.2
+  },
+  {
+    "a": "guitar B13",
+    "b": "wall B15",
+    "relation": "next to",
+    "gap_cm": 13.6
+  },
+  {
+    "a": "guitar B13",
+    "b": "book B17",
+    "relation": "next to",
+    "gap_cm": 9.0
+  },
+  {
+    "a": "guitar B13",
+    "b": "cup B19",
+    "relation": "next to",
+    "gap_cm": 3.6
+  },
+  {
+    "a": "guitar B13",
+    "b": "skirting board B24",
+    "relation": "next to",
+    "gap_cm": 6.2
+  },
+  {
+    "a": "large surface B14",
+    "b": "book B16",
+    "relation": "next to",
+    "gap_cm": 1.9
+  },
+  {
+    "a": "large surface B14",
+    "b": "book B17",
+    "relation": "next to",
+    "gap_cm": 0.0
+  },
+  {
+    "a": "book B22",
+    "b": "large surface B14",
+    "relation": "on top of",
+    "share": 0.61,
+    "gap_cm": 0.2
+  },
+  {
+    "a": "book B26",
+    "b": "large surface B14",
+    "relation": "on top of",
+    "share": 0.34,
+    "gap_cm": 0.7
+  },
+  {
+    "a": "wall B15",
+    "b": "book B16",
+    "relation": "next to",
+    "gap_cm": 0.2
+  },
+  {
+    "a": "wall B15",
+    "b": "baseball cap B20",
+    "relation": "next to",
+    "gap_cm": 9.8
+  },
+  {
+    "a": "wall B15",
+    "b": "table tennis bat B21",
+    "relation": "next to",
+    "gap_cm": 4.4
+  },
+  {
+    "a": "wall B15",
+    "b": "book B22",
+    "relation": "next to",
+    "gap_cm": 1.5
+  },
+  {
+    "a": "wall B15",
+    "b": "cup B25",
+    "relation": "next to",
+    "gap_cm": 10.8
+  },
+  {
+    "a": "wall B15",
+    "b": "book B26",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "book B16",
+    "b": "table tennis bat B21",
+    "relation": "next to",
+    "gap_cm": 5.6
+  },
+  {
+    "a": "book B16",
+    "b": "book B22",
+    "relation": "on top of",
+    "share": 0.6,
+    "gap_cm": 0.9
+  },
+  {
+    "a": "book B16",
+    "b": "book B26",
+    "relation": "on top of",
+    "share": 0.71,
+    "gap_cm": 0.0
+  },
+  {
+    "a": "neck pillow B18",
+    "b": "hat B23",
+    "relation": "next to",
+    "gap_cm": 0.1
+  },
+  {
+    "a": "baseball cap B20",
+    "b": "hat B23",
+    "relation": "next to",
+    "gap_cm": 14.3
+  },
+  {
+    "a": "table tennis bat B21",
+    "b": "book B22",
+    "relation": "next to",
+    "gap_cm": 7.8
+  },
+  {
+    "a": "table tennis bat B21",
+    "b": "book B26",
+    "relation": "next to",
+    "gap_cm": 9.7
+  },
+  {
+    "a": "book B26",
+    "b": "book B22",
+    "relation": "on top of",
+    "share": 0.83,
+    "gap_cm": 0.0
+  }
+]

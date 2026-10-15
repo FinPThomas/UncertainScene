@@ -1,0 +1,304 @@
+2026-10-15 19:09:37,225 INFO uncertainscene.scene01: step 1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a: scene01_dark_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects2
+2026-10-15 19:09:51,787 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-10-15 19:09:51,892 INFO dinov2: using MLP layer as FFN
+2026-10-15 19:13:25,758 INFO uncertainscene.recon.vggt: loaded facebook/VGGT-1B on cuda in 215 s
+2026-10-15 19:14:09,634 INFO uncertainscene.recon.chunked: chunk 2/19: 48 frames, scale 1.004, anchor residual 0.003 (relative to depth)
+2026-10-15 19:14:31,533 INFO uncertainscene.recon.chunked: chunk 3/19: 48 frames, scale 0.993, anchor residual 0.004 (relative to depth)
+2026-10-15 19:14:54,533 INFO uncertainscene.recon.chunked: chunk 4/19: 48 frames, scale 0.993, anchor residual 0.006 (relative to depth)
+2026-10-15 19:15:18,117 INFO uncertainscene.recon.chunked: chunk 5/19: 47 frames, scale 0.984, anchor residual 0.006 (relative to depth)
+2026-10-15 19:15:41,468 INFO uncertainscene.recon.chunked: chunk 6/19: 47 frames, scale 0.980, anchor residual 0.007 (relative to depth)
+2026-10-15 19:16:04,489 INFO uncertainscene.recon.chunked: chunk 7/19: 47 frames, scale 0.979, anchor residual 0.008 (relative to depth)
+2026-10-15 19:16:27,554 INFO uncertainscene.recon.chunked: chunk 8/19: 47 frames, scale 0.986, anchor residual 0.008 (relative to depth)
+2026-10-15 19:16:50,671 INFO uncertainscene.recon.chunked: chunk 9/19: 47 frames, scale 0.972, anchor residual 0.007 (relative to depth)
+2026-10-15 19:17:13,732 INFO uncertainscene.recon.chunked: chunk 10/19: 47 frames, scale 0.982, anchor residual 0.008 (relative to depth)
+2026-10-15 19:17:36,832 INFO uncertainscene.recon.chunked: chunk 11/19: 47 frames, scale 0.981, anchor residual 0.006 (relative to depth)
+2026-10-15 19:17:59,876 INFO uncertainscene.recon.chunked: chunk 12/19: 47 frames, scale 0.980, anchor residual 0.005 (relative to depth)
+2026-10-15 19:18:23,023 INFO uncertainscene.recon.chunked: chunk 13/19: 47 frames, scale 0.991, anchor residual 0.005 (relative to depth)
+2026-10-15 19:18:46,122 INFO uncertainscene.recon.chunked: chunk 14/19: 47 frames, scale 0.989, anchor residual 0.005 (relative to depth)
+2026-10-15 19:19:09,291 INFO uncertainscene.recon.chunked: chunk 15/19: 47 frames, scale 0.985, anchor residual 0.004 (relative to depth)
+2026-10-15 19:19:32,290 INFO uncertainscene.recon.chunked: chunk 16/19: 47 frames, scale 0.976, anchor residual 0.004 (relative to depth)
+2026-10-15 19:19:38,042 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 19:19:55,396 INFO uncertainscene.recon.chunked: chunk 17/19: 47 frames, scale 0.977, anchor residual 0.004 (relative to depth)
+2026-10-15 19:20:18,461 INFO uncertainscene.recon.chunked: chunk 18/19: 47 frames, scale 0.975, anchor residual 0.005 (relative to depth)
+2026-10-15 19:20:41,568 INFO uncertainscene.recon.chunked: chunk 19/19: 47 frames, scale 0.980, anchor residual 0.003 (relative to depth)
+2026-10-15 19:20:42,347 INFO uncertainscene.recon.vggt: reconstructed 753 frames (382 + 371) in 19 chunks in 652 s; worst chunk residual 0.008
+2026-10-15 19:21:16,984 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] reconstruction (753 frames, 19 chunks, worst anchor residual 0.0083) done in 700 s | RAM 4.5/12.7 GB, disk free 59.5 GB, GPU 4.5/15.0 GB
+2026-10-15 19:25:45,640 INFO uncertainscene.recon.poses: poses: 6718 of 8068 frame pairs matched
+2026-10-15 19:25:48,895 INFO uncertainscene.recon.poses: poses: 0 of 27 frame pairs matched
+2026-10-15 19:25:48,900 INFO uncertainscene.recon.poses: poses: 1 sparse frames, 0 frames outside the main group: 27 extra pairs tried, 0 matched
+2026-10-15 19:25:48,946 INFO uncertainscene.recon.poses: poses: 3623 features/frame, 368364 tracks, 1965849 observations (272 s)
+2026-10-15 19:25:51,774 INFO uncertainscene.recon.poses: poses: VGGT poses reproject at 8.52 px median (215252 points)
+2026-10-15 19:26:27,716 INFO uncertainscene.recon.poses: poses: round 1: 3.98 px median, 215252 points (311 s)
+2026-10-15 19:26:57,800 INFO uncertainscene.recon.poses: poses: round 2: 1.07 px median, 139667 points (341 s)
+2026-10-15 19:27:06,325 INFO uncertainscene.recon.poses: poses: 55 frames with < 30 points: 38 resected, 17 interpolated from neighbours
+2026-10-15 19:27:12,757 INFO uncertainscene.recon.poses: poses: final 0.73 px median, 1.94 px p90 (VGGT 8.52 px); per-frame median worst 2.64 px; cameras turned 1.89 deg median; 55 weak frames (38 resected, 17 interpolated)
+2026-10-15 19:27:12,758 INFO uncertainscene.recon.poses: poses: per recording 0.76, 0.70 px median; 258 points seen in both recordings (1.23 px); 16% of feature observations kept
+2026-10-15 19:27:19,939 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] camera poses refined: 8.5 px -> 0.73 px reprojection error (p90 1.94 px, 38 sparse frames resected, 17 interpolated), cameras turned 1.89 deg (median) done in 363 s | RAM 6.7/12.7 GB, disk free 59.5 GB, GPU 6.3/15.0 GB
+2026-10-15 19:27:27,893 INFO numexpr.utils: NumExpr defaulting to 2 threads.
+2026-10-15 19:27:49,543 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] DINOv2 features done in 30 s | RAM 6.2/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
+2026-10-15 19:29:45,167 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 19:39:52,520 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 19:41:05,458 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] point-level change detection (1200000 points, tau 0.235) done in 796 s | RAM 6.9/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
+2026-10-15 19:41:06,212 INFO uncertainscene.change.floor: floor: gravity refined by 2.2 deg, 30 floor points (3% of horizontal), camera 0.358 units above floor -> 3.766 m/unit
+2026-10-15 19:41:06,518 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] floor (30 floor points, gravity refined 2.2 deg) done in 1 s | RAM 6.9/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
+2026-10-15 19:43:39,907 INFO uncertainscene.change.metric: scale: metric depth 2.763 m/unit from 80 frames (frames spread 18.2%, +-10% 1 sigma)
+2026-10-15 19:43:39,911 INFO uncertainscene.change.floor: scale: most likely 2.763 m/unit (90% 2.334-3.266) from metric_depth 2.763; phone height (not used) 3.766
+2026-10-15 19:43:40,191 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] metric scale (depth model 2.763 m/unit from 80 frames; combined 2.763, 90% 2.334-3.266) done in 154 s | RAM 6.9/12.7 GB, disk free 57.7 GB, GPU 5.9/15.0 GB
+2026-10-15 19:44:14,257 INFO root: Loaded checkpoint sucessfully
+2026-10-15 19:44:15,125 INFO root: Loaded checkpoint sucessfully
+2026-10-15 19:44:15,214 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 19:44:15,267 INFO root: Computing image embeddings for the provided image...
+2026-10-15 19:44:15,461 INFO root: Image embeddings computed.
+2026-10-15 19:50:00,128 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 19:55:58,676 INFO uncertainscene.change.segment: SAM 2 tracking: frame 1/88: 24 new objects (24 tracked so far)
+2026-10-15 19:55:58,685 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 19:55:58,780 INFO root: Computing image embeddings for the provided image...
+2026-10-15 19:55:58,804 INFO root: Image embeddings computed.
+2026-10-15 20:00:06,632 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 20:02:14,697 INFO uncertainscene.change.segment: SAM 2 tracking: frame 9/88: 13 new objects (37 tracked so far)
+2026-10-15 20:02:14,705 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:02:14,742 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:02:14,765 INFO root: Image embeddings computed.
+2026-10-15 20:04:25,005 INFO uncertainscene.change.segment: SAM 2 tracking: frame 17/88: 4 new objects (41 tracked so far)
+2026-10-15 20:04:25,012 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:04:25,044 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:04:25,070 INFO root: Image embeddings computed.
+2026-10-15 20:07:30,010 INFO uncertainscene.change.segment: SAM 2 tracking: frame 25/88: 6 new objects (47 tracked so far)
+2026-10-15 20:07:30,018 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:07:30,055 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:07:30,077 INFO root: Image embeddings computed.
+2026-10-15 20:09:13,251 INFO uncertainscene.change.segment: SAM 2 tracking: frame 33/88: 3 new objects (50 tracked so far)
+2026-10-15 20:09:13,262 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:09:13,303 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:09:13,327 INFO root: Image embeddings computed.
+2026-10-15 20:10:10,892 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 20:11:24,295 INFO uncertainscene.change.segment: SAM 2 tracking: frame 41/88: 4 new objects (54 tracked so far)
+2026-10-15 20:11:24,304 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:11:24,340 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:11:24,365 INFO root: Image embeddings computed.
+2026-10-15 20:15:51,409 INFO uncertainscene.change.segment: SAM 2 tracking: frame 49/88: 9 new objects (63 tracked so far)
+2026-10-15 20:15:51,418 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:15:51,454 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:15:51,477 INFO root: Image embeddings computed.
+2026-10-15 20:16:40,527 INFO uncertainscene.change.segment: SAM 2 tracking: frame 57/88: 1 new objects (64 tracked so far)
+2026-10-15 20:16:40,534 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:16:40,573 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:16:40,596 INFO root: Image embeddings computed.
+2026-10-15 20:20:12,143 INFO uncertainscene.change.segment: SAM 2 tracking: frame 65/88: 7 new objects (71 tracked so far)
+2026-10-15 20:20:12,150 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:20:12,191 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:20:12,219 INFO root: Image embeddings computed.
+2026-10-15 20:20:17,442 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 20:21:55,372 INFO uncertainscene.change.segment: SAM 2 tracking: frame 73/88: 3 new objects (74 tracked so far)
+2026-10-15 20:21:55,380 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:21:55,423 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:21:55,446 INFO root: Image embeddings computed.
+2026-10-15 20:22:44,473 INFO uncertainscene.change.segment: SAM 2 tracking: frame 81/88: 1 new objects (75 tracked so far)
+2026-10-15 20:22:52,362 INFO uncertainscene.change.segment: SAM 2 tracking + detector: 18 part masks not seeded, 2 tracks joined to the object they lie in, 40 of 75 tracks labelled by the detector
+2026-10-15 20:22:52,553 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:22:52,615 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:22:52,705 INFO root: Image embeddings computed.
+2026-10-15 20:30:21,700 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 20:33:13,828 INFO uncertainscene.change.segment: SAM 2 tracking: frame 1/88: 21 new objects (21 tracked so far)
+2026-10-15 20:33:13,839 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:33:13,882 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:33:13,924 INFO root: Image embeddings computed.
+2026-10-15 20:36:45,663 INFO uncertainscene.change.segment: SAM 2 tracking: frame 9/88: 7 new objects (28 tracked so far)
+2026-10-15 20:36:45,676 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:36:45,719 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:36:45,747 INFO root: Image embeddings computed.
+2026-10-15 20:40:28,322 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 20:41:39,309 INFO uncertainscene.change.segment: SAM 2 tracking: frame 17/88: 10 new objects (38 tracked so far)
+2026-10-15 20:41:39,317 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:41:39,360 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:41:39,392 INFO root: Image embeddings computed.
+2026-10-15 20:44:44,222 INFO uncertainscene.change.segment: SAM 2 tracking: frame 25/88: 6 new objects (44 tracked so far)
+2026-10-15 20:44:44,232 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:44:44,277 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:44:44,310 INFO root: Image embeddings computed.
+2026-10-15 20:45:33,196 INFO uncertainscene.change.segment: SAM 2 tracking: frame 33/88: 1 new objects (45 tracked so far)
+2026-10-15 20:45:33,207 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:45:33,249 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:45:33,278 INFO root: Image embeddings computed.
+2026-10-15 20:47:16,493 INFO uncertainscene.change.segment: SAM 2 tracking: frame 41/88: 3 new objects (48 tracked so far)
+2026-10-15 20:47:16,503 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:47:16,544 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:47:16,582 INFO root: Image embeddings computed.
+2026-10-15 20:48:32,560 INFO uncertainscene.change.segment: SAM 2 tracking: frame 49/88: 2 new objects (50 tracked so far)
+2026-10-15 20:48:32,568 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:48:32,610 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:48:32,648 INFO root: Image embeddings computed.
+2026-10-15 20:48:38,853 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:48:38,880 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:48:38,905 INFO root: Image embeddings computed.
+2026-10-15 20:48:44,753 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:48:44,778 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:48:44,802 INFO root: Image embeddings computed.
+2026-10-15 20:49:33,542 INFO uncertainscene.change.segment: SAM 2 tracking: frame 73/88: 1 new objects (51 tracked so far)
+2026-10-15 20:49:33,552 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-15 20:49:33,592 INFO root: Computing image embeddings for the provided image...
+2026-10-15 20:49:33,630 INFO root: Image embeddings computed.
+2026-10-15 20:50:32,560 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 20:51:17,237 INFO uncertainscene.change.segment: SAM 2 tracking: frame 81/88: 3 new objects (54 tracked so far)
+2026-10-15 20:51:25,639 INFO uncertainscene.change.segment: SAM 2 tracking + detector: 15 part masks not seeded, 3 tracks joined to the object they lie in, 35 of 54 tracks labelled by the detector
+2026-10-15 20:51:26,159 INFO uncertainscene.scene01: SAM 2 (tracked through each recording, with YOLOE whole objects): 1797 masks on 88 frames, 124 objects tracked, in 4066 s
+2026-10-15 20:52:03,724 INFO uncertainscene.change.segment: recording A: 927 masks on 44 frames -> 802 fragments -> 60 objects (20 structures), median 11.0 views per object, merge grid 0.0795 units
+2026-10-15 20:52:40,382 INFO uncertainscene.change.segment: recording B: 870 masks on 44 frames -> 782 fragments -> 47 objects (13 structures), median 15.0 views per object, merge grid 0.0795 units
+2026-10-15 20:52:40,853 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] SAM 2 objects (60 in A, 47 in B) done in 4141 s | RAM 8.1/12.7 GB, disk free 56.9 GB, GPU 4.7/15.0 GB
+2026-10-15 20:53:28,366 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] labels for every object (detector votes, CLIP as fallback) done in 48 s | RAM 8.1/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 20:53:28,816 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] names that cannot fit the object's size replaced: 24 done in 0 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 20:53:31,645 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] pieces joined to the touching object of the same name: 5 (59 objects in A, 43 in B) done in 3 s | RAM 8.1/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 20:53:32,120 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] unsure objects dropped: 42 (A11 sofa (clip 0.38, 11 views); A15 cushion (clip 0.32, 17 views); A16 wooden crate (clip 0.28, 6 views); A17 guitar (clip 0.45, 12 views); A20 sofa (clip 0.33, 10 views); A25 guitar (clip 0.31, 3 views); A28 skirting board (clip 0.10, 5 views); A29 skirting board (clip 0.50, 16 views) ...) done in 0 s | RAM 8.1/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 20:53:32,631 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] Rigidity Copilot: expected stiffness of 60 objects done in 1 s | RAM 8.1/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 20:53:32,641 INFO uncertainscene.change.floor: scale: most likely 2.512 m/unit (90% 2.245-2.782) from metric_depth 2.763, objects 0.908; phone height (not used) 3.766
+2026-10-15 20:59:18,272 INFO uncertainscene.change.inventory: objects: 2 one-sided objects paired with the same named object in the other recording
+2026-10-15 20:59:18,763 INFO uncertainscene.change.inventory: object changes: {'A:unchanged': 22, 'A:shifted': 3, 'A:removed': 3, 'A:moved': 2, 'A:not seen in other recording': 1, 'A:changed in place': 1, 'B:unchanged': 15, 'B:added': 6, 'B:shifted': 5, 'B:moved': 2}; thresholds gone 0.300 appearance 0.755 shift 0.0503 (from 60 null objects)
+2026-10-15 20:59:19,235 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] object-level changes done in 347 s | RAM 8.1/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:00:38,286 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 21:10:45,285 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 21:14:28,970 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] after recording re-aligned on 10 unchanged objects: shift 12.31 cm, 7.031 deg, scale 1.03%, object surface gap 10.15 -> 2.84 cm; objects rebuilt done in 910 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:15:04,829 INFO uncertainscene.change.segment: recording A: 927 masks on 44 frames -> 802 fragments -> 60 objects (21 structures), median 11.0 views per object, merge grid 0.0801 units
+2026-10-15 21:15:40,309 INFO uncertainscene.change.segment: recording B: 870 masks on 44 frames -> 782 fragments -> 47 objects (13 structures), median 15.0 views per object, merge grid 0.0801 units
+2026-10-15 21:15:40,938 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] SAM 2 objects (60 in A, 47 in B) done in 72 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:16:05,909 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] labels for every object (detector votes, CLIP as fallback) done in 25 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:16:06,349 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] names that cannot fit the object's size replaced: 23 done in 0 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:16:09,366 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] pieces joined to the touching object of the same name: 8 (59 objects in A, 40 in B) done in 3 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:16:09,810 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] unsure objects dropped: 39 (A11 sofa (clip 0.38, 11 views); A15 cushion (clip 0.32, 17 views); A16 wooden crate (clip 0.28, 6 views); A20 sofa (clip 0.33, 10 views); A25 guitar (clip 0.31, 3 views); A28 skirting board (clip 0.10, 5 views); A29 skirting board (clip 0.50, 16 views); A31 skirting board (clip 0.20, 5 views) ...) done in 0 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:16:10,296 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] Rigidity Copilot: expected stiffness of 60 objects done in 0 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:16:10,304 INFO uncertainscene.change.floor: scale: most likely 2.502 m/unit (90% 2.237-2.772) from metric_depth 2.763, objects 0.904; phone height (not used) 3.766
+2026-10-15 21:20:50,197 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 21:21:14,438 INFO uncertainscene.change.inventory: objects: 1 one-sided objects paired with the same named object in the other recording
+2026-10-15 21:21:14,907 INFO uncertainscene.change.inventory: object changes: {'A:unchanged': 24, 'A:removed': 5, 'A:moved': 2, 'A:not seen in other recording': 1, 'A:changed in place': 1, 'B:unchanged': 22, 'B:added': 2, 'B:changed in place': 1, 'B:moved': 2}; thresholds gone 0.300 appearance 0.756 shift 0.0608 (from 60 null objects)
+2026-10-15 21:21:15,364 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] object-level changes done in 305 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:30:55,737 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 21:35:42,889 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] after recording re-aligned on 13 unchanged objects: shift 2.7 cm, 2.305 deg, scale -0.01%, object surface gap 4.37 -> 3.01 cm; objects rebuilt done in 868 s | RAM 8.3/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:36:18,654 INFO uncertainscene.change.segment: recording A: 927 masks on 44 frames -> 802 fragments -> 60 objects (21 structures), median 11.0 views per object, merge grid 0.0801 units
+2026-10-15 21:36:54,132 INFO uncertainscene.change.segment: recording B: 870 masks on 44 frames -> 782 fragments -> 48 objects (13 structures), median 14.0 views per object, merge grid 0.0801 units
+2026-10-15 21:36:54,789 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] SAM 2 objects (60 in A, 48 in B) done in 72 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:37:20,470 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] labels for every object (detector votes, CLIP as fallback) done in 26 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:37:20,907 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] names that cannot fit the object's size replaced: 21 done in 0 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:37:23,945 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] pieces joined to the touching object of the same name: 9 (59 objects in A, 40 in B) done in 3 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:37:24,408 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] unsure objects dropped: 37 (A11 sofa (clip 0.38, 11 views); A15 cushion (clip 0.32, 17 views); A16 wooden crate (clip 0.28, 6 views); A20 sofa (clip 0.33, 10 views); A25 guitar (clip 0.31, 3 views); A28 skirting board (clip 0.10, 5 views); A29 skirting board (clip 0.50, 16 views); A31 skirting board (clip 0.20, 5 views) ...) done in 0 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:37:24,881 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] Rigidity Copilot: expected stiffness of 62 objects done in 0 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:37:24,888 INFO uncertainscene.change.floor: scale: most likely 2.502 m/unit (90% 2.237-2.772) from metric_depth 2.763, objects 0.904; phone height (not used) 3.766
+2026-10-15 21:42:33,460 INFO uncertainscene.change.inventory: objects: 1 one-sided objects paired with the same named object in the other recording
+2026-10-15 21:42:33,933 INFO uncertainscene.change.inventory: object changes: {'A:unchanged': 24, 'A:removed': 5, 'A:moved': 2, 'A:not seen in other recording': 1, 'A:changed in place': 1, 'B:unchanged': 22, 'B:added': 4, 'B:changed in place': 1, 'B:moved': 2}; thresholds gone 0.300 appearance 0.755 shift 0.0604 (from 62 null objects)
+2026-10-15 21:42:34,399 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] object-level changes done in 310 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:42:44,511 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] object context (33 on top of, 170 next to) done in 10 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 21:44:00,005 INFO uncertainscene.recon.poses: poses: 979 of 1173 frame pairs matched
+2026-10-15 21:44:01,603 INFO uncertainscene.change.motion3d: motion: recording 0: 4568 3D feature points, pixel noise 0.56 px (77 s)
+2026-10-15 21:44:06,426 INFO uncertainscene.recon.poses: poses: 913 of 1158 frame pairs matched
+2026-10-15 21:44:07,669 INFO uncertainscene.change.motion3d: motion: recording 1: 5202 3D feature points, pixel noise 0.50 px (83 s)
+2026-10-15 21:44:09,418 ERROR uncertainscene.scene01: feature motion failed; continuing without it
+Traceback (most recent call last):
+  File "/content/UncertainScene/src/uncertainscene/experiments/scene01.py", line 515, in analyse
+    mot = motion3d.measure(rec, objs_a, s)
+  File "/content/UncertainScene/src/uncertainscene/change/motion3d.py", line 376, in measure
+    inl = _static_matches(kps[int(a)][ia], kps[b][ib], cfg.f_px)
+  File "/content/UncertainScene/src/uncertainscene/change/motion3d.py", line 186, in _static_matches
+    _, m = cv2.findFundamentalMat(pa.astype(np.float64), pb.astype(np.float64), getattr(cv2, "USAC_ACCURATE", cv2.FM_RANSAC), thr, 0.999)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cv2.error: OpenCV(4.14.0) /io/opencv/modules/calib3d/src/usac/estimator.cpp:353: error: (-215:Assertion failed) !model.empty() in function 'setModelParameters'
+
+2026-10-15 21:44:31,311 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] heat maps (120000 points, scale 2.502 m/unit) done in 107 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 7.0/15.0 GB
+2026-10-15 21:44:34,742 INFO uncertainscene.change.assets: assets: 28 objects exported (0 deformable), 18 contacts
+2026-10-15 21:44:35,185 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] object assets (28 objects, 18 contacts) done in 4 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 7.0/15.0 GB
+2026-10-15 21:45:07,435 INFO uncertainscene.poc: [1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a] figures, viewer and reports done in 32 s | RAM 8.2/12.7 GB, disk free 55.3 GB, GPU 7.0/15.0 GB
