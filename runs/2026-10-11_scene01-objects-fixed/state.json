@@ -63,6 +63,16 @@
       "started": "2026-10-15 13:23:12 UTC",
       "status": "done"
     },
+    "1d-objects_moved_light-before-a_vs_light-after-a": {
+      "account": "colab-b769",
+      "attempts": 1,
+      "commit": "835c461",
+      "expires": 1792110794.6960292,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-15 19:07:44 UTC",
+      "status": "running"
+    },
     "2-position_3-clips_no-change_dark-before-a-b-c": {
       "account": "colab-5f93",
       "attempts": 1,
