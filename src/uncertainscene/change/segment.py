@@ -597,6 +597,45 @@ def _extent(X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     return np.median(X, 0), np.sort(ext)[::-1]
 
 
+def clean_points(X: np.ndarray, frame: np.ndarray, voxel: float, pose_px: np.ndarray | None = None,
+                 min_views: int = 2, k: int = 8, far: float = 3.0, min_keep: float = 0.3) -> np.ndarray:
+    """Mask of an object's points worth keeping. Its cloud is the union of every view's depth
+    points, so one weak view (a pose that sits off, depth bleeding past the mask edge) adds a
+    shell or a spike that distorts the hull. Kept:
+    - points from frames whose pose is not among the object's most uncertain (pose_px above
+      twice the median of its frames), when it has other views;
+    - points in cells (`voxel`, the merge grid) that at least `min_views` frames put a point in,
+      when the object was seen in that many frames: a surface is where the views agree;
+    - points whose k-th neighbour is within `far` times the typical distance (no stray points).
+    Falls back to the previous stage when a stage would keep under `min_keep` of the points."""
+    from scipy.spatial import cKDTree
+
+    keep = np.ones(len(X), bool)
+    fr = np.unique(frame)
+    if pose_px is not None and len(fr) >= 3:
+        pp = np.asarray(pose_px, float)[frame]
+        m = keep & (pp <= 2 * np.median(np.asarray(pose_px, float)[fr]) + 1e-9)
+        if m.sum() >= min_keep * len(X):
+            keep = m
+    if len(np.unique(frame[keep])) >= min_views:
+        cell = np.floor(X / voxel).astype(np.int64)
+        _, inv = np.unique(cell, axis=0, return_inverse=True)
+        inv = inv.ravel()
+        pairs_ = np.unique(np.c_[inv[keep], frame[keep]], axis=0)
+        views = np.bincount(pairs_[:, 0], minlength=int(inv.max()) + 1)
+        m = keep & (views[inv] >= min_views)
+        if m.sum() >= min_keep * len(X):
+            keep = m
+    if keep.sum() > k + 1:
+        idx = np.nonzero(keep)[0]
+        ref = X[idx] if len(idx) <= 200_000 else X[np.random.default_rng(0).choice(idx, 200_000, replace=False)]
+        d = cKDTree(ref).query(X[idx], k=k + 1)[0][:, -1]
+        m = d <= far * np.median(d) + 1e-12
+        if m.sum() >= min_keep * len(X):
+            keep[idx[~m]] = False
+    return keep
+
+
 def effective_voxel(rec: Recon, masks: dict, voxel: float) -> float:
     """Voxels must be coarser than the pixel footprint, or views of one surface share no voxel.
     Compute this once for all recordings of a reconstruction, so their voxel keys line up."""
@@ -636,6 +675,9 @@ def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structu
         X = np.concatenate([f["X"] for f in fs])
         frame = np.concatenate([np.full(len(f["X"]), f["frame"]) for f in fs])
         pix = np.concatenate([f["pix"] for f in fs])
+        good = clean_points(X, frame, merge_vox, getattr(rec, "pose_px", None))
+        n_raw = len(X)
+        X, frame, pix = X[good], frame[good], pix[good]
         if len(X) > max_points:
             sel = rng.choice(len(X), max_points, replace=False)
             X, frame, pix = X[sel], frame[sel], pix[sel]
@@ -667,6 +709,7 @@ def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structu
         o.extra["fine_voxel"] = voxel
         o.extra["fine_vox"] = vox
         o.extra["n_views"] = len(mk)
+        o.extra["points_kept_share"] = round(float(good.sum() / max(n_raw, 1)), 3)
         objs.append(o)
     # drop parts: an object almost entirely inside a larger non-structure object
     objs.sort(key=lambda o: -len(o.extra["fine_vox"]))

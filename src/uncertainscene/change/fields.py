@@ -32,7 +32,7 @@ class RobotModel:
     phone_height_m: float = 1.35
     phone_height_range_m: tuple = (1.1, 1.6)
     shoulder_height_m: float = 0.75      # arm mount height above floor (mobile manipulator torso)
-    reach_m: float = 1.0                 # arm reach from the mount
+    reach_m: float = 0.85                # arm reach from the mount
     mobile: bool = True                  # base can drive to any free floor spot (False: stays where the operator stood)
     base_offset_m: float = 0.0           # fixed base only: moved this far from the operator towards the scene
     footprint_m: float = 0.25            # free radius the base needs on the floor
@@ -90,6 +90,26 @@ def _approach(X: np.ndarray, normals: np.ndarray, up: np.ndarray, length: float,
             blocked |= cnt > 0
         free += ~blocked
     return free / len(dirs)
+
+
+def _local_shape(X: np.ndarray, radius: float) -> tuple[np.ndarray, np.ndarray]:
+    """Per point: support (neighbours within `radius`, relative to half the scene's median count,
+    clipped to 1: a stray floating point has almost none and scores ~0) and thinness (how much
+    the neighbourhood is a line rather than a patch, 0-1: handles, rims and straps are thin)."""
+    from scipy.spatial import cKDTree
+
+    tree = cKDTree(X)
+    nb = tree.query_ball_point(X, r=radius)
+    cnt = np.array([len(n) for n in nb], float)
+    support = np.clip(cnt / max(0.5 * float(np.median(cnt)), 1.0), 0, 1)
+    thin = np.zeros(len(X))
+    for i, n in enumerate(nb):
+        if len(n) < 6:
+            continue
+        P = X[n] - X[n].mean(0)
+        ev = np.sqrt(np.clip(np.linalg.eigvalsh(P.T @ P), 0, None))     # ascending
+        thin[i] = (ev[2] - ev[1]) / (ev[2] + 1e-12)
+    return support, thin
 
 
 def _voxel(X: np.ndarray, size: float) -> np.ndarray:
@@ -159,7 +179,10 @@ def compute_fields(res: ChangeResult, rec: Recon, robot: RobotModel | None = Non
     reach = np.clip((robot.reach_m - dist) / 0.1 + 0.5, 0, 1) * (height > -0.05)
 
     normals = _normals(X, toward)
-    approach = _approach(X, normals, up, robot.gripper_clearance_m / s, robot.gripper_radius_m / s)
+    # a free path alone is highest for stray points floating in mid-air (nothing around them):
+    # the surface must also be solid (support)
+    support, thin = _local_shape(X, 0.025 / s)
+    approach = _approach(X, normals, up, robot.gripper_clearance_m / s, robot.gripper_radius_m / s) * support
     unc_cm = np.nan_to_num(ps.unc[idx] * s * 100, nan=np.nanmedian(ps.unc) * s * 100 if np.any(~np.isnan(ps.unc)) else 0)
     conf_term = 1 / (1 + (unc_cm / robot.uncertainty_ok_cm) ** 2)
     shift_cm = ps.disp[idx] * s * 100
@@ -169,7 +192,8 @@ def compute_fields(res: ChangeResult, rec: Recon, robot: RobotModel | None = Non
             "base": base, "shoulder": shoulder, "bases": bases if bases is not None else np.zeros((0, 3)),
             "uncertainty_cm": unc_cm.astype(np.float32), "shift_cm": shift_cm.astype(np.float32),
             "height_m": height.astype(np.float32), "reach": reach.astype(np.float32),
-            "approach": approach.astype(np.float32),
+            "approach": approach.astype(np.float32), "support": support.astype(np.float32),
+            "thin": thin.astype(np.float32),
             "interact": (reach * approach * conf_term).astype(np.float32), "certainty": conf_term.astype(np.float32),
             "cls": ps.cls[idx]}
 
@@ -233,13 +257,15 @@ def object_affordance(f: dict, objs: list, gripper_open_m: float = 0.12, max_lif
 
     - grasp: the point belongs to a movable object that fits the gripper (smallest size <=
       `gripper_open_m`, largest <= `max_lift_m`) with nothing resting on it, times
-      reach and certainty; rigid objects score higher (a soft
-      object deforms in the fingers: x (0.5 + 0.5 rigidity)); reach x certainty, as the
-      per-point approach score is too sparse on cluttered soft surfaces;
+      reach, certainty and support; rigid objects score higher (a soft
+      object deforms in the fingers: x (0.5 + 0.5 rigidity)) and thin parts (handles) up to
+      1.5x the body; reach x certainty, as the per-point approach score is too sparse on
+      cluttered soft surfaces;
     - push: movable objects too big to grasp (cushions, blankets), times reach and certainty;
     - place: upward-facing surface (normal within ~25 deg of up) of a support or the floor with no
       object within `place_clear_m`, times reach.
-    Adds f["object_id"] (index into objs, -1 none), f["grasp"], f["push"], f["place"] and sets
+    Adds f["object_id"] (index into objs, -1 none), f["grasp"], f["push"], f["place"], raises
+    f["interact"] to at least grasp / 0.8 push, and sets
     o.extra["affordance"] (mean scores over the object's points, best action). Returns counts."""
     from scipy.spatial import cKDTree
 
@@ -272,9 +298,10 @@ def object_affordance(f: dict, objs: list, gripper_open_m: float = 0.12, max_lif
         fits = size[-1] <= gripper_open_m and size[0] <= max_lift_m
         # reach x certainty, not x the per-point approach score: run 10 (1c-objects) had only 5% of
         # points "approachable" (normals of cluttered soft surfaces), which zeroed every object
-        doable = f["reach"][sel] * f.get("certainty", np.ones(n))[sel]
+        doable = f["reach"][sel] * f.get("certainty", np.ones(n))[sel] * f.get("support", np.ones(n))[sel]
         if not bg and fits and not ctx.get("supports"):
-            grasp[sel] = doable * (0.5 + 0.5 * rig)
+            # thin parts (a mug handle, a rim) are where fingers close: up to +50% over the body
+            grasp[sel] = doable * (0.5 + 0.5 * rig) * (2 + f.get("thin", np.zeros(n))[sel]) / 3
         elif not bg:
             push[sel] = doable
     up_ok = f.get("up_dot", np.ones(n)) > 0.9
@@ -286,6 +313,10 @@ def object_affordance(f: dict, objs: list, gripper_open_m: float = 0.12, max_lif
         occupied = cKDTree(X[mv]).query(X, k=1)[0] * s < place_clear_m
     place[:] = (f["reach"] * (up_ok & support & ~occupied)).astype(np.float32)
     f.update({"object_id": owner, "grasp": grasp, "push": push, "place": place})
+    # interactability: the better of a free approach to a solid surface and an object to act on,
+    # so objects stand out from the sofa and walls around them
+    if "interact" in f:
+        f["interact"] = np.maximum(f["interact"], np.maximum(grasp, 0.8 * push)).astype(np.float32)
     for i, o in mine:
         sel = owner == i
         if sel.any():

@@ -40,8 +40,10 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class PoseConfig:
-    n_features: int = 4000
+    n_features: int = 6000
+    contrast: float = 0.02          # SIFT contrast threshold (OpenCV default 0.04 finds few points on plain fabric)
     k_near: int = 12                # pose-nearest partner frames per frame
+    k_cross: int = 6                # plus this many pose-nearest frames from each OTHER recording
     k_time: int = 2                 # plus this many neighbours in time on each side
     ratio: float = 0.8              # Lowe ratio test
     ransac_px: float = 1.5          # fundamental-matrix RANSAC threshold
@@ -58,6 +60,7 @@ class PoseConfig:
     resect_px: float = 4.0          # PnP inlier gate (px)
     sparse_obs: int = 150           # frames with fewer track observations get a wider second match
     min_inliers_sparse: int = 15
+    group_link: int = 50            # frames tied to the main group by fewer shared points get a wider match
     polish_iters: int = 150         # final joint adjustment over every frame
     polish_always: bool = True
     shared_focal: bool = True       # one focal length for every recording (same phone, same 1x lens)
@@ -68,12 +71,12 @@ def _rootsift(desc: np.ndarray) -> np.ndarray:
     return np.sqrt(d).astype(np.float32)
 
 
-def features(files: list[str], n: int):
+def features(files: list[str], n: int, contrast: float = 0.04):
     """Keypoints [N, 2] (continuous pixel coords: pixel centre of index i at i + 0.5) and RootSIFT
     descriptors per frame, plus the frame size (w, h)."""
     import cv2
 
-    sift = cv2.SIFT_create(nfeatures=n)
+    sift = cv2.SIFT_create(nfeatures=n, contrastThreshold=contrast)
     kps, descs, wh = [], [], None
     for f in files:
         g = cv2.imread(f, cv2.IMREAD_GRAYSCALE)
@@ -91,9 +94,10 @@ def _centres_dirs(E: np.ndarray):
     return -np.einsum("sji,sj->si", R, t), R[:, 2]
 
 
-def pairs(E: np.ndarray, video: np.ndarray, k_near: int, k_time: int) -> np.ndarray:
-    """Frame pairs (i < j) to match: pose neighbours (position + viewing direction) and time
-    neighbours within each recording."""
+def pairs(E: np.ndarray, video: np.ndarray, k_near: int, k_time: int, k_cross: int = 0) -> np.ndarray:
+    """Frame pairs (i < j) to match: pose neighbours (position + viewing direction), time
+    neighbours within each recording and, with `k_cross`, the pose-nearest frames of every other
+    recording (the only pairs that tie the recordings to each other)."""
     c, d = _centres_dirs(E)
     spread = float(np.linalg.norm(c - c.mean(0), axis=1).max()) + 1e-9
     dist = np.linalg.norm(c[:, None] - c[None], axis=2) / spread + (1 - d @ d.T)
@@ -102,6 +106,10 @@ def pairs(E: np.ndarray, video: np.ndarray, k_near: int, k_time: int) -> np.ndar
     for i in range(len(E)):
         for j in np.argsort(dist[i])[:k_near]:
             P.add((min(i, j), max(i, j)))
+        if k_cross:
+            other = np.nonzero(video != video[i])[0]
+            for j in other[np.argsort(dist[i, other])[:k_cross]]:
+                P.add((min(i, int(j)), max(i, int(j))))
     for v in np.unique(video):
         idx = np.nonzero(video == v)[0]
         for a in range(len(idx)):
@@ -162,11 +170,15 @@ def tracks(M: np.ndarray, n_kp: list[int]):
     frame = np.searchsorted(off, used, side="right") - 1
     kp = used - off[frame]
     t = lab[used]
-    # drop tracks that see the same frame twice (ambiguous) and tracks of one observation
+    # a track that sees one frame twice holds a wrong match. One such frame: drop just that
+    # frame's observations (the rest still agree); more than one: the chain is unreliable, drop it
     key = t.astype(np.int64) * (len(n_kp) + 1) + frame
-    _, first, cnt = np.unique(key, return_index=True, return_counts=True)
-    bad_t = np.unique(t[first[cnt > 1]])
-    keep = ~np.isin(t, bad_t)
+    _, inv, cnt = np.unique(key, return_inverse=True, return_counts=True)
+    dup = cnt[inv] > 1
+    first = np.zeros(len(t), bool)
+    first[np.unique(inv, return_index=True)[1]] = True
+    n_bad_frames = np.bincount(t[dup & first], minlength=int(t.max()) + 1 if len(t) else 0)
+    keep = ~dup & (n_bad_frames[t] <= 1)
     t, frame, kp = t[keep], frame[keep], kp[keep]
     _, t, size = np.unique(t, return_inverse=True, return_counts=True)
     keep = size[t] >= 2
@@ -567,6 +579,7 @@ def refine_tracks(E: np.ndarray, Kf: np.ndarray, video: np.ndarray, t_: np.ndarr
         "per_recording_median_px": [float(np.median(err[video[fr] == v])) if (video[fr] == v).any() else None
                                     for v in np.unique(video)],
         "points_in_both": int(both.sum()),
+        "trajectory_jumps": trajectory_jumps(Ec, video),
         "points_in_both_median_px": float(np.median(err[both[tn]])) if both.any() else None,
         "observations_kept_share": float(len(tn) / max(len(t_), 1)),
         "seconds": round(time.time() - t0),
@@ -584,10 +597,45 @@ def refine_tracks(E: np.ndarray, Kf: np.ndarray, video: np.ndarray, t_: np.ndarr
                                                           "pose_px": pose_px.astype(np.float32)}, report
 
 
+def loose_frames(t: np.ndarray, frame: np.ndarray, n_frames: int, min_shared: int) -> np.ndarray:
+    """Frames outside the main group: frames are linked when they share at least `min_shared`
+    tracks, and every frame not in the largest linked group is loose. A loose group is tied to
+    the rest by a few points only, so the adjustment cannot place it and it keeps VGGT's offset
+    (the camera groups that sit slightly apart)."""
+    from scipy.sparse import coo_matrix
+    from scipy.sparse.csgraph import connected_components
+
+    if not len(t):
+        return np.ones(n_frames, bool)
+    A = coo_matrix((np.ones(len(t)), (frame, t)), shape=(n_frames, int(t.max()) + 1)).tocsr()
+    A.data[:] = 1
+    C = (A @ A.T).tocoo()
+    ok = (C.data >= min_shared) & (C.row != C.col)
+    G = coo_matrix((np.ones(ok.sum()), (C.row[ok], C.col[ok])), shape=(n_frames, n_frames))
+    _, lab = connected_components(G, directed=False)
+    return lab != np.bincount(lab).argmax()
+
+
+def trajectory_jumps(E: np.ndarray, video: np.ndarray, factor: float = 4.0) -> list[int]:
+    """Per recording, how many steps between consecutive cameras are over `factor` times the
+    median step: a phone moves smoothly, so a jump means a group of poses sits apart."""
+    c, _ = _centres_dirs(E)
+    out = []
+    for v in np.unique(video):
+        idx = np.nonzero(video == v)[0]
+        if len(idx) < 3:
+            out.append(0)
+            continue
+        st = np.linalg.norm(np.diff(c[idx], axis=0), axis=1)
+        out.append(int((st > factor * np.median(st)).sum()))
+    return out
+
+
 def _extra_pairs(E, video, sparse, P_done, cfg):
-    """More partners for frames that ended up with few track observations: wider pose
-    neighbourhood and more time neighbours, skipping pairs already tried."""
-    P2 = pairs(E, video, cfg.k_near * 3, cfg.k_time * 3)
+    """More partners for frames that ended up with few track observations or outside the main
+    group: wider pose neighbourhood, more time neighbours and more frames of the other
+    recording, skipping pairs already tried."""
+    P2 = pairs(E, video, cfg.k_near * 3, cfg.k_time * 3, cfg.k_cross * 2)
     keep = (sparse[P2[:, 0]] | sparse[P2[:, 1]])
     done = set(map(tuple, P_done.tolist()))
     return np.array([p for p in P2[keep].tolist() if tuple(p) not in done], dtype=np.int64).reshape(-1, 2)
@@ -602,23 +650,30 @@ def refine(E: np.ndarray, K: np.ndarray, video: np.ndarray, files: list[str], mo
 
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     t0 = time.time()
-    kps, descs, wh = features(files, cfg.n_features)
+    kps, descs, wh = features(files, cfg.n_features, cfg.contrast)
     Kf = K.astype(np.float64).copy()
     Kf[:, 0] *= wh[0] / model_wh[0]
     Kf[:, 1] *= wh[1] / model_wh[1]
-    P = pairs(E, video, cfg.k_near, cfg.k_time)
+    P = pairs(E, video, cfg.k_near, cfg.k_time, cfg.k_cross)
     M, n_pairs = match(kps, descs, P, cfg, device)
     n_kp = [len(k) for k in kps]
     t_, frame, kp = tracks(M, n_kp)
-    # frames with few track observations get a second, wider matching pass (lower inlier bar)
-    sparse = np.bincount(frame, minlength=len(E)) < cfg.sparse_obs
+    # frames with few track observations, or in a group only loosely tied to the rest, get a
+    # second, wider matching pass (lower inlier bar)
+    few = np.bincount(frame, minlength=len(E)) < cfg.sparse_obs
+    loose = loose_frames(t_, frame, len(E), cfg.group_link)
+    sparse = few | loose
+    loose_after = int(loose.sum())
     if sparse.any():
         P2 = _extra_pairs(E, video, sparse, P, cfg)
         M2, n2 = match(kps, descs, P2, replace(cfg, min_inliers=cfg.min_inliers_sparse), device)
-        log.info("poses: %d sparse frames: %d extra pairs tried, %d matched", int(sparse.sum()), len(P2), n2)
+        log.info("poses: %d sparse frames, %d frames outside the main group: %d extra pairs tried, %d matched",
+                 int(few.sum()), int(loose.sum()), len(P2), n2)
         if len(M2):
             M, n_pairs, P = np.r_[M, M2], n_pairs + n2, np.r_[P, P2]
             t_, frame, kp = tracks(M, n_kp)
+            loose_after = int(loose_frames(t_, frame, len(E), cfg.group_link).sum())
+            log.info("poses: %d frames still outside the main group", loose_after)
     off = np.concatenate([[0], np.cumsum(n_kp)])
     uv = np.concatenate(kps)[off[frame] + kp].astype(np.float64)
     log.info("poses: %d features/frame, %d tracks, %d observations (%.0f s)", int(np.mean(n_kp)),
@@ -627,7 +682,9 @@ def refine(E: np.ndarray, K: np.ndarray, video: np.ndarray, files: list[str], mo
         raise RuntimeError(f"too few feature tracks ({len(t_)}) to refine poses")
     Ec, Kc, pts, report = refine_tracks(E, Kf, video, t_, frame, uv, cfg, device, t0)
     report = {"frame_size": list(wh), "frame_pairs_tried": int(len(P)), "frame_pairs_matched": int(n_pairs),
-              "sparse_frames_rematched": int(sparse.sum())} | report
+              "sparse_frames_rematched": int(sparse.sum()), "frames_outside_main_group": int(loose.sum()),
+              "frames_outside_main_group_after": loose_after,
+              "trajectory_jumps_vggt": trajectory_jumps(E, video)} | report
     return Ec, Kc, pts, report
 
 
@@ -639,7 +696,7 @@ def refine_recon(rec, cache=None, key: str = "", cfg: PoseConfig = PoseConfig())
 
     from PIL import Image
 
-    f = cache / f"poses4_{key}.npz" if cache is not None else None
+    f = cache / f"poses5_{key}.npz" if cache is not None else None
     if f is not None and f.exists():
         z = np.load(f)
         log.info("reusing cached refined poses %s", f.name)

@@ -173,14 +173,23 @@ def crops_sheet(crop_dir: Path, objs: list, out: Path) -> Path | None:
     return out
 
 
-FIELD_STYLE = {  # field -> (title, colormap, vmin, vmax or None for 99th percentile)
+def display_max(val) -> float:
+    """Top of a colour scale left open (vmax None): the 95th percentile of the positive values,
+    so a map that is mostly zero (interactability, grasp) still shows where it is highest."""
+    v = np.asarray(val, float)
+    v = v[np.isfinite(v) & (v > 0)]
+    return float(np.quantile(v, 0.95)) if len(v) else 1.0
+
+
+FIELD_STYLE = {  # field -> (title, colormap, vmin, vmax or None for display_max)
     "uncertainty_cm": ("Surface uncertainty (cm, 1-sigma)", "magma", 0, None),
     "shift_cm": ("Surface shift vs other recording (cm, + receded)", "coolwarm", None, None),
     "height_m": ("Height above floor (m)", "viridis", 0, None),
     "reach": ("Robot reachability (0-1)", "RdYlGn", 0, 1),
-    "approach": ("Gripper approachability (0-1)", "RdYlGn", 0, 1),
-    "interact": ("Interactability = reach x approach x certainty", "RdYlGn", 0, 1),
-    "grasp": ("Grasp: objects that fit the gripper, nothing on top (x rigidity)", "Greens", 0, 1),
+    "approach": ("Gripper approachability (0-1, free path x solid surface)", "RdYlGn", 0, 1),
+    "interact": ("Interactability (reach x certainty x approach/object; colour top = 95th pct)", "RdYlGn", 0, None),
+    "grasp": ("Grasp: objects that fit the gripper, nothing on top (x rigidity, thin parts higher; "
+              "colour top = 95th pct)", "Greens", 0, None),
     "push": ("Push: movable objects too big to grasp", "Oranges", 0, 1),
     "place": ("Place: free upward surfaces in reach", "Blues", 0, 1),
 }
@@ -205,7 +214,7 @@ def field_maps(f: dict, rec: Recon, out: Path, title: str = "") -> Path:
             m = float(np.nanquantile(np.abs(val), 0.99)) if fin.any() else 1
             vmin, vmax = -m, m
         if vmax is None:
-            vmax = float(np.nanquantile(val, 0.95)) if fin.any() else 1
+            vmax = display_max(val)
         for j, (vname, a1, a2) in enumerate((("front", right, up), ("top", right, fwd))):
             ax = axes[(2 * k + j) // 4, (2 * k + j) % 4]
             order = np.argsort(np.nan_to_num(np.abs(val), nan=-1))

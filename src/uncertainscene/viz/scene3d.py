@@ -148,7 +148,7 @@ def from_analysis(res, objs_a: list, objs_b: list, fields: dict | None = None, n
     (sharing one point table) and every SAM 2 object with its box and 90% position region."""
     from ..change.detect import APPEARANCE, GONE
     from ..change.inventory import STATUS_COLOR
-    from .plots import FIELD_STYLE
+    from .plots import FIELD_STYLE, display_max
 
     rng = np.random.default_rng(seed)
     pts = Points()
@@ -181,7 +181,7 @@ def from_analysis(res, objs_a: list, objs_b: list, fields: dict | None = None, n
             if name == "shift_cm":
                 m = float(np.quantile(np.abs(val), 0.99)) or 1.0
                 vmin, vmax = -m, m
-            vmax = vmax if vmax is not None else (float(np.quantile(val, 0.95)) or 1.0)
+            vmax = vmax if vmax is not None else display_max(val)
             rgb, stops = _scale_rgb(val, cmap, vmin, vmax)
             layers.append({"name": ttl, "kind": "heat", "rec": "A" if fields.get("which") == "A" else "B",
                            "visible": False, "size": 2, "pts": t, "rgb": _b64(rgb),

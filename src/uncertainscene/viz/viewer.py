@@ -82,7 +82,7 @@ def write_html(res: ChangeResult, objs: list, out: Path, title: str = "", n_bg: 
                                            line=dict(color=COL["moved"], width=8), name=f"move {o.id}",
                                            showlegend=False))
     if fields is not None:
-        from .plots import FIELD_STYLE
+        from .plots import FIELD_STYLE, display_max
 
         sel = rng.choice(len(fields["X"]), min(n_field, len(fields["X"])), replace=False)
         Xf = fields["X"][sel]
@@ -93,7 +93,7 @@ def write_html(res: ChangeResult, objs: list, out: Path, title: str = "", n_bg: 
             if name == "shift_cm":
                 m = float(np.quantile(np.abs(val), 0.99)) or 1.0
                 vmin, vmax = -m, m
-            vmax = vmax if vmax is not None else float(np.quantile(val, 0.95)) or 1.0
+            vmax = vmax if vmax is not None else display_max(val)
             plotly_cmap = {"magma": "Magma", "coolwarm": "RdBu_r", "viridis": "Viridis", "RdYlGn": "RdYlGn",
                            "Greens": "Greens", "Oranges": "Oranges", "Blues": "Blues"}[cmap]
             traces.append(go.Scatter3d(x=Xf[:, 0].round(3), y=Xf[:, 1].round(3), z=Xf[:, 2].round(3), mode="markers",

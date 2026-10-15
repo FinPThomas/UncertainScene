@@ -39,6 +39,17 @@ VOCAB = OBJECTS + SUPPORT
 CANON = {"pillow": "cushion", "hat": "baseball cap", "stack of books": "book", "vase": "glass vase",
          "mug": "cup", "throw blanket": "blanket", "soft toy": "toy", "side table": "table"}
 
+# largest plausible size (m) of each movable object class, generous: a "neck pillow" 1.2 m long
+# is a sofa seat with the wrong name (run 10), not a neck pillow
+MAX_SIZE_M = {
+    "cushion": 0.8, "neck pillow": 0.6, "blanket": 2.2, "book": 0.45, "glass vase": 0.6, "cup": 0.25,
+    "glass": 0.25, "coaster": 0.15, "guitar": 1.3, "baseball cap": 0.4, "table tennis bat": 0.35,
+    "remote control": 0.3, "phone": 0.25, "bottle": 0.45, "bag": 0.7, "paper bag": 0.6, "box": 0.8,
+    "shoe": 0.4, "plant": 1.2, "picture frame": 1.0, "lamp": 1.2, "toy": 0.6, "towel": 1.5, "jacket": 1.2,
+    "laptop": 0.5, "headphones": 0.3, "basket": 0.7, "bowl": 0.4, "plate": 0.35, "ball": 0.4, "pen": 0.2,
+    "sock": 0.35, "card": 0.15, "candle": 0.3, "clock": 0.5, "speaker": 0.6,
+}
+
 
 def canonical(label: str) -> str:
     return CANON.get(label, label)

@@ -141,6 +141,70 @@ def consistent_partners(objs_a: list[SceneObject], objs_b: list[SceneObject], sa
     return fixed
 
 
+def _set_moved(a: SceneObject, b: SceneObject, sim: float) -> None:
+    a.status = b.status = "moved"
+    a.partner, b.partner = b.id, a.id
+    rng = np.random.default_rng(a.id)
+    boots = [np.median(b.X[rng.integers(0, len(b.X), len(b.X))], 0) - np.median(a.X[rng.integers(0, len(a.X), len(a.X))], 0)
+             for _ in range(200)]
+    dist = np.linalg.norm(boots, axis=1)
+    disp = b.centroid - a.centroid
+    for o in (a, b):
+        o.stats.update({"displacement": disp.tolist(), "distance": float(np.linalg.norm(disp)),
+                        "distance_ci": [float(np.quantile(dist, 0.05)), float(np.quantile(dist, 0.95))],
+                        "match_similarity": round(float(sim), 3)})
+
+
+def _sure_label(o, min_prob: float) -> bool:
+    return o.label is not None and (o.extra.get("label_source") == "detector" or (o.label_prob or 0) >= min_prob)
+
+
+def pair_by_identity(objs_a: list[SceneObject], objs_b: list[SceneObject], min_prob: float = 0.5,
+                     min_sim: float = 0.6, same_frac: float = 0.5) -> int:
+    """One object, one verdict. Run 10: the neck pillow was "removed" in A (its points were not
+    found in B) and a neck pillow in B, in the same place, was "unchanged" with no partner: two
+    point clouds, two opposite answers, because the recordings sit ~12 cm apart and the
+    point-overlap match missed it. Here an unpaired object with a sure name (detector, or CLIP
+    >= min_prob) that one side calls removed/added is paired with the unpaired object of the
+    same sure name in the other recording (similar size, looks alike >= min_sim), nearest first:
+    within `same_frac` of its size they are the same object, unchanged; further apart, moved.
+    Returns how many pairs were made."""
+    def free(o, gone_word):
+        return (not o.structure and not o.extra.get("background") and o.partner is None
+                and o.status in (gone_word, "unchanged", "shifted"))
+
+    A = [o for o in objs_a if free(o, "removed") and _sure_label(o, min_prob)]
+    B = [o for o in objs_b if free(o, "added") and _sure_label(o, min_prob)]
+    cand = []
+    for a in A:
+        for b in B:
+            if a.label != b.label or (a.status != "removed" and b.status != "added"):
+                continue
+            size = max(float(np.max(a.extent)), float(np.max(b.extent)))
+            ratio = (float(np.max(a.extent)) + 1e-9) / (float(np.max(b.extent)) + 1e-9)
+            sim = _sim(a, b)
+            if not 1 / 1.6 < ratio < 1.6 or sim < min_sim:
+                continue
+            d = float(np.linalg.norm(np.asarray(b.centroid) - np.asarray(a.centroid)))
+            cand.append((d / size, sim, a, b))
+    used, n = set(), 0
+    for rel, sim, a, b in sorted(cand, key=lambda t: t[0]):
+        if id(a) in used or id(b) in used:
+            continue
+        used |= {id(a), id(b)}
+        n += 1
+        if rel < same_frac:
+            a.status = b.status = "unchanged"
+            a.partner, b.partner = b.id, a.id
+        else:
+            _set_moved(a, b, sim)
+        for o in (a, b):
+            o.stats["paired_by_identity"] = True
+    if n:
+        log.info("objects: %d one-sided objects paired with the same named object in the other recording", n)
+    return n
+
+
 def classify(objs_a: list[SceneObject], objs_b: list[SceneObject], rec: Recon, feats, res: ChangeResult,
              cfg: DetectConfig | None = None, null_q: float = 0.975, min_observed: float = 0.25,
              same_sim: float = 0.8, move_sim: float = 0.75) -> dict:
@@ -187,6 +251,7 @@ def classify(objs_a: list[SceneObject], objs_b: list[SceneObject], rec: Recon, f
             if o.status == "unchanged" and cp is not None:
                 o.partner = cp
     consistent_partners(objs_a, objs_b, same_sim)
+    pair_by_identity(objs_a, objs_b)
     # moved = removed in A + added in B that look alike
     rem = [o for o in objs_a if o.status == "removed" and not o.structure]
     add = [o for o in objs_b if o.status == "added" and not o.structure]
@@ -206,17 +271,7 @@ def classify(objs_a: list[SceneObject], objs_b: list[SceneObject], rec: Recon, f
         if a.id in used or ("B", b.id) in used:
             continue
         used |= {a.id, ("B", b.id)}
-        a.status = b.status = "moved"
-        a.partner, b.partner = b.id, a.id
-        rng = np.random.default_rng(a.id)
-        boots = [np.median(b.X[rng.integers(0, len(b.X), len(b.X))], 0) - np.median(a.X[rng.integers(0, len(a.X), len(a.X))], 0)
-                 for _ in range(200)]
-        dist = np.linalg.norm(boots, axis=1)
-        disp = b.centroid - a.centroid
-        for o in (a, b):
-            o.stats.update({"displacement": disp.tolist(), "distance": float(np.linalg.norm(disp)),
-                            "distance_ci": [float(np.quantile(dist, 0.05)), float(np.quantile(dist, 0.95))],
-                            "match_similarity": round(float(sim), 3)})
+        _set_moved(a, b, sim)
     counts = {}
     for o in objs_a + objs_b:
         counts[f"{o.recording}:{o.status}"] = counts.get(f"{o.recording}:{o.status}", 0) + 1
@@ -402,17 +457,61 @@ def label_all(objs: list[SceneObject], rec: Recon, crop_dir=None, n_views: int =
             img.save(crop_dir / f"{o.recording}{o.id:03d}_{(o.label or 'object').replace(' ', '_')}.jpg", quality=82)
 
 
+def check_label_sizes(objs: list[SceneObject], scale_m: float, slack: float = 1.25) -> int:
+    """Drop names that cannot fit the object's size: when the largest size is over `slack` times
+    the class's largest plausible size (detect2d.MAX_SIZE_M), take the first CLIP guess that
+    fits, else call it a large surface (background). Returns how many names changed."""
+    from .detect2d import MAX_SIZE_M, SUPPORT
+    from .features import BACKGROUND
+
+    changed = 0
+    for o in objs:
+        size = float(np.max(o.extent)) * scale_m
+        lim = MAX_SIZE_M.get(o.label)
+        if lim is None or size <= slack * lim:
+            continue
+        fits = [(lab, p) for lab, p in (o.extra.get("clip_top3") or [])
+                if MAX_SIZE_M.get(canonical(lab), np.inf) * slack >= size]
+        old = o.label
+        o.label, o.label_prob = (canonical(fits[0][0]), fits[0][1]) if fits else ("large surface", 0.0)
+        o.extra["label_source"] = "size check"
+        o.extra["label_before_size_check"] = old
+        o.extra["background"] = o.label in BACKGROUND or o.label in SUPPORT or o.structure or o.label == "large surface"
+        changed += 1
+    return changed
+
+
 def _diag(o) -> float:
     X = np.asarray(o.X, float)
     return float(np.linalg.norm(np.quantile(X, 0.95, axis=0) - np.quantile(X, 0.05, axis=0))) if len(X) else 0.0
+
+
+def inside_in_views(p, q, min_frames: int = 2, min_share: float = 0.6, min_inside: float = 0.7) -> bool:
+    """Whether p's mask lies inside q's box (at least `min_inside` of it) in at least
+    `min_share` of the frames where both were segmented (and in at least `min_frames`): a strap,
+    a handle or a panel that the tracker kept apart from the object it belongs to."""
+    shared = sorted(set(p.masks) & set(q.masks))
+    if len(shared) < min_frames:
+        return False
+    hits = 0
+    for s in shared:
+        mp, mq = p.masks[s], q.masks[s]
+        if mp.shape != mq.shape or not mq.any() or not mp.any():
+            continue
+        ys, xs = np.nonzero(mq)
+        box = np.zeros_like(mq)
+        box[ys.min():ys.max() + 1, xs.min():xs.max() + 1] = True
+        hits += np.logical_and(mp, box).sum() / mp.sum() >= min_inside
+    return hits >= max(min_frames, min_share * len(shared))
 
 
 def group_pieces(objs: list[SceneObject], scale_m: float, gap_m: float = 0.03) -> int:
     """Join pieces of one object that tracking left apart (run 10: the guitar in after was six
     objects, one labelled guitar by the detector, four more labelled guitar by CLIP, all touching).
     A piece is a non-structure object labelled by CLIP only; it joins a touching (closest points
-    within `gap_m`) non-structure object of the same recording that the detector named with the
-    same label and that is larger. Two detector-named objects are never joined (the detector saw
+    within `gap_m`) larger non-structure object of the same recording that the detector named,
+    either with the same label or, when the piece is under 0.6 of its size, when the piece lies
+    inside that object's box in most images where both appear (inside_in_views). Two detector-named objects are never joined (the detector saw
     them as separate instances, e.g. two cushions). Updates objs in place (ids renumbered per
     recording); returns how many pieces were joined."""
     from scipy.spatial import cKDTree
@@ -430,7 +529,10 @@ def group_pieces(objs: list[SceneObject], scale_m: float, gap_m: float = 0.03) -
                 continue
             best, best_d = None, np.inf
             for q in named:
-                if q.label != p.label or _diag(q) <= _diag(p) or id(q) in gone:
+                if _diag(q) <= _diag(p) or id(q) in gone:
+                    continue
+                # same name, or (any CLIP name) a smaller piece that keeps lying inside q in the images
+                if q.label != p.label and not (_diag(p) < 0.6 * _diag(q) and inside_in_views(p, q)):
                     continue
                 d = float(trees[id(q)].query(np.asarray(p.X, float), k=1)[0].min()) * scale_m
                 if d < gap_m and d < best_d:
