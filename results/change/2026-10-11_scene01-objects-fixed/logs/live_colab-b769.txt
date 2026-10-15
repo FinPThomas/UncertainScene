@@ -1,5 +1,5 @@
-session colab-b769, step 1d-objects_moved_light-before-a_vs_light-after-a, running 111 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 8.7/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+session colab-b769, step 1d-objects_moved_light-before-a_vs_light-after-a, running 121 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 9.9/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
 
 2026-10-15 19:07:46,153 INFO uncertainscene.scene01: step 1d-objects_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects2
 2026-10-15 19:07:58,890 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -230,3 +230,14 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 2026-10-15 20:58:29,078 INFO uncertainscene.change.inventory: objects: 2 one-sided objects paired with the same named object in the other recording
 2026-10-15 20:58:29,344 INFO uncertainscene.change.inventory: object changes: {'A:unchanged': 31, 'A:moved': 1, 'A:removed': 2, 'B:unchanged': 25, 'B:added': 4, 'B:moved': 1}; thresholds gone 0.300 appearance 0.764 shift 0.1066 (from 64 null objects)
 2026-10-15 20:58:29,808 INFO uncertainscene.poc: [1d-objects_moved_light-before-a_vs_light-after-a] object-level changes done in 341 s | RAM 8.7/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB
+2026-10-15 20:58:39,011 WARNING uncertainscene.infra.publish: push rejected (attempt 1): To https://github.com/FinPThomas/UncertainScene.git
+ ! [rejected]        HEAD -> exp/change/scene01-heatmaps (fetch first)
+error: failed to push some refs to 'https://github.com/FinPThomas/UncertainScene.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+2026-10-15 21:06:26,364 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 82% (RAM 10.4/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB)
+2026-10-15 21:06:42,305 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 82% (RAM 10.4/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB)
+2026-10-15 21:06:57,993 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 81% (RAM 10.3/12.7 GB, disk free 55.3 GB, GPU 6.9/15.0 GB)
