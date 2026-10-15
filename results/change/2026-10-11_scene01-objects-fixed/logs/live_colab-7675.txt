@@ -1,5 +1,5 @@
-session colab-7675, step 1c-objects_moved_light-before-a_vs_light-after-a, running 20 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 7.0/12.7 GB, disk free 59.0 GB, GPU 5.6/15.0 GB
+session colab-7675, step 1c-objects_moved_light-before-a_vs_light-after-a, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 6.7/12.7 GB, disk free 57.8 GB, GPU 6.9/15.0 GB
 
 2026-10-15 13:23:14,065 INFO uncertainscene.scene01: step 1c-objects_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects
 2026-10-15 13:23:28,392 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -38,3 +38,6 @@ machine: RAM 7.0/12.7 GB, disk free 59.0 GB, GPU 5.6/15.0 GB
 2026-10-15 13:35:28,314 INFO uncertainscene.poc: [1c-objects_moved_light-before-a_vs_light-after-a] camera poses refined: 8.3 px -> 0.59 px reprojection error (p90 1.71 px, 96 sparse frames resected, 40 interpolated), cameras turned 1.60 deg (median) done in 220 s | RAM 5.8/12.7 GB, disk free 59.6 GB, GPU 5.6/15.0 GB
 2026-10-15 13:35:36,119 INFO numexpr.utils: NumExpr defaulting to 2 threads.
 2026-10-15 13:36:08,588 INFO uncertainscene.poc: [1c-objects_moved_light-before-a_vs_light-after-a] DINOv2 features done in 40 s | RAM 5.8/12.7 GB, disk free 59.0 GB, GPU 5.6/15.0 GB
+2026-10-15 13:51:45,727 INFO uncertainscene.poc: [1c-objects_moved_light-before-a_vs_light-after-a] point-level change detection (1200000 points, tau 0.252) done in 937 s | RAM 6.7/12.7 GB, disk free 59.0 GB, GPU 5.6/15.0 GB
+2026-10-15 13:51:46,493 INFO uncertainscene.change.floor: floor: gravity refined by 3.4 deg, 37 floor points (3% of horizontal), camera 0.368 units above floor -> 3.665 m/unit
+2026-10-15 13:51:46,785 INFO uncertainscene.poc: [1c-objects_moved_light-before-a_vs_light-after-a] floor (37 floor points, gravity refined 3.4 deg) done in 1 s | RAM 6.7/12.7 GB, disk free 59.0 GB, GPU 5.6/15.0 GB
