@@ -1,0 +1,30 @@
+2026-10-16 18:11:56Z INFO  [1/8] Python 3.13.15, platform: Colab
+2026-10-16 18:11:57Z INFO  [2/8] GITHUB_TOKEN found in Colab secrets: fine-grained (github_pat_), 93 characters (value never printed)
+2026-10-16 18:11:58Z INFO  [3/8] token valid for GitHub user 'FinPThomas'; expires: 2026-11-15 15:12:25 UTC; API calls left this hour: 4978
+2026-10-16 18:11:58Z INFO  [4/8] repository FinPThomas/UncertainScene visible (private: False)
+2026-10-16 18:11:58Z INFO        branch exp/change/scene01-heatmaps at 76172e6
+2026-10-16 18:12:00Z INFO  [5/8] code at 76172e6 (fix(change): keep light Colab runs within resource limits) in 1 s
+2026-10-16 18:15:16Z INFO  [6/8] dependencies installed in 197 s (torch 2.11.0+cu130, SAM 2 ok)
+2026-10-16 18:15:16Z INFO        building gsplat CUDA code (once per session, several minutes)
+2026-10-16 18:15:16Z INFO        gsplat CUDA code already built
+2026-10-16 18:15:18Z INFO  [7/8] GitHub check passed: test file pushed to exp/change/scene01-heatmaps (results/change/2026-10-11_scene01-objects-fixed/logs/github_check_20261016_181516.txt)
+2026-10-16 18:15:18Z INFO  [8/8] GPU Tesla T4 14.6 GB: fits ~54 frames per reconstruction (more are capped; CUDA out-of-memory retries with 20% fewer)
+2026-10-16 18:15:18Z INFO        machine now: RAM 5.3/12.7 GB, disk free 54.4 GB, GPU 0.3/15.0 GB
+2026-10-16 18:15:18Z INFO        guardrails: RAM warn 80% / stop 92%, disk warn 12 GB / stop 5 GB free, checked every 15 s and between every stage of a step; a step only starts if its RAM, disk and time fit; session plan 11.0 h minus 20 min
+2026-10-16 18:15:18Z INFO        session label colab-becc; run state:
+1-main_moved_light-before-a_vs_light-after-a: done (change: 12 changed objects of 32 (39%); labels: wooden crate, skirting board, neck pillow, baseball cap, skirting board; scale 2.048 m/unit; 7188s)
+1-main_no-change-light-vs-dark_dark-before-a_vs_light-before-a: running
+1-main_no-change_light-before-a_vs_light-before-b: done (static: 13 changed objects of 40 (33%); labels: ball, table tennis bat, table tennis bat, glass vase, skirting board; scale 1.900 m/unit; 7557s)
+1-main_summary: done (summary of 1 runs; RESULTS.md and viewer.html refreshed)
+1b-splat_moved_light-before-a_vs_light-after-a: done (splats: PSNR before 18.25, after 18.86 dB on held-out frames; same-view changed 1.5% of pixels (noise level 1% by construction); 2473 s)
+1c-objects_moved_light-before-a_vs_light-after-a: done (change: 10 changed objects of 30 (36%); labels: skirting board, neck pillow, baseball cap, skirting board, ball; scale 1.921 m/unit; 6576s)
+1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a: done (change+lighting: 6 changed objects of 17 (38%); labels: cup, lamp, cup, cabinet, book; scale 2.502 m/unit; 9303s)
+1d-objects_moved_light-before-a_vs_light-after-a: running
+1d-objects_no-change-light-vs-dark_dark-before-a_vs_light-before-a: running
+1d-objects_no-change_dark-before-a_vs_dark-before-b: done (static: 4 changed objects of 13 (33%); labels: box, lamp, cup, cup, table tennis bat; scale 2.240 m/unit; 10029s)
+1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a: interrupted (stopped: RAM at 93% (hard limit 92%))
+1e-changes_moved_light-before-a_vs_light-after-a: interrupted (stopped: RAM at 92% (hard limit 92%))
+2-position_3-clips_no-change_dark-before-a-b-c: interrupted (released by hand: session colab-5f93 ended without finishing (Colab stopped); rerun next session)
+summary_session_colab-05ca: done (summary of 5 runs; RESULTS.md and viewer.html refreshed)
+summary_session_colab-98b0: done (summary of 5 runs; RESULTS.md and viewer.html refreshed)
+summary_session_colab-fa00: done (summary of 1 runs; RESULTS.md and viewer.html refreshed)
