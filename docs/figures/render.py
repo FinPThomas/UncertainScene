@@ -148,3 +148,16 @@ def load_asset(step: Path, name: str):
     X = P @ R.T + t
     C = np.stack([a["r"], a["g"], a["b"]], 1)
     return meta, X, C
+
+
+def render_aa(cam: Camera, X, C, radius_px=2.2, ss=2, bg=(255, 255, 255)):
+    """render() at ss-times the resolution, then downsampled: smoother splat edges, finer points."""
+    from PIL import Image
+    big = Camera.__new__(Camera)
+    big.__dict__.update(cam.__dict__)
+    big.size = (cam.size[0] * ss, cam.size[1] * ss)
+    if hasattr(cam, "f"):
+        big.f = cam.f * ss
+    img, zb = render(big, X, C, radius_px * ss, bg)
+    im = Image.fromarray(img).resize(cam.size, Image.LANCZOS)
+    return np.asarray(im), zb[::ss, ::ss]

@@ -34,7 +34,7 @@ light pair was run in full only once at the final settings. Each increase in com
 | Is deformation told apart from movement? | Yes, on the neck pillow | shape difference 4.2 cm against 3.0 cm pair noise; soft per the Rigidity Copilot |
 | Does it survive a lighting change? | Partly | 15 objects matched both ways; vase and bat cushion found moved but misnamed |
 | How many false alarms when nothing changed? | 4 of 12 objects | dark-dark pair |
-| Are the stated uncertainties honest? | Not yet | per-view ranges about 20x too small; objects about 1.4x too large in metric size |
+| Are the stated uncertainties honest? | Not yet | per-view ranges 20–60x too small; objects about 1.4x too large in metric size |
 | What limits accuracy most? | Point density and views, set by compute | 120 000 of 600 000 points saved; 258 points shared across the lighting change |
 
 <p align="center"><img src="docs/figures/data.gif" width="600"></p>
@@ -166,9 +166,10 @@ node graph keeps carrying the physics.
 
 <p align="center"><img src="docs/figures/cloud_views.png" width="900"></p>
 
-*Figure 3. Light pair, after sweep (run 12): the saved scene cloud (120 000 of 600 000 points) plus every object asset
-at full density, from front left, front and front right. Sparse stray points (mean distance to the 8 nearest points
-above its 75th percentile) are hidden for display. Books (yellow, left), bat cushion (red), neck pillow and cap (dark
+*Figure 3. Light pair, after sweep (run 12): the central part of the saved scene cloud (120 000 of 600 000 points)
+plus every object asset at full density, from front left, front and front right. For display only, sparse stray points
+(mean distance to the 8 nearest points above its 60th percentile) are hidden and single-pixel gaps between points are
+filled. Books (yellow, left), bat cushion (red), neck pillow and cap (dark
 blue, back), grey cushion and guitar (front right) are visible. The sparse, patchy sofa is the density limit of
 Section 10.*
 
@@ -316,7 +317,7 @@ and from 2 to 25 (dark), so a few frames are confidently wrong.
 
 <p align="center"><img src="docs/figures/asset_issues.png" width="900"></p>
 
-*Figure 5. Exported assets of the light pair (run 12): a clean object and three pose failures. The bat cushion appears
+*Figure 5. Exported assets of the light pair (run 12): a clean object (the cap) and three pose failures. The bat cushion appears
 twice, the grey cushion as stacked parallel layers, and the after-sweep mug is fragmented after ghost-copy removal.*
 
 **Tested and not kept.** A motion-based misalignment term (run 6) read noisy points as a 14 cm offset; a guarded
@@ -348,9 +349,9 @@ least two views agree on; detached pieces under 15% of the largest are cut.
 
 <p align="center"><img src="docs/figures/segmentation.png" width="900"></p>
 
-*Figure 6. After sweep, every object painted one colour. Left: run 6, masks merged in 3D (58 objects over both
-sweeps; walls, sofa and guitar in many pieces). Right: light pair (run 12), YOLOE-seeded SAM 2 tracks (21 objects over
-both sweeps).*
+*Figure 6. After sweep, every object painted one colour; the largest object (the sofa) and points belonging to no
+object are pale grey. (a) Run 6, single-frame masks merged in 3D (58 objects over both sweeps; walls, sofa and guitar
+in many pieces). (b) Light pair (run 12), YOLOE-seeded SAM 2 tracks (21 objects over both sweeps).*
 
 ### 4.2 Names and semantic context
 
@@ -405,9 +406,11 @@ is new here**.
 
 <p align="center"><img src="docs/figures/uncertainty.png" width="900"></p>
 
-*Figure 7. Light pair (run 12). (a) Scale: per-frame metric-depth estimates, object-size votes and the combined
-posterior mode with its 90% range. (b) Median 90% position radius against the number of views fused: as stated by the
-fused per-view covariances, and as observed from the views' own scatter.*
+*Figure 7. Light pair (run 12). (a) How many metres one unit of the reconstruction is: the belief from the metric
+depth model (blue, ticks = its 80 per-frame estimates), the belief from the typical sizes of four named objects (green,
+triangles = each object's vote), and the combined estimate (orange) with its 90% range. (b) How precisely object
+positions are known: the median 90% radius actually observed when an object's views are compared (blue) against the
+radius the fused per-view covariances claim (red), for 1, 2 and 4 views.*
 
 | pair | metric depth | objects | combined (90% range) | size check: measured / typical |
 |---|---|---|---|---|
@@ -439,7 +442,7 @@ state (standard), and a 90% region follows from the chi-square quantile. Views f
 and the fused region never undercuts the views' own scatter. Median 90% radius on the light pair: **±5.0 cm**.
 
 Figure 7b shows why the scatter floor is needed. The fused covariances claim half a centimetre from one view and under
-a millimetre from sixteen, while the views actually scatter by 7–12 cm. The normalised innovation squared, which
+a millimetre from sixteen, while the views actually scatter by 7–12 cm: the stated range is 20–60x too small. The normalised innovation squared, which
 averages 3 for honest uncertainties in 3D, is **37 000** on the light pair. It is reported, not used to rescale, so
 that the fault stays visible; calibrating per-view covariances on the no-change pair is the fix.
 
@@ -463,8 +466,8 @@ two clouds about the vertical against the turn noise of this pair's unchanged ob
 
 <p align="center"><img src="docs/figures/change_map.png" width="1000"></p>
 
-*Figure 8. (a) Light pair (run 12) from above, changed objects only: 90% position regions before (dashed) and after
-(solid), the cap's move, the mug's turn and the neck pillow's deformation. (b) Each detected change divided by its own
+*Figure 8. (a) Light pair (run 12) from above on the faded scene, changed objects only: 90% position regions before
+(dashed) and after (filled), the cap's move, the mug's turn, the neck pillow's deformation and the two surface shifts. (b) Each detected change divided by its own
 pair's 90% noise level (position regions plus misalignment for moves, turn noise for the mug, shape noise for the
 pillow); the bar is the 90% range. Dark-light values are from run 11.*
 
@@ -473,7 +476,8 @@ pillow); the bar is the 90% range. Dark-light values are from run 11.*
 | cap | moved | 73 cm (67–79 cm), turned 18 ± 3°, onto the sofa; 55% sure | correct |
 | mug | turned in place | about 40 ± 2° about the vertical | correct |
 | neck pillow | deformed | shape differs 4.2 cm vs 3.0 cm noise; soft; 66% sure | correct |
-| grey cushion, guitar | shifted | surface moved about 22 cm | correct |
+| grey cushion | shifted | surface moved about 22 cm; it was squashed | found, should read deformed |
+| guitar | shifted | surface moved about 22 cm | correct |
 | bat cushion | "table tennis bat" added | red side now visible | found, wrong verb |
 | glass vase | "cup" added | – | found, wrong name and verb |
 | skirting board, box | removed, added | 30%, 50% sure | false alarms |
@@ -547,9 +551,9 @@ beside the prior as a check.
 <p align="center"><img src="docs/figures/properties.png" width="1000"></p>
 
 *Figure 9. Light pair (run 12). (a) Rigidity Copilot per object: expected Young's modulus (dot), range (bar) and top
-material, sorted soft to rigid, one asset per name (the one with most points). The neck pillow's after-sweep asset reads 0.41; its
-before-sweep asset reads 0.27, the value its deformation verdict quotes. (b) Mean robot action scores per object of the after sweep (Section 8); names as
-checked against the photos, with the pipeline's name in brackets where it was wrong.*
+material, sorted soft to rigid, one asset per name, with the one wrong material in red (the one with most points). The neck pillow's after-sweep asset reads 0.41; its
+before-sweep asset reads 0.27, the value its deformation verdict quotes. (b) The best action and its mean score per object of the after sweep (Section 8);
+names as checked against the photos, with the pipeline's name after a comma where it was wrong.*
 
 The ordering soft to rigid is right: neck pillow and cushion at about 10⁵–10⁶ Pa, cap as fabric, guitar and cabinet
 as wood, mug at the rigid end. Single material names can be wrong (the ceramic mug reads as metal, a book as rubber)
@@ -624,7 +628,8 @@ as density improves.
 <p align="center"><img src="docs/figures/scene_objects.png" width="900"></p>
 
 *Figure 11. Light pair (run 12), after sweep: every object coloured by its verdict, on the faded scene. Names as checked
-against the photos; the pipeline's wrong names are kept after a comma.*
+against the photos; the pipeline's wrong names are kept after a comma. The grey cushion was squashed between the
+sweeps and is marked deformed from the photos; the pipeline reported it only as a surface shift.*
 
 ## 9. Exported assets
 
@@ -644,15 +649,15 @@ is the moved object; its actions are those of its after-sweep partner B21. The c
 
 <p align="center"><img src="docs/figures/assets.png" width="900"></p>
 
-*Figure 13. The same asset format for the cap and the mug (run 12): photo crop, exported cloud, and node graph (node
-size = weight) with the Copilot's modulus.*
+*Figure 13. What exported assets still get wrong (run 12): the photo crop each asset is named from, above the exported
+cloud, with the fault in red. Transparent, dark or poorly textured objects and off-pose views are the main causes.*
 
 The format is chosen for simulators and physics-informed models rather than for display: points for collision and
 rendering, a hull for fast contact checks, a graph with rest lengths and stiffness for deformable simulation, and a
 pose for re-placing the object where the after sweep found it.
 
 > **Summary.** Clean objects export as usable assets with pose, graph, stiffness, actions and a sentence; pose groups
-> (Figure 5) still corrupt some after-sweep assets.
+> (Figure 5), transparent glass and dark, textureless objects (Figure 13) still corrupt some assets.
 
 ## 10. Why the results are not yet perfect
 
@@ -674,9 +679,10 @@ SAM 2's small backbone, chunked reconstruction and the saved density were chosen
 
 <p align="center"><img src="docs/figures/progress.png" width="1000"></p>
 
-*Figure 14. Light pair across runs: (a) frames used per sweep, (b) objects found over both sweeps (fragments falling
-to whole objects), (c) median reprojection error and residual misalignment between sweeps, (d) Colab T4 minutes for
-the pair. Run 12 reused the cached reconstruction of run 10. Values from each run's `metrics.json` and `report.md`.*
+*Figure 14. Light pair across runs. (a) Three error measures, each as a share of its first measured value (log
+scale): objects found over both sweeps (fragments falling to whole objects), median reprojection error, and residual
+misalignment between sweeps; the raw value is printed at each point. (b) Colab T4 minutes for the pair and what each
+run added. Run 12 reused the cached reconstruction of run 10. Values from each run's `metrics.json` and `report.md`.*
 
 Every increase in compute so far bought a clear gain. Moving from 28 to all 364 frames per sweep allowed whole-object
 tracking; the longer runs that added bundle adjustment took reprojection from 8.3 to under 1 px; and re-alignment
