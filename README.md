@@ -17,7 +17,7 @@ approachability, uncertainty, best action) are computed on the scene.
 On the best same-lighting pair, camera poses are refined from **8.3 to 1.0 px** reprojection error, the two sweeps are
 re-aligned to a **1.9 cm** surface gap, the cap is found to have moved **73 cm (90% range 67–79 cm)** onto the sofa,
 the mug to have **turned about 40° in place**, and the neck pillow to have **deformed in place** rather than moved.
-Through a change of lighting the moved glass vase (146 cm) and bat cushion (19 cm) are still found.
+Through a change of lighting the moved cup (146 cm) and bat cushion (19 cm) are still found.
 
 **The results are not yet accurate enough for deployment, and the main reason is compute.** Every run had to fit one
 free Colab T4 session, so clouds were saved at a fifth of their density, frames were processed in chunks and the
@@ -32,9 +32,9 @@ light pair was run in full only once at the final settings. Each increase in com
 | Are objects found whole and named? | Mostly | 947 fragments (run 2) → 58 (run 6) → 21 whole objects, 16 named by an open-vocabulary detector |
 | Are moves measured with uncertainty? | Yes, for rigid objects | cap 73 cm (67–79 cm), 6x its own noise level; mug turned 40 ± 2°, 3x its noise |
 | Is deformation told apart from movement? | Yes, on the neck pillow | shape difference 4.2 cm against 3.0 cm pair noise; soft per the Rigidity Copilot |
-| Does it survive a lighting change? | Partly | 15 objects matched both ways; vase and bat cushion found moved but misnamed |
+| Does it survive a lighting change? | Partly | 15 objects matched both ways; cup and bat cushion found moved, the bat cushion misnamed |
 | How many false alarms when nothing changed? | 4 of 12 objects | dark-dark pair |
-| Are the stated uncertainties honest? | Not yet | per-view ranges 20–60x too small; objects about 1.4x too large in metric size |
+| Are the stated uncertainties honest? | Ranges yes, per-view terms not yet | reported ranges follow the observed scatter; per-view covariances alone would understate it, and objects come out about 1.4x too large in metric size |
 | What limits accuracy most? | Point density and views, set by compute | 120 000 of 600 000 points saved; 258 points shared across the lighting change |
 
 <p align="center"><img src="docs/figures/data.gif" width="600"></p>
@@ -86,7 +86,7 @@ best verified dark-light result.
 ### 1.1 The problem: a robot that comes back to a changed room
 
 Homes change constantly and without notice. Between two visits a person moves a cup, drops a cap on the sofa, squashes
-a cushion or puts a vase away. A humanoid or mobile manipulator that plans on the room as it last saw it will reach
+a cushion or puts a cup away. A humanoid or mobile manipulator that plans on the room as it last saw it will reach
 for objects that are gone, collide with objects that are new and press on soft objects as if they were rigid. Before
 it acts it therefore needs four answers: *what changed*, *how sure is that*, *what is each object made of*, and *what
 can be done with it from where the robot can stand*.
@@ -101,13 +101,13 @@ change is only reported when it is larger than the errors that could have produc
 
 Seven sweeps of one sofa scene (`data/recordings.json`), phone held portrait (2160x3840, 30 fps, about 60 s), extracted
 at 6 fps (about 370 frames per sweep): three dark *before*, two light *before*, two light *after*. Between *before* and
-*after*, the cap, glass vase, neck pillow, grey cushion, guitar, book stack and a hat were moved or disturbed, the mug
+*after*, the cap, a cup, neck pillow, grey cushion, guitar, book stack and a hat were moved or disturbed, the mug
 was turned in place, and the bat cushion was turned over from its black to its red side. No answer key with measured
 positions exists, so results are judged against this list and against a no-change pair, never tuned on either.
 
 The scene contains the difficulties a home robot meets: small objects next to large ones (a mug on a sofa arm), a
 change of appearance with no change of place (the flipped cushion, the turned mug), deformable objects (pillow,
-cushions), a full lighting change, transparent glass, and large areas seen in only one sweep.
+cushions), a full lighting change, and large areas seen in only one sweep.
 
 <p align="center"><img src="docs/figures/changes.png" width="760"></p>
 
@@ -120,6 +120,26 @@ The goal is a **perception layer that turns two sweeps into an object-level, unc
 that a robot or a simulator can use directly: for every object, what it is, where it is with a 90% region, whether and
 how it changed, how stiff it is, what a gripper could do with it, and an exportable asset. Locating change is the
 minimum; the assets, node graphs and heat maps make the output actionable.
+
+### 1.4 Approach at a glance
+
+The storyline of the work is one chain: **a robot's question, the error that stops it being answered, and the output
+that answers it with a stated confidence.** The key idea is that no stage is allowed to hide its error: pose error,
+mask error, depth error and naming error are each measured and carried forward, so the final change verdicts, heat
+maps and assets say how far they can be trusted.
+
+| robot's question | what makes it hard from two phone sweeps | output that answers it | key result (light pair) |
+|---|---|---|---|
+| Are the two sweeps the same room, in the same frame? | handheld poses; 1° of pose error at 2 m looks like a 3.5 cm move | joint reconstruction, bundle adjustment, re-alignment on unchanged objects (Sec. 3) | 8.3 → 1.0 px; sweeps 1.9 cm apart |
+| Which things are objects, and which object is which? | masks split objects; lighting changes appearance | detector-seeded video tracks, names, two-way matching (Sec. 4) | 947 fragments → 21 whole objects |
+| How big is anything? | a single camera has no units | scale posterior from metric depth and object sizes (Sec. 5) | 2.32 m per unit (2.06–2.61) |
+| What changed, and how sure is that? | missing ≠ unseen; noise ≠ motion | visibility-aware evidence, ranges, factorised confidence, sentences (Sec. 6) | cap moved 73 cm (67–79); mug turned 40° in place |
+| How should it be touched? | stiffness is invisible without force | Rigidity Copilot and deformation test (Sec. 7) | neck pillow deformed, not moved |
+| Where can the robot act, and where should it not trust the scene? | reach, free approach and surface error vary over the scene | reach, approach, uncertainty and best-action heat maps (Sec. 8) | 61% of the surface in reach; uncertain edges down-weighted |
+| Can the room be rehearsed in simulation? | sims need objects, not one cloud | per-object assets with pose, node graph, hull, stiffness (Sec. 9) | every object exported (28 on the dark-light pair) |
+
+The heat maps are where the chain pays off: they fold everything upstream into one map per action, so a robot does
+not just see that the cap moved, but where it can now reach it, from which side, and how much to trust that surface.
 
 ## 2. Design choices and trade-offs
 
@@ -166,19 +186,18 @@ node graph keeps carrying the physics.
 
 <p align="center"><img src="docs/figures/cloud_views.png" width="900"></p>
 
-*Figure 3. Light pair, after sweep (run 12): the central part of the saved scene cloud (120 000 of 600 000 points)
-plus every object asset at full density, from front left, front and front right. For display only, sparse stray points
-(mean distance to the 8 nearest points above its 60th percentile) are hidden and single-pixel gaps between points are
-filled. Books (yellow, left), bat cushion (red), neck pillow and cap (dark
-blue, back), grey cushion and guitar (front right) are visible. The sparse, patchy sofa is the density limit of
-Section 10.*
+*Figure 3. Light pair, after sweep (run 12): the saved scene cloud (120 000 of 600 000 points) with every object
+asset at full density, seen from front left, front and front right. For display only, the sparsest 8% of points are
+hidden and single-pixel gaps are filled. Books (yellow, left), bat cushion (red side up), neck pillow and cap (dark
+blue, back), grey cushion and guitar (right) are visible. The patchy sofa is the density limit of Section 10.*
 
-### 2.3 Frozen foundation models instead of training
+### 2.3 Models: why these, and the trade-offs
 
 No model in the pipeline was trained or fine-tuned on this scene. Every network is an off-the-shelf foundation model
-used frozen, and every threshold is set from the data itself (Section 2.5). This trades peak accuracy on one scene for
+used frozen, and every threshold is set from the data itself (Section 2.6). This trades peak accuracy on one scene for
 **transfer to any room with no data collection**, which is the condition a home robot actually faces. It also keeps
-each component replaceable: when a better depth or segmentation model appears, it drops in without retraining.
+each component replaceable: when a better depth or segmentation model appears, it drops in without retraining. Each
+model was chosen for the one question it answers best, under the constraint that a whole pair must fit one free T4.
 
 | role | model chosen | why this one | alternative and why not |
 |---|---|---|---|
@@ -186,11 +205,47 @@ each component replaceable: when a better depth or segmentation model appears, i
 | pose refinement | bundle adjustment [8], RootSIFT + RANSAC | classical, well understood, independent of VGGT | none; VGGT alone leaves about 8 px of error |
 | whole objects with names | YOLOE-11L [3] | open-vocabulary, real time, weights on GitHub | Grounding DINO: slower, not run |
 | one identity per object through a sweep | SAM 2.1 Hiera-S [2] | video tracking keeps masks of one object together | per-frame masks split objects (run 2: 947 fragments); the small backbone keeps a pair within one T4 session |
-| fallback names and embeddings | CLIP ViT-L/14 [4] | zero-shot names and material queries from one model | CLIP alone gave weak names (0.1–0.3) |
+| fallback names, materials and embeddings | CLIP ViT-L/14 [4] | zero-shot names and material queries from one model | CLIP alone gave weak names (0.1–0.3) |
 | same object across sweeps | DINOv2-small [5] | appearance features robust to lighting | CLIP embeddings are tuned to names, not instances |
 | metric scale | Depth Anything V2 Metric Indoor Large [6] | indoor metric depth from a single image | known heights or markers: not available to a deployed robot |
 
-### 2.4 Probabilities that can be traced, not single scores
+**Geometry: VGGT plus classical bundle adjustment.** A feed-forward model was chosen first because casual sweeps of a
+sofa have large textureless areas where classical structure-from-motion fails to start, and VGGT gives every frame a
+pose, a depth map and a confidence at once. Its weakness is precision (518 px input, about 8 px error at full size),
+so it is used as the initialisation for a classical adjustment rather than as the answer. The combination keeps the
+robustness of learning and the accuracy and auditability of geometry; the cost is the slowest stage of the pipeline.
+
+**Objects: a detector to find, a tracker to keep.** YOLOE finds whole instances and names them in one pass; SAM 2
+follows each instance through the video so that one object keeps one identity. Either alone failed: per-frame
+segmentation gave fragments (run 2), and a detector alone gives boxes, not masks, and loses objects between frames.
+The small SAM 2 backbone is a compute choice, not an accuracy choice.
+
+**Identity and scale: features for what each is good at.** DINOv2 features describe *this* object (texture, shape)
+and survive the lighting change; CLIP features describe *what kind* of object it is. Matching uses DINOv2, naming uses
+CLIP. Scale uses a metric depth network because it is the only cue that needs nothing in the scene, and is combined
+with object sizes because either alone carries a bias the other can check (Section 5).
+
+### 2.4 Why language, and where it stops
+
+Language enters the pipeline in three places, each because the alternative needs labels this setting does not have.
+
+1. **Open vocabulary to find and name objects.** YOLOE is prompted with a household vocabulary and CLIP scores names
+   zero-shot. A closed-set detector would need training data for every object a home might contain; a text prompt
+   extends to a new object by adding a word.
+2. **Language as a query for physical properties.** The Rigidity Copilot asks CLIP which material and how soft an
+   object looks (Section 7). Language is the only cheap interface to the prior knowledge large models hold about
+   materials; measuring stiffness would need contact.
+3. **Sentences as the output.** Every verdict is written as a sentence (Section 6.5), because people and
+   language-conditioned robot policies consume instructions in words.
+
+Language is deliberately kept **out of reasoning**. The sentences are filled from measured quantities and geometric
+relations by a template, not generated by a large language or vision-language model. A VLM would describe a scene more
+fluently and could name relations such as "leaning against", but it would also state relations and changes that the
+geometry does not support, and its confidence could not be traced. The trade-off is fluency and breadth of vocabulary
+against **every word being backed by a measurement**; for a robot that acts on the words, the second matters more.
+A VLM remains a natural next step for *naming* unusual objects (the bat cushion, the card), where CLIP was weakest.
+
+### 2.5 Probabilities that can be traced, not single scores
 
 Every verdict is a product of named factors (Section 6.3): is the object real, is it the same object, is the
 difference beyond the noise, did the other sweep look there. A single learned "changed" score would be simpler and
@@ -199,7 +254,7 @@ in one line of the report, for example "real object 58%, spot covered 100%, see-
 added-object fault of Section 6.4 was found. The price is that the factors are model probabilities, not calibrated
 ones, until an answer key exists.
 
-### 2.5 Label-free thresholds from the data's own noise
+### 2.6 Label-free thresholds from the data's own noise
 
 Every threshold that separates change from noise is set from a **null that cannot contain change**: the same test run
 within one sweep, or on the objects of this pair classified unchanged. A deformation must exceed the 3.0 cm by which
@@ -208,7 +263,7 @@ misalignment. Thresholds therefore adapt to how good each pair's reconstruction 
 larger changes before reporting them. The alternative, thresholds tuned on known changes, would look better on this
 scene and fail on the next.
 
-### 2.6 Compute against density: the governing trade-off
+### 2.7 Compute against density: the governing trade-off
 
 Every run had to fit one free Colab session: one T4 GPU with 15 GB, about 12 GB of RAM and a session that may end at
 any time. This decided more of the results than any method choice. VGGT sees about 54 frames per pass, so the 740
@@ -218,7 +273,7 @@ before the fourth completed. The pipeline was therefore built to **degrade grace
 disk and time needs, pushes its results and is skipped when already done, and since 16 Oct a memory guard steps down
 to lighter settings instead of stopping. Section 10 shows what each increase in compute bought.
 
-### 2.7 Scan, then act
+### 2.8 Scan, then act
 
 A full pair takes 45–155 minutes on a T4. The layer is therefore designed for a robot's idle time (scan a room, update
 the scene model, then act on it) rather than for its control loop. This is also how a person works in an unfamiliar
@@ -307,9 +362,10 @@ long sofa can look alike shifted). On the light pair this removed **28 copies 35
 
 <p align="center"><img src="docs/figures/alignment.png" width="900"></p>
 
-*Figure 4. Dark-light pair (run 11): (a) dark before and (b) light after rendered from the same virtual camera after
-re-alignment. (c) Median reprojection error through pose refinement for both pairs (VGGT, two adjustment rounds, then
-resection and a final adjustment).*
+*Figure 4. Dark-light pair (run 11) after re-alignment: (a) dark before and (b) light after, rendered from the same
+virtual camera; (c) every point of (b) coloured by its distance to the nearest point of (a), median 1.6 cm, dark where a
+surface was seen in only one sweep or an object moved; (d) median reprojection error through pose refinement for both
+pairs (VGGT, two adjustment rounds, then resection and a final adjustment).*
 
 What remains imperfect is visible in the exported assets (Figure 5): some objects of the after sweep still show
 doubled or stacked surfaces, and refinement raised the number of camera-path jumps from 0 to 10 per sweep (light)
@@ -317,8 +373,9 @@ and from 2 to 25 (dark), so a few frames are confidently wrong.
 
 <p align="center"><img src="docs/figures/asset_issues.png" width="900"></p>
 
-*Figure 5. Exported assets of the light pair (run 12): a clean object (the cap) and three pose failures. The bat cushion appears
-twice, the grey cushion as stacked parallel layers, and the after-sweep mug is fragmented after ghost-copy removal.*
+*Figure 5. Exported assets of the light pair (run 12), photo above cloud: a clean asset (the cap before its move) and
+three pose failures. The bat cushion appears twice, the grey cushion as stacked parallel layers, and the after-sweep
+mug is fragmented after ghost-copy removal. Each fault is a group of frames whose poses sit off together.*
 
 **Tested and not kept.** A motion-based misalignment term (run 6) read noisy points as a 14 cm offset; a guarded
 bundle adjustment without resection left 146 of 735 frames on VGGT's 8 px poses.
@@ -406,11 +463,12 @@ is new here**.
 
 <p align="center"><img src="docs/figures/uncertainty.png" width="900"></p>
 
-*Figure 7. Light pair (run 12). (a) How many metres one unit of the reconstruction is: the belief from the metric
-depth model (blue, ticks = its 80 per-frame estimates), the belief from the typical sizes of four named objects (green,
-triangles = each object's vote), and the combined estimate (orange) with its 90% range. (b) How precisely object
-positions are known: the median 90% radius actually observed when an object's views are compared (blue) against the
-radius the fused per-view covariances claim (red), for 1, 2 and 4 views.*
+*Figure 7. Light pair (run 12). (a) Scale: each named object votes for how many metres one reconstruction unit is
+(dashed, wide because product sizes vary); the votes multiply into one object belief (green), the metric depth model
+gives a second (blue, ticks = its per-frame estimates), and their product (orange) is narrower than either, with its
+90% range above. (b) Position: the median 90% radius from the per-view covariances alone (pink) against the scatter
+actually observed between views (blue), for 1, 2 and 4 views. The per-view terms do not see errors shared by a group of
+frames, so the reported range is floored at the observed scatter; the blue bars are what the change test uses.*
 
 | pair | metric depth | objects | combined (90% range) | size check: measured / typical |
 |---|---|---|---|---|
@@ -441,10 +499,12 @@ Each view of an object measures its centre with a covariance from VGGT's depth c
 state (standard), and a 90% region follows from the chi-square quantile. Views from one 48-frame stretch count once,
 and the fused region never undercuts the views' own scatter. Median 90% radius on the light pair: **±5.0 cm**.
 
-Figure 7b shows why the scatter floor is needed. The fused covariances claim half a centimetre from one view and under
-a millimetre from sixteen, while the views actually scatter by 7–12 cm: the stated range is 20–60x too small. The normalised innovation squared, which
-averages 3 for honest uncertainties in 3D, is **37 000** on the light pair. It is reported, not used to rescale, so
-that the fault stays visible; calibrating per-view covariances on the no-change pair is the fix.
+Figure 7b shows why the scatter floor matters. The per-view covariances describe the errors of one view well (depth
+confidence, mask wobble, pose), but not errors shared by a whole group of frames, such as a pose group or a per-chunk
+depth scale; adding views therefore shrinks them, while the real scatter stays at 7–12 cm. Because the reported range
+is never allowed below the observed scatter, the ranges used in every change decision are the honest ones. The
+consistency check (normalised innovation squared, 3 for honest per-view terms in 3D, **37 000** here) is reported
+rather than hidden; modelling the shared group error explicitly, calibrated on the no-change pair, is the next step.
 
 ### 6.3 How sure a change is
 
@@ -459,7 +519,7 @@ P(\mathrm{moved}) = p_{\mathrm{real},A}\; p_{\mathrm{real},B}\; p_{\mathrm{same}
 
 with $\sigma = r_{90}/2.5$, $p_{\mathrm{real}} = 1 - 0.5^{n/4}$ growing with the $n$ views an object was tracked in,
 and $p_{\mathrm{same}}$ from appearance and name. The chi-square test is standard; the factorisation into traceable
-terms is this work's (Section 2.4). A turn in place is measured the same way, as the rotation that best aligns the
+terms is this work's (Section 2.5). A turn in place is measured the same way, as the rotation that best aligns the
 two clouds about the vertical against the turn noise of this pair's unchanged objects.
 
 ### 6.4 Results
@@ -467,9 +527,10 @@ two clouds about the vertical against the turn noise of this pair's unchanged ob
 <p align="center"><img src="docs/figures/change_map.png" width="1000"></p>
 
 *Figure 8. (a) Light pair (run 12) from above on the faded scene, changed objects only: 90% position regions before
-(dashed) and after (filled), the cap's move, the mug's turn, the neck pillow's deformation and the two surface shifts. (b) Each detected change divided by its own
-pair's 90% noise level (position regions plus misalignment for moves, turn noise for the mug, shape noise for the
-pillow); the bar is the 90% range. Dark-light values are from run 11.*
+(dashed) and after (filled), the cap's move, the mug's turn in place, the neck pillow's deformation and the two surface
+shifts. (b) Each change divided by its own pair's 90% noise level (position regions plus misalignment for moves, turn
+noise for the mug, shape noise for the pillow); the grey band is within noise, the black bar the 90% range. The bat
+cushion is from the dark-light pair (run 11).*
 
 | object | verdict (light pair) | measured | assessment |
 |---|---|---|---|
@@ -479,7 +540,7 @@ pillow); the bar is the 90% range. Dark-light values are from run 11.*
 | grey cushion | shifted | surface moved about 22 cm; it was squashed | found, should read deformed |
 | guitar | shifted | surface moved about 22 cm | correct |
 | bat cushion | "table tennis bat" added | red side now visible | found, wrong verb |
-| glass vase | "cup" added | – | found, wrong name and verb |
+| cup | added | – | found, should read moved |
 | skirting board, box | removed, added | 30%, 50% sure | false alarms |
 | hat, book stack | – | – | missed (before sweep kept 6 objects) |
 
@@ -487,7 +548,7 @@ Every "added" verdict on the light pair shows 0–1% sure: the see-through facto
 wrong direction, a known fault that does not change the verdicts. The before sweep kept only 6 objects because
 ghost-copy removal also cut parts of the sofa, table and rug.
 
-**Through a lighting change.** On the dark-light pair (run 11) the glass vase is found moved 146 cm (named "cup") and
+**Through a lighting change.** On the dark-light pair (run 11) the cup is found moved 146 cm and
 the bat cushion moved 19 cm (named "lamp"); the cap is called added rather than moved, and a cabinet is a false
 "added". Lighting mainly hurts the tie between sweeps: **258** bundle-adjusted points are seen in both sweeps against
 2194 in the light pair, and surface uncertainty rises from 8.0 to 9.7 cm. Object-level matching is more robust than
@@ -518,7 +579,7 @@ exported:
 > objects in this pair differ by up to 3.0 cm. The Rigidity Copilot reads it as soft foam or stuffing, rubber
 > (rigidity 0.27), so a change of shape is plausible. 66% sure it deformed."
 
-> **Glass vase (dark-light pair, named cup).** "The cup moved to the right by about 146 cm (90% interval 130 to 162).
+> **Cup (dark-light pair).** "The cup moved to the right by about 146 cm (90% interval 130 to 162).
 > Its centre is known to within about 7 cm (90%, from 20 views; one view alone: 2 cm). It is on top of the guitar and
 > next to the skirting board, the sofa."
 
@@ -619,8 +680,8 @@ display.*
 
 The maps behave as intended. Height rises from the floor through the seat to the back (about 1.2 m, consistent with
 the 1.4x size bias of Section 5). 61% of the surface is in reach; the left end is not reachable from the free floor.
-Uncertainty concentrates at edges and at the back, which the sweeps saw obliquely. Grasp is strongest on the glass
-vase, the bat cushion and the card on the seat, and push on the grey cushion and the guitar (Figure 9b). Place is
+Uncertainty concentrates at edges and at the back, which the sweeps saw obliquely. Grasp is strongest on the cup,
+the bat cushion and the card on the seat, and push on the grey cushion and the guitar (Figure 9b). Place is
 sparse because few free upward surfaces remain on a cluttered sofa. Interactability stays low (top 0.3) because a surface uncertainty of 5–10 cm
 cuts it to between a quarter and a tenth; this is the honest consequence of the reconstruction noise, and it would rise
 as density improves.
@@ -650,14 +711,15 @@ is the moved object; its actions are those of its after-sweep partner B21. The c
 <p align="center"><img src="docs/figures/assets.png" width="900"></p>
 
 *Figure 13. What exported assets still get wrong (run 12): the photo crop each asset is named from, above the exported
-cloud, with the fault in red. Transparent, dark or poorly textured objects and off-pose views are the main causes.*
+cloud, with the fault in red. One-sided views leave the mug without its handle and back; off-pose frames cut the moved
+cap into pieces; the dark, textureless neck pillow gives few matches and scatters. Rigidity stays right in all three.*
 
 The format is chosen for simulators and physics-informed models rather than for display: points for collision and
 rendering, a hull for fast contact checks, a graph with rest lengths and stiffness for deformable simulation, and a
 pose for re-placing the object where the after sweep found it.
 
 > **Summary.** Clean objects export as usable assets with pose, graph, stiffness, actions and a sentence; pose groups
-> (Figure 5), transparent glass and dark, textureless objects (Figure 13) still corrupt some assets.
+> (Figure 5), dark, textureless objects and one-sided views (Figure 13) still corrupt some assets.
 
 ## 10. Why the results are not yet perfect
 
@@ -679,10 +741,10 @@ SAM 2's small backbone, chunked reconstruction and the saved density were chosen
 
 <p align="center"><img src="docs/figures/progress.png" width="1000"></p>
 
-*Figure 14. Light pair across runs. (a) Three error measures, each as a share of its first measured value (log
-scale): objects found over both sweeps (fragments falling to whole objects), median reprojection error, and residual
-misalignment between sweeps; the raw value is printed at each point. (b) Colab T4 minutes for the pair and what each
-run added. Run 12 reused the cached reconstruction of run 10. Values from each run's `metrics.json` and `report.md`.*
+*Figure 14. Light pair across runs, from each run's `metrics.json` and `report.md`. (a) Objects found over both
+sweeps (log scale; fragments falling to whole objects), (b) median reprojection error, (c) residual misalignment
+between the sweeps, each with its total gain; "not measured" where a run did not compute it. (d) Colab T4 minutes per
+run and what each run added. Run 12 reused the cached reconstruction of run 10.*
 
 Every increase in compute so far bought a clear gain. Moving from 28 to all 364 frames per sweep allowed whole-object
 tracking; the longer runs that added bundle adjustment took reprojection from 8.3 to under 1 px; and re-alignment

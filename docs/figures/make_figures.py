@@ -34,7 +34,7 @@ plt.rcParams.update({"font.size": 11, "axes.titlesize": 12, "figure.dpi": 100, "
 TURNED = {"A17", "B23"}
 SQUASHED = {"B8"}            # the grey cushion was squashed; the pipeline saw it only as a surface shift
 # names checked against the photos: the pipeline's label is kept in brackets where it was wrong
-SHOWN = {"B22": "glass vase, named cup", "B23": "mug", "A17": "mug", "B17": "bat cushion, named bat",
+SHOWN = {"B23": "mug", "A17": "mug", "B17": "bat cushion, named bat",
          "B15": "card, named book"}          # the mug did not move; it was turned in place (Fin, 16 Oct)
 STATUS = {"turned": "#b8860b", "moved": "#e8710a", "added": "#2ca02c", "removed": "#d62728", "deformed": "#c218c2",
           "shifted": "#17a2b8", "changed in place": "#9467bd", "unchanged": "#8c8c8c"}
@@ -118,17 +118,17 @@ def fig_changes():
 
 def _dense_after_cloud():
     """Light-after cloud for display: the saved viewer cloud with sparse stray points hidden
-    (mean distance to 8 nearest points above its 60th percentile) plus every after-sweep asset
+    (mean distance to 8 nearest points above its 92nd percentile) plus every after-sweep asset
     at full density."""
     import glob
     from scipy.spatial import cKDTree
     sc, up, s = _scene(LIGHT)
     X, C = table(sc, 3), rgb(layer(sc, "lightAa (colour)"))
     B = basis(up, X)
-    k = _crop(X, B, q=(8, 92))                                           # central region: sofa and objects
+    k = _crop(X, B)
     X, C = X[k], C[k]
     d = cKDTree(X).query(X, k=9)[0][:, 1:].mean(1)
-    keep = d < np.percentile(d, 60)
+    keep = d < np.percentile(d, 92)
     Xs, Cs = [X[keep]], [C[keep]]
     for f in sorted(glob.glob(str(LIGHT / "assets" / "B*.ply"))):
         _, Xa, Ca = load_asset(LIGHT, Path(f).stem)
@@ -139,8 +139,8 @@ def _dense_after_cloud():
 def fig_cloud_views():
     """Figure 3: the light-after point cloud from three directions."""
     Xd, Cd, B, X = _dense_after_cloud()
-    views = [(215, 25, "front left"), (180, 22, "front"), (145, 25, "front right")]
-    ims = [_fill_holes(render_aa(_front(B, X, az, el, 1.15, size=(1000, 700)), Xd, Cd, 1.7)[0])
+    views = [(200, 18, "front left"), (180, 14, "front"), (160, 18, "front right")]
+    ims = [_fill_holes(render_aa(_front(B, X, az, el, 1.25, size=(1000, 700)), Xd, Cd, 2.3)[0])
            for az, el, _ in views]
     ims = _shared_trim(ims)
     fig, ax = plt.subplots(1, 3, figsize=(18, 4.9))
@@ -246,8 +246,8 @@ def fig_scene_objects():
 
 
 def fig_alignment():
-    """Figure 4: dark-before and light-after clouds in one frame (after re-alignment), and the
-    reprojection error through pose refinement."""
+    """Figure 4: dark-before and light-after clouds from one virtual camera after re-alignment, both
+    overlaid in two tints, and the reprojection error through pose refinement."""
     m_d = json.loads((DARK / "metrics.json").read_text())
     m_l = json.loads((LIGHT / "metrics.json").read_text())
     sc, up, s = _scene(DARK)
@@ -255,18 +255,27 @@ def fig_alignment():
     CA, CB = rgb(layer(sc, "darkBa (colour)")), rgb(layer(sc, "lightAa (colour)"))
     B = basis(up, XB)
     cam = _front(B, XB, 180, 16, 1.3, size=(760, 560))
-    ims = []
-    for X, C in ((XA, CA), (XB, CB)):
-        kk = _crop(X, B)
-        ims.append(render_aa(cam, X[kk], C[kk], 2.0)[0])
+    kA, kB = _crop(XA, B), _crop(XB, B)
+    ims = [_fill_holes(render_aa(cam, XA[kA], CA[kA], 2.0)[0]), _fill_holes(render_aa(cam, XB[kB], CB[kB], 2.0)[0])]
+    from scipy.spatial import cKDTree
+    gap = cKDTree(XA[kA]).query(XB[kB])[0] * s * 100                     # cm to the dark sweep's nearest point
+    gcm = matplotlib.colormaps["viridis_r"]
+    ims.append(_fill_holes(render_aa(cam, XB[kB], gcm(np.clip(gap / 10, 0, 1))[:, :3] * 255, 2.0)[0]))
+    med_gap = float(np.median(gap))
     ims = _shared_trim(ims)
-    fig = plt.figure(figsize=(17, 4.6))
-    gs = fig.add_gridspec(1, 3, width_ratios=[1, 1, 0.85], wspace=0.08)
-    for k, (im, t) in enumerate(zip(ims, ("(a) dark before", "(b) light after, same virtual camera"))):
+    fig = plt.figure(figsize=(21, 4.7))
+    gs = fig.add_gridspec(1, 4, width_ratios=[1, 1, 1, 0.85], wspace=0.16)
+    titles = ("(a) dark before", "(b) light after, same virtual camera",
+              f"(c) gap from (b) to the nearest point of (a)\nmedian {med_gap:.1f} cm")
+    for k, (im, t) in enumerate(zip(ims, titles)):
         a = fig.add_subplot(gs[k])
         a.imshow(im), a.axis("off"), a.set_title(t, fontsize=12.5)
-    b = fig.add_subplot(gs[2])
-    steps = ["VGGT", "adjustment\nround 1", "adjustment\nround 2", "resection +\nfinal round"]
+        if k == 2:
+            cbar = fig.colorbar(plt.cm.ScalarMappable(cmap=gcm, norm=plt.Normalize(0, 10)), ax=a,
+                                orientation="horizontal", fraction=0.05, pad=0.02, aspect=30)
+            cbar.set_label("cm (10 = 10 cm or more)", fontsize=10)
+    b = fig.add_subplot(gs[3])
+    steps = ["VGGT", "round 1", "round 2", "resection\n+ final"]
     for m, lab, c in ((m_l, "light pair", "#e8710a"), (m_d, "dark-light pair", "#1f64c8")):
         p = m["poses"]
         y = [p["vggt"]["median_px"], p["rounds"][0]["median_px"], p["rounds"][1]["median_px"], p["final"]["median_px"]]
@@ -274,10 +283,10 @@ def fig_alignment():
         b.text(3.12, y[-1] + (0.3 if lab == "light pair" else -0.3), f"{y[-1]:.2f} px", color=c, fontsize=11,
                weight="bold", va="center")
     b.set_xticks(range(4), steps, fontsize=10)
-    b.set_xlim(-0.2, 3.75), b.set_ylim(0, 9.5)
+    b.set_xlim(-0.2, 3.85), b.set_ylim(0, 9.5)
     b.set_ylabel("median reprojection error (px)")
     b.legend(frameon=False, loc="upper right")
-    b.set_title("(c) camera pose refinement", fontsize=12.5)
+    b.set_title("(d) camera pose refinement", fontsize=12.5)
     _clean(b)
     fig.savefig(OUT / "alignment.png", bbox_inches="tight", pad_inches=0.08)
     plt.close(fig)
@@ -432,7 +441,6 @@ def fig_change_map():
     def thr(ra, rb, align=3.0):            # 90% noise distance from both position regions + misalignment
         return float(2.5 * np.sqrt((ra / 2.5) ** 2 + (rb / 2.5) ** 2 + align ** 2))
     rows = [("cap moved", "light pair", 73.2, (67.0, 79.4), thr(3.36, 8.8), "cm", STATUS["moved"]),
-            ("glass vase moved", "dark-light pair", 146, (130, 162), thr(6.56, 8.6, 2.8), "cm", STATUS["moved"]),
             ("mug turned", "light pair", 40, (38, 42), 12.0, "°", STATUS["turned"]),
             ("bat cushion moved", "dark-light pair", 19, (17, 21), thr(5.71, 8.94, 2.8), "cm", STATUS["moved"]),
             ("neck pillow deformed", "light pair", 4.2, None, 3.0, "cm", STATUS["deformed"])]
@@ -462,96 +470,122 @@ def fig_progress():
     run's metrics.json / report.md (run 1: results/change/2026-10-10_scene01-heatmaps; run 2:
     2026-10-10_scene01-objects; runs 6, 10, 12: 2026-10-11_scene01-objects-fixed 1-main, 1c, 1e)."""
     runs = ["run 1\n10 Oct", "run 2\n10 Oct", "run 6\n13 Oct", "run 10\n15 Oct", "run 12\n16 Oct"]
-    added = ["point-level change,\n28 frames per sweep", "all 364 frames,\nper-frame masks",
-             "bundle adjustment,\nmasks merged in 3D", "YOLOE-seeded\nSAM 2 tracks",
-             "resection, re-alignment\non unchanged objects"]
+    added = ["point-level\nchange only", "all frames,\nper-frame masks", "bundle adjustment,\nmasks merged in 3D",
+             "YOLOE-seeded\nSAM 2 tracks", "resection,\nre-alignment"]
     x = np.arange(len(runs))
-    fig, (a, b) = plt.subplots(2, 1, figsize=(13, 8.4), sharex=True, gridspec_kw=dict(height_ratios=[1.25, 1]))
-    series = [("objects found (fragmentation)", [np.nan, 947, 58, 45, 21], "#4c72b0", "o", "{:.0f}", [(-12, -16)] * 5),
-              ("reprojection error", [np.nan, 8.3, 0.66, 0.59, 1.04], "#e8710a", "s", "{:g} px",
-               [None, (10, -15), (10, 7), (10, 7), (10, -15)]),
-              ("misalignment between sweeps", [np.nan, np.nan, 14, 12.6, 1.9], "#1f9e89", "D", "{:g} cm", [(10, 8)] * 5)]
-    for lab, v, col, mk, fmt, off in series:
+    fig = plt.figure(figsize=(17, 9.0))
+    gs = fig.add_gridspec(2, 3, height_ratios=[1, 0.95], hspace=0.55, wspace=0.28)
+    panels = [("Objects found over both sweeps", "fewer = less fragmented", [np.nan, 947, 58, 45, 21], "{:.0f}",
+               "#4c72b0", True, "947 → 21 (45x fewer)"),
+              ("Reprojection error (median)", "pixels; lower is better", [np.nan, 8.3, 0.66, 0.59, 1.04], "{:g} px",
+               "#e8710a", False, "8.3 → 1.0 px (8x lower)"),
+              ("Misalignment between sweeps", "cm; lower is better", [np.nan, np.nan, 14, 12.6, 1.9], "{:g} cm",
+               "#1f9e89", False, "14 → 1.9 cm (7x lower)")]
+    for j, (t, sub, v, fmt, col, log, gain) in enumerate(panels):
+        a = fig.add_subplot(gs[0, j])
         v = np.array(v, float)
-        first = v[np.isfinite(v)][0]
-        y = 100 * v / first
-        a.plot(x, y, marker=mk, color=col, lw=2.6, ms=9, label=f"{lab}, first measured = 100%")
-        for xi, yi, vi, o in zip(x, y, v, off):
-            if np.isfinite(vi):
-                a.annotate(fmt.format(vi), (xi, yi), o, textcoords="offset points", fontsize=10.5, color=col,
-                           ha="right" if o[0] < 0 else "left")
-    a.set_yscale("log"), a.set_ylim(1, 250)
-    a.set_yticks([1, 2, 5, 10, 20, 50, 100], ["1%", "2%", "5%", "10%", "20%", "50%", "100%"])
-    a.set_ylabel("remaining error\n(% of first measurement, log)")
-    a.legend(frameon=False, fontsize=10.5, loc="lower left")
-    a.set_title("(a) Light pair: each error measure fell 7–45x across the runs (lower is better)", fontsize=13)
-    _clean(a)
+        ok = np.isfinite(v)
+        a.plot(x[ok], v[ok], "o-", color=col, lw=2.8, ms=10)
+        for xi, vi in zip(x[ok], v[ok]):
+            last = xi == x[ok][-1]
+            lab = fmt.format(vi) if (last or vi > 2) else f"{vi:g}"
+            drop = not last and xi > x[ok][0] and v[ok][list(x[ok]).index(xi) - 1] > 3 * vi
+            a.annotate(lab, (xi, vi), (12, 4) if (last or drop) else (0, 13),
+                       textcoords="offset points", ha="left" if (last or drop) else "center", fontsize=11.5, color=col, weight="bold")
+        if (~ok).any():
+            a.text(x[~ok].mean(), 0.5, "not\nmeasured", transform=a.get_xaxis_transform(), ha="center",
+                   va="center", fontsize=9.5, color="#999")
+        if log:
+            a.set_yscale("log"), a.set_ylim(10, 3000)
+        else:
+            a.set_ylim(0, np.nanmax(v) * 1.25)
+        a.set_xticks(x, [r.split("\n")[0] for r in runs], fontsize=10.5), a.set_xlim(-0.5, 4.8)
+        a.set_title(f"{'abc'[j]}) {t}\n", fontsize=13, loc="left")
+        a.text(0, 1.03, sub + ":  ", transform=a.transAxes, fontsize=10.5, color="#666")
+        a.text(1, 1.03, gain, transform=a.transAxes, ha="right", fontsize=11, weight="bold", color=col)
+        if j == 1:
+            a.annotate("rose slightly, likely as resection\nadjusts the hardest frames", (4, 1.04), (2.2, 5.0),
+                       fontsize=10, color="#555", arrowprops=dict(arrowstyle="->", color="#888"))
+        _clean(a)
+    b = fig.add_subplot(gs[1, :])
     v = [7.2, 40.0, 120.3, 110.1, 46.4]
-    bars = b.bar(x, v, 0.55, color=["#7fbf8e"] * 4 + ["#c8e6cf"])
+    b.bar(x, v, 0.5, color=["#7fbf8e"] * 4 + ["#c8e6cf"], ec=["#4f9a63"] * 5)
     for xi, vi, t in zip(x, v, added):
-        b.text(xi, vi + 3, f"{vi:.0f} min", ha="center", fontsize=11, weight="bold")
-        b.text(xi, vi + 14, f"+ {t}", ha="center", va="bottom", fontsize=9.8, color="#333")
-    b.text(4, 4, "reconstruction\nreused from run 10", ha="center", va="bottom", fontsize=9.5, color="#555")
-    b.set_ylim(0, 175), b.set_ylabel("Colab T4 minutes for the pair")
-    b.set_title("(b) Compute spent per run, and what each run added", fontsize=13)
-    b.set_xticks(x, runs, fontsize=11), b.set_xlim(-0.6, 4.6)
+        b.text(xi, vi + 4, f"{vi:.0f} min", ha="center", fontsize=12, weight="bold")
+        b.text(xi, vi + 17, "+ " + t.replace("\n", " ") if len(t) < 22 else "+ " + t, ha="center", va="bottom",
+               fontsize=10.5, color="#333")
+    b.text(4, 4, "reconstruction\nreused", ha="center", va="bottom", fontsize=9.5, color="#555")
+    b.set_ylim(0, 175), b.set_ylabel("minutes")
+    b.set_xticks(x, runs, fontsize=11), b.set_xlim(-0.5, 4.5)
+    b.set_title("d) Colab T4 compute spent on the light pair, and what each run added", fontsize=13, loc="left")
     _clean(b)
-    fig.tight_layout(h_pad=1.5)
     fig.savefig(OUT / "progress.png", bbox_inches="tight", pad_inches=0.08)
     plt.close(fig)
 
 
 def fig_uncertainty():
-    """Figure 7: (a) how the two scale predictions combine; (b) stated vs observed position precision."""
+    """Figure 7: (a) how wide, uncertain cues combine into a narrow scale estimate; (b) why position
+    ranges are floored at the observed scatter."""
     m = json.loads((LIGHT / "metrics.json").read_text())
     sc_ = m["scale_cues"]
-    fig, (a, b) = plt.subplots(1, 2, figsize=(16, 5.0), gridspec_kw=dict(width_ratios=[1.2, 1], wspace=0.28))
-    s = np.linspace(1.4, 4.9, 700)
+    fig, (a, b) = plt.subplots(1, 2, figsize=(17, 5.4), gridspec_kw=dict(width_ratios=[1.35, 1], wspace=0.22))
+    ls = np.linspace(np.log(1.3), np.log(4.4), 900)
+    s = np.exp(ls)
 
-    def belief(c):
-        z = (np.log(s) - np.log(c["scale"])) / c["sd_log"]
-        p = np.exp(-0.5 * z ** 2) / s
-        return p / p.max()
+    def gauss(mu, sd):
+        return np.exp(-0.5 * ((ls - mu) / sd) ** 2) / (sd * np.sqrt(2 * np.pi))
     md, ob, cb = sc_["metric_depth"], sc_["objects"], sc_["combined"]
-    a.fill_between(s, belief(md), color="#1f64c8", alpha=0.12)
-    a.plot(s, belief(md), color="#1f64c8", lw=2.2, label=f"metric depth model\n(80 frames): {md['scale']:.2f}")
-    a.fill_between(s, belief(ob), color="#2ca02c", alpha=0.12)
-    a.plot(s, belief(ob), color="#2ca02c", lw=2.2, label=f"typical sizes of\n4 named objects: {ob['scale']:.2f}")
-    a.plot(s, belief(cb), color="#e8710a", lw=3.2, label=f"combined:\n{cb['scale']:.2f} m per unit")
+    # each object's vote: a mixture over its top names plus a small outlier share (wide, unsure)
+    names = {"cup": "mug"}
+    for v in ob["votes"]:
+        d = sum(w * gauss(mu, sd) for mu, sd, w in v["terms"])
+        a.plot(s, d, color="#2ca02c", lw=1.1, ls=(0, (4, 3)), alpha=0.75)
+        k = int(np.argmax(d))
+        a.text(s[k], d[k] + 0.08, names.get(v["label"], v["label"]), ha="center", fontsize=9.5, color="#2ca02c")
+    a.plot([], [], color="#2ca02c", lw=1.1, ls=(0, (4, 3)), label="one object's size vote (wide: sizes vary)")
+    dob = gauss(np.log(ob["scale"]), ob["sd_log"])
+    a.plot(s, dob, color="#2ca02c", lw=2.6, label=f"all object votes together: {ob['scale']:.2f}")
+    dmd = gauss(np.log(md["scale"]), md["sd_log"])
+    a.fill_between(s, dmd, color="#1f64c8", alpha=0.1)
+    a.plot(s, dmd, color="#1f64c8", lw=2.6, label=f"metric depth model (80 frames): {md['scale']:.2f}")
+    dcb = gauss(np.log(cb["scale"]), cb["sd_log"])
+    a.fill_between(s, dcb, color="#e8710a", alpha=0.18)
+    a.plot(s, dcb, color="#e8710a", lw=3.4, label=f"combined estimate: {cb['scale']:.2f} m per unit")
     lo, hi = cb["range"]
-    a.errorbar(cb["scale"], 1.05, xerr=[[cb["scale"] - lo], [hi - cb["scale"]]], fmt="none", ecolor="#e8710a",
+    top = dcb.max()
+    a.errorbar(cb["scale"], top * 1.06, xerr=[[cb["scale"] - lo], [hi - cb["scale"]]], fmt="none", ecolor="#e8710a",
                elinewidth=2, capsize=5)
-    a.text(lo - 0.03, 1.05, f"90%: {lo:.2f}–{hi:.2f}", ha="right", va="center", fontsize=10.5, color="#e8710a",
-           weight="bold")
-    a.plot(md["per_frame"], np.full(len(md["per_frame"]), -0.05), "|", color="#1f64c8", ms=9, alpha=0.6)
-    for v in ob["per_object"]:
-        a.plot(v, -0.12, "v", color="#2ca02c", ms=8)
-    a.text(1.42, -0.05, "frames", fontsize=9.5, color="#1f64c8", va="center")
-    a.text(1.42, -0.12, "objects", fontsize=9.5, color="#2ca02c", va="center")
-    a.set_ylim(-0.18, 1.12), a.set_xlim(1.4, 4.9), a.set_yticks([])
+    a.text(lo - 0.04, top * 1.06, f"90% range {lo:.2f}–{hi:.2f}", va="center", ha="right", fontsize=10.5,
+           color="#e8710a", weight="bold")
+    a.plot(md["per_frame"], np.full(len(md["per_frame"]), -0.25), "|", color="#1f64c8", ms=9, alpha=0.6)
+    a.text(1.32, -0.25, "per-frame\ndepth estimates", fontsize=9, color="#1f64c8", va="center")
+    a.set_xlim(1.3, 4.4), a.set_ylim(-0.5, top * 1.18)
+    a.set_yticks([])
     a.set_xlabel("metres per scene unit (the reconstruction's unknown scale)")
-    a.set_ylabel("relative belief")
-    a.legend(frameon=False, fontsize=10.5, loc="upper right", bbox_to_anchor=(1.02, 0.85))
-    a.set_title("(a) Metric scale: two independent predictions, combined", fontsize=13)
+    a.set_ylabel("belief (probability density)")
+    a.legend(frameon=False, fontsize=10.2, loc="upper right")
+    a.set_title("(a) Wide, unsure cues multiply into one confident scale", fontsize=13)
     _clean(a, None)
     vc, mc = m["pos_views_curve"], m["pos_model_curve"]
     ks = [1, 2, 4]
     ob_ = [vc[str(k)]["median_radius90_cm"] for k in ks]
     st_ = [mc[str(k)]["median_radius90_cm"] for k in ks]
     xx = np.arange(len(ks))
-    b.bar(xx - 0.2, ob_, 0.38, color="#4c72b0", label="observed: how far repeated views of an object scatter")
-    b.bar(xx + 0.2, st_, 0.38, color="#c44e52", label="stated: what the fused per-view covariances claim")
+    b.bar(xx - 0.2, st_, 0.38, color="#d9a1a3", label="from per-view covariances alone")
+    b.bar(xx + 0.2, ob_, 0.38, color="#4c72b0", label="observed scatter = the range reported")
     for xi, o_, s_ in zip(xx, ob_, st_):
-        b.text(xi - 0.2, o_ * 1.12, f"{o_:.1f} cm", ha="center", fontsize=10.5)
-        b.text(xi + 0.2, s_ * 1.12, f"{s_:.2f} cm", ha="center", fontsize=10.5)
-        b.text(xi, 30, f"stated\n{o_ / s_:.0f}x too small", ha="center", fontsize=11, weight="bold",
-               color="#c44e52")
-    b.set_yscale("log"), b.set_ylim(0.05, 600)
-    b.set_xticks(xx, [f"{k} view" + ("s" if k > 1 else "") + " fused" for k in ks], fontsize=11)
-    b.set_xlim(-0.6, 2.6)
-    b.set_ylabel("median 90% position radius (cm, log)")
-    b.legend(frameon=False, fontsize=10, loc="upper center")
-    b.set_title("(b) Is the stated position uncertainty honest? Not yet", fontsize=13)
+        b.text(xi - 0.2, s_ + 0.25, f"{s_:.1f}", ha="center", fontsize=10.5)
+        b.text(xi + 0.2, o_ + 0.25, f"{o_:.1f}", ha="center", fontsize=10.5)
+    b.text(0.98, 0.98, "Per-view covariances cover depth confidence,\nmask wobble and pose error, but not errors\n"
+           "shared by a group of frames (pose groups,\nper-frame depth scale). They shrink as views\n"
+           "are added; the real scatter does not. The\nreported range is therefore never allowed\n"
+           "below the observed scatter.", transform=b.transAxes, ha="right", va="top", fontsize=10,
+           color="#333", bbox=dict(fc="#f6f6f6", ec="none", pad=6))
+    b.set_xticks(xx, [f"{k} view" + ("s" if k > 1 else "") for k in ks], fontsize=11)
+    b.set_ylim(0, 30), b.set_xlim(-0.5, 2.5)
+    b.set_ylabel("median 90% position radius (cm)")
+    b.legend(frameon=False, fontsize=10, loc="upper right", bbox_to_anchor=(1.0, 0.6))
+    b.set_title("(b) Position ranges are set by the observed scatter", fontsize=13)
     _clean(b)
     fig.savefig(OUT / "uncertainty.png", bbox_inches="tight", pad_inches=0.08)
     plt.close(fig)
@@ -715,42 +749,27 @@ def _asset_panel(ax, step, name, up, az=200, el=25, nodes=True, zoom=1.9):
 
 def fig_assets():
     """Figure 13: what exported assets still get wrong: photo crop against the exported cloud."""
-    up = np.array(json.loads((LIGHT / "assets/A016_baseball_cap.json").read_text())["up"])
-    items = [("A017_cup", "mug (A17)", 200,
-              "only the wall facing the camera;\nhandle missing. Copilot: metal\n(ceramic), rigidity 0.92 still right"),
-             ("B022_cup", "glass vase (B22, named cup)", 200,
-              "transparent glass gives no\nreliable depth: a flat sheet\ntinted by what lies behind"),
-             ("B021_baseball_cap", "cap after the move (B21)", 200,
-              "split into pieces: views from\noff-pose frames cut away as\nghost copies"),
-             ("B012_neck_pillow", "neck pillow, after (B12)", 200,
-              "scattered pieces: soft, dark,\nlittle texture to match\nbetween views")]
-    fig, ax = plt.subplots(2, 4, figsize=(17, 8.2), gridspec_kw=dict(height_ratios=[1, 1.15]))
-    for j, (nm, t, az, note) in enumerate(items):
-        ax[0, j].imshow(Image.open(LIGHT / "assets" / f"{nm}.jpg")), ax[0, j].axis("off")
-        ax[0, j].set_title(t, fontsize=12.5)
-        meta = _asset_panel(ax[1, j], LIGHT, nm, up, az=az, nodes=False)
-        ax[1, j].set_title(f"exported cloud, {meta['points']:,} points", fontsize=11, color="#555")
-        ax[1, j].text(0.5, -0.04, note, transform=ax[1, j].transAxes, ha="center", va="top", fontsize=11,
-                      color="#c0392b")
-    fig.tight_layout(h_pad=1.0, w_pad=0.8)
-    fig.savefig(OUT / "assets.png", bbox_inches="tight", pad_inches=0.08)
-    plt.close(fig)
+    bad = "#c0392b"
+    _photo_cloud_grid([
+        ("A017_cup", "mug (A17)", 200, 1.9,
+         "only the wall facing the camera;\nhandle missing. Copilot: metal\n(ceramic), rigidity 0.92 still right", bad),
+        ("B021_baseball_cap", "cap after the move (B21)", 200, 1.9,
+         "split into pieces: views from\noff-pose frames cut away as\nghost copies", bad),
+        ("B012_neck_pillow", "neck pillow, after (B12)", 200, 1.9,
+         "scattered pieces: soft, dark,\nlittle texture to match\nbetween views", bad)], "assets.png", (13.5, 8.0))
 
 
 def fig_asset_issues():
-    """Figure 5: a clean asset and assets cut from views whose poses sit off."""
-    up = np.array(json.loads((LIGHT / "assets/A016_baseball_cap.json").read_text())["up"])
-    items = [("A016_baseball_cap", "clean: cap, before", 200, "#2ca02c", 1.9),
-             ("B017_table_tennis_bat", "doubled: bat cushion, after", 200, "#d62728", 1.9),
-             ("A008_cushion", "stacked layers: cushion, before", 240, "#d62728", 1.9),
-             ("B023_cup", "fragmented: mug, after", 200, "#d62728", 2.25)]
-    fig, ax = plt.subplots(1, 4, figsize=(16, 4.0))
-    for a, (nm, t, az, col, zm) in zip(ax, items):
-        _asset_panel(a, LIGHT, nm, up, az=az, nodes=False, zoom=zm)
-        a.set_title(t, fontsize=12.5, color=col)
-    fig.tight_layout(w_pad=0.5)
-    fig.savefig(OUT / "asset_issues.png", bbox_inches="tight", pad_inches=0.05)
-    plt.close(fig)
+    """Figure 5: a clean asset and three assets cut from views whose poses sit off."""
+    ok, bad = "#2a8a3e", "#c0392b"
+    _photo_cloud_grid([
+        ("A016_baseball_cap", "cap, before: clean", 200, 1.9, "one consistent group of views:\none surface, the right shape", ok),
+        ("B017_table_tennis_bat", "bat cushion, after: doubled", 200, 1.9,
+         "two groups of frames whose poses\ndisagree place the surface twice", bad),
+        ("A008_cushion", "cushion, before: stacked", 240, 1.9,
+         "frames a few cm apart in pose\ngive parallel layers", bad),
+        ("B023_cup", "mug, after: fragmented", 200, 2.25,
+         "views from off-pose frames were\nremoved as ghost copies", bad)], "asset_issues.png", (17, 8.0))
 
 
 def _clean(ax, grid="y"):
@@ -790,6 +809,22 @@ def _fill_holes(im, bg=255, rounds=2, need=5):
         fill = empty & (cnt >= need)
         im[fill] = acc[fill] / cnt[fill][:, None]
     return im.clip(0, 255).astype(np.uint8)
+
+
+def _photo_cloud_grid(items, out, figsize):
+    """Photo crop above exported cloud, with a coloured note under each (used by Figures 5 and 13)."""
+    up = np.array(json.loads((LIGHT / "assets/A016_baseball_cap.json").read_text())["up"])
+    fig, ax = plt.subplots(2, len(items), figsize=figsize, gridspec_kw=dict(height_ratios=[1, 1.15]))
+    for j, (nm, t, az, zoom, note, col) in enumerate(items):
+        ax[0, j].imshow(Image.open(LIGHT / "assets" / f"{nm}.jpg")), ax[0, j].axis("off")
+        ax[0, j].set_title(t, fontsize=13)
+        meta = _asset_panel(ax[1, j], LIGHT, nm, up, az=az, nodes=False, zoom=zoom)
+        ax[1, j].set_title(f"exported cloud, {meta['points']:,} points", fontsize=11, color="#555", pad=14)
+        ax[1, j].text(0.5, -0.03, note, transform=ax[1, j].transAxes, ha="center", va="top", fontsize=11.5,
+                      color=col)
+    fig.tight_layout(h_pad=1.0, w_pad=0.8)
+    fig.savefig(OUT / out, bbox_inches="tight", pad_inches=0.08)
+    plt.close(fig)
 
 
 FIGS = {"data": fig_data_gif, "changes": fig_changes, "cloud_views": fig_cloud_views, "segmentation": fig_segmentation,
