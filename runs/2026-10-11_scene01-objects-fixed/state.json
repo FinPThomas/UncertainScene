@@ -104,14 +104,14 @@
       "status": "done"
     },
     "1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a": {
-      "account": "colab-05ca",
-      "attempts": 1,
-      "commit": "564c7ff",
-      "expires": null,
-      "finished": "2026-10-16 15:50:27 UTC",
-      "note": "stopped: RAM at 93% (hard limit 92%)",
-      "started": "2026-10-16 14:31:38 UTC",
-      "status": "interrupted"
+      "account": "colab-becc",
+      "attempts": 2,
+      "commit": "8f78377",
+      "expires": 1792196332.0880992,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-16 19:02:22 UTC",
+      "status": "running"
     },
     "1e-changes_moved_light-before-a_vs_light-after-a": {
       "account": "colab-becc",
