@@ -1,5 +1,5 @@
-session colab-05ca, step 1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a, running 20 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 7.8/12.7 GB, disk free 59.4 GB, GPU 6.3/15.0 GB
+session colab-05ca, step 1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 9.6/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
 
 2026-10-16 14:31:39,712 INFO uncertainscene.scene01: step 1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a: scene01_dark_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects3
 2026-10-16 14:31:53,058 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -44,3 +44,5 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 2026-10-16 14:51:31,097 INFO uncertainscene.recon.poses: poses: final 0.73 px median, 1.94 px p90 (VGGT 8.52 px); per-frame median worst 2.64 px; cameras turned 1.90 deg median; 55 weak frames (30 resected, 25 interpolated)
 2026-10-16 14:51:31,099 INFO uncertainscene.recon.poses: poses: per recording 0.76, 0.70 px median; 250 points seen in both recordings (1.23 px); 16% of feature observations kept
 2026-10-16 14:51:38,302 INFO uncertainscene.poc: [1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a] camera poses refined: 8.5 px -> 0.73 px reprojection error (p90 1.94 px, 30 sparse frames resected, 25 interpolated), cameras turned 1.90 deg (median) done in 365 s | RAM 8.2/12.7 GB, disk free 59.4 GB, GPU 6.3/15.0 GB
+2026-10-16 14:51:46,711 INFO numexpr.utils: NumExpr defaulting to 2 threads.
+2026-10-16 14:52:12,444 INFO uncertainscene.poc: [1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a] DINOv2 features done in 34 s | RAM 8.2/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
