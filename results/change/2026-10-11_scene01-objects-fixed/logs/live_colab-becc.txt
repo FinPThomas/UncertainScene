@@ -1,5 +1,5 @@
-session colab-becc, step 1e-changes_moved_light-before-a_vs_light-after-a, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 11.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+session colab-becc, step 1e-changes_moved_light-before-a_vs_light-after-a, running 40 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 9.7/12.7 GB, disk free 54.2 GB, GPU 2.5/15.0 GB
 
 2026-10-16 16:46:49,977 INFO uncertainscene.scene01: step 1e-changes_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects3
 2026-10-16 16:47:02,909 INFO dinov2: using MLP layer as FFN
@@ -220,3 +220,13 @@ machine: RAM 11.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
 2026-10-16 18:44:54,857 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
 2026-10-16 18:45:10,285 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
 2026-10-16 18:45:25,734 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:45:41,154 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:45:56,656 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:46:12,092 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:46:27,547 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:46:31,299 INFO uncertainscene.change.inventory: objects: 2 one-sided objects paired with the same named object in the other recording
+2026-10-16 18:46:31,300 INFO uncertainscene.change.inventory: object changes: {'A:unchanged': 15, 'A:shifted': 1, 'A:moved': 2, 'A:removed': 2, 'B:unchanged': 18, 'B:added': 5, 'B:shifted': 1, 'B:moved': 2}; thresholds gone 0.334 appearance 0.753 shift 0.0919 (from 46 null objects)
+2026-10-16 18:46:31,706 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] object-level changes done in 301 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:46:38,250 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] recordings not re-aligned again: RAM at 78% (correction 1.81 cm, 0.92 deg kept for the next run) done in 7 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:46:49,019 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] objects set aside on disk before re-detection (RAM at 70%) done in 11 s | RAM 8.8/12.7 GB, disk free 54.2 GB, GPU 2.5/15.0 GB
+2026-10-16 18:54:14,185 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 81% (RAM 10.3/12.7 GB, disk free 54.2 GB, GPU 2.5/15.0 GB)
