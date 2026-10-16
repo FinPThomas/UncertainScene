@@ -1,4 +1,4 @@
-session colab-05ca, step 1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a, running 60 min (live log, pushed every 10 min; the step's own results follow when it ends)
+session colab-05ca, step 1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a, running 70 min (live log, pushed every 10 min; the step's own results follow when it ends)
 machine: RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB
 
 2026-10-16 14:31:39,712 INFO uncertainscene.scene01: step 1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a: scene01_dark_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects3
@@ -166,3 +166,59 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 2026-10-16 15:31:16,796 INFO root: Image embeddings computed.
 2026-10-16 15:31:24,277 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 89% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
 2026-10-16 15:31:39,607 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:31:54,923 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:32:10,248 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:32:25,570 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:32:40,953 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:32:56,334 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:33:11,662 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:33:12,907 INFO uncertainscene.change.segment: SAM 2 tracking: frame 41/88: 4 new objects (54 tracked so far)
+2026-10-16 15:33:12,920 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-16 15:33:12,959 INFO root: Computing image embeddings for the provided image...
+2026-10-16 15:33:12,983 INFO root: Image embeddings computed.
+2026-10-16 15:33:26,990 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:33:42,312 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:33:57,703 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:34:13,019 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:34:28,343 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:34:43,660 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:34:58,991 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:35:14,399 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:35:29,730 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:35:45,066 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:36:00,386 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:36:15,711 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:36:31,029 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:36:46,375 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:37:01,705 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:37:09,722 INFO uncertainscene.change.segment: SAM 2 tracking: frame 49/88: 9 new objects (63 tracked so far)
+2026-10-16 15:37:09,732 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-16 15:37:09,771 INFO root: Computing image embeddings for the provided image...
+2026-10-16 15:37:09,794 INFO root: Image embeddings computed.
+2026-10-16 15:37:17,037 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:37:32,452 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:37:47,854 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:37:53,528 INFO uncertainscene.change.segment: SAM 2 tracking: frame 57/88: 1 new objects (64 tracked so far)
+2026-10-16 15:37:53,549 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-16 15:37:53,581 INFO root: Computing image embeddings for the provided image...
+2026-10-16 15:37:53,605 INFO root: Image embeddings computed.
+2026-10-16 15:38:03,205 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:38:18,545 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:38:33,857 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:38:49,177 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:39:04,517 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:39:19,848 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:39:35,235 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:39:50,567 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:40:05,917 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:40:21,253 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:40:36,625 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:40:51,982 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:41:03,159 INFO uncertainscene.change.segment: SAM 2 tracking: frame 65/88: 7 new objects (71 tracked so far)
+2026-10-16 15:41:03,170 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-16 15:41:03,208 INFO root: Computing image embeddings for the provided image...
+2026-10-16 15:41:03,234 INFO root: Image embeddings computed.
+2026-10-16 15:41:07,341 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:41:22,721 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:41:38,130 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
+2026-10-16 15:41:53,460 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 56.8 GB, GPU 9.6/15.0 GB)
