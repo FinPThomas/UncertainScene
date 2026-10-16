@@ -107,11 +107,11 @@
       "account": "colab-becc",
       "attempts": 2,
       "commit": "8f78377",
-      "expires": 1792196332.0880992,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-16 19:26:22 UTC",
+      "note": "stopped: RAM at 94% (hard limit 92%)",
       "started": "2026-10-16 19:02:22 UTC",
-      "status": "running"
+      "status": "interrupted"
     },
     "1e-changes_moved_light-before-a_vs_light-after-a": {
       "account": "colab-becc",
