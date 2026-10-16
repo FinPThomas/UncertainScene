@@ -147,11 +147,11 @@
       "account": "colab-98b0",
       "attempts": 1,
       "commit": "ae70e4b",
-      "expires": 1792173357.0512626,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-16 17:23:06 UTC",
+      "note": "summary of 5 runs; RESULTS.md and viewer.html refreshed",
       "started": "2026-10-16 17:22:57 UTC",
-      "status": "running"
+      "status": "done"
     },
     "summary_session_colab-fa00": {
       "account": "colab-fa00",
