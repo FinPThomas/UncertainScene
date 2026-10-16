@@ -133,6 +133,16 @@
       "started": "2026-10-13 17:01:23 UTC",
       "status": "interrupted"
     },
+    "summary_session_colab-05ca": {
+      "account": "colab-05ca",
+      "attempts": 1,
+      "commit": "140ce44",
+      "expires": 1792167813.6921027,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-16 15:50:33 UTC",
+      "status": "running"
+    },
     "summary_session_colab-fa00": {
       "account": "colab-fa00",
       "attempts": 1,
