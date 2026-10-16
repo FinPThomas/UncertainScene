@@ -77,21 +77,21 @@
       "account": "colab-b769",
       "attempts": 1,
       "commit": "835c461",
-      "expires": null,
+      "expires": 1792110794.6960292,
       "finished": null,
-      "note": "session colab-b769 lost at 21:28 UTC (RAM 80%, second re-alignment); released for a rerun",
+      "note": null,
       "started": "2026-10-15 19:07:44 UTC",
-      "status": "failed"
+      "status": "running"
     },
     "1d-objects_no-change_dark-before-a_vs_dark-before-b": {
       "account": "colab-835c",
       "attempts": 1,
       "commit": "820bc6a",
-      "expires": 1792120312.998592,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-16 00:34:00 UTC",
+      "note": "static: 4 changed objects of 13 (33%); labels: box, lamp, cup, cup, table tennis bat; scale 2.240 m/unit; 10029s",
       "started": "2026-10-15 21:46:22 UTC",
-      "status": "running"
+      "status": "done"
     },
     "2-position_3-clips_no-change_dark-before-a-b-c": {
       "account": "colab-5f93",

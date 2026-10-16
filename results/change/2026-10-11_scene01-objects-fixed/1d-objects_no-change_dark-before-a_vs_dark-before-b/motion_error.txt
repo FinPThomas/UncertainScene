@@ -1,0 +1,2 @@
+error: OpenCV(4.14.0) /io/opencv/modules/calib3d/src/usac/estimator.cpp:353: error: (-215:Assertion failed) !model.empty() in function 'setModelParameters'
+

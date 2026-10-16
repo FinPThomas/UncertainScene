@@ -1,0 +1,710 @@
+[
+  {
+    "id": "A17",
+    "recording": "A",
+    "label": "box",
+    "label_prob": 0.701,
+    "label_top3": [
+      [
+        "box",
+        0.701
+      ],
+      [
+        "paper bag",
+        0.299
+      ]
+    ],
+    "status": "removed",
+    "structure": false,
+    "size_cm": [
+      72.2,
+      38.1,
+      28.2
+    ],
+    "height_m": 0.96,
+    "views": 11,
+    "complete": true,
+    "partner": null,
+    "description": "A box that was there before is no longer there. Its centre is known to within about 12 cm (90%, from 11 views; one view alone: 2 cm). It is next to the shelf, the sofa, the large surface.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        15.0,
+        3.41,
+        1.95
+      ],
+      "radius90_cm": 11.59,
+      "radius90_cm_views": 4.56,
+      "n_views": 11,
+      "n_independent_views": 4,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          32.31369575414116,
+          191.52247301535996
+        ],
+        "a": 32.080667218868214,
+        "b": 7.3128213326788005,
+        "angle": 85.29755138017579
+      },
+      "single_view_radius90_cm": 1.85,
+      "depth_sd_cm": 30.06,
+      "side_sd_cm": 0.03,
+      "pose_sd_cm": 0.11,
+      "wobble_views": 11,
+      "nis_mean": 29640.51,
+      "trace_cm": [
+        0.5,
+        0.16,
+        0.15,
+        0.15,
+        0.13,
+        0.11,
+        0.11,
+        0.1,
+        0.1,
+        0.1,
+        0.09
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "box": 0.44,
+      "paper bag": 0.188
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 4,
+      "frames_seen": 11,
+      "frames_total": 44,
+      "span_share": 0.25
+    },
+    "affordance": null,
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "shelf A36",
+          "gap_cm": 0.1
+        },
+        {
+          "object": "sofa A5",
+          "gap_cm": 0.1
+        },
+        {
+          "object": "large surface A7",
+          "gap_cm": 0.2
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": 33,
+      "counterpart_iou": 0.143,
+      "counterpart_sim": 0.613,
+      "observed": 0.9793,
+      "gone": 0.0967,
+      "appearance": 0.7235,
+      "shift_rel": -0.0232,
+      "n_points": 15000,
+      "null_gone": 0.1229,
+      "null_appearance": 0.6199
+    }
+  },
+  {
+    "id": "A27",
+    "recording": "A",
+    "label": "lamp",
+    "label_prob": 0.648,
+    "label_top3": [
+      [
+        "lamp",
+        0.648
+      ],
+      [
+        "chair",
+        0.352
+      ]
+    ],
+    "status": "changed in place",
+    "structure": false,
+    "size_cm": [
+      38.7,
+      17.8,
+      6.2
+    ],
+    "height_m": 0.84,
+    "views": 20,
+    "complete": true,
+    "partner": null,
+    "description": "The lamp is in the same place but looks different (turned over, deformed or swapped). Its centre is known to within about 7 cm (90%, from 20 views; one view alone: 1 cm). It is next to the book, the guitar, the large surface.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        6.53,
+        1.96,
+        1.52
+      ],
+      "radius90_cm": 6.72,
+      "radius90_cm_views": 3.23,
+      "n_views": 20,
+      "n_independent_views": 7,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -85.18807617634214,
+          159.0418121565857
+        ],
+        "a": 13.830991978030374,
+        "b": 3.9343786914800654,
+        "angle": 115.98792735742892
+      },
+      "single_view_radius90_cm": 1.31,
+      "depth_sd_cm": 16.46,
+      "side_sd_cm": 0.03,
+      "pose_sd_cm": 0.09,
+      "wobble_views": 20,
+      "nis_mean": 184228.67,
+      "trace_cm": [
+        1.13,
+        0.42,
+        0.37,
+        0.16,
+        0.15,
+        0.15,
+        0.14,
+        0.12,
+        0.12,
+        0.11,
+        0.11,
+        0.11,
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.03,
+        0.03
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "lamp": 0.744,
+      "chair": 0.404
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 6,
+      "frames_seen": 20,
+      "frames_total": 44,
+      "span_share": 0.476
+    },
+    "affordance": null,
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "book A19",
+          "gap_cm": 0.1
+        },
+        {
+          "object": "guitar A16",
+          "gap_cm": 0.1
+        },
+        {
+          "object": "large surface A7",
+          "gap_cm": 0.1
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": 32,
+      "counterpart_iou": 0.421,
+      "counterpart_sim": 0.956,
+      "observed": 1.0,
+      "gone": 0.028,
+      "appearance": 0.7828,
+      "shift_rel": -0.0142,
+      "n_points": 15000,
+      "null_gone": 0.0081,
+      "null_appearance": 0.7716
+    }
+  },
+  {
+    "id": "A30",
+    "recording": "A",
+    "label": "cup",
+    "label_prob": 1.0,
+    "label_top3": [
+      [
+        "cup",
+        1.0
+      ]
+    ],
+    "status": "changed in place",
+    "structure": false,
+    "size_cm": [
+      23.6,
+      10.8,
+      7.1
+    ],
+    "height_m": 0.7,
+    "views": 11,
+    "complete": true,
+    "partner": null,
+    "description": "The cup is in the same place but looks different (turned over, deformed or swapped). Its centre is known to within about 7 cm (90%, from 11 views; one view alone: 1 cm). It is on top of the sofa and next to the hat, the guitar, the sofa.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        7.05,
+        1.97,
+        1.62
+      ],
+      "radius90_cm": 7.07,
+      "radius90_cm_views": 2.21,
+      "n_views": 11,
+      "n_independent_views": 5,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          30.234498524196983,
+          208.43803788225043
+        ],
+        "a": 15.084914275657892,
+        "b": 4.139413802283135,
+        "angle": 83.62218038114838
+      },
+      "single_view_radius90_cm": 1.05,
+      "depth_sd_cm": 15.13,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.06,
+      "wobble_views": 11,
+      "nis_mean": 28295.73,
+      "trace_cm": [
+        0.52,
+        0.2,
+        0.1,
+        0.09,
+        0.08,
+        0.07,
+        0.07,
+        0.07,
+        0.07,
+        0.04,
+        0.04
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "cup": 7.426
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 5,
+      "frames_seen": 11,
+      "frames_total": 44,
+      "span_share": 0.25
+    },
+    "affordance": null,
+    "context": {
+      "on_top_of": {
+        "object": "sofa A0",
+        "share": 0.88
+      },
+      "next_to": [
+        {
+          "object": "hat A38",
+          "gap_cm": 0.0
+        },
+        {
+          "object": "guitar A12",
+          "gap_cm": 0.1
+        },
+        {
+          "object": "sofa A5",
+          "gap_cm": 0.1
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": 23,
+      "counterpart_iou": 0.364,
+      "counterpart_sim": 0.889,
+      "observed": 1.0,
+      "gone": 0.0756,
+      "appearance": 0.7939,
+      "shift_rel": -0.0075,
+      "n_points": 16009,
+      "null_gone": 0.0517,
+      "null_appearance": 0.6607
+    }
+  },
+  {
+    "id": "B24",
+    "recording": "B",
+    "label": "cup",
+    "label_prob": 0.697,
+    "label_top3": [
+      [
+        "cup",
+        0.697
+      ],
+      [
+        "paper bag",
+        0.197
+      ],
+      [
+        "phone",
+        0.083
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      29.3,
+      19.5,
+      10.2
+    ],
+    "height_m": 1.01,
+    "views": 13,
+    "complete": true,
+    "partner": null,
+    "description": "A cup is there now that was not there before. Its centre is known to within about 8 cm (90%, from 13 views; one view alone: 2 cm). It is on top of the book and next to the sofa, the pillow, the sofa.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        6.87,
+        2.73,
+        1.82
+      ],
+      "radius90_cm": 8.12,
+      "radius90_cm_views": 3.4,
+      "n_views": 13,
+      "n_independent_views": 6,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -119.4876522605726,
+          169.12313012997527
+        ],
+        "a": 14.748896526476695,
+        "b": 5.8277142309743954,
+        "angle": 108.96432638743988
+      },
+      "single_view_radius90_cm": 1.83,
+      "depth_sd_cm": 18.97,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.12,
+      "wobble_views": 13,
+      "nis_mean": 15306.96,
+      "trace_cm": [
+        2.4,
+        0.23,
+        0.12,
+        0.12,
+        0.1,
+        0.1,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.06,
+        0.06
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "cup": 2.64,
+      "phone": 0.314,
+      "paper bag": 0.745,
+      "bottle": 0.091
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 5,
+      "frames_seen": 13,
+      "frames_total": 44,
+      "span_share": 0.481
+    },
+    "affordance": {
+      "grasp": 0.001,
+      "push": 0.0,
+      "place_on": 0.0,
+      "grasp_raw": 0.0002,
+      "push_raw": 0.0,
+      "place_on_raw": 0.0,
+      "points": 2297,
+      "best": "none"
+    },
+    "context": {
+      "on_top_of": {
+        "object": "book B18",
+        "share": 0.43
+      },
+      "next_to": [
+        {
+          "object": "sofa B7",
+          "gap_cm": 0.0
+        },
+        {
+          "object": "pillow B11",
+          "gap_cm": 0.1
+        },
+        {
+          "object": "sofa B2",
+          "gap_cm": 0.1
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": 16,
+      "counterpart_iou": 0.263,
+      "counterpart_sim": 0.824,
+      "observed": 1.0,
+      "gone": 0.0145,
+      "appearance": 0.7594,
+      "shift_rel": -0.0297,
+      "n_points": 15000,
+      "null_gone": 0.0445,
+      "null_appearance": 0.6716
+    }
+  },
+  {
+    "id": "B32",
+    "recording": "B",
+    "label": "table tennis bat",
+    "label_prob": 0.962,
+    "label_top3": [
+      [
+        "table tennis bat",
+        0.962
+      ],
+      [
+        "mirror",
+        0.01
+      ],
+      [
+        "plate",
+        0.004
+      ]
+    ],
+    "status": "changed in place",
+    "structure": false,
+    "size_cm": [
+      36.7,
+      23.3,
+      11.5
+    ],
+    "height_m": 0.83,
+    "views": 13,
+    "complete": true,
+    "partner": null,
+    "description": "The table tennis bat is in the same place but looks different (turned over, deformed or swapped). Its centre is known to within about 6 cm (90%, from 13 views; one view alone: 1 cm). It is on top of the blanket and next to the sofa, the pillow, the sofa.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        4.65,
+        2.7,
+        0.95
+      ],
+      "radius90_cm": 5.72,
+      "radius90_cm_views": 4.67,
+      "n_views": 13,
+      "n_independent_views": 6,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -86.12542093644244,
+          152.85469285437114
+        ],
+        "a": 9.636512759774858,
+        "b": 4.210324725237218,
+        "angle": 152.02342884251425
+      },
+      "single_view_radius90_cm": 0.94,
+      "depth_sd_cm": 12.83,
+      "side_sd_cm": 0.01,
+      "pose_sd_cm": 0.03,
+      "wobble_views": 13,
+      "nis_mean": 119731.3,
+      "trace_cm": [
+        2.38,
+        0.42,
+        0.33,
+        0.22,
+        0.21,
+        0.16,
+        0.12,
+        0.06,
+        0.04,
+        0.04,
+        0.04,
+        0.03,
+        0.03
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {
+      "chair": 0.142,
+      "plate": 0.206,
+      "ball": 0.214
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 6,
+      "frames_seen": 13,
+      "frames_total": 44,
+      "span_share": 0.464
+    },
+    "affordance": {
+      "grasp": 0.204,
+      "push": 0.0,
+      "place_on": 0.012,
+      "grasp_raw": 0.0493,
+      "push_raw": 0.0,
+      "place_on_raw": 0.0037,
+      "points": 732,
+      "best": "grasp"
+    },
+    "context": {
+      "on_top_of": {
+        "object": "blanket B8",
+        "share": 0.81
+      },
+      "next_to": [
+        {
+          "object": "sofa B7",
+          "gap_cm": 0.1
+        },
+        {
+          "object": "pillow B11",
+          "gap_cm": 0.5
+        },
+        {
+          "object": "sofa B5",
+          "gap_cm": 1.1
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": 27,
+      "counterpart_iou": 0.421,
+      "counterpart_sim": 0.956,
+      "observed": 1.0,
+      "gone": 0.0915,
+      "appearance": 0.736,
+      "shift_rel": -0.0025,
+      "n_points": 11479,
+      "null_gone": 0.1178,
+      "null_appearance": 0.7141
+    }
+  },
+  {
+    "id": "B33",
+    "recording": "B",
+    "label": "book",
+    "label_prob": 1.0,
+    "label_top3": [
+      [
+        "book",
+        1.0
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      24.5,
+      13.3,
+      6.7
+    ],
+    "height_m": 1.1,
+    "views": 5,
+    "complete": false,
+    "partner": null,
+    "description": "A book is there now that was not there before. Its centre is known to within about 7 cm (90%, from 5 views; one view alone: 1 cm). It is next to the book.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        7.8,
+        2.83,
+        1.11
+      ],
+      "radius90_cm": 7.27,
+      "radius90_cm_views": null,
+      "n_views": 5,
+      "n_independent_views": 3,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          41.78721373712901,
+          248.76806533463494
+        ],
+        "a": 16.627434075116888,
+        "b": 5.9142868024301185,
+        "angle": 69.23591714195
+      },
+      "single_view_radius90_cm": 1.03,
+      "depth_sd_cm": 13.86,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.07,
+      "wobble_views": 5,
+      "nis_mean": 38278.04,
+      "trace_cm": [
+        1.03,
+        0.14,
+        0.13,
+        0.07,
+        0.07
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "book": 0.906
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 3,
+      "frames_seen": 5,
+      "frames_total": 44,
+      "span_share": 0.333
+    },
+    "affordance": {
+      "grasp": 0.315,
+      "push": 0.0,
+      "place_on": 0.0,
+      "grasp_raw": 0.076,
+      "push_raw": 0.0,
+      "place_on_raw": 0.0,
+      "points": 142,
+      "best": "grasp"
+    },
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "book B34",
+          "gap_cm": 2.9
+        }
+      ],
+      "supports": []
+    },
+    "stats": {
+      "counterpart": 33,
+      "counterpart_iou": 0.545,
+      "counterpart_sim": 0.68,
+      "observed": 1.0,
+      "gone": 0.3192,
+      "appearance": 0.5354,
+      "shift_rel": 0.0111,
+      "n_points": 5791,
+      "null_gone": 0.0508,
+      "null_appearance": 0.4065
+    }
+  }
+]

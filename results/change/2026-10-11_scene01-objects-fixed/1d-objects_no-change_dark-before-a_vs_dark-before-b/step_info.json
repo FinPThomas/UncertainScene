@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-11_scene01-objects-fixed",
+  "step": "1d-objects_no-change_dark-before-a_vs_dark-before-b",
+  "status": "done",
+  "account": "colab-835c",
+  "commit": "820bc6a",
+  "minutes": 167.6,
+  "usage_at_end": "RAM 4.6/12.7 GB, disk free 54.4 GB, GPU 0.3/15.0 GB",
+  "note": "static: 4 changed objects of 13 (33%); labels: box, lamp, cup, cup, table tennis bat; scale 2.240 m/unit; 10029s"
+}

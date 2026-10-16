@@ -1,0 +1,359 @@
+{
+ "objects": [
+  {
+   "name": "A017_box",
+   "label": "box",
+   "status": "removed",
+   "nodes": 96,
+   "edges": 350,
+   "behaviour": null,
+   "rigidity": 0.878,
+   "material": "wood",
+   "youngs_modulus_pa": 6090000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A027_lamp",
+   "label": "lamp",
+   "status": "changed in place",
+   "nodes": 96,
+   "edges": 343,
+   "behaviour": null,
+   "rigidity": 0.641,
+   "material": "rubber",
+   "youngs_modulus_pa": 198000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A030_cup",
+   "label": "cup",
+   "status": "changed in place",
+   "nodes": 96,
+   "edges": 349,
+   "behaviour": null,
+   "rigidity": 0.895,
+   "material": "metal",
+   "youngs_modulus_pa": 25600000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B024_cup",
+   "label": "cup",
+   "status": "added",
+   "nodes": 96,
+   "edges": 347,
+   "behaviour": null,
+   "rigidity": 0.896,
+   "material": "metal",
+   "youngs_modulus_pa": 10700000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B032_table_tennis_bat",
+   "label": "table tennis bat",
+   "status": "changed in place",
+   "nodes": 96,
+   "edges": 349,
+   "behaviour": null,
+   "rigidity": 0.701,
+   "material": "rubber",
+   "youngs_modulus_pa": 811000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B033_book",
+   "label": "book",
+   "status": "added",
+   "nodes": 96,
+   "edges": 339,
+   "behaviour": null,
+   "rigidity": 0.871,
+   "material": "ceramic or porcelain",
+   "youngs_modulus_pa": 17200000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B017_guitar",
+   "label": "guitar",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 347,
+   "behaviour": null,
+   "rigidity": 0.717,
+   "material": "wood",
+   "youngs_modulus_pa": 1080000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A012_guitar",
+   "label": "guitar",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 352,
+   "behaviour": null,
+   "rigidity": 0.798,
+   "material": "wood",
+   "youngs_modulus_pa": 4160000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A015_cushion",
+   "label": "cushion",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 348,
+   "behaviour": null,
+   "rigidity": 0.534,
+   "material": "fabric or cloth",
+   "youngs_modulus_pa": 4990000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A019_book",
+   "label": "book",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 344,
+   "behaviour": null,
+   "rigidity": 0.823,
+   "material": "paper or cardboard",
+   "youngs_modulus_pa": 746000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A020_neck_pillow",
+   "label": "neck pillow",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 342,
+   "behaviour": null,
+   "rigidity": 0.56,
+   "material": "soft foam or stuffing",
+   "youngs_modulus_pa": 2310000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B015_cushion",
+   "label": "cushion",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 347,
+   "behaviour": null,
+   "rigidity": 0.528,
+   "material": "rubber",
+   "youngs_modulus_pa": 12700000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B018_book",
+   "label": "book",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 355,
+   "behaviour": null,
+   "rigidity": 0.836,
+   "material": "paper or cardboard",
+   "youngs_modulus_pa": 1200000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B020_guitar",
+   "label": "guitar",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 346,
+   "behaviour": null,
+   "rigidity": 0.847,
+   "material": "wood",
+   "youngs_modulus_pa": 5740000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B031_skirting_board",
+   "label": "skirting board",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 346,
+   "behaviour": null,
+   "rigidity": 0.796,
+   "material": "wood",
+   "youngs_modulus_pa": 807000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B025_neck_pillow",
+   "label": "neck pillow",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 345,
+   "behaviour": null,
+   "rigidity": 0.482,
+   "material": "soft foam or stuffing",
+   "youngs_modulus_pa": 1850000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A023_skirting_board",
+   "label": "skirting board",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 333,
+   "behaviour": null,
+   "rigidity": 0.888,
+   "material": "metal",
+   "youngs_modulus_pa": 21400000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A033_book",
+   "label": "book",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 324,
+   "behaviour": null,
+   "rigidity": 0.841,
+   "material": "paper or cardboard",
+   "youngs_modulus_pa": 3600000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A034_greeting_card",
+   "label": "greeting card",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 329,
+   "behaviour": null,
+   "rigidity": 0.792,
+   "material": "paper or cardboard",
+   "youngs_modulus_pa": 660000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B034_book",
+   "label": "book",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 328,
+   "behaviour": null,
+   "rigidity": 0.886,
+   "material": "metal",
+   "youngs_modulus_pa": 12200000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A037_bowl",
+   "label": "bowl",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 331,
+   "behaviour": null,
+   "rigidity": 0.818,
+   "material": "paper or cardboard",
+   "youngs_modulus_pa": 1860000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A031_picture_frame",
+   "label": "picture frame",
+   "status": "not seen in other recording",
+   "nodes": 96,
+   "edges": 333,
+   "behaviour": null,
+   "rigidity": 0.803,
+   "material": "rubber",
+   "youngs_modulus_pa": 1640000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B022_guitar",
+   "label": "guitar",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 330,
+   "behaviour": null,
+   "rigidity": 0.772,
+   "material": "wood",
+   "youngs_modulus_pa": 3110000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  }
+ ],
+ "contacts": [
+  {
+   "a": "A027_lamp",
+   "b": "A019_book",
+   "point_pairs": 336,
+   "relation": "touching"
+  },
+  {
+   "a": "A030_cup",
+   "b": "A012_guitar",
+   "point_pairs": 47,
+   "relation": "touching"
+  },
+  {
+   "a": "B024_cup",
+   "b": "B018_book",
+   "point_pairs": 39,
+   "relation": "B024_cup rests on B018_book"
+  },
+  {
+   "a": "B017_guitar",
+   "b": "B020_guitar",
+   "point_pairs": 276,
+   "relation": "touching"
+  },
+  {
+   "a": "B015_cushion",
+   "b": "B031_skirting_board",
+   "point_pairs": 40,
+   "relation": "touching"
+  },
+  {
+   "a": "A033_book",
+   "b": "A034_greeting_card",
+   "point_pairs": 26,
+   "relation": "touching"
+  },
+  {
+   "a": "A033_book",
+   "b": "A037_bowl",
+   "point_pairs": 117,
+   "relation": "A037_bowl rests on A033_book"
+  },
+  {
+   "a": "A034_greeting_card",
+   "b": "A037_bowl",
+   "point_pairs": 1464,
+   "relation": "A037_bowl rests on A034_greeting_card"
+  }
+ ],
+ "scale_m_per_unit": 2.2398684596023264,
+ "up": [
+  -0.3773,
+  -0.917,
+  0.1291
+ ]
+}
