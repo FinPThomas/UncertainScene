@@ -1,5 +1,5 @@
-session colab-402d, step 1e-changes_moved_light-before-a_vs_light-after-a, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 8.5/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
+session colab-402d, step 1e-changes_moved_light-before-a_vs_light-after-a, running 40 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 10.3/12.7 GB, disk free 56.8 GB, GPU 10.3/15.0 GB
 
 2026-10-16 11:26:24,879 INFO uncertainscene.scene01: step 1e-changes_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects3
 2026-10-16 11:26:37,657 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -39,3 +39,19 @@ machine: RAM 8.5/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
 2026-10-16 11:42:31,696 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] camera poses refined: 8.3 px -> 1.04 px reprojection error (p90 2.72 px, 53 sparse frames resected, 12 interpolated), cameras turned 1.23 deg (median) done in 319 s | RAM 7.6/12.7 GB, disk free 59.4 GB, GPU 6.3/15.0 GB
 2026-10-16 11:42:39,378 INFO numexpr.utils: NumExpr defaulting to 2 threads.
 2026-10-16 11:43:04,075 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] DINOv2 features done in 32 s | RAM 7.7/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
+2026-10-16 11:57:06,517 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] point-level change detection (1200000 points, tau 0.268) done in 842 s | RAM 8.5/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
+2026-10-16 11:57:07,266 INFO uncertainscene.change.floor: floor: gravity refined by 3.7 deg, 28 floor points (3% of horizontal), camera 0.370 units above floor -> 3.645 m/unit
+2026-10-16 11:57:07,555 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] floor (28 floor points, gravity refined 3.7 deg) done in 1 s | RAM 8.5/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
+2026-10-16 12:00:23,330 INFO uncertainscene.change.metric: scale: metric depth 2.598 m/unit from 80 frames (frames spread 14.8%, +-10% 1 sigma)
+2026-10-16 12:00:23,335 INFO uncertainscene.change.floor: scale: most likely 2.598 m/unit (90% 2.198-3.067) from metric_depth 2.598; phone height (not used) 3.645
+2026-10-16 12:00:23,622 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] metric scale (depth model 2.598 m/unit from 80 frames; combined 2.598, 90% 2.198-3.067) done in 196 s | RAM 8.4/12.7 GB, disk free 57.6 GB, GPU 5.9/15.0 GB
+2026-10-16 12:00:24,007 INFO uncertainscene.scene01: no cached SAM 2 masks sam2rec_scene01_light_before_a_364f_b57d5d0b16_k44_p32_det.npz (HTTPError)
+2026-10-16 12:01:03,685 INFO root: Loaded checkpoint sucessfully
+2026-10-16 12:01:04,575 INFO root: Loaded checkpoint sucessfully
+2026-10-16 12:01:04,663 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-16 12:01:04,726 INFO root: Computing image embeddings for the provided image...
+2026-10-16 12:01:04,946 INFO root: Image embeddings computed.
+2026-10-16 12:05:42,062 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 80% (RAM 10.2/12.7 GB, disk free 56.8 GB, GPU 10.3/15.0 GB)
+2026-10-16 12:05:57,618 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 81% (RAM 10.2/12.7 GB, disk free 56.8 GB, GPU 10.3/15.0 GB)
+2026-10-16 12:06:12,979 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 81% (RAM 10.3/12.7 GB, disk free 56.8 GB, GPU 10.3/15.0 GB)
+2026-10-16 12:06:28,317 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 81% (RAM 10.3/12.7 GB, disk free 56.8 GB, GPU 10.3/15.0 GB)
