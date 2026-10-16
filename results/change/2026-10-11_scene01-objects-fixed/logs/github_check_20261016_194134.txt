@@ -1,0 +1,9 @@
+2026-10-16 19:37:42Z INFO  [1/8] Python 3.13.15, platform: Colab
+2026-10-16 19:37:42Z INFO  [2/8] GITHUB_TOKEN found in Colab secrets: fine-grained (github_pat_), 93 characters (value never printed)
+2026-10-16 19:37:43Z INFO  [3/8] token valid for GitHub user 'FinPThomas'; expires: 2026-11-15 15:12:25 UTC; API calls left this hour: 4999
+2026-10-16 19:37:43Z INFO  [4/8] repository FinPThomas/UncertainScene visible (private: False)
+2026-10-16 19:37:44Z INFO        branch exp/change/scene01-heatmaps at 138c166
+2026-10-16 19:37:45Z INFO  [5/8] code at 138c166 (fix(change): start final steps light, step down on RAM, never stop) in 1 s
+2026-10-16 19:41:33Z INFO  [6/8] dependencies installed in 229 s (torch 2.11.0+cu130, SAM 2 ok)
+2026-10-16 19:41:33Z INFO        building gsplat CUDA code (once per session, several minutes)
+2026-10-16 19:41:33Z INFO        gsplat CUDA code already built
