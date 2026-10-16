@@ -108,8 +108,8 @@
       "attempts": 1,
       "commit": "564c7ff",
       "expires": null,
-      "finished": null,
-      "note": "session ended (run 12: memory, then SAM 2 install); released for the rerun",
+      "finished": "2026-10-16 15:50:27 UTC",
+      "note": "stopped: RAM at 93% (hard limit 92%)",
       "started": "2026-10-16 14:31:38 UTC",
       "status": "interrupted"
     },
@@ -117,11 +117,11 @@
       "account": "colab-402d",
       "attempts": 1,
       "commit": "237c579",
-      "expires": null,
+      "expires": 1792168973.6136243,
       "finished": null,
-      "note": "session ended (run 12: memory, then SAM 2 install); released for the rerun",
+      "note": null,
       "started": "2026-10-16 11:26:23 UTC",
-      "status": "interrupted"
+      "status": "running"
     },
     "2-position_3-clips_no-change_dark-before-a-b-c": {
       "account": "colab-5f93",

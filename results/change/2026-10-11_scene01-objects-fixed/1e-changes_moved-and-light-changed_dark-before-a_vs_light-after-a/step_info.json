@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-11_scene01-objects-fixed",
+  "step": "1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a",
+  "status": "interrupted",
+  "account": "colab-05ca",
+  "commit": "564c7ff",
+  "minutes": 78.8,
+  "usage_at_end": "RAM 4.7/12.7 GB, disk free 55.2 GB, GPU 0.3/15.0 GB",
+  "note": "stopped: RAM at 93% (hard limit 92%)"
+}
