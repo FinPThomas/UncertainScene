@@ -117,11 +117,11 @@
       "account": "colab-98b0",
       "attempts": 2,
       "commit": "fb5fed5",
-      "expires": 1792188198.083307,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-16 17:22:54 UTC",
+      "note": "stopped: RAM at 92% (hard limit 92%)",
       "started": "2026-10-16 16:46:48 UTC",
-      "status": "running"
+      "status": "interrupted"
     },
     "2-position_3-clips_no-change_dark-before-a-b-c": {
       "account": "colab-5f93",

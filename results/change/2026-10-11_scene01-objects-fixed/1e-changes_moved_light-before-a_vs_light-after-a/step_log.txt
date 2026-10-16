@@ -1,0 +1,149 @@
+2026-10-16 16:46:49,977 INFO uncertainscene.scene01: step 1e-changes_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects3
+2026-10-16 16:47:02,909 INFO dinov2: using MLP layer as FFN
+2026-10-16 16:47:37,674 INFO uncertainscene.recon.vggt: loaded facebook/VGGT-1B on cuda in 35 s
+2026-10-16 16:48:19,600 INFO uncertainscene.recon.chunked: chunk 2/19: 47 frames, scale 1.006, anchor residual 0.002 (relative to depth)
+2026-10-16 16:48:40,918 INFO uncertainscene.recon.chunked: chunk 3/19: 47 frames, scale 1.017, anchor residual 0.003 (relative to depth)
+2026-10-16 16:49:01,786 INFO uncertainscene.recon.chunked: chunk 4/19: 47 frames, scale 1.012, anchor residual 0.004 (relative to depth)
+2026-10-16 16:49:22,676 INFO uncertainscene.recon.chunked: chunk 5/19: 47 frames, scale 1.025, anchor residual 0.004 (relative to depth)
+2026-10-16 16:49:42,968 INFO uncertainscene.recon.chunked: chunk 6/19: 46 frames, scale 1.024, anchor residual 0.005 (relative to depth)
+2026-10-16 16:50:03,189 INFO uncertainscene.recon.chunked: chunk 7/19: 46 frames, scale 1.032, anchor residual 0.005 (relative to depth)
+2026-10-16 16:50:23,408 INFO uncertainscene.recon.chunked: chunk 8/19: 46 frames, scale 1.034, anchor residual 0.005 (relative to depth)
+2026-10-16 16:50:43,535 INFO uncertainscene.recon.chunked: chunk 9/19: 46 frames, scale 1.028, anchor residual 0.005 (relative to depth)
+2026-10-16 16:51:03,676 INFO uncertainscene.recon.chunked: chunk 10/19: 46 frames, scale 1.027, anchor residual 0.006 (relative to depth)
+2026-10-16 16:51:23,834 INFO uncertainscene.recon.chunked: chunk 11/19: 46 frames, scale 1.038, anchor residual 0.006 (relative to depth)
+2026-10-16 16:51:44,040 INFO uncertainscene.recon.chunked: chunk 12/19: 46 frames, scale 1.029, anchor residual 0.005 (relative to depth)
+2026-10-16 16:52:04,239 INFO uncertainscene.recon.chunked: chunk 13/19: 46 frames, scale 1.015, anchor residual 0.005 (relative to depth)
+2026-10-16 16:52:24,455 INFO uncertainscene.recon.chunked: chunk 14/19: 46 frames, scale 1.015, anchor residual 0.005 (relative to depth)
+2026-10-16 16:52:44,655 INFO uncertainscene.recon.chunked: chunk 15/19: 46 frames, scale 1.011, anchor residual 0.005 (relative to depth)
+2026-10-16 16:53:04,952 INFO uncertainscene.recon.chunked: chunk 16/19: 46 frames, scale 1.006, anchor residual 0.005 (relative to depth)
+2026-10-16 16:53:25,221 INFO uncertainscene.recon.chunked: chunk 17/19: 46 frames, scale 1.009, anchor residual 0.005 (relative to depth)
+2026-10-16 16:53:45,420 INFO uncertainscene.recon.chunked: chunk 18/19: 46 frames, scale 1.011, anchor residual 0.003 (relative to depth)
+2026-10-16 16:54:05,613 INFO uncertainscene.recon.chunked: chunk 19/19: 46 frames, scale 1.005, anchor residual 0.003 (relative to depth)
+2026-10-16 16:54:09,288 INFO uncertainscene.recon.vggt: reconstructed 735 frames (364 + 371) in 19 chunks in 427 s; worst chunk residual 0.006
+2026-10-16 16:54:43,679 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] reconstruction (735 frames, 19 chunks, worst anchor residual 0.0061) done in 474 s | RAM 9.6/12.7 GB, disk free 54.8 GB, GPU 4.5/15.0 GB
+2026-10-16 16:59:22,628 INFO uncertainscene.recon.poses: poses: 7339 of 7968 frame pairs matched
+2026-10-16 16:59:25,173 INFO uncertainscene.recon.poses: poses: 8 of 53 frame pairs matched
+2026-10-16 16:59:25,178 INFO uncertainscene.recon.poses: poses: 2 sparse frames, 0 frames outside the main group: 53 extra pairs tried, 8 matched
+2026-10-16 16:59:26,850 INFO uncertainscene.recon.poses: poses: 0 frames still outside the main group
+2026-10-16 16:59:26,896 INFO uncertainscene.recon.poses: poses: 3612 features/frame, 330916 tracks, 1834236 observations (283 s)
+2026-10-16 16:59:29,304 INFO uncertainscene.recon.poses: poses: VGGT poses reproject at 8.31 px median (195595 points)
+2026-10-16 16:59:37,977 INFO uncertainscene.recon.poses: poses: round 1: 5.45 px median, 195595 points (294 s)
+2026-10-16 16:59:52,188 INFO uncertainscene.recon.poses: poses: round 2: 1.99 px median, 140997 points (309 s)
+2026-10-16 17:00:02,232 INFO uncertainscene.recon.poses: poses: 65 frames with < 30 points: 53 resected, 12 interpolated from neighbours
+2026-10-16 17:00:08,143 INFO uncertainscene.recon.poses: poses: final 1.04 px median, 2.72 px p90 (VGGT 8.31 px); per-frame median worst 2.92 px; cameras turned 1.23 deg median; 65 weak frames (53 resected, 12 interpolated)
+2026-10-16 17:00:08,144 INFO uncertainscene.recon.poses: poses: per recording 1.07, 1.02 px median; 2194 points seen in both recordings (1.64 px); 15% of feature observations kept
+2026-10-16 17:00:16,462 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] camera poses refined: 8.3 px -> 1.04 px reprojection error (p90 2.72 px, 53 sparse frames resected, 12 interpolated), cameras turned 1.23 deg (median) done in 333 s | RAM 10.0/12.7 GB, disk free 54.8 GB, GPU 6.3/15.0 GB
+2026-10-16 17:00:46,893 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] DINOv2 features done in 30 s | RAM 9.7/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB
+2026-10-16 17:01:02,762 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.5/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:01:18,119 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:01:33,470 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:01:48,835 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.5/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:02:04,185 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.5/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:02:19,524 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:02:34,880 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:02:50,228 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 85% (RAM 10.8/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:03:05,666 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 85% (RAM 10.8/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:03:21,080 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:03:36,469 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 85% (RAM 10.8/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:03:51,868 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:04:07,260 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 85% (RAM 10.8/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:04:22,642 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 86% (RAM 10.9/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:04:38,024 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:04:53,353 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:05:08,737 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:05:24,100 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:05:39,499 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:05:54,872 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:06:10,210 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:06:25,593 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:06:40,963 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:06:56,393 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:07:11,772 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:07:27,164 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:07:42,489 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:07:57,850 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:08:13,232 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:08:28,599 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:08:43,940 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:08:59,303 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:09:14,663 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 87% (RAM 11.1/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:09:30,039 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 86% (RAM 10.9/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:09:45,382 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:10:00,758 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:10:16,135 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:10:31,467 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:10:46,803 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:11:02,163 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:11:17,568 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:11:32,940 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:11:48,274 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:12:03,616 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:12:19,006 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 86% (RAM 10.9/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:12:34,389 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 89% (RAM 11.2/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:12:49,777 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 87% (RAM 11.0/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:13:05,194 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.1/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:13:20,582 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 85% (RAM 10.8/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:13:35,964 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:13:51,353 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:14:06,704 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:14:22,028 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:14:37,375 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:14:52,787 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:15:08,187 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.5/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:15:23,541 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:15:28,105 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:15:28,395 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] point-level change detection (1200000 points, tau 0.268) done in 882 s | RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB
+2026-10-16 17:15:29,177 INFO uncertainscene.change.floor: floor: gravity refined by 3.7 deg, 28 floor points (3% of horizontal), camera 0.370 units above floor -> 3.645 m/unit
+2026-10-16 17:15:29,495 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB)
+2026-10-16 17:15:29,778 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] floor (28 floor points, gravity refined 3.7 deg) done in 1 s | RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.3/15.0 GB
+2026-10-16 17:15:38,908 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:15:54,293 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:16:09,691 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:16:25,095 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.5/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:16:40,425 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:16:45,575 INFO uncertainscene.change.metric: scale: metric depth 2.598 m/unit from 80 frames (frames spread 14.8%, +-10% 1 sigma)
+2026-10-16 17:16:45,582 INFO uncertainscene.change.floor: scale: most likely 2.598 m/unit (90% 2.198-3.067) from metric_depth 2.598; phone height (not used) 3.645
+2026-10-16 17:16:45,886 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.5/12.7 GB, disk free 54.4 GB, GPU 5.8/15.0 GB)
+2026-10-16 17:16:46,159 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] metric scale (depth model 2.598 m/unit from 80 frames; combined 2.598, 90% 2.198-3.067) done in 76 s | RAM 10.5/12.7 GB, disk free 54.4 GB, GPU 5.8/15.0 GB
+2026-10-16 17:16:46,987 INFO uncertainscene.scene01: SAM 2 masks of recording 0 reused from sam2rec_scene01_light_before_a_364f_b57d5d0b16_k44_p32_det.npz
+2026-10-16 17:16:47,080 INFO uncertainscene.scene01: SAM 2 masks of recording 1 reused from sam2rec_scene01_light_after_a_371f_c684abb6bd_k44_p32_det.npz
+2026-10-16 17:16:47,081 INFO uncertainscene.scene01: SAM 2 (tracked through each recording, with YOLOE whole objects (cached per recording)): 1895 masks on 88 frames, 114 objects tracked, in 1 s
+2026-10-16 17:16:55,923 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 5.8/15.0 GB)
+2026-10-16 17:17:11,445 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 5.8/15.0 GB)
+2026-10-16 17:17:27,023 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 5.8/15.0 GB)
+2026-10-16 17:17:42,668 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 5.8/15.0 GB)
+2026-10-16 17:17:48,989 INFO uncertainscene.change.segment: recording A: 1025 masks on 44 frames -> 861 fragments -> 36 objects (14 structures), median 11.0 views per object, merge grid 0.0296 units
+2026-10-16 17:17:58,181 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 5.8/15.0 GB)
+2026-10-16 17:18:13,667 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 5.8/15.0 GB)
+2026-10-16 17:18:29,186 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 5.8/15.0 GB)
+2026-10-16 17:18:37,978 INFO uncertainscene.change.segment: recording B: 870 masks on 44 frames -> 742 fragments -> 38 objects (11 structures), median 12.0 views per object, merge grid 0.0296 units
+2026-10-16 17:18:38,473 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 5.8/15.0 GB)
+2026-10-16 17:18:38,868 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] SAM 2 objects (36 in A, 38 in B) done in 113 s | RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 5.8/15.0 GB
+2026-10-16 17:18:44,672 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 6.0/15.0 GB)
+2026-10-16 17:19:00,108 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:19:03,694 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:19:04,086 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] labels for every object (detector votes, CLIP as fallback) done in 25 s | RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB
+2026-10-16 17:19:04,494 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:19:04,892 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] names that cannot fit the object's size replaced: 16 done in 1 s | RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB
+2026-10-16 17:19:07,798 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:19:08,192 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] pieces joined to the touching object of the same name: 9 (31 objects in A, 34 in B) done in 3 s | RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB
+2026-10-16 17:19:08,621 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:19:09,006 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] unsure objects dropped: 20 (A8 guitar case (clip 0.34, 17 views); A14 wooden crate (clip 0.19, 9 views); A17 skirting board (clip 0.29, 11 views); A18 skirting board (clip 0.30, 5 views); A21 neck pillow (clip 0.14, 8 views); A22 tissue box (size check 0.04, 5 views); A23 plate (size check 0.11, 12 views); A24 sofa (clip 0.22, 4 views) ...) done in 1 s | RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB
+2026-10-16 17:19:09,476 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:19:09,858 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] Rigidity Copilot: expected stiffness of 45 objects done in 1 s | RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB
+2026-10-16 17:19:09,897 INFO uncertainscene.change.floor: scale: most likely 2.318 m/unit (90% 2.064-2.607) from metric_depth 2.598, objects 2.088; phone height (not used) 3.645
+2026-10-16 17:19:15,657 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 91% (RAM 11.6/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:19:31,344 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 90% (RAM 11.4/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:19:46,858 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.1/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:20:02,393 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.1/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:20:17,868 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.1/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:20:33,324 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 92% (RAM 11.6/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:20:48,864 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.1/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:21:04,323 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.1/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:21:19,776 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 91% (RAM 11.5/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:21:35,255 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 87% (RAM 11.1/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:21:50,729 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 92% (RAM 11.6/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:22:06,199 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:22:21,714 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.1/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:22:37,176 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
+2026-10-16 17:22:52,607 ERROR uncertainscene.infra.guard: guard hard limit: RAM at 92% (hard limit 92%); interrupting the running step
