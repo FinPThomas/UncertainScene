@@ -181,6 +181,7 @@ Newest first. One line per meaningful step: date, path, what was done, link to t
 
 | Date | Path | What happened | Result |
 |---|---|---|---|
+| 2026-10-16 | report | README revised per Fin (21:43): mug recorded as turned only, splats framed as a design choice, no camera-height cue, maths as math blocks, design trade-offs and humanoid context, limits from density/views/compute; new figures (change map with evidence vs noise, run progress, scale and position precision, Rigidity Copilot and actions, turning asset GIFs with hull and nodes), clearer cloud views; no pipeline step rerun | [README.md](README.md) |
 | 2026-10-16 | report | Paper-style README (abstract, key findings, method with maths, best runs only: light pair run 12 and dark-light pair run 11, references) and `docs/figures/make_figures.py`, which redraws its 10 figures from saved viewer scenes and assets; no pipeline step rerun | [README.md](README.md) |
 | 2026-10-16 | infra | Light 1e analysis streams DINO features to disk, releases duplicate point features, and retries object visibility with a RAM-sized sample after memory pressure; full light steps upload cloud and object assets to the run release with a committed manifest | [src/uncertainscene/experiments/scene01.py](src/uncertainscene/experiments/scene01.py) |
 | 2026-10-15 | infra | Colab push preflight now syncs and retries when the branch advances; a regression test covers stale checkouts | [src/uncertainscene/infra/publish.py](src/uncertainscene/infra/publish.py) |
