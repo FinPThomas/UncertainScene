@@ -408,7 +408,8 @@ def test_v2_queue_and_summary(tmp_path):
                          "1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a", "1e-changes_summary-light"]
     assert dark[0] == "1e-changes_no-change_light-before-a_vs_light-before-b"
     assert not any("dark" in n for n in light[3:]) and all("dark" in n or "summary" in n for n in dark[2:])
-    assert all(queue("light")[i].align_rounds == 2 and queue("light")[i].variant == "objects3" for i in range(2))
+    assert all(queue("light")[i].align_rounds == 2 and queue("light")[i].variant == "objects3"
+               and queue("light")[i].low_memory == 1 for i in range(2))
     assert not any(n.startswith("1d-objects") for n in light + dark)
     q = queue()
     names = [s if isinstance(s, str) else s.name for s in q]
@@ -784,3 +785,13 @@ def test_full_step_with_real_tracking_poses_motion_and_scale_paths(tmp_path, mon
     rows = json.loads((out3 / "objects.json").read_text())
     assert any(r.get("change_sentence") for r in rows if not r["structure"])
     assert not (out3 / "movement_error.txt").exists()
+    # the light settings the final queue starts on (and the lightest the RAM guard steps down to)
+    for lvl in (1, scene01.LOW_MEMORY_MAX):
+        out4 = tmp_path / f"out_low{lvl}"
+        out4.mkdir()
+        note4 = scene01.step_fn(_replace(spec, align_rounds=2, variant="objects3", motion=False, low_memory=lvl),
+                                tmp_path / "cache")(out4, tmp_path)
+        assert "changed objects" in note4
+        m4 = json.loads((out4 / "metrics.json").read_text())
+        assert m4["sam_error"] is None and "movement" in m4
+        assert "low-memory retry" in (out4 / "step_log.txt").read_text()

@@ -56,6 +56,7 @@ class Spec:
     refine_poses: bool = True          # bundle adjustment of the VGGT poses (not for light steps)
     motion: bool | None = None         # feature-matched distance moved + deformation; None = full outputs only
     align_rounds: int = 0              # re-align B onto A on unchanged objects and rebuild, up to this many times
+    low_memory: int = 0                # 1-2: lighter settings after the RAM guard stopped this step (see step_fn)
 
     @property
     def frames_est(self) -> int:
@@ -197,7 +198,10 @@ def queue(stream: str | None = None) -> list:
     # the dark before recording, so a change seen in the dark can be compared with the light;
     # then the pairs where nothing moved (false changes). Run 11's 1d steps are superseded.
     objects = {"light": [(LB, LA), (DB, LA)], "dark": [(LB, LBb), (DB, LB)]}
-    first = {st: [Spec(step_name("1e-changes", a, b), a, b, variant="objects3", align_rounds=2, motion=False)
+    # light settings from the start (Fin, 2026-10-16 19:31: "so at least runs and quickly"); the
+    # RAM guard steps them down further instead of stopping (_analyse_degrading)
+    first = {st: [Spec(step_name("1e-changes", a, b), a, b, variant="objects3", align_rounds=2, motion=False,
+                       low_memory=1)
                   for a, b in prs] + [f"1e-changes_summary-{st}"] for st, prs in objects.items()}
     if stream is None:
         return first["light"] + first["dark"] + q
@@ -423,6 +427,50 @@ def _masks(rec, spec: Spec, cache: Path, store=None) -> dict:
 
 
 # ---- the step -----------------------------------------------------------------------------
+LOW_MEMORY_MAX = 3
+
+
+def _trim() -> None:
+    import ctypes
+
+    try:
+        ctypes.CDLL("libc.so.6").malloc_trim(0)
+    except Exception:  # noqa: BLE001 - not glibc
+        pass
+
+
+def _analyse_degrading(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
+    """analyse(), and if the RAM guard stops it, again with lighter settings (fewer change
+    points, fewer re-alignment rounds), up to twice, instead of stopping the step (Fin,
+    2026-10-16: run 12's dark stream was stopped three times at 92-94% RAM). The caches
+    (reconstruction, poses, features, SAM 2 masks) make a retry much shorter than the first try."""
+    from ..infra.guard import ResourceLimit
+    from .poc import release_memory
+
+    import gc
+    import shutil
+
+    guard = getattr(check, "__self__", None)
+    if guard is not None and _trim not in guard.soft_callbacks:
+        guard.soft_callbacks.append(_trim)        # above 80% RAM: hand freed heap back to the system
+    while True:
+        try:
+            return analyse(spec, out, cache, store, check)
+        except (KeyboardInterrupt, ResourceLimit):
+            why = getattr(guard, "tripped", None) or ""
+            if guard is None or "RAM" not in why or spec.low_memory >= LOW_MEMORY_MAX:
+                raise                              # a person stopping it, disk, or nothing lighter left
+            log.warning("RAM guard stopped %s (%s); retrying with lighter settings", spec.name, why)
+        spec = replace(spec, low_memory=spec.low_memory + 1)   # the failed attempt's memory is free here
+        gc.collect()
+        log.info("released models and memory before the retry: %s", release_memory())
+        for p in out.iterdir():
+            if p.name != "step_log.txt":
+                shutil.rmtree(p) if p.is_dir() else p.unlink()
+        guard.tripped = None
+        guard.start()
+
+
 def step_fn(spec: Spec, cache: Path, store=None, check=None):
     def fn(out: Path, work: Path) -> str:
         h = logging.FileHandler(out / "step_log.txt")
@@ -452,7 +500,7 @@ def step_fn(spec: Spec, cache: Path, store=None, check=None):
                 return analyse_clips(spec, out, cache, check)
             log.info("step %s: %s vs %s, %s frames/video, %d SAM key frames, variant %s", spec.name, spec.a, spec.b,
                      spec.n_per_video or "all", spec.n_key, spec.variant)
-            return analyse(spec, out, cache, store, check)
+            return _analyse_degrading(spec, out, cache, store, check)
         except Exception:
             log.exception("step %s failed", spec.name)
             raise
@@ -486,6 +534,10 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     cfg = replace(DetectConfig(max_points=600000), **spec.detect)
     if spec.outputs == "light":
         cfg = replace(cfg, stride=max(cfg.stride, 3))
+    if spec.low_memory:                        # fewer change points after the RAM guard stopped this step
+        cfg = replace(cfg, stride=max(cfg.stride, 1 + spec.low_memory), max_points=600000 // 3 ** spec.low_memory)
+        stage(f"low-memory retry {spec.low_memory}: every {cfg.stride}th pixel, up to {cfg.max_points} points per "
+              f"recording, {max(spec.align_rounds - spec.low_memory, 0)} re-alignment rounds")
     res = detect(rec, feats, cfg)
     # Object analysis samples from the shared feature map; these per-point copies are redundant.
     res.A.feat = res.B.feat = None
@@ -513,7 +565,8 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         struct = 1.2 / floor.scale_m_per_unit
         A = {s: m for s, m in masks.items() if rec.video[s] == 0}
         B = {s: m for s, m in masks.items() if rec.video[s] == 1}
-        for it in range(1 + spec.align_rounds):
+        rounds = max(spec.align_rounds - spec.low_memory, 0)
+        for it in range(1 + rounds):
             mvox = merge_voxel(rec, masks, voxel)                                 # one merge grid for both
             objs_a = build_objects(rec, A, "A", voxel, struct, adapt_voxel=False, merge_vox=mvox)
             objs_b = build_objects(rec, B, "B", voxel, struct, adapt_voxel=False, merge_vox=mvox)
@@ -537,11 +590,17 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
             # objects of the before recording only: most objects appear in both, and voting twice
             # would make the scale look twice as certain as it is
             floor = combine_scale(floor, object_scale(size_votes(objs_a, abs_err_units=0.03 / floor.scale_m_per_unit)))
+            import psutil
+
+            if spec.low_memory or psutil.virtual_memory().percent > 75:
+                from .poc import release_memory     # SAM 2 / CLIP / DINOv2 reload on demand; classify needs none
+
+                stage(f"networks released before the object tests: {release_memory()}")
             obj_thr = inv.classify(objs_a, objs_b, rec, feats, res, cfg, check=check)
             stage("object-level changes")
             # objects both recordings agree did not move line B up with A; then everything is
             # rebuilt on the corrected poses (Fin: matched objects should make the poses better)
-            if it == spec.align_rounds:
+            if it == rounds:
                 break
             from ..change import align
 
