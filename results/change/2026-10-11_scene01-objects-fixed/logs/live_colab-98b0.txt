@@ -1,0 +1,26 @@
+session colab-98b0, step 1e-changes_moved_light-before-a_vs_light-after-a, running 10 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 9.6/12.7 GB, disk free 54.8 GB, GPU 4.5/15.0 GB
+
+2026-10-16 16:46:49,977 INFO uncertainscene.scene01: step 1e-changes_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects3
+2026-10-16 16:47:02,909 INFO dinov2: using MLP layer as FFN
+2026-10-16 16:47:37,674 INFO uncertainscene.recon.vggt: loaded facebook/VGGT-1B on cuda in 35 s
+2026-10-16 16:48:19,600 INFO uncertainscene.recon.chunked: chunk 2/19: 47 frames, scale 1.006, anchor residual 0.002 (relative to depth)
+2026-10-16 16:48:40,918 INFO uncertainscene.recon.chunked: chunk 3/19: 47 frames, scale 1.017, anchor residual 0.003 (relative to depth)
+2026-10-16 16:49:01,786 INFO uncertainscene.recon.chunked: chunk 4/19: 47 frames, scale 1.012, anchor residual 0.004 (relative to depth)
+2026-10-16 16:49:22,676 INFO uncertainscene.recon.chunked: chunk 5/19: 47 frames, scale 1.025, anchor residual 0.004 (relative to depth)
+2026-10-16 16:49:42,968 INFO uncertainscene.recon.chunked: chunk 6/19: 46 frames, scale 1.024, anchor residual 0.005 (relative to depth)
+2026-10-16 16:50:03,189 INFO uncertainscene.recon.chunked: chunk 7/19: 46 frames, scale 1.032, anchor residual 0.005 (relative to depth)
+2026-10-16 16:50:23,408 INFO uncertainscene.recon.chunked: chunk 8/19: 46 frames, scale 1.034, anchor residual 0.005 (relative to depth)
+2026-10-16 16:50:43,535 INFO uncertainscene.recon.chunked: chunk 9/19: 46 frames, scale 1.028, anchor residual 0.005 (relative to depth)
+2026-10-16 16:51:03,676 INFO uncertainscene.recon.chunked: chunk 10/19: 46 frames, scale 1.027, anchor residual 0.006 (relative to depth)
+2026-10-16 16:51:23,834 INFO uncertainscene.recon.chunked: chunk 11/19: 46 frames, scale 1.038, anchor residual 0.006 (relative to depth)
+2026-10-16 16:51:44,040 INFO uncertainscene.recon.chunked: chunk 12/19: 46 frames, scale 1.029, anchor residual 0.005 (relative to depth)
+2026-10-16 16:52:04,239 INFO uncertainscene.recon.chunked: chunk 13/19: 46 frames, scale 1.015, anchor residual 0.005 (relative to depth)
+2026-10-16 16:52:24,455 INFO uncertainscene.recon.chunked: chunk 14/19: 46 frames, scale 1.015, anchor residual 0.005 (relative to depth)
+2026-10-16 16:52:44,655 INFO uncertainscene.recon.chunked: chunk 15/19: 46 frames, scale 1.011, anchor residual 0.005 (relative to depth)
+2026-10-16 16:53:04,952 INFO uncertainscene.recon.chunked: chunk 16/19: 46 frames, scale 1.006, anchor residual 0.005 (relative to depth)
+2026-10-16 16:53:25,221 INFO uncertainscene.recon.chunked: chunk 17/19: 46 frames, scale 1.009, anchor residual 0.005 (relative to depth)
+2026-10-16 16:53:45,420 INFO uncertainscene.recon.chunked: chunk 18/19: 46 frames, scale 1.011, anchor residual 0.003 (relative to depth)
+2026-10-16 16:54:05,613 INFO uncertainscene.recon.chunked: chunk 19/19: 46 frames, scale 1.005, anchor residual 0.003 (relative to depth)
+2026-10-16 16:54:09,288 INFO uncertainscene.recon.vggt: reconstructed 735 frames (364 + 371) in 19 chunks in 427 s; worst chunk residual 0.006
+2026-10-16 16:54:43,679 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] reconstruction (735 frames, 19 chunks, worst anchor residual 0.0061) done in 474 s | RAM 9.6/12.7 GB, disk free 54.8 GB, GPU 4.5/15.0 GB
