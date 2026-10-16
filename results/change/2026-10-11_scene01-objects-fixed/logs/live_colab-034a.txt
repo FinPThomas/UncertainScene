@@ -1,5 +1,5 @@
-session colab-034a, step 1e-changes_no-change_light-before-a_vs_light-before-b, running 80 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 7.4/12.7 GB, disk free 55.2 GB, GPU 0.3/15.0 GB
+session colab-034a, step 1e-changes_no-change_light-before-a_vs_light-before-b, running 90 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 7.1/12.7 GB, disk free 55.0 GB, GPU 0.3/15.0 GB
 
 2026-10-16 21:45:19,746 INFO uncertainscene.scene01: step 1e-changes_no-change_light-before-a_vs_light-before-b: scene01_light_before_a vs scene01_light_before_b, all frames/video, 44 SAM key frames, variant objects3
 2026-10-16 21:45:34,062 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -105,3 +105,28 @@ machine: RAM 7.4/12.7 GB, disk free 55.2 GB, GPU 0.3/15.0 GB
 2026-10-16 23:04:24,968 INFO uncertainscene.change.floor: scale: most likely 2.397 m/unit (90% 2.096-2.719) from metric_depth 2.649, objects 2.048; phone height (not used) 3.218
 2026-10-16 23:04:26,215 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] networks released before the object tests: {'ram_used_gb': 6.7} done in 1 s | RAM 6.3/12.7 GB, disk free 55.2 GB, GPU 0.3/15.0 GB
 2026-10-16 23:05:13,173 INFO uncertainscene.change.inventory: object visibility sampled 213262/590539 points across 29 objects (max 8000 per object, 0 retries)
+2026-10-16 23:06:03,538 INFO uncertainscene.change.inventory: object visibility sampled 213262/590539 points across 29 objects (max 8000 per object, 0 retries)
+2026-10-16 23:06:33,112 INFO uncertainscene.change.inventory: object visibility sampled 152217/471272 points across 23 objects (max 8000 per object, 0 retries)
+2026-10-16 23:07:02,772 INFO uncertainscene.change.inventory: object visibility sampled 152217/471272 points across 23 objects (max 8000 per object, 0 retries)
+2026-10-16 23:07:03,139 INFO uncertainscene.change.inventory: objects: 2 one-sided objects paired with the same named object in the other recording
+2026-10-16 23:07:03,141 INFO uncertainscene.change.inventory: object changes: {'A:unchanged': 26, 'A:removed': 1, 'A:moved': 2, 'B:unchanged': 19, 'B:changed in place': 1, 'B:moved': 2, 'B:added': 1}; thresholds gone 0.332 appearance 0.713 shift 0.0881 (from 52 null objects)
+2026-10-16 23:07:03,572 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] object-level changes done in 157 s | RAM 7.1/12.7 GB, disk free 55.2 GB, GPU 0.3/15.0 GB
+2026-10-16 23:07:15,636 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] after recording re-aligned on 10 unchanged objects: shift 9.25 cm, 9.882 deg, scale -1.6%, object surface gap 8.49 -> 3.1 cm; objects rebuilt done in 12 s | RAM 6.9/12.7 GB, disk free 55.2 GB, GPU 0.3/15.0 GB
+2026-10-16 23:08:13,107 INFO uncertainscene.change.segment: recording A: 1025 masks on 44 frames -> 857 fragments -> 36 objects (16 structures), median 11.5 views per object, merge grid 0.0280 units
+2026-10-16 23:09:05,182 INFO uncertainscene.change.segment: recording B: 1085 masks on 44 frames -> 860 fragments -> 46 objects (10 structures), median 9.5 views per object, merge grid 0.0280 units
+2026-10-16 23:09:05,704 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] SAM 2 objects (36 in A, 46 in B) done in 110 s | RAM 7.1/12.7 GB, disk free 55.2 GB, GPU 0.3/15.0 GB
+2026-10-16 23:09:29,710 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] labels for every object (detector votes, CLIP as fallback) done in 24 s | RAM 7.1/12.7 GB, disk free 55.2 GB, GPU 2.5/15.0 GB
+2026-10-16 23:09:30,118 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] names that cannot fit the object's size replaced: 11 done in 0 s | RAM 7.1/12.7 GB, disk free 55.2 GB, GPU 2.5/15.0 GB
+2026-10-16 23:09:33,812 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] pieces joined to the touching object of the same name: 8 (35 objects in A, 39 in B) done in 4 s | RAM 7.1/12.7 GB, disk free 55.2 GB, GPU 2.5/15.0 GB
+2026-10-16 23:09:34,234 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] unsure objects dropped: 27 (A16 wooden crate (clip 0.19, 9 views); A19 skirting board (clip 0.30, 5 views); A22 skirting board (clip 0.48, 18 views); A24 tissue box (size check 0.04, 5 views); A25 plate (clip 0.13, 11 views); A26 plate (size check 0.15, 13 views); A28 sofa (clip 0.20, 4 views); A29 skirting board (clip 0.12, 2 views) ...) done in 0 s | RAM 7.1/12.7 GB, disk free 55.2 GB, GPU 2.5/15.0 GB
+2026-10-16 23:09:34,698 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] Rigidity Copilot: expected stiffness of 47 objects done in 0 s | RAM 7.1/12.7 GB, disk free 55.2 GB, GPU 2.5/15.0 GB
+2026-10-16 23:09:34,728 INFO uncertainscene.change.floor: scale: most likely 2.404 m/unit (90% 2.144-2.695) from metric_depth 2.649, objects 2.216; phone height (not used) 3.218
+2026-10-16 23:09:35,635 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] networks released before the object tests: {'ram_used_gb': 6.7} done in 1 s | RAM 6.2/12.7 GB, disk free 55.2 GB, GPU 0.3/15.0 GB
+2026-10-16 23:10:08,309 INFO uncertainscene.change.inventory: object visibility sampled 173211/463755 points across 24 objects (max 8000 per object, 0 retries)
+2026-10-16 23:10:42,927 INFO uncertainscene.change.inventory: object visibility sampled 173211/463755 points across 24 objects (max 8000 per object, 0 retries)
+2026-10-16 23:11:13,484 INFO uncertainscene.change.inventory: object visibility sampled 158004/442808 points across 23 objects (max 8000 per object, 0 retries)
+2026-10-16 23:11:43,463 INFO uncertainscene.change.inventory: object visibility sampled 158004/442808 points across 23 objects (max 8000 per object, 0 retries)
+2026-10-16 23:11:44,637 INFO uncertainscene.change.inventory: objects: 4 one-sided objects paired with the same named object in the other recording
+2026-10-16 23:11:44,638 INFO uncertainscene.change.inventory: object changes: {'A:unchanged': 19, 'A:moved': 3, 'A:removed': 2, 'B:unchanged': 15, 'B:changed in place': 1, 'B:moved': 3, 'B:added': 4}; thresholds gone 0.336 appearance 0.716 shift 0.0797 (from 47 null objects)
+2026-10-16 23:11:45,072 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] object-level changes done in 129 s | RAM 7.1/12.7 GB, disk free 55.2 GB, GPU 0.3/15.0 GB
+2026-10-16 23:11:59,473 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] objects set aside on disk before re-detection (RAM at 54%) done in 14 s | RAM 6.8/12.7 GB, disk free 55.0 GB, GPU 0.3/15.0 GB
