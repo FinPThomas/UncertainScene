@@ -1,5 +1,5 @@
-session colab-034a, step 1e-changes_no-change_light-before-a_vs_light-before-b, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 8.7/12.7 GB, disk free 56.8 GB, GPU 10.3/15.0 GB
+session colab-034a, step 1e-changes_no-change_light-before-a_vs_light-before-b, running 40 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 9.5/12.7 GB, disk free 56.8 GB, GPU 10.3/15.0 GB
 
 2026-10-16 21:45:19,746 INFO uncertainscene.scene01: step 1e-changes_no-change_light-before-a_vs_light-before-b: scene01_light_before_a vs scene01_light_before_b, all frames/video, 44 SAM key frames, variant objects3
 2026-10-16 21:45:34,062 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -50,3 +50,7 @@ machine: RAM 8.7/12.7 GB, disk free 56.8 GB, GPU 10.3/15.0 GB
 2026-10-16 22:13:50,365 INFO root: For numpy array image, we assume (HxWxC) format
 2026-10-16 22:13:50,421 INFO root: Computing image embeddings for the provided image...
 2026-10-16 22:13:50,616 INFO root: Image embeddings computed.
+2026-10-16 22:23:20,401 INFO uncertainscene.change.segment: SAM 2 tracking: frame 1/88: 19 new objects (19 tracked so far)
+2026-10-16 22:23:20,409 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-16 22:23:20,460 INFO root: Computing image embeddings for the provided image...
+2026-10-16 22:23:20,483 INFO root: Image embeddings computed.
