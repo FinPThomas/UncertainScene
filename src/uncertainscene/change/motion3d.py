@@ -183,7 +183,11 @@ def _static_matches(pa: np.ndarray, pb: np.ndarray, thr: float) -> np.ndarray:
 
     if len(pa) < 15:
         return np.zeros(len(pa), bool)
-    _, m = cv2.findFundamentalMat(pa.astype(np.float64), pb.astype(np.float64), getattr(cv2, "USAC_ACCURATE", cv2.FM_RANSAC), thr, 0.999)
+    try:   # run 11: OpenCV's USAC asserts (!model.empty()) on degenerate matches instead of returning None
+        _, m = cv2.findFundamentalMat(pa.astype(np.float64), pb.astype(np.float64),
+                                      getattr(cv2, "USAC_ACCURATE", cv2.FM_RANSAC), thr, 0.999)
+    except cv2.error:
+        return np.zeros(len(pa), bool)
     return np.zeros(len(pa), bool) if m is None else m.ravel().astype(bool)
 
 

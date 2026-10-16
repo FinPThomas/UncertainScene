@@ -597,9 +597,143 @@ def _extent(X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     return np.median(X, 0), np.sort(ext)[::-1]
 
 
+def _shift(P: np.ndarray, tree, Q: np.ndarray, r: float, t0=None, iters: int = 12, keep: float = 0.7):
+    """Translation that lands points P on the cloud Q (trimmed ICP, translation only): t, share of
+    P within r after the shift, trimmed mean distance before and after."""
+    t = np.zeros(3) if t0 is None else np.asarray(t0, float)
+    d0 = tree.query(P, k=1)[0]
+    before = float(np.mean(np.sort(d0)[: max(1, int(keep * len(d0)))]))
+    for _ in range(iters):
+        d, j = tree.query(P + t, k=1)
+        close = d <= np.quantile(d, keep)
+        step = np.median(Q[j[close]] - (P + t)[close], 0)
+        t = t + step
+        if np.linalg.norm(step) < 1e-3 * r:
+            break
+    d = tree.query(P + t, k=1)[0]
+    return t, float((d < r).mean()), before, float(np.mean(np.sort(d)[: max(1, int(keep * len(d)))]))
+
+
+def split_copies(X: np.ndarray, frame: np.ndarray, r: float, n_per_frame: int = 200, max_frames: int = 40,
+                 cams: dict | None = None, seed: int = 0) -> tuple[np.ndarray, dict]:
+    """Drop second copies of an object made by a group of camera poses that sits off (Fin,
+    2026-10-16: "the point cloud of the object is that of the object perfectly, but in two
+    places from groups of poses"). Each frame's points are one view of the object. For every
+    two frames that see a common surface, the translation that best lands one view on the other
+    is found (trimmed ICP): views from well-agreeing poses need almost none, a view from a pose
+    group that sits off needs the group's offset. Views linked by small shifts (< r) form groups;
+    a group other than the largest is a copy, and dropped, when one translation of more than 2 r
+    lands it on the largest group clearly better than no shift (at least half its points within
+    r, trimmed distance at most 0.6 of before). Views that see a different part of the object
+    (no shift lands them) and flat surfaces (no shift is better) are kept. A copy must also come
+    from cameras that looked from where cameras of the largest group looked (`cams`: frame ->
+    (centre, viewing direction); within a quarter of the cameras' spread and 25 deg): two views
+    from the same place must see the same surface, while two halves of a long sofa seen from two
+    ends can look alike shifted. Without `cams`, only shifts under half the object's size count.
+    Returns the keep mask and what happened."""
+    from scipy.sparse.csgraph import connected_components
+    from scipy.spatial import cKDTree
+
+    keep = np.ones(len(X), bool)
+    fr = np.unique(frame)
+    info = {"groups": 1, "copies_dropped": 0, "frames_dropped": 0, "shift": None, "dropped_frames": []}
+    if len(fr) < 4:
+        return keep, info
+    rng = np.random.default_rng(seed)
+    use = fr if len(fr) <= max_frames else fr[np.round(np.linspace(0, len(fr) - 1, max_frames)).astype(int)]
+    P, trees = [], []
+    for f in use:
+        idx = np.nonzero(frame == f)[0]
+        if len(idx) > n_per_frame:
+            idx = rng.choice(idx, n_per_frame, replace=False)
+        P.append(X[idx])
+        trees.append(cKDTree(X[idx]))
+    n = len(use)
+    # the link distance can be no finer than how densely one view samples the surface
+    spacing = float(np.median([np.median(t.query(p, k=2)[0][:, 1]) for p, t in zip(P, trees) if len(p) > 2]))
+    r = max(r, 2.0 * spacing)
+    info["link_distance"] = round(r, 5)
+    A = np.zeros((n, n), bool)
+    if cams is not None:
+        cc = np.array([cams[int(f)][0] if int(f) in cams else np.full(3, np.nan) for f in use])
+        dd = np.array([cams[int(f)][1] if int(f) in cams else np.full(3, np.nan) for f in use])
+        sp = float(np.nanmax(np.linalg.norm(cc[:, None] - cc[None], axis=2))) if np.isfinite(cc).all() else np.inf
+    for i in range(n):
+        for j in range(i + 1, n):
+            if cams is not None and np.isfinite(sp) and not (np.linalg.norm(cc[i] - cc[j]) <= 0.25 * sp + 1e-9
+                                                            and float(dd[i] @ dd[j]) >= np.cos(np.radians(25))):
+                continue                         # views from far apart may see different sides: no link either way
+            if float((trees[j].query(P[i], k=1, distance_upper_bound=r)[0] < r).mean()) >= 0.5:
+                A[i, j] = A[j, i] = True         # already on each other without a shift
+                continue
+            t, share, d0, d1 = _shift(P[i], trees[j], P[j], r, iters=8)
+            A[i, j] = A[j, i] = share >= 0.5 and np.linalg.norm(t) < r
+    ng, lab = connected_components(A, directed=False)
+    info["groups"] = int(ng)
+    if ng < 2:
+        return keep, info
+    size = np.bincount(lab, weights=[len(p) for p in P])
+    main = int(np.argmax(size))
+    K = np.concatenate([P[i] for i in range(n) if lab[i] == main])
+    tk = cKDTree(K)
+
+    ext_main = float(np.linalg.norm(np.quantile(K, 0.95, axis=0) - np.quantile(K, 0.05, axis=0)))
+    if cams is not None:
+        cc = np.array([cams[int(f)][0] for f in fr if int(f) in cams])
+        spread = float(np.linalg.norm(cc.max(0) - cc.min(0))) if len(cc) else 0.0
+
+    def same_viewpoint(group_frames) -> bool:
+        if cams is None:
+            return True
+        main_f = [int(f) for f, g in zip(use, lab) if g == main and int(f) in cams]
+        for f in group_frames:
+            if int(f) not in cams:
+                continue
+            c, d = cams[int(f)]
+            for g in main_f:
+                c2, d2 = cams[g]
+                if np.linalg.norm(c - c2) <= 0.25 * spread + 1e-9 and float(d @ d2) >= np.cos(np.radians(25)):
+                    return True
+        return False
+
+    def is_copy(C, group_frames=()):
+        best = None
+        for t0 in (np.zeros(3), np.median(K, 0) - np.median(C, 0)):
+            t, share, d0, d1 = _shift(C, tk, K, r, t0=t0)
+            if best is None or d1 < best[3]:
+                best = (t, share, d0, d1)
+        t, share, d0, d1 = best
+        ok = share >= 0.5 and d1 <= 0.6 * d0 and np.linalg.norm(t) > 2 * r
+        if ok and cams is None:
+            ok = np.linalg.norm(t) < 0.5 * ext_main
+        return ok and same_viewpoint(group_frames), t
+
+    off_groups = {}
+    for g in range(ng):
+        if g == main or (lab == g).sum() < 1:
+            continue
+        cp, t = is_copy(np.concatenate([P[i] for i in range(n) if lab[i] == g]), use[lab == g])
+        if cp:
+            off_groups[g] = t
+    dropped = [int(f) for f, g in zip(use, lab) if g in off_groups]
+    # frames left out of the graph join a copy when they land on the largest group only shifted
+    for f in sorted(set(fr) - set(use)):
+        if not off_groups:
+            break
+        idx = np.nonzero(frame == f)[0]
+        cp, _ = is_copy(X[idx if len(idx) <= n_per_frame else rng.choice(idx, n_per_frame, replace=False)], [f])
+        if cp:
+            dropped.append(int(f))
+    if dropped:
+        keep &= ~np.isin(frame, dropped)
+        info.update(copies_dropped=len(off_groups), frames_dropped=len(dropped), dropped_frames=dropped,
+                    shift=round(float(max(np.linalg.norm(t) for t in off_groups.values())), 5))
+    return keep, info
+
+
 def clean_points(X: np.ndarray, frame: np.ndarray, voxel: float, pose_px: np.ndarray | None = None,
                  min_views: int = 2, k: int = 8, far: float = 3.0, min_keep: float = 0.3,
-                 min_piece: float = 0.15) -> np.ndarray:
+                 min_piece: float = 0.15, stats: dict | None = None, cams: dict | None = None) -> np.ndarray:
     """Mask of an object's points worth keeping. Its cloud is the union of every view's depth
     points, so one weak view (a pose that sits off, depth bleeding past the mask edge) adds a
     shell or a spike that distorts the hull. Kept:
@@ -615,6 +749,13 @@ def clean_points(X: np.ndarray, frame: np.ndarray, voxel: float, pose_px: np.nda
 
     keep = np.ones(len(X), bool)
     fr = np.unique(frame)
+    # a second copy of the object from a group of poses that sits off goes first
+    if len(fr) >= 4:
+        m, info = split_copies(X, frame, 2 * voxel, cams=cams)
+        if info["copies_dropped"] and m.sum() >= min_keep * len(X):
+            keep = m
+        if stats is not None:
+            stats.update(info)
     if pose_px is not None and len(fr) >= 3:
         pp = np.asarray(pose_px, float)[frame]
         m = keep & (pp <= 2 * np.median(np.asarray(pose_px, float)[fr]) + 1e-9)
@@ -686,6 +827,9 @@ def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structu
         voxel = effective_voxel(rec, masks, voxel)
     merge_vox = merge_vox or merge_voxel(rec, masks, voxel)
     frags = lift(rec, masks, voxel, seed=seed, merge_vox=merge_vox)
+    Rw = rec.E[:, :, :3].astype(np.float64)
+    cent = -np.einsum("sji,sj->si", Rw, rec.E[:, :, 3].astype(np.float64))
+    cams = {int(f): (cent[f], Rw[f, 2]) for f in masks}          # camera centre and viewing direction
     objs = []
     for g in merge(frags):
         fs = [frags[i] for i in g]
@@ -695,12 +839,16 @@ def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structu
         X = np.concatenate([f["X"] for f in fs])
         frame = np.concatenate([np.full(len(f["X"]), f["frame"]) for f in fs])
         pix = np.concatenate([f["pix"] for f in fs])
-        good = clean_points(X, frame, merge_vox, getattr(rec, "pose_px", None))
+        copies: dict = {}
+        good = clean_points(X, frame, merge_vox, getattr(rec, "pose_px", None), stats=copies, cams=cams)
         n_raw = len(X)
         X, frame, pix = X[good], frame[good], pix[good]
         if len(X) > max_points:
             sel = rng.choice(len(X), max_points, replace=False)
             X, frame, pix = X[sel], frame[sel], pix[sel]
+        if copies.get("copies_dropped") and len(X):     # the copy's views no longer count for this object
+            off = set(copies["dropped_frames"])
+            fs = [f for f in fs if f["frame"] not in off] or fs
         inner = [f for f in fs if not f["border"]] or fs
         best = max(inner, key=lambda f: f["area"] * f["score"])
         c, ext = _extent(X)
@@ -730,6 +878,8 @@ def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structu
         o.extra["fine_vox"] = vox
         o.extra["n_views"] = len(mk)
         o.extra["points_kept_share"] = round(float(good.sum() / max(n_raw, 1)), 3)
+        if copies.get("copies_dropped"):
+            o.extra["pose_copy_removed"] = {k: v for k, v in copies.items() if k != "dropped_frames"}
         objs.append(o)
     # drop parts: an object almost entirely inside a larger non-structure object
     objs.sort(key=lambda o: -len(o.extra["fine_vox"]))

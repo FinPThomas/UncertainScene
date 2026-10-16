@@ -31,7 +31,7 @@ from .segment import SceneObject, _extent
 log = logging.getLogger(__name__)
 
 STATUS_COLOR = {"unchanged": (150, 150, 150), "removed": (214, 39, 40), "added": (44, 160, 44),
-                "moved": (255, 127, 14), "changed in place": (148, 103, 189), "shifted": (23, 190, 207),
+                "moved": (255, 127, 14), "changed in place": (148, 103, 189), "shifted": (23, 190, 207), "deformed": (227, 119, 194),
                 "not seen in other recording": (90, 90, 200), "unknown": (90, 90, 90)}
 
 
@@ -290,7 +290,7 @@ def to_change_objects(objs_a: list[SceneObject], objs_b: list[SceneObject], res:
     for o in objs_a + objs_b:
         if o.status in ("unchanged", "not seen in other recording", "unknown") or o.structure:
             continue
-        if o.status == "moved" and o.recording == "B":
+        if o.status in ("moved", "deformed") and o.recording == "B":
             continue                      # reported once, from A, with its partner
         ps = res.A if o.recording == "A" else res.B
         vox = vox or {}
@@ -335,6 +335,7 @@ def describe(o: SceneObject, E: np.ndarray, scale: float, unit: str = "cm", scal
             "changed in place": f"The {name} is in the same place but looks different (turned over, deformed or swapped).",
             "shifted": f"The {name}'s surface moved by about {abs(o.stats.get('shift_rel', 0)) * scale * k:.0f} {unit} "
                        "(squashed, pushed or deformed).",
+            "deformed": f"The {name} is in the same place but its shape changed (deformed).",
             "unchanged": f"The {name} is unchanged.",
             "not seen in other recording": f"The {name} was only seen in one recording, so it cannot be compared."}.get(
         o.status, "")
@@ -356,6 +357,11 @@ def object_rows(objs: list[SceneObject], scale: float, floor_up: np.ndarray, flo
                                     if k in ("tracks", "runs", "frames_seen", "frames_total", "span_share")} or None,
                      "affordance": o.extra.get("affordance"),
                      "context": {k: v for k, v in (o.extra.get("context") or {}).items() if k != "sentence"} or None,
+                     "change": o.extra.get("change"), "change_sentence": o.extra.get("change_sentence"),
+                     "pose": (o.extra.get("pose") or {}).get("words"), "coverage": o.extra.get("coverage"),
+                     "rigidity": (o.extra.get("rigidity") or {}).get("rigidity"),
+                     "tracks": o.extra.get("tracks"), "pose_copy_removed": o.extra.get("pose_copy_removed"),
+                     "name_size_warning": o.extra.get("name_size_warning"),
                      "stats": {k: v for k, v in o.stats.items() if not isinstance(v, np.ndarray)}})
     return rows
 
@@ -589,3 +595,123 @@ def group_pieces(objs: list[SceneObject], scale_m: float, gap_m: float = 0.03) -
                 o.id = i
             objs[:] = [o for o in objs if o.recording != rec or id(o) not in gone]
     return joined
+
+
+def _size_z(label: str | None, size_m: float, scale_sd_log: float) -> tuple[float | None, float]:
+    """How far a measured largest size (m) is from a label's typical one, in sds (None: no size)."""
+    from .sizes import size_prior
+
+    pr = size_prior(canonical(label)) if label else None
+    if not pr or size_m <= 0:
+        return None, 1.0
+    sd = float(np.sqrt(pr[2] ** 2 + 0.15 ** 2 + scale_sd_log ** 2))
+    return float(np.log(size_m / pr[0]) / sd), sd
+
+
+def _name_candidates(o) -> dict:
+    """Name -> weight from the detector / CLIP name and CLIP's top 3."""
+    c: dict = {}
+    if o.label:
+        c[o.label] = 0.75 if o.extra.get("label_source") == "detector" else float(o.label_prob or 0)
+    for lab, p in (o.extra.get("clip_top3") or o.label_top3 or []):
+        lab = canonical(lab)
+        c[lab] = max(c.get(lab, 0.0), float(p))
+    return c
+
+
+def names_by_size(objs_a: list[SceneObject], objs_b: list[SceneObject], scale_m: float, scale_sd_log: float = 0.1,
+                  bad_z: float = 2.5) -> list[str]:
+    """One name per physical object that also fits its measured size (Run 11: a 30 cm glass vase
+    was a detector "cup" that moved 146 cm; a table tennis bat was a detector "lamp" in one
+    recording and "table tennis bat" by CLIP in the other). Partners (the same object in both
+    recordings) pool their candidate names; each candidate is scored by its weight times how
+    well the typical size (sizes.py) fits the measured core size of both clouds. A name is only
+    changed when the current one fits badly (beyond `bad_z` sds) or the partners disagree, and
+    then to the best-scoring candidate. Returns what changed."""
+    from .floor import core_extent
+
+    by_b = {o.id: o for o in objs_b}
+    groups = []
+    for a in objs_a:
+        b = by_b.get(a.partner) if a.partner is not None else None
+        groups.append([a] + ([b] if b is not None else []))
+    paired_b = {id(g[1]) for g in groups if len(g) > 1}
+    groups += [[b] for b in objs_b if id(b) not in paired_b]
+    out = []
+    for g in groups:
+        if any(o.structure or o.extra.get("background") for o in g):
+            continue
+        sizes = [core_extent(o.X)[0] * scale_m if len(o.X) >= 30 else float(np.max(o.extent)) * scale_m for o in g]
+        cand: dict = {}
+        for o in g:
+            for lab, w in _name_candidates(o).items():
+                cand[lab] = cand.get(lab, 0.0) + w / len(g)
+        scores = {}
+        for lab, w in cand.items():
+            zs = [_size_z(lab, s, scale_sd_log) for s in sizes]
+            if zs[0][0] is None:
+                scores[lab] = (w * 0.3, None)                # a name without a typical size: weak, kept as an option
+            else:
+                scores[lab] = (w * float(np.prod([np.exp(-0.5 * z * z) / sd for z, sd in zs])) ** (1 / len(zs)),
+                               max(abs(z) for z, _ in zs))
+        if not scores:
+            continue
+        best = max(scores, key=lambda k: scores[k][0])
+        cur = [o.label for o in g]
+        cur_z = [scores.get(lab, (0, None))[1] for lab in cur]
+        disagree = len(set(cur)) > 1
+        bad = any(z is not None and z > bad_z for z in cur_z)
+        if not (disagree or bad) or best in cur and not disagree:
+            for o, z in zip(g, cur_z):
+                o.extra["name_size_z"] = None if z is None else round(z, 2)
+            continue
+        if bad and not disagree and (scores[best][1] is None or scores[best][1] > 1.5):
+            for o, z in zip(g, cur_z):      # nothing better fits: keep the name, flag it
+                o.extra["name_size_z"] = None if z is None else round(z, 2)
+                o.extra["name_size_warning"] = f"a typical {o.label} is not this size ({z:.1f} sd)"
+            continue
+        for o in g:
+            if o.label != best:
+                out.append(f"{o.recording}{o.id} {o.label} -> {best} ({sizes[g.index(o)] * 100:.0f} cm)")
+                o.extra["label_before_size_names"] = o.label
+                o.label = best
+                o.label_prob = round(float(min(0.95, cand[best])), 3)
+                o.extra["label_source"] = "size + names"
+            o.extra["name_size_z"] = None if scores[best][1] is None else round(scores[best][1], 2)
+    if out:
+        log.info("names by size: %d changed: %s", len(out), "; ".join(out))
+    return out
+
+
+def scale_check(objs: list[SceneObject], scale_m: float, scale_range=None, n: int = 8) -> dict:
+    """Is the metric scale right? For up to `n` objects whose names are sure (detector, or CLIP >=
+    0.5) and have a typical size, the measured size at the chosen scale against the typical
+    size: ratio and sds. Most should be within 2 sds; a scale that is off shows as most ratios
+    on one side."""
+    from .floor import core_extent
+    from .sizes import size_prior
+
+    sd_scale = float(np.log(scale_range[1] / scale_range[0]) / (2 * 1.645)) if scale_range else 0.1
+    rows = []
+    for o in sorted(objs, key=lambda o: -(0.75 if o.extra.get("label_source") == "detector" else o.label_prob or 0)):
+        pr = size_prior(canonical(o.label)) if o.label else None
+        sure = o.extra.get("label_source") in ("detector", "size + names") or (o.label_prob or 0) >= 0.5
+        if o.structure or not pr or not sure or o.extra.get("unsure") or not o.complete:
+            continue
+        size = (core_extent(o.X)[0] if len(o.X) >= 30 else float(np.max(o.extent))) * scale_m
+        z, _ = _size_z(o.label, size, sd_scale)
+        rows.append({"object": f"{o.recording}{o.id} {o.label}", "typical_cm": round(pr[0] * 100, 1),
+                     "measured_cm": round(size * 100, 1), "ratio": round(size / pr[0], 2), "sd": round(z, 2),
+                     "fits": bool(abs(z) <= 2)})
+        if len(rows) >= n:
+            break
+    if not rows:
+        return {"objects": [], "verdict": "no sure object with a typical size to check the scale against"}
+    r = np.array([x["ratio"] for x in rows])
+    fit = sum(x["fits"] for x in rows)
+    med = float(np.median(r))
+    verdict = (f"{fit} of {len(rows)} objects fit their typical size at {scale_m:.3f} m/unit (median measured/typical "
+               f"{med:.2f})" + ("; the scale looks right" if fit >= 0.6 * len(rows) and 0.75 <= med <= 1.33 else
+                                 "; objects come out " + ("too big: scale may be too large" if med > 1 else
+                                                         "too small: scale may be too small")))
+    return {"objects": rows, "median_ratio": round(med, 3), "fit": fit, "verdict": verdict}

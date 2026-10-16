@@ -193,9 +193,12 @@ def queue(stream: str | None = None) -> list:
 
     # whole objects after run 10, recordings re-aligned on unchanged objects (Fin, 2026-10-15),
     # per stream: the changed pair first, then the pairs where nothing moved (false changes)
-    objects = {"light": [(LB, LA), (LB, LBb), (LBb, LAb)], "dark": [(DB, LA), (DB, DBb), (DB, LB)]}
-    first = {st: [Spec(step_name("1d-objects", a, b), a, b, variant="objects2", align_rounds=2) for a, b in prs]
-             + [f"1d-objects_summary-{st}"] for st, prs in objects.items()}
+    # what changed, in words (Fin, 2026-10-16): the same after recording against the light and
+    # the dark before recording, so a change seen in the dark can be compared with the light;
+    # then the pairs where nothing moved (false changes). Run 11's 1d steps are superseded.
+    objects = {"light": [(LB, LA), (DB, LA)], "dark": [(LB, LBb), (DB, LB)]}
+    first = {st: [Spec(step_name("1e-changes", a, b), a, b, variant="objects3", align_rounds=2, motion=False)
+                  for a, b in prs] + [f"1e-changes_summary-{st}"] for st, prs in objects.items()}
     if stream is None:
         return first["light"] + first["dark"] + q
     if stream not in STREAMS:
@@ -273,7 +276,66 @@ def _feats(rec, spec: Spec, cache: Path):
     return feats
 
 
-def _masks(rec, spec: Spec, cache: Path) -> dict:
+MASK_TAG = "cache-scene01-sam2"           # release holding each recording's SAM 2 tracks
+
+
+def _rec_masks_name(rec, v: int, spec, use_det: bool) -> str:
+    """Cache name of one recording's tracked masks: the recording, its frames and the settings.
+    The after recording is shared by the light and dark pairs, so it is tracked once."""
+    import hashlib
+
+    idx = np.nonzero(rec.video == v)[0]
+    files = [Path(rec.files[i]) for i in idx]
+    h = hashlib.sha1(("|".join(f.name for f in files) + f"|{rec.depth.shape[1:]}").encode()).hexdigest()[:10]
+    return (f"sam2rec_{files[0].parent.name}_{len(idx)}f_{h}_k{spec.n_key}_p{spec.sam_points}"
+            f"{'_det' if use_det else ''}.npz")
+
+
+def _save_rec_masks(cache: Path, name: str, store, tr: dict) -> None:
+    try:
+        meta, bits = [], []
+        for loc, ms in tr.items():
+            for m in ms:
+                meta.append({k: v for k, v in m.items() if k != "mask"} | {"loc": int(loc)})
+                bits.append(m["mask"])
+        cache.mkdir(parents=True, exist_ok=True)
+        f = cache / name
+        tmp = f.with_name(f.stem + "_tmp.npz")
+        np.savez_compressed(tmp, meta=np.array(meta, dtype=object),
+                            bits=np.packbits(np.stack(bits)) if bits else np.zeros(0, np.uint8),
+                            locs=np.array(sorted(tr)))
+        tmp.replace(f)
+        if store is not None:
+            store.put(f, MASK_TAG, name=name, overwrite=True)
+            log.info("SAM 2 masks %s saved to release %s (%.0f MB)", name, MASK_TAG, f.stat().st_size / 1e6)
+    except Exception:  # noqa: BLE001 - a cache is a bonus
+        log.exception("could not cache SAM 2 masks %s", name)
+
+
+def _load_rec_masks(cache: Path, name: str, store, H: int, W: int) -> dict | None:
+    f = cache / name
+    if not f.exists() and store is not None:
+        try:
+            store.get(name, MASK_TAG, cache)
+        except Exception as e:  # noqa: BLE001 - not uploaded yet: track it
+            log.info("no cached SAM 2 masks %s (%s)", name, type(e).__name__)
+    if not f.exists():
+        return None
+    try:
+        z = np.load(f, allow_pickle=True)
+        meta = z["meta"].tolist()
+        bits = np.unpackbits(z["bits"])[: len(meta) * H * W].reshape(len(meta), H, W).astype(bool)
+        out: dict = {int(k): [] for k in z["locs"].tolist()}
+        for m, b in zip(meta, bits):
+            loc = m.pop("loc")
+            out.setdefault(int(loc), []).append({**m, "mask": b})
+        return out
+    except Exception as e:  # noqa: BLE001
+        log.warning("SAM 2 mask cache %s unreadable (%s); tracking again", name, e)
+        return None
+
+
+def _masks(rec, spec: Spec, cache: Path, store=None) -> dict:
     """SAM 2 masks on key frames of both recordings, cached (packed bits)."""
     from ..change.segment import key_frames, release_sam, sam_masks, sam_tracks
 
@@ -298,25 +360,37 @@ def _masks(rec, spec: Spec, cache: Path) -> dict:
     if spec.sam_track:
         # follow every object through the recording (2x the key-frame rate); masks are kept on the
         # key frames (every 2nd tracked frame), so views and 3D points stay as dense as before
-        if use_det:
-            try:
-                from ..change.detect2d import Detector
-
-                det = Detector(weights=None)
-                how_det = "with YOLOE whole objects"
-            except Exception as e:  # noqa: BLE001 - objects from SAM 2 alone, as in run 6
-                log.exception("YOLOE detector unavailable (%s); objects from SAM 2 alone", e)
-                how_det = "without YOLOE (unavailable)"
+        det_tried = False             # the detector loads only if a recording must be tracked now
         try:
             out = {}
             for v in np.unique(rec.video):
-                tf = key_frames(rec, int(v), 2 * spec.n_key)
-                tr = sam_tracks(rec.files, tf, (H, W), points_per_side=spec.sam_points, keep_frames=tf[::2],
-                                workdir=str(cache), det=det)
-                for ms in tr.values():                  # track ids unique across recordings
-                    for m in ms:
+                idx = np.nonzero(rec.video == v)[0]
+                name = _rec_masks_name(rec, int(v), spec, use_det)
+                tr = _load_rec_masks(cache, name, store, H, W)       # this recording tracked in an earlier step
+                if tr is None:
+                    if use_det and det is None and not det_tried:
+                        det_tried = True
+                        try:
+                            from ..change.detect2d import Detector
+
+                            det = Detector(weights=None)
+                            how_det = "with YOLOE whole objects"
+                        except Exception as e:  # noqa: BLE001 - objects from SAM 2 alone, as in run 6
+                            log.exception("YOLOE detector unavailable (%s); objects from SAM 2 alone", e)
+                            how_det = "without YOLOE (unavailable)"
+                    tf = key_frames(rec, int(v), 2 * spec.n_key)
+                    trg = sam_tracks(rec.files, tf, (H, W), points_per_side=spec.sam_points, keep_frames=tf[::2],
+                                     workdir=str(cache), det=det)
+                    tr = {int(np.searchsorted(idx, s_)): ms for s_, ms in trg.items()}
+                    if not (use_det and det is None):           # never cache detector-less masks under its name
+                        _save_rec_masks(cache, name, store, tr)
+                else:
+                    how_det = how_det or "with YOLOE whole objects (cached per recording)"
+                    log.info("SAM 2 masks of recording %d reused from %s", int(v), name)
+                for loc, ms in tr.items():
+                    for m in ms:                                # track ids unique across recordings
                         m["track"] += 100000 * int(v)
-                out.update(tr)
+                    out[int(idx[loc])] = ms
             how = "tracked through each recording" + (f", {how_det}" if use_det else "")
         except Exception as e:  # noqa: BLE001 - fall back to independent masks per key frame
             log.exception("SAM 2 video tracking failed (%s); using masks per key frame", e)
@@ -324,7 +398,7 @@ def _masks(rec, spec: Spec, cache: Path) -> dict:
     if out is None:
         frames = [k for v in np.unique(rec.video) for k in key_frames(rec, int(v), spec.n_key)]
         out = sam_masks(rec.files, frames, (H, W), points_per_side=spec.sam_points)
-    no_det = use_det and det is None             # never cache masks made without the detector under its name
+    no_det = use_det and det is None and "unavailable" in how_det   # never cache masks made without the detector
     det = None
     release_sam()
     log.info("SAM 2 (%s): %d masks on %d frames, %d objects tracked, in %.0f s", how, sum(len(v) for v in out.values()),
@@ -423,8 +497,9 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     # ---- objects: SAM 2 + CLIP, or point clusters as a fallback ----
     objs_a = objs_b = []
     obj_thr, sam_error, alignments, pruned = {}, None, [], []
+    realigned, coverage_withdrawn, names_changed, move_summary, scale_chk = False, [], [], {}, {}
     try:
-        masks = _masks(rec, spec, cache)
+        masks = _masks(rec, spec, cache, store)
         voxel = effective_voxel(rec, masks, 0.012 / floor.scale_m_per_unit)   # one grid for both recordings
         struct = 1.2 / floor.scale_m_per_unit
         A = {s: m for s, m in masks.items() if rec.video[s] == 0}
@@ -452,7 +527,7 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
                 log.exception("Rigidity Copilot failed; assets get no stiffness")
             # objects of the before recording only: most objects appear in both, and voting twice
             # would make the scale look twice as certain as it is
-            floor = combine_scale(floor, object_scale(size_votes(objs_a)))
+            floor = combine_scale(floor, object_scale(size_votes(objs_a, abs_err_units=0.03 / floor.scale_m_per_unit)))
             obj_thr = inv.classify(objs_a, objs_b, rec, feats, res, cfg)
             stage("object-level changes")
             # objects both recordings agree did not move line B up with A; then everything is
@@ -480,14 +555,28 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
                       f"(correction {d['shift_cm']} cm, {d['rotation_deg']} deg kept for the next run)")
                 break
             rec = align.apply_to_b(rec, fit)
-            # the old points and objects go before the new ones are built (two copies of the
-            # 1.2M-point change detection do not fit beside the models in 12.7 GB)
-            res = objs_a = objs_b = None
+            realigned = True
+            # objects are rebuilt from the re-aligned cameras; the object tests only need the
+            # change detection's thresholds, so the 1.2M points are re-detected once, after the
+            # last round (run 11's light stream died re-detecting inside round 2 at 80% RAM)
+            objs_a = objs_b = None
             gc.collect()
-            res = detect(rec, feats, cfg)
             stage(f"after recording re-aligned on {d['pairs']} unchanged objects: shift {d['shift_cm']} cm, "
                   f"{d['rotation_deg']} deg, scale {d['scale_change_pct']}%, object surface gap "
                   f"{d['median_gap_cm_before']} -> {d['median_gap_cm_after']} cm; objects rebuilt")
+        masks = A = B = None                   # objects keep their own masks; the rest goes
+        import gc
+
+        gc.collect()
+        if realigned:
+            import psutil
+
+            cfg_final = cfg if psutil.virtual_memory().percent < 70 else replace(cfg, stride=max(cfg.stride, 3))
+            res = None
+            gc.collect()
+            res = detect(rec, feats, cfg_final)
+            stage(f"point-level change detection on the re-aligned recordings ({len(res.A.X) + len(res.B.X)} points"
+                  f"{', every 3rd pixel to save memory' if cfg_final is not cfg else ''})")
     except Exception as e:  # noqa: BLE001 - SAM 2 missing or failing must not lose the rest
         if type(e).__name__ == "ResourceLimit":
             raise
@@ -496,13 +585,37 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         (out / "sam_error.txt").write_text(sam_error + "\n")
 
     s = floor.scale_m_per_unit
+    feats = None                               # DINOv2 features are not needed past this point
+    if objs_a or objs_b:
+        try:                                   # one name per object that also fits its size (vase, not cup)
+            sd = float(np.log(floor.scale_range[1] / floor.scale_range[0]) / 3.29) if floor.scale_range else 0.1
+            names_changed = inv.names_by_size(objs_a, objs_b, s, sd)
+            stage(f"names checked against measured sizes: {len(names_changed)} changed"
+                  f"{' (' + '; '.join(names_changed[:6]) + ')' if names_changed else ''}")
+        except Exception:  # noqa: BLE001
+            log.exception("name check by size failed; keeping the names")
+        try:                                   # no removed / added where the other video did not look
+            from ..change.movement import guard_coverage
+
+            coverage_withdrawn = guard_coverage(objs_a, objs_b, rec, res.thresholds["tau_rel_depth"])
+            stage(f"coverage: {len(coverage_withdrawn)} removed/added verdicts withdrawn because the other video "
+                  "did not look at that spot")
+        except Exception:  # noqa: BLE001
+            log.exception("coverage check failed; verdicts kept as they are")
+        try:
+            scale_chk = inv.scale_check(objs_a + objs_b, s, floor.scale_range)
+            stage(f"scale check against typical object sizes: {scale_chk['verdict']}")
+        except Exception:  # noqa: BLE001
+            log.exception("scale check failed")
     pos.annotate(objs_a + objs_b, s, np.array(floor.up))
     for o in objs_a + objs_b:
         o.extra["description"] = inv.describe(o, rec.E, s, scale_range=floor.scale_range)
         pc = o.extra.get("position_cm")
+        o.extra["position_sentence"] = ""
         if pc and not o.structure and not pc["too_few_views"]:
-            o.extra["description"] += (f" Its centre is known to within about {pc['radius90_cm']:.0f} cm (90%, from "
-                                       f"{pc['n_views']} views; one view alone: {pc['single_view_radius90_cm']:.0f} cm).")
+            o.extra["position_sentence"] = (f" Its centre is known to within about {pc['radius90_cm']:.0f} cm (90%, from "
+                                            f"{pc['n_views']} views; one view alone: {pc['single_view_radius90_cm']:.0f} cm).")
+            o.extra["description"] += o.extra["position_sentence"]
     rels = []
     try:                                       # context: on top of / next to, from the point clouds
         from ..change.relations import relations
@@ -517,6 +630,25 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         if type(e).__name__ == "ResourceLimit":
             raise
         log.exception("object context failed; continuing without it")
+
+    # ---- what happened to each object, in words, with how sure (Fin, 2026-10-16) ----
+    if objs_a or objs_b:
+        try:
+            from ..change.movement import describe_all
+
+            align_cm = alignments[-1]["median_gap_cm_after"] if alignments else 3.0
+            move_summary = describe_all(objs_a, objs_b, s, np.array(floor.up), rec.E, obj_thr, align_cm=align_cm)
+            for o in objs_a + objs_b:
+                if o.extra.get("change_sentence"):
+                    o.extra["description"] = o.extra["change_sentence"] + o.extra.get("position_sentence", "")
+            stage(f"movement in words for {move_summary['pairs_compared']} object pairs ({move_summary['deformed']} "
+                  f"deformed; this pair's noise: shape {move_summary['shape_noise_cm']} cm, turn "
+                  f"{move_summary['turn_noise_deg']} deg)")
+        except Exception as e:  # noqa: BLE001
+            if type(e).__name__ == "ResourceLimit":
+                raise
+            log.exception("movement descriptions failed; keeping the short descriptions")
+            (out / "movement_error.txt").write_text(f"{type(e).__name__}: {e}\n")
 
     # ---- distance moved and deformation from matched feature points ----
     mot = None
@@ -620,7 +752,12 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
          "chunks_dropped": rinfo.get("chunks_dropped"), "gpu_peak_gb": rinfo.get("gpu_peak_gb"),
          "recon_cached": rinfo.get("cached", False), "frames_total": int(len(rec.images)),
          "sam_error": sam_error, "scale_cues": floor.scale_cues, "recording_alignment": alignments, "objects_pruned_unsure": pruned,
-         "objects_paired_both_ways": sum(o.partner is not None for o in objs_a)}
+         "objects_paired_both_ways": sum(o.partner is not None for o in objs_a),
+         "coverage_withdrawn": coverage_withdrawn, "names_changed_by_size": names_changed, "movement": move_summary,
+         "scale_check": scale_chk,
+         "pose_copies_removed": [f"{o.recording}{o.id} {o.label}: {o.extra['pose_copy_removed']['frames_dropped']} frames, "
+                                 f"{o.extra['pose_copy_removed']['shift'] * s * 100:.0f} cm off"
+                                 for o in objs_a + objs_b if o.extra.get("pose_copy_removed")]}
     m.update(M.label_free(res, changes_objs))
     cont = [o.extra["continuity"] for o in objs_a + objs_b if not o.structure and o.extra.get("continuity")]
     if cont:                                   # object continuity through the videos
@@ -700,6 +837,14 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     except Exception:  # noqa: BLE001 - the viewer file must not lose the step
         log.exception("scene3d.json failed")
     stage("figures, viewer and reports")
+    if spec.variant == "objects3":
+        try:                                   # the same after recording against light and dark before
+            lc = compare_lighting(spec, out, rows)
+            if lc:
+                m["lighting_comparison"] = lc
+                (out / "metrics.json").write_text(json.dumps(m, indent=2, default=float) + "\n")
+        except Exception:  # noqa: BLE001
+            log.exception("light vs dark comparison failed")
     write_report(spec, m, rows, out)
     enforce_size(out)
     if sam_error:   # everything else is saved; mark the step failed so RETRY_FAILED reruns it
@@ -796,10 +941,133 @@ def object_metrics(objs_a: list, objs_b: list, thr: dict) -> dict:
            "obj_B": sum(not o.structure for o in objs_b), "obj_compared": len(seen), "obj_changed": len(changed),
            "obj_changed_frac": round(len(changed) / max(len(seen), 1), 4),
            "obj_labelled_confident": sum(o.label_prob >= 0.35 for o in objs)}
-    for st in ("moved", "added", "removed", "changed in place", "shifted"):
+    for st in ("moved", "added", "removed", "changed in place", "shifted", "deformed"):
         out[f"obj_{st.replace(' ', '_')}"] = sum(o.status == st for o in objs)
     out.update({f"obj_thr_{k}": v for k, v in thr.items()})
     return out
+
+
+def compare_lighting(spec: Spec, out: Path, rows: list[dict]) -> dict | None:
+    """When the other before recording (light or dark) against the same after recording has
+    finished too: the verdict for every object of the after recording in both, matched by its
+    SAM 2 track (the after recording's masks are tracked once and shared), written to
+    lighting_comparison.md. Does a dark before recording change what is found?"""
+    from .catalog import step_name
+
+    other_a = {DB: LB, LB: DB}.get(spec.a)
+    if other_a is None:
+        return None
+    sib = out.parent / step_name("1e-changes", other_a, spec.b)
+    if not (sib / "objects.json").exists():
+        return None
+    theirs = [r for r in json.loads((sib / "objects.json").read_text()) if r["recording"] == "B" and not r["structure"]]
+    mine = [r for r in rows if r["recording"] == "B" and not r["structure"]]
+    light, dark = (mine, theirs) if spec.a == LB else (theirs, mine)
+
+    def match(r, pool):
+        tr = set(r.get("tracks") or [])
+        best, bj = None, 0.0
+        for q in pool:
+            qt = set(q.get("tracks") or [])
+            j = len(tr & qt) / max(len(tr | qt), 1)
+            if j > bj:
+                best, bj = q, j
+        if best is None:                      # no shared track: a unique object of the same name
+            same = [q for q in pool if q["label"] == r["label"]]
+            best = same[0] if len(same) == 1 else None
+        return best
+
+    pairs, agree = [], 0
+    for r in light:
+        q = match(r, dark)
+        st_d = q["status"] if q else "not found"
+        ok = st_d == r["status"]
+        agree += ok
+        pairs.append((r, q, ok))
+    def pc(r):
+        p = ((r or {}).get("change") or {}).get("p_change")
+        return "" if p is None else f" ({p:.0%})"
+
+    L = [f"# Same after recording, light vs dark before recording ({short(spec.b)})", "",
+         f"{agree} of {len(pairs)} objects of the after recording get the same verdict against the light and the dark "
+         "before recording. Objects are matched by their SAM 2 track in the after recording.", "",
+         "| Object (after) | Light before: verdict | Dark before: verdict | Same? |", "|---|---|---|---|"]
+    for r, q, ok in sorted(pairs, key=lambda t: (t[2], t[0]["status"] == "unchanged")):
+        L.append(f"| {r['id']} {r['label']} | {r['status']}{pc(r)} | "
+                 f"{(q['status'] + pc(q)) if q else 'not found'} | {'yes' if ok else '**no**'} |")
+    L += ["", "## In words", ""]
+    for r, q, ok in pairs:
+        if ok and r["status"] == "unchanged":
+            continue
+        L.append(f"- **{r['id']} {r['label']}**. Light: {r.get('change_sentence') or r['status']} "
+                 f"Dark: {(q.get('change_sentence') or q['status']) if q else 'not found in the dark pair.'}")
+    (out / "lighting_comparison.md").write_text("\n".join(L) + "\n")
+    changed = [t for t in pairs if t[0]["status"] != "unchanged" or (t[1] and t[1]["status"] != "unchanged")]
+    return {"objects": len(pairs), "same_verdict": agree, "changed_in_either": len(changed),
+            "changed_same_verdict": sum(t[2] for t in changed), "file": "lighting_comparison.md"}
+
+
+MASK_USES = [
+    ("Object points", "only depth points inside an object's SAM 2 mask, in the frames SAM 2 tracked it, become its cloud"),
+    ("Names", "the detector votes and CLIP see masked crops (background greyed out), never the whole frame"),
+    ("Same object / moved", "appearance is pooled over the masked pixels of each view; the clouds compared are the "
+                            "masked clouds"),
+    ("Position and its range", "each view's measurement is the masked region's depth; SAM 2's mask wobble widens it"),
+    ("Deformation", "the shape compared before vs after is the masked cloud of each recording"),
+    ("Scale check", "measured object sizes are the masked clouds' core extents"),
+    ("Assets", "each exported asset (points, hull, node graph) is the masked cloud"),
+    ("Not masked", "the point-level change map, the heat maps and the camera poses use whole frames"),
+]
+
+
+def change_sections(m: dict, rows: list[dict]) -> list[str]:
+    """What changed, in words (movement.py), what cannot be told, the scale check and where the
+    SAM 2 masks are used."""
+    L = ["## What changed, in words", ""]
+    phys = [r for r in rows if not r["structure"]]
+    seen_pair = set()
+    ch = []
+    for r in phys:
+        if r["status"] in ("unchanged", "not seen in other recording", "unknown"):
+            continue
+        if r["status"] in ("moved", "deformed") and r["recording"] == "B":
+            continue                              # told once, from the before recording
+        ch.append(r)
+    ch.sort(key=lambda r: -((r.get("change") or {}).get("p_change") or 0))
+    for r in ch:
+        seen_pair.add(r["id"])
+        p = (r.get("change") or {}).get("p_change")
+        L.append(f"- **{r['id']} {r['label']}** — {r['status']}" + (f", {p:.0%} sure" if p is not None else "")
+                 + f": {r.get('change_sentence') or r['description']}")
+    if not ch:
+        L.append("- nothing changed beyond the noise")
+    cant = [r for r in phys if r["status"] == "not seen in other recording"]
+    if cant:
+        L += ["", "### Can't tell (the other video did not look there enough)", ""]
+        L += [f"- {r['id']} {r['label']}: {r.get('change_sentence') or r['description']}" for r in cant[:20]]
+    mv = m.get("movement") or {}
+    if mv:
+        L += ["", f"Noise levels of this pair, from its own unchanged objects (no answer key): shape differences up to "
+                  f"{mv.get('shape_noise_cm')} cm, turns up to {mv.get('turn_noise_deg')} deg, tilts up to "
+                  f"{mv.get('tilt_noise_deg')} deg ({mv.get('unchanged_pairs_for_noise')} unchanged pairs). Only "
+                  "changes beyond these are reported. How sure: the product of named parts (object is real from its "
+                  "views; same object from appearance and name; moved beyond both clouds' position ranges plus the "
+                  "recordings' residual misalignment; the other video covered the spot; see-through evidence; shape "
+                  "evidence with the Rigidity Copilot's stiffness). Model probabilities, not calibrated on an answer key."]
+    sc = m.get("scale_check") or {}
+    if sc.get("objects"):
+        L += ["", "## Scale check: measured sizes against typical sizes", "", sc["verdict"] + ".", "",
+              "| Object | Typical largest size | Measured | Ratio | Sds off | Fits |", "|---|---|---|---|---|---|"]
+        L += [f"| {o['object']} | {o['typical_cm']} cm | {o['measured_cm']} cm | {o['ratio']} | {o['sd']} | "
+              f"{'yes' if o['fits'] else 'no'} |" for o in sc["objects"]]
+    if m.get("names_changed_by_size"):
+        L += ["", "Names changed because the measured size did not fit: " + "; ".join(m["names_changed_by_size"]) + "."]
+    if m.get("pose_copies_removed"):
+        L += ["", "Second copies of objects from a group of camera poses that sat off, removed: "
+              + "; ".join(m["pose_copies_removed"]) + "."]
+    L += ["", "## Where the SAM 2 masks are used", "", "| Stage | How |", "|---|---|"]
+    L += [f"| {a} | {b} |" for a, b in MASK_USES]
+    return L
 
 
 def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
@@ -813,8 +1081,9 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
           f"| Objects found (A / B) | {m.get('obj_A', 0)} / {m.get('obj_B', 0)} |",
           f"| Objects compared / changed | {m.get('obj_compared', 0)} / {m.get('obj_changed', 0)} "
           f"({m.get('obj_changed_frac', 0):.0%}) |",
-          f"| Moved / added / removed / changed in place / shifted | {m.get('obj_moved', 0)} / {m.get('obj_added', 0)} / "
-          f"{m.get('obj_removed', 0)} / {m.get('obj_changed_in_place', 0)} / {m.get('obj_shifted', 0)} |",
+          f"| Moved / added / removed / deformed / changed in place / shifted | {m.get('obj_moved', 0)} / "
+          f"{m.get('obj_added', 0)} / {m.get('obj_removed', 0)} / {m.get('obj_deformed', 0)} / "
+          f"{m.get('obj_changed_in_place', 0)} / {m.get('obj_shifted', 0)} |",
           f"| Point-level changed share (old method) | {m['changed_frac']:.2%} |",
           f"| Scale | {m.get('field_scale_m_per_unit')} m/unit, 90% {m.get('field_scale_range')} (most likely from metric "
           f"depth cue {m.get('field_scale_metric_depth')} and "
@@ -917,10 +1186,12 @@ def write_report(spec: Spec, m: dict, rows: list[dict], out: Path) -> None:
                      ("base_placement.png", "where a robot could stand"), ("change_map.png", "change map")):
         if (out / img).exists():
             L += [f"![{cap}]({img})", ""]
-    L += ["## Changes", ""]
-    ch = [r for r in rows if r["status"] not in ("unchanged", "not seen in other recording", "unknown") and not r["structure"]]
-    L += [f"- **{r['id']} {r['label']}** ({r['status']}, {' x '.join(f'{x:.0f}' for x in r['size_cm'])} cm): "
-          f"{r['description']}" for r in ch] or ["- none"]
+    L += change_sections(m, rows)
+    lc = m.get("lighting_comparison")
+    if lc:
+        L += ["", f"Light vs dark before recording: {lc['same_verdict']} of {lc['objects']} after-recording objects get the "
+                  f"same verdict ({lc['changed_same_verdict']} of {lc['changed_in_either']} that changed in either): "
+                  "[lighting_comparison.md](lighting_comparison.md)"]
     if (out / "scene_report.md").exists():
         L += ["", "Scene report with the full object inventory and simulator ranges: [scene_report.md](scene_report.md)"]
     if (out / "viewer.html").exists():

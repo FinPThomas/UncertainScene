@@ -127,7 +127,8 @@ def _object_terms(objects: list[dict], trim: float, recon_sd: float):
                 continue
             dims = [pr[0]] + ([pr[1]] if len(ext) > 1 and ext[1] > 0 else [])
             est = float(np.mean([np.log(d / e) for d, e in zip(dims, ext)]))
-            terms.append((est, float(np.hypot(pr[2], recon_sd)), float(p)))
+            rel_abs = float(o.get("abs_err_units", 0.0)) / ext[0]          # a fixed error weighs more on a small object
+            terms.append((est, float(np.sqrt(pr[2] ** 2 + recon_sd ** 2 + rel_abs ** 2)), float(p)))
         if terms:
             out.append({"label": o.get("label"), "terms": terms, "other": float(max(1.0 - mass, 0.0))
                         + sum(p for lab, p in top if not size_prior(canonical(lab)))})
@@ -164,11 +165,37 @@ def _summary(grid, p) -> dict:
             "sd_log": float((hi - lo) / (2 * 1.645))}
 
 
-def size_votes(objs) -> list[dict]:
-    """object_scale input from SceneObjects (labels, top-3 CLIP labels, sorted extents)."""
-    return [{"label": o.label, "label_prob": o.label_prob, "label_top3": getattr(o, "label_top3", None),
-             "extent": [float(x) for x in o.extent], "complete": o.complete}
-            for o in objs if o.extent is not None and not o.structure]   # wall-sized fragments: no vote
+def core_extent(X: np.ndarray, lo: float = 0.1, hi: float = 0.9) -> list[float]:
+    """Sorted extents along the principal axes over the central 80% of points, rescaled to a
+    5-95% span (/0.8*0.9). Run 11: small objects voted for a scale 2-5x too small (a card 0.54,
+    a picture frame 0.82, against metric depth 2.76): stray points bleeding in at the mask and
+    depth edges stretch a small cloud's 5-95% span much more than a large one's."""
+    X = np.asarray(X, float)
+    Xc = X - X.mean(0)
+    _, _, Vt = np.linalg.svd(Xc, full_matrices=False)
+    P = Xc @ Vt.T
+    e = (np.quantile(P, hi, axis=0) - np.quantile(P, lo, axis=0)) * 0.9 / (hi - lo)
+    return sorted((float(x) for x in e), reverse=True)
+
+
+def size_votes(objs, abs_err_units: float = 0.0) -> list[dict]:
+    """object_scale input from SceneObjects (labels, top-3 CLIP labels, sorted extents).
+    A detector name leads the vote (CLIP's top 3 share what the detector leaves); objects the
+    pipeline is unsure of do not vote; `abs_err_units` is an absolute extent error (scene
+    units) that makes small objects count for less."""
+    out = []
+    for o in objs:
+        if o.extent is None or o.structure or (getattr(o, "extra", None) or {}).get("unsure"):
+            continue                                              # wall-sized fragments, unsure objects: no vote
+        top = getattr(o, "label_top3", None)
+        if (getattr(o, "extra", None) or {}).get("label_source") == "detector" and o.label:
+            rest = [(lab, p) for lab, p in (top or []) if lab != o.label]
+            tot = sum(p for _, p in rest) or 1.0
+            top = [(o.label, 0.75)] + [(lab, 0.25 * p / tot) for lab, p in rest]
+        ext = core_extent(o.X) if getattr(o, "X", None) is not None and len(o.X) >= 30 else [float(x) for x in o.extent]
+        out.append({"label": o.label, "label_prob": o.label_prob, "label_top3": top, "extent": ext,
+                    "complete": o.complete, "abs_err_units": abs_err_units})
+    return out
 
 
 def object_scale(objects: list[dict], trim: float = 0.9, recon_sd: float = 0.10, outlier: float = 0.1) -> dict | None:

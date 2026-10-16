@@ -58,7 +58,7 @@ def load_objects(path: Path) -> list[dict]:
     return meta
 
 
-CHANGED = ("moved", "added", "removed", "changed in place", "shifted")
+CHANGED = ("moved", "added", "removed", "changed in place", "shifted", "deformed")
 
 
 def fps(X: np.ndarray, n: int, seed: int = 0) -> np.ndarray:
@@ -141,6 +141,34 @@ def node_strain(nodes: np.ndarray, edges: np.ndarray, links: dict | None, radius
     out["strain"][both], out["strain_sigma"][both] = s[both], sig[both]
     out["node_disp"] = nd
     return out
+
+
+def neighbour_pieces(X_m: np.ndarray, radius_m: float, max_points: int = 3000, seed: int = 0) -> dict:
+    """Split an object's points into pieces: points closer than `radius_m` stay together (Fin,
+    2026-10-16: a slider to isolate one copy of an object doubled by camera poses that sat off).
+    Returns the label of every point (-1 for points left out of the sample) and per piece its
+    share of points, centre and size, largest first."""
+    from scipy.sparse.csgraph import connected_components
+    from scipy.spatial import cKDTree
+
+    X = np.asarray(X_m, float)
+    idx = np.arange(len(X))
+    if len(X) > max_points:
+        idx = np.sort(np.random.default_rng(seed).choice(len(X), max_points, replace=False))
+    tree = cKDTree(X[idx])
+    n, lab = connected_components(tree.sparse_distance_matrix(tree, radius_m, output_type="coo_matrix"), directed=False)
+    order = np.argsort(-np.bincount(lab, minlength=n))
+    rank = np.empty(n, int)
+    rank[order] = np.arange(n)
+    lab = rank[lab]
+    _, j = tree.query(X, k=1)                     # every point takes its nearest sampled point's piece
+    full = lab[j]
+    pieces = []
+    for k in range(min(n, 8)):
+        P = X[full == k]
+        pieces.append({"share": round(float(len(P) / len(X)), 3), "centre_m": np.round(np.median(P, 0), 4).tolist(),
+                       "size_m": np.round(P.max(0) - P.min(0), 3).tolist()})
+    return {"radius_m": radius_m, "pieces": int(n), "largest": pieces, "labels": full}
 
 
 def contacts(graphs: list[dict], up: np.ndarray, contact: float) -> list[dict]:
@@ -286,7 +314,25 @@ def build(objs: list, scale_m: float, up: np.ndarray, out_dir: Path, motion: dic
                                ("deformable" if (strained & measured).sum() >= max(3, 0.1 * measured.sum()) else
                                 "rigid at this precision")},
                "rigidity_copilot": rig,
-               "motion": o.extra.get("motion")}
+               "motion": o.extra.get("motion"),
+               # what happened to it between the recordings (movement.py), in numbers and words
+               "change": o.extra.get("change"), "change_sentence": o.extra.get("change_sentence"),
+               "pose_words": (o.extra.get("pose") or {}).get("words"),
+               "measured_on": "SAM 2 masks: points only from inside this object's masks in "
+                              f"{o.extra.get('n_views') or len(getattr(o, 'masks', {}) or {})} views; name from masked crops"}
+        # pieces at a few nearest-neighbour distances, so one copy of a doubled object can be
+        # isolated later (the viewer has the same split as a slider)
+        doc["neighbour_pieces"] = []
+        for rad in (0.03, 0.06, 0.10):
+            pc = neighbour_pieces(Xm, rad)
+            doc["neighbour_pieces"].append({k: v for k, v in pc.items() if k != "labels"})
+        ch = o.extra.get("change") or {}
+        if ch.get("shape_diff_cm") is not None:          # object-wise deformation from the two whole clouds
+            doc["deformation"]["object_shape_diff_cm"] = ch["shape_diff_cm"]
+            doc["deformation"]["object_shape_noise_cm"] = ch.get("shape_noise_cm")
+            doc["deformation"]["object_verdict"] = ("deformed" if o.status == "deformed" else
+                                                    "same shape" if (ch["p"].get("shape_differs") or 0) < 0.5 else
+                                                    "shape differs, but too stiff to deform (reconstruction)")
         by_name[name] = rig
         beh = doc["deformation"]["behaviour"]
         if rig is not None and beh is not None:          # does the measured strain agree with the expectation?

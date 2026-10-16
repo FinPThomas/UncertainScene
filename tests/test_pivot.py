@@ -189,7 +189,7 @@ def test_full_step_end_to_end(tmp_path, monkeypatch):
     monkeypatch.setattr(scene01, "_recon", lambda spec, cache: (rec, {"seconds": 1.0, "chunks": 1, "used_per_video": 8,
                                                                       "chunk_residual_max": 0.0}))
     monkeypatch.setattr(scene01, "_feats", lambda rec_, spec, cache: colour_feats(rec_))
-    monkeypatch.setattr(scene01, "_masks", lambda rec_, spec, cache: _fake_masks(
+    monkeypatch.setattr(scene01, "_masks", lambda rec_, spec, cache, store=None: _fake_masks(
         rec_, key_frames(rec_, 0, 8) + key_frames(rec_, 1, 8)))
     from uncertainscene.change import motion3d
     from uncertainscene.recon import poses
@@ -257,10 +257,14 @@ def test_v2_queue_and_summary(tmp_path):
     # two streams (Fin, 2026-10-15): each starts with its re-aligned objects steps
     light = [s if isinstance(s, str) else s.name for s in queue("light")]
     dark = [s if isinstance(s, str) else s.name for s in queue("dark")]
-    assert light[0] == "1d-objects_moved_light-before-a_vs_light-after-a"
-    assert dark[0] == "1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a"
-    assert not any("dark" in n for n in light) and all("dark" in n or "summary" in n for n in dark)
-    assert all(queue("light")[i].align_rounds == 2 for i in range(3))
+    # (Fin, 2026-10-16): the light stream compares the after recording with the light and then the
+    # dark before recording, so a change seen in the dark can be compared with the light
+    assert light[:3] == ["1e-changes_moved_light-before-a_vs_light-after-a",
+                         "1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a", "1e-changes_summary-light"]
+    assert dark[0] == "1e-changes_no-change_light-before-a_vs_light-before-b"
+    assert not any("dark" in n for n in light[3:]) and all("dark" in n or "summary" in n for n in dark[2:])
+    assert all(queue("light")[i].align_rounds == 2 and queue("light")[i].variant == "objects3" for i in range(2))
+    assert not any(n.startswith("1d-objects") for n in light + dark)
     q = queue()
     names = [s if isinstance(s, str) else s.name for s in q]
     assert len(names) == len(set(names)) and names[0] == light[0]
@@ -343,7 +347,7 @@ def test_clips_step_end_to_end(tmp_path, monkeypatch):
                             np.concatenate([r1.conf, r2.conf]), np.concatenate([r1.K, r2.K]),
                             np.concatenate([r1.E, r2.E]), np.concatenate([r1.video, r2.video + 2])), tmp_path)
     monkeypatch.setattr(clips, "_recon", lambda spec, cache: (rec, {"chunks": 1, "chunk_residuals": []}))
-    monkeypatch.setattr(scene01, "_masks", lambda rec_, spec, cache: _fake_masks(
+    monkeypatch.setattr(scene01, "_masks", lambda rec_, spec, cache, store=None: _fake_masks(
         rec_, [k for v in range(4) for k in key_frames(rec_, v, 8)]))
     spec = scene01.ClipsSpec("2-position_test", ("scene01_light_before_a", "scene01_light_before_b",
                                                  "scene01_light_after_a", "scene01_light_after_b"),
@@ -619,3 +623,19 @@ def test_full_step_with_real_tracking_poses_motion_and_scale_paths(tmp_path, mon
     assert "changed objects" in scene01.step_fn(_replace(spec, align_rounds=2), tmp_path / "cache")(out2, tmp_path)
     m2 = json.loads((out2 / "metrics.json").read_text())
     assert isinstance(m2["recording_alignment"], list) and m2["sam_error"] is None
+    # what changed, in words (objects3): every recording's tracks cached on their own, so a pair
+    # that shares a recording (and a new session, via the release store) does not track it again
+    assert len(list((tmp_path / "cache").glob("sam2rec_*_det.npz"))) == 2
+    for f in (tmp_path / "cache").glob("sam2td_*.npz"):
+        f.unlink()
+    out3 = tmp_path / "out3"
+    out3.mkdir()
+    note3 = scene01.step_fn(_replace(spec, align_rounds=1, variant="objects3", motion=False), tmp_path / "cache")(out3, tmp_path)
+    assert "changed objects" in note3
+    m3 = json.loads((out3 / "metrics.json").read_text())
+    assert m3["sam_error"] is None and "movement" in m3 and "scale_check" in m3
+    rep = (out3 / "report.md").read_text()
+    assert "## What changed, in words" in rep and "## Where the SAM 2 masks are used" in rep
+    rows = json.loads((out3 / "objects.json").read_text())
+    assert any(r.get("change_sentence") for r in rows if not r["structure"])
+    assert not (out3 / "movement_error.txt").exists()

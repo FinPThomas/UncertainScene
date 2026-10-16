@@ -35,6 +35,10 @@ PHASES = {
     "1c-objects": ("Whole objects",
                    "With a detector that finds whole objects and names them, is every object one piece in the point "
                    "cloud, correctly labelled, and matched as the same object across recordings?"),
+    "1e-changes": ("What changed, in words",
+                   "For every object: how far it moved and which way, from next to what to next to what, turned or "
+                   "tipped, deformed (checked with the Rigidity Copilot) and how sure; removed only where the other "
+                   "video looked. The same after recording against the light and the dark before recording."),
     "1d-objects": ("Whole objects, recordings re-aligned",
                    "After run 10: once the after recording is lined up on the objects that did not move, does each "
                    "object get one verdict, are pieces one object, and are the object clouds clean? (light and "
@@ -75,6 +79,7 @@ VARIANT = {
     "short_operator": "assuming the phone was held lower", "tall_operator": "assuming the phone was held higher",
     "objects": "whole objects found by a detector, then tracked",
     "objects2": "whole objects, recordings re-aligned on unchanged objects (clean clouds, one verdict per object)",
+    "objects3": "what changed in words: distance, direction, from/to context, turn, deformation, how sure",
 }
 
 

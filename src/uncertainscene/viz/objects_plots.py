@@ -14,7 +14,7 @@ import numpy as np  # noqa: E402
 from ..change.inventory import STATUS_COLOR, masked_crop  # noqa: E402
 from ..recon.frames import Recon  # noqa: E402
 
-ORDER = ["moved", "added", "removed", "changed in place", "shifted", "unchanged", "not seen in other recording",
+ORDER = ["moved", "added", "removed", "deformed", "changed in place", "shifted", "unchanged", "not seen in other recording",
          "unknown"]
 
 
