@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-11_scene01-objects-fixed",
+  "step": "summary_session_colab-05ca",
+  "status": "done",
+  "account": "colab-05ca",
+  "commit": "140ce44",
+  "minutes": 0.3,
+  "usage_at_end": "RAM 5.2/12.7 GB, disk free 55.2 GB, GPU 0.3/15.0 GB",
+  "note": "summary of 5 runs; RESULTS.md and viewer.html refreshed"
+}
