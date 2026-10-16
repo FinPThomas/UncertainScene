@@ -1,5 +1,5 @@
-session colab-402d, step 1e-changes_moved_light-before-a_vs_light-after-a, running 10 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 5.3/12.7 GB, disk free 59.8 GB, GPU 8.3/15.0 GB
+session colab-402d, step 1e-changes_moved_light-before-a_vs_light-after-a, running 20 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 9.0/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
 
 2026-10-16 11:26:24,879 INFO uncertainscene.scene01: step 1e-changes_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects3
 2026-10-16 11:26:37,657 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -22,3 +22,20 @@ machine: RAM 5.3/12.7 GB, disk free 59.8 GB, GPU 8.3/15.0 GB
 2026-10-16 11:35:30,746 INFO uncertainscene.recon.chunked: chunk 16/19: 46 frames, scale 1.006, anchor residual 0.005 (relative to depth)
 2026-10-16 11:35:52,466 INFO uncertainscene.recon.chunked: chunk 17/19: 46 frames, scale 1.009, anchor residual 0.005 (relative to depth)
 2026-10-16 11:36:14,285 INFO uncertainscene.recon.chunked: chunk 18/19: 46 frames, scale 1.011, anchor residual 0.003 (relative to depth)
+2026-10-16 11:36:36,107 INFO uncertainscene.recon.chunked: chunk 19/19: 46 frames, scale 1.005, anchor residual 0.003 (relative to depth)
+2026-10-16 11:36:36,786 INFO uncertainscene.recon.vggt: reconstructed 735 frames (364 + 371) in 19 chunks in 601 s; worst chunk residual 0.006
+2026-10-16 11:37:12,231 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] reconstruction (735 frames, 19 chunks, worst anchor residual 0.0061) done in 647 s | RAM 5.1/12.7 GB, disk free 59.4 GB, GPU 4.5/15.0 GB
+2026-10-16 11:41:33,784 INFO uncertainscene.recon.poses: poses: 7339 of 7968 frame pairs matched
+2026-10-16 11:41:37,047 INFO uncertainscene.recon.poses: poses: 8 of 53 frame pairs matched
+2026-10-16 11:41:37,050 INFO uncertainscene.recon.poses: poses: 2 sparse frames, 0 frames outside the main group: 53 extra pairs tried, 8 matched
+2026-10-16 11:41:38,903 INFO uncertainscene.recon.poses: poses: 0 frames still outside the main group
+2026-10-16 11:41:38,945 INFO uncertainscene.recon.poses: poses: 3612 features/frame, 330916 tracks, 1834236 observations (267 s)
+2026-10-16 11:41:41,444 INFO uncertainscene.recon.poses: poses: VGGT poses reproject at 8.31 px median (195595 points)
+2026-10-16 11:41:55,139 INFO uncertainscene.recon.poses: poses: round 1: 5.45 px median, 195595 points (283 s)
+2026-10-16 11:42:08,603 INFO uncertainscene.recon.poses: poses: round 2: 1.99 px median, 140997 points (296 s)
+2026-10-16 11:42:18,989 INFO uncertainscene.recon.poses: poses: 65 frames with < 30 points: 53 resected, 12 interpolated from neighbours
+2026-10-16 11:42:24,834 INFO uncertainscene.recon.poses: poses: final 1.04 px median, 2.72 px p90 (VGGT 8.31 px); per-frame median worst 2.92 px; cameras turned 1.23 deg median; 65 weak frames (53 resected, 12 interpolated)
+2026-10-16 11:42:24,835 INFO uncertainscene.recon.poses: poses: per recording 1.07, 1.02 px median; 2194 points seen in both recordings (1.64 px); 15% of feature observations kept
+2026-10-16 11:42:31,696 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] camera poses refined: 8.3 px -> 1.04 px reprojection error (p90 2.72 px, 53 sparse frames resected, 12 interpolated), cameras turned 1.23 deg (median) done in 319 s | RAM 7.6/12.7 GB, disk free 59.4 GB, GPU 6.3/15.0 GB
+2026-10-16 11:42:39,378 INFO numexpr.utils: NumExpr defaulting to 2 threads.
+2026-10-16 11:43:04,075 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] DINOv2 features done in 32 s | RAM 7.7/12.7 GB, disk free 58.9 GB, GPU 6.3/15.0 GB
