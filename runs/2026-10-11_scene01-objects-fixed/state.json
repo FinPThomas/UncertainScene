@@ -103,6 +103,16 @@
       "started": "2026-10-15 21:46:22 UTC",
       "status": "done"
     },
+    "1e-changes_moved-and-light-changed_dark-before-a_vs_light-after-a": {
+      "account": "colab-05ca",
+      "attempts": 1,
+      "commit": "564c7ff",
+      "expires": 1792180088.4526641,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-16 14:31:38 UTC",
+      "status": "running"
+    },
     "1e-changes_moved_light-before-a_vs_light-after-a": {
       "account": "colab-402d",
       "attempts": 1,
