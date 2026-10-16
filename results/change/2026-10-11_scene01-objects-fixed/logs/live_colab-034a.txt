@@ -1,5 +1,5 @@
-session colab-034a, step 1e-changes_no-change_light-before-a_vs_light-before-b, running 20 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 8.0/12.7 GB, disk free 58.8 GB, GPU 6.3/15.0 GB
+session colab-034a, step 1e-changes_no-change_light-before-a_vs_light-before-b, running 30 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 8.7/12.7 GB, disk free 56.8 GB, GPU 10.3/15.0 GB
 
 2026-10-16 21:45:19,746 INFO uncertainscene.scene01: step 1e-changes_no-change_light-before-a_vs_light-before-b: scene01_light_before_a vs scene01_light_before_b, all frames/video, 44 SAM key frames, variant objects3
 2026-10-16 21:45:34,062 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -37,3 +37,16 @@ machine: RAM 8.0/12.7 GB, disk free 58.8 GB, GPU 6.3/15.0 GB
 2026-10-16 22:02:45,620 INFO numexpr.utils: NumExpr defaulting to 2 threads.
 2026-10-16 22:03:05,803 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] DINOv2 features done in 28 s | RAM 7.6/12.7 GB, disk free 58.8 GB, GPU 6.3/15.0 GB
 2026-10-16 22:03:06,081 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] low-memory retry 1: every 2th pixel, up to 200000 points per recording, 1 re-alignment rounds done in 0 s | RAM 7.6/12.7 GB, disk free 58.8 GB, GPU 6.3/15.0 GB
+2026-10-16 22:10:06,352 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] point-level change detection (400000 points, tau 0.207) done in 420 s | RAM 7.6/12.7 GB, disk free 58.8 GB, GPU 6.3/15.0 GB
+2026-10-16 22:10:07,267 INFO uncertainscene.change.floor: floor: gravity refined by 6.1 deg, 58 floor points (4% of horizontal), camera 0.419 units above floor -> 3.218 m/unit
+2026-10-16 22:10:07,562 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] floor (58 floor points, gravity refined 6.1 deg) done in 1 s | RAM 7.7/12.7 GB, disk free 58.8 GB, GPU 6.3/15.0 GB
+2026-10-16 22:13:17,358 INFO uncertainscene.change.metric: scale: metric depth 2.649 m/unit from 80 frames (frames spread 17.3%, +-10% 1 sigma)
+2026-10-16 22:13:17,363 INFO uncertainscene.change.floor: scale: most likely 2.649 m/unit (90% 2.239-3.130) from metric_depth 2.649; phone height (not used) 3.218
+2026-10-16 22:13:17,647 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] metric scale (depth model 2.649 m/unit from 80 frames; combined 2.649, 90% 2.239-3.130) done in 190 s | RAM 7.3/12.7 GB, disk free 57.6 GB, GPU 5.8/15.0 GB
+2026-10-16 22:13:18,845 INFO uncertainscene.scene01: SAM 2 masks of recording 0 reused from sam2rec_scene01_light_before_a_364f_b57d5d0b16_k44_p32_det.npz
+2026-10-16 22:13:19,057 INFO uncertainscene.scene01: no cached SAM 2 masks sam2rec_scene01_light_before_b_372f_3c89723155_k44_p32_det.npz (FileNotFoundError)
+2026-10-16 22:13:49,365 INFO root: Loaded checkpoint sucessfully
+2026-10-16 22:13:50,268 INFO root: Loaded checkpoint sucessfully
+2026-10-16 22:13:50,365 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-16 22:13:50,421 INFO root: Computing image embeddings for the provided image...
+2026-10-16 22:13:50,616 INFO root: Image embeddings computed.
