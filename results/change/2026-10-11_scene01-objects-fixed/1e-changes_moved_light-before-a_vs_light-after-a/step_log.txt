@@ -147,3 +147,96 @@
 2026-10-16 17:22:21,714 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.1/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
 2026-10-16 17:22:37,176 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 88% (RAM 11.2/12.7 GB, disk free 54.4 GB, GPU 6.9/15.0 GB)
 2026-10-16 17:22:52,607 ERROR uncertainscene.infra.guard: guard hard limit: RAM at 92% (hard limit 92%); interrupting the running step
+2026-10-16 18:15:26,811 INFO uncertainscene.scene01: step 1e-changes_moved_light-before-a_vs_light-after-a: scene01_light_before_a vs scene01_light_after_a, all frames/video, 44 SAM key frames, variant objects3
+2026-10-16 18:15:26,814 INFO uncertainscene.scene01: reusing cached reconstruction recon2_scene01_light_before_a_scene01_light_after_a_nall_o0.npz
+2026-10-16 18:15:33,724 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] reconstruction (735 frames, 19 chunks, worst anchor residual 0.0061) done in 7 s | RAM 6.7/12.7 GB, disk free 54.4 GB, GPU 0.3/15.0 GB
+2026-10-16 18:15:33,728 INFO uncertainscene.recon.poses: reusing cached refined poses poses5_scene01_light_before_a_scene01_light_after_a_nall_o0.npz
+2026-10-16 18:15:34,367 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] camera poses refined: 8.3 px -> 1.04 px reprojection error (p90 2.72 px, 53 sparse frames resected, 12 interpolated), cameras turned 1.23 deg (median), cached done in 1 s | RAM 7.1/12.7 GB, disk free 54.4 GB, GPU 0.3/15.0 GB
+2026-10-16 18:15:36,348 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] DINOv2 features done in 2 s | RAM 7.1/12.7 GB, disk free 54.4 GB, GPU 0.3/15.0 GB
+2026-10-16 18:30:05,007 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] point-level change detection (1200000 points, tau 0.268) done in 869 s | RAM 9.6/12.7 GB, disk free 54.4 GB, GPU 0.3/15.0 GB
+2026-10-16 18:30:05,817 INFO uncertainscene.change.floor: floor: gravity refined by 3.7 deg, 58 floor points (5% of horizontal), camera 0.346 units above floor -> 3.897 m/unit
+2026-10-16 18:30:06,118 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] floor (58 floor points, gravity refined 3.7 deg) done in 1 s | RAM 9.6/12.7 GB, disk free 54.4 GB, GPU 0.3/15.0 GB
+2026-10-16 18:31:22,593 INFO uncertainscene.change.metric: scale: metric depth 2.599 m/unit from 80 frames (frames spread 14.8%, +-10% 1 sigma)
+2026-10-16 18:31:22,599 INFO uncertainscene.change.floor: scale: most likely 2.599 m/unit (90% 2.198-3.068) from metric_depth 2.599; phone height (not used) 3.897
+2026-10-16 18:31:22,894 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] metric scale (depth model 2.599 m/unit from 80 frames; combined 2.599, 90% 2.198-3.068) done in 77 s | RAM 9.6/12.7 GB, disk free 54.4 GB, GPU 1.4/15.0 GB
+2026-10-16 18:32:22,263 INFO uncertainscene.change.segment: recording A: 1025 masks on 44 frames -> 861 fragments -> 36 objects (14 structures), median 10.5 views per object, merge grid 0.0296 units
+2026-10-16 18:33:10,576 INFO uncertainscene.change.segment: recording B: 870 masks on 44 frames -> 742 fragments -> 40 objects (11 structures), median 11.5 views per object, merge grid 0.0296 units
+2026-10-16 18:33:11,068 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] SAM 2 objects (36 in A, 40 in B) done in 108 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 1.4/15.0 GB
+2026-10-16 18:33:36,243 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] labels for every object (detector votes, CLIP as fallback) done in 25 s | RAM 9.9/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:33:36,673 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] names that cannot fit the object's size replaced: 16 done in 0 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:33:39,842 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] pieces joined to the touching object of the same name: 9 (31 objects in A, 36 in B) done in 3 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:33:40,334 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] unsure objects dropped: 21 (A8 cushion (clip 0.16, 15 views); A14 wooden crate (clip 0.19, 9 views); A17 skirting board (clip 0.29, 11 views); A18 skirting board (clip 0.30, 5 views); A21 neck pillow (clip 0.14, 8 views); A22 baseball cap (clip 0.06, 5 views); A23 plate (size check 0.11, 12 views); A24 sofa (clip 0.22, 4 views) ...) done in 0 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:33:40,799 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] Rigidity Copilot: expected stiffness of 46 objects done in 0 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:33:40,838 INFO uncertainscene.change.floor: scale: most likely 2.415 m/unit (90% 2.148-2.710) from metric_depth 2.599, objects 2.253; phone height (not used) 3.897
+2026-10-16 18:33:51,677 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:34:07,127 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:34:22,592 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:34:38,064 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:34:53,489 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 87% (RAM 11.1/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:35:09,272 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:35:24,725 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:35:40,209 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.5/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:35:55,664 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:36:11,110 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 89% (RAM 11.3/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:36:26,628 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:36:42,061 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:36:57,538 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:37:13,066 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:37:28,498 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:37:44,021 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:37:59,467 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:38:14,912 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:38:30,484 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.7/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:38:45,977 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:39:01,454 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:39:16,047 INFO uncertainscene.change.inventory: object changes: {'A:unchanged': 16, 'A:removed': 3, 'A:moved': 1, 'B:unchanged': 21, 'B:added': 4, 'B:moved': 1}; thresholds gone 0.335 appearance 0.754 shift 0.1022 (from 46 null objects)
+2026-10-16 18:39:16,465 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] object-level changes done in 336 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:39:23,503 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] after recording re-aligned on 5 unchanged objects: shift 16.16 cm, 7.068 deg, scale -10.05%, object surface gap 5.17 -> 1.94 cm; objects rebuilt done in 7 s | RAM 9.9/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:40:22,341 INFO uncertainscene.change.segment: recording A: 1025 masks on 44 frames -> 861 fragments -> 36 objects (14 structures), median 11.0 views per object, merge grid 0.0271 units
+2026-10-16 18:41:09,437 INFO uncertainscene.change.segment: recording B: 870 masks on 44 frames -> 742 fragments -> 39 objects (11 structures), median 12.0 views per object, merge grid 0.0271 units
+2026-10-16 18:41:09,919 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] SAM 2 objects (36 in A, 39 in B) done in 106 s | RAM 9.9/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:41:26,245 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] labels for every object (detector votes, CLIP as fallback) done in 16 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:41:26,660 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] names that cannot fit the object's size replaced: 14 done in 0 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:41:29,428 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] pieces joined to the touching object of the same name: 9 (31 objects in A, 35 in B) done in 3 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:41:29,861 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] unsure objects dropped: 20 (A8 cushion (clip 0.16, 16 views); A14 wooden crate (clip 0.19, 9 views); A17 skirting board (clip 0.29, 11 views); A18 skirting board (clip 0.30, 5 views); A21 neck pillow (clip 0.14, 8 views); A22 baseball cap (clip 0.06, 5 views); A23 plate (size check 0.11, 12 views); A24 sofa (clip 0.22, 4 views) ...) done in 0 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:41:30,314 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] Rigidity Copilot: expected stiffness of 46 objects done in 0 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:41:30,354 INFO uncertainscene.change.floor: scale: most likely 2.317 m/unit (90% 2.061-2.608) from metric_depth 2.599, objects 2.080; phone height (not used) 3.897
+2026-10-16 18:41:32,698 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.5/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:41:48,309 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:42:03,794 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:42:19,256 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:42:34,679 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 86% (RAM 10.9/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:42:50,211 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:43:05,655 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:43:21,093 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:43:36,597 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:43:52,033 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 89% (RAM 11.3/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:44:07,853 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:44:23,322 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:44:38,795 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 89% (RAM 11.3/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:44:54,857 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:45:10,285 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:45:25,734 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:45:41,154 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:45:56,656 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:46:12,092 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 83% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:46:27,547 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 84% (RAM 10.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:46:31,299 INFO uncertainscene.change.inventory: objects: 2 one-sided objects paired with the same named object in the other recording
+2026-10-16 18:46:31,300 INFO uncertainscene.change.inventory: object changes: {'A:unchanged': 15, 'A:shifted': 1, 'A:moved': 2, 'A:removed': 2, 'B:unchanged': 18, 'B:added': 5, 'B:shifted': 1, 'B:moved': 2}; thresholds gone 0.334 appearance 0.753 shift 0.0919 (from 46 null objects)
+2026-10-16 18:46:31,706 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] object-level changes done in 301 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:46:38,250 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] recordings not re-aligned again: RAM at 78% (correction 1.81 cm, 0.92 deg kept for the next run) done in 7 s | RAM 10.0/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 18:46:49,019 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] objects set aside on disk before re-detection (RAM at 70%) done in 11 s | RAM 8.8/12.7 GB, disk free 54.2 GB, GPU 2.5/15.0 GB
+2026-10-16 18:54:14,185 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 81% (RAM 10.3/12.7 GB, disk free 54.2 GB, GPU 2.5/15.0 GB)
+2026-10-16 18:57:29,950 WARNING uncertainscene.infra.guard: guard soft limit: RAM at 81% (RAM 10.3/12.7 GB, disk free 54.2 GB, GPU 2.5/15.0 GB)
+2026-10-16 19:00:27,382 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] point-level change detection on the re-aligned recordings (1200000 points) done in 818 s | RAM 9.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 19:00:27,440 INFO uncertainscene.change.inventory: names by size: 1 changed: B24 book -> box (49 cm)
+2026-10-16 19:00:27,853 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] names checked against measured sizes: 1 changed (B24 book -> box (49 cm)) done in 0 s | RAM 9.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 19:00:28,804 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] coverage: 0 removed/added verdicts withdrawn because the other video did not look at that spot done in 1 s | RAM 9.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 19:00:29,250 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] scale check against typical object sizes: 4 of 8 objects fit their typical size at 2.317 m/unit (median measured/typical 1.39); objects come out too big: scale may be too large done in 0 s | RAM 9.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 19:00:33,853 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] object context (17 on top of, 71 next to) done in 5 s | RAM 9.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 19:00:36,559 INFO uncertainscene.change.movement: movement: 1 objects deformed (same object, same place, different shape, soft enough)
+2026-10-16 19:00:36,941 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] movement in words for 3 object pairs (1 deformed; this pair's noise: shape 3.0 cm, turn 12.0 deg) done in 3 s | RAM 9.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 19:01:01,281 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] heat maps (120000 points, scale 2.317 m/unit) done in 24 s | RAM 9.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 19:01:15,999 INFO uncertainscene.change.assets: assets: 21 objects exported (0 deformable), 6 contacts
+2026-10-16 19:01:16,428 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] object assets (21 objects, 6 contacts) done in 15 s | RAM 9.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB
+2026-10-16 19:01:51,191 INFO uncertainscene.poc: [1e-changes_moved_light-before-a_vs_light-after-a] figures, viewer and reports done in 35 s | RAM 9.6/12.7 GB, disk free 54.4 GB, GPU 2.5/15.0 GB

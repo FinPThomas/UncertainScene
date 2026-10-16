@@ -1,0 +1,2135 @@
+[
+  {
+    "id": "A8",
+    "recording": "A",
+    "label": "cushion",
+    "label_prob": 0.778,
+    "label_top3": [
+      [
+        "grey cushion",
+        0.778
+      ],
+      [
+        "pillow",
+        0.074
+      ],
+      [
+        "sofa cushion",
+        0.05
+      ]
+    ],
+    "status": "shifted",
+    "structure": false,
+    "size_cm": [
+      58.3,
+      37.4,
+      35.2
+    ],
+    "height_m": 0.95,
+    "views": 18,
+    "complete": true,
+    "partner": null,
+    "description": "The cushion's surface moved by about 22 cm (squashed, pushed or deformed). Its centre is known to within about 9 cm (90%, from 18 views; one view alone: 1 cm). It is next to the coffee table, the chair, the side table.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        6.84,
+        4.19,
+        1.81
+      ],
+      "radius90_cm": 9.32,
+      "radius90_cm_views": 6.84,
+      "n_views": 18,
+      "n_independent_views": 7,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          65.99777479802701,
+          196.29039287634308
+        ],
+        "a": 12.966243847822044,
+        "b": 5.296290256614186,
+        "angle": 103.89701146834793
+      },
+      "single_view_radius90_cm": 1.22,
+      "depth_sd_cm": 4.77,
+      "side_sd_cm": 0.04,
+      "pose_sd_cm": 0.13,
+      "wobble_views": 18,
+      "nis_mean": 59702.46,
+      "trace_cm": [
+        0.28,
+        0.22,
+        0.18,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {
+      "cushion": 3.484,
+      "neck pillow": 0.98,
+      "towel": 1.337,
+      "blanket": 0.296
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 6,
+      "frames_seen": 18,
+      "frames_total": 44,
+      "span_share": 0.409
+    },
+    "affordance": null,
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "coffee table A2",
+          "gap_cm": 0.0
+        },
+        {
+          "object": "chair A12",
+          "gap_cm": 1.5
+        },
+        {
+          "object": "side table A9",
+          "gap_cm": 5.1
+        }
+      ],
+      "supports": []
+    },
+    "change": {
+      "p": {
+        "real": 0.956,
+        "name": 0.778,
+        "other_video_covered": 1.0,
+        "see_through": 0.001
+      },
+      "coverage": {
+        "views": 143,
+        "share_seen_twice": 1.0
+      },
+      "context": "next to the coffee table and the chair",
+      "pose": "tilted about 42 deg"
+    },
+    "change_sentence": "",
+    "pose": "tilted about 42 deg",
+    "coverage": {
+      "views": 143,
+      "share_seen_twice": 1.0
+    },
+    "rigidity": 0.425,
+    "tracks": [
+      3
+    ],
+    "pose_copy_removed": {
+      "groups": 8,
+      "copies_dropped": 3,
+      "frames_dropped": 8,
+      "shift": 0.50733,
+      "link_distance": 0.05423
+    },
+    "name_size_warning": null,
+    "stats": {
+      "counterpart": 8,
+      "counterpart_iou": 0.157,
+      "counterpart_sim": 0.862,
+      "observed": 1.0,
+      "gone": 0.0058,
+      "appearance": 0.6148,
+      "shift_rel": -0.0967,
+      "n_points": 25000,
+      "null_gone": 0.0687,
+      "null_appearance": 0.4993
+    }
+  },
+  {
+    "id": "A15",
+    "recording": "A",
+    "label": "neck pillow",
+    "label_prob": 0.997,
+    "label_top3": [
+      [
+        "neck pillow",
+        0.997
+      ],
+      [
+        "pillow",
+        0.001
+      ],
+      [
+        "cushion",
+        0.0
+      ]
+    ],
+    "status": "deformed",
+    "structure": false,
+    "size_cm": [
+      50.4,
+      25.8,
+      12.2
+    ],
+    "height_m": 1.31,
+    "views": 12,
+    "complete": true,
+    "partner": "B12",
+    "description": "The neck pillow (100% sure of the name, clip) deformed but did not move away: same object in the same place (moved 14 cm, within its position noise), but its shape differs by 4.2 cm where unchanged objects in this pair differ by up to 3.0 cm. The Rigidity Copilot reads it as soft foam or stuffing, rubber (rigidity 0.27), so a change of shape is plausible. 66% sure it deformed. Also: tipped 31 deg; was tilted about 26 deg, now tilted about 35 deg. Measured on its SAM 2 masks in 12 views. Its centre is known to within about 6 cm (90%, from 12 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        9.03,
+        1.62,
+        0.84
+      ],
+      "radius90_cm": 5.77,
+      "radius90_cm_views": 5.77,
+      "n_views": 12,
+      "n_independent_views": 5,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -36.04961248549667,
+          192.5197708447697
+        ],
+        "a": 17.624911972458165,
+        "b": 3.3974783247922993,
+        "angle": 82.83517367387871
+      },
+      "single_view_radius90_cm": 0.82,
+      "depth_sd_cm": 3.67,
+      "side_sd_cm": 0.04,
+      "pose_sd_cm": 0.08,
+      "wobble_views": 12,
+      "nis_mean": 81646.25,
+      "trace_cm": [
+        0.25,
+        0.19,
+        0.08,
+        0.08,
+        0.07,
+        0.07,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {
+      "baseball cap": 1.784,
+      "toy": 0.149,
+      "neck pillow": 2.03
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 6,
+      "frames_seen": 12,
+      "frames_total": 44,
+      "span_share": 0.3
+    },
+    "affordance": null,
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "coffee table A2",
+          "gap_cm": 0.0
+        },
+        {
+          "object": "sofa A7",
+          "gap_cm": 1.6
+        },
+        {
+          "object": "sofa A14",
+          "gap_cm": 2.2
+        }
+      ],
+      "supports": []
+    },
+    "change": {
+      "other": "B12",
+      "distance_cm": 13.5,
+      "distance_range_cm": [
+        6.8,
+        20.1
+      ],
+      "direction": "down and to the right",
+      "height_change_cm": -12.2,
+      "pose_before": "tilted about 26 deg",
+      "pose_after": "tilted about 35 deg",
+      "context_before": "next to the coffee table and the sofa",
+      "context_after": "next to the hat and the sofa",
+      "p": {
+        "real_before": 0.875,
+        "real_after": 0.851,
+        "name": 0.997,
+        "same_object": 0.99,
+        "beyond_position_noise": 0.969,
+        "shape_differs": 0.825,
+        "deformed": 0.897
+      },
+      "turn_deg": null,
+      "turn_sd_deg": 2.3,
+      "turn_measurable": true,
+      "tilt_deg": 31.1,
+      "shape_diff_cm": 4.16,
+      "shape_noise_cm": 3.0,
+      "extent_ratio": [
+        1.086,
+        0.663,
+        0.861
+      ],
+      "rigidity": 0.267,
+      "materials": [
+        [
+          "soft foam or stuffing",
+          0.869
+        ],
+        [
+          "rubber",
+          0.093
+        ],
+        [
+          "fabric or cloth",
+          0.015
+        ]
+      ],
+      "p_change": 0.661,
+      "p_change_means": "deformed"
+    },
+    "change_sentence": "The neck pillow (100% sure of the name, clip) deformed but did not move away: same object in the same place (moved 14 cm, within its position noise), but its shape differs by 4.2 cm where unchanged objects in this pair differ by up to 3.0 cm. The Rigidity Copilot reads it as soft foam or stuffing, rubber (rigidity 0.27), so a change of shape is plausible. 66% sure it deformed. Also: tipped 31 deg; was tilted about 26 deg, now tilted about 35 deg. Measured on its SAM 2 masks in 12 views.",
+    "pose": "tilted about 26 deg",
+    "coverage": {
+      "views": 74,
+      "share_seen_twice": 1.0
+    },
+    "rigidity": 0.267,
+    "tracks": [
+      4
+    ],
+    "pose_copy_removed": null,
+    "name_size_warning": null,
+    "stats": {
+      "counterpart": 12,
+      "counterpart_iou": 0.302,
+      "counterpart_sim": 0.941,
+      "observed": 1.0,
+      "gone": 0.2664,
+      "appearance": 0.6938,
+      "shift_rel": -0.0036,
+      "n_points": 20368,
+      "null_gone": 0.174,
+      "null_appearance": 0.5512
+    }
+  },
+  {
+    "id": "A16",
+    "recording": "A",
+    "label": "baseball cap",
+    "label_prob": 1.0,
+    "label_top3": [
+      [
+        "baseball cap",
+        1.0
+      ]
+    ],
+    "status": "moved",
+    "structure": false,
+    "size_cm": [
+      30.2,
+      14.6,
+      5.3
+    ],
+    "height_m": 1.37,
+    "views": 9,
+    "complete": true,
+    "partner": "B21",
+    "description": "The baseball cap (98% sure of the name, detector) moved 73 cm (90%: 67 to 79 cm) to the left and towards the camera and down, from next to the sofa and the cushion to on top of the sofa, next to the sofa and the skirting board, turned about 18 deg (+/- 3) about the vertical, was tilted about 15 deg, now tilted about 10 deg. 55% sure it moved (beyond position noise 100%, same object 99%, real object 70%). Measured on its SAM 2 masks in 9 views. Its centre is known to within about 3 cm (90%, from 9 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        2.86,
+        1.39,
+        0.61
+      ],
+      "radius90_cm": 3.36,
+      "radius90_cm_views": 3.06,
+      "n_views": 9,
+      "n_independent_views": 5,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          86.54377811463026,
+          201.0640797557504
+        ],
+        "a": 6.088927529919519,
+        "b": 1.3591791370288726,
+        "angle": -158.14403746750511
+      },
+      "single_view_radius90_cm": 1.23,
+      "depth_sd_cm": 4.54,
+      "side_sd_cm": 0.01,
+      "pose_sd_cm": 0.14,
+      "wobble_views": 9,
+      "nis_mean": 303300.75,
+      "trace_cm": [
+        0.22,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.02,
+        0.02
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "baseball cap": 7.436
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 4,
+      "frames_seen": 9,
+      "frames_total": 44,
+      "span_share": 0.25
+    },
+    "affordance": null,
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "sofa A14",
+          "gap_cm": 8.0
+        },
+        {
+          "object": "cushion A8",
+          "gap_cm": 11.0
+        }
+      ],
+      "supports": []
+    },
+    "change": {
+      "other": "B21",
+      "distance_cm": 73.2,
+      "distance_range_cm": [
+        67.0,
+        79.4
+      ],
+      "direction": "to the left and towards the camera and down",
+      "height_change_cm": -24.3,
+      "pose_before": "tilted about 15 deg",
+      "pose_after": "tilted about 10 deg",
+      "context_before": "next to the sofa and the cushion",
+      "context_after": "on top of the sofa, next to the sofa and the skirting board",
+      "p": {
+        "real_before": 0.79,
+        "real_after": 0.703,
+        "name": 0.98,
+        "same_object": 0.99,
+        "beyond_position_noise": 1.0,
+        "shape_differs": 0.392,
+        "deformed": 0.325
+      },
+      "turn_deg": 17.6,
+      "turn_sd_deg": 2.9,
+      "turn_measurable": true,
+      "tilt_deg": null,
+      "shape_diff_cm": 2.67,
+      "shape_noise_cm": 3.0,
+      "extent_ratio": [
+        1.489,
+        1.807,
+        1.125
+      ],
+      "rigidity": 0.594,
+      "materials": [
+        [
+          "fabric or cloth",
+          0.517
+        ],
+        [
+          "soft foam or stuffing",
+          0.33
+        ],
+        [
+          "wood",
+          0.06
+        ]
+      ],
+      "p_change": 0.55,
+      "p_change_means": "moved"
+    },
+    "change_sentence": "The baseball cap (98% sure of the name, detector) moved 73 cm (90%: 67 to 79 cm) to the left and towards the camera and down, from next to the sofa and the cushion to on top of the sofa, next to the sofa and the skirting board, turned about 18 deg (+/- 3) about the vertical, was tilted about 15 deg, now tilted about 10 deg. 55% sure it moved (beyond position noise 100%, same object 99%, real object 70%). Measured on its SAM 2 masks in 9 views.",
+    "pose": "tilted about 15 deg",
+    "coverage": {
+      "views": 42,
+      "share_seen_twice": 1.0
+    },
+    "rigidity": 0.594,
+    "tracks": [
+      5
+    ],
+    "pose_copy_removed": null,
+    "name_size_warning": null,
+    "stats": {
+      "counterpart": 7,
+      "counterpart_iou": 0.01,
+      "counterpart_sim": 0.423,
+      "observed": 0.8283,
+      "gone": 0.0,
+      "appearance": 0.9442,
+      "shift_rel": -0.1182,
+      "n_points": 19210,
+      "null_gone": 0.0004,
+      "null_appearance": 0.5729,
+      "displacement": [
+        -0.20945820987277838,
+        0.13086624492243265,
+        -0.1970963478099752
+      ],
+      "distance": 0.3159836800583817,
+      "distance_ci": [
+        0.3101488594088178,
+        0.31851412292576897
+      ],
+      "match_similarity": 0.905,
+      "paired_by_identity": true
+    }
+  },
+  {
+    "id": "A17",
+    "recording": "A",
+    "label": "cup",
+    "label_prob": 1.0,
+    "label_top3": [
+      [
+        "cup",
+        1.0
+      ]
+    ],
+    "status": "moved",
+    "structure": false,
+    "size_cm": [
+      16.1,
+      7.1,
+      2.9
+    ],
+    "height_m": 0.69,
+    "views": 11,
+    "complete": true,
+    "partner": "B23",
+    "description": "The cup (98% sure of the name, detector) moved 36 cm (90%: 34 to 38 cm) towards the camera and down and to the left, from next to the chair and the side table to next to the guitar case and the sofa, turned about 40 deg (+/- 2) about the vertical, was tilted about 17 deg, now lying flat. 67% sure it moved (beyond position noise 100%, same object 99%, real object 79%). Measured on its SAM 2 masks in 11 views. Its centre is known to within about 3 cm (90%, from 11 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        2.3,
+        1.05,
+        0.44
+      ],
+      "radius90_cm": 2.55,
+      "radius90_cm_views": null,
+      "n_views": 11,
+      "n_independent_views": 5,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          104.91531085016872,
+          180.81556340095582
+        ],
+        "a": 4.930651371303778,
+        "b": 1.9214992255067842,
+        "angle": 77.43800594237015
+      },
+      "single_view_radius90_cm": 1.27,
+      "depth_sd_cm": 5.86,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.15,
+      "wobble_views": 11,
+      "nis_mean": 97566.31,
+      "trace_cm": [
+        2.09,
+        0.86,
+        0.16,
+        0.1,
+        0.07,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "cup": 8.968
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 5,
+      "frames_seen": 11,
+      "frames_total": 44,
+      "span_share": 0.379
+    },
+    "affordance": null,
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "chair A12",
+          "gap_cm": 7.1
+        },
+        {
+          "object": "side table A9",
+          "gap_cm": 8.5
+        }
+      ],
+      "supports": []
+    },
+    "change": {
+      "other": "B23",
+      "distance_cm": 36.1,
+      "distance_range_cm": [
+        34.0,
+        38.2
+      ],
+      "direction": "towards the camera and down and to the left",
+      "height_change_cm": -15.7,
+      "pose_before": "tilted about 17 deg",
+      "pose_after": "lying flat",
+      "context_before": "next to the chair and the side table",
+      "context_after": "next to the guitar case and the sofa",
+      "p": {
+        "real_before": 0.851,
+        "real_after": 0.79,
+        "name": 0.98,
+        "same_object": 0.99,
+        "beyond_position_noise": 1.0,
+        "shape_differs": 0.042,
+        "deformed": 0.013
+      },
+      "turn_deg": 39.9,
+      "turn_sd_deg": 2.2,
+      "turn_measurable": true,
+      "tilt_deg": null,
+      "shape_diff_cm": 0.65,
+      "shape_noise_cm": 3.0,
+      "extent_ratio": [
+        1.587,
+        0.992,
+        1.085
+      ],
+      "rigidity": 0.919,
+      "materials": [
+        [
+          "metal",
+          0.478
+        ],
+        [
+          "ceramic or porcelain",
+          0.292
+        ],
+        [
+          "glass",
+          0.06
+        ]
+      ],
+      "p_change": 0.666,
+      "p_change_means": "moved"
+    },
+    "change_sentence": "The cup (98% sure of the name, detector) moved 36 cm (90%: 34 to 38 cm) towards the camera and down and to the left, from next to the chair and the side table to next to the guitar case and the sofa, turned about 40 deg (+/- 2) about the vertical, was tilted about 17 deg, now lying flat. 67% sure it moved (beyond position noise 100%, same object 99%, real object 79%). Measured on its SAM 2 masks in 11 views.",
+    "pose": "tilted about 17 deg",
+    "coverage": {
+      "views": 113,
+      "share_seen_twice": 1.0
+    },
+    "rigidity": 0.919,
+    "tracks": [
+      35
+    ],
+    "pose_copy_removed": null,
+    "name_size_warning": null,
+    "stats": {
+      "counterpart": 9,
+      "counterpart_iou": 0.029,
+      "counterpart_sim": 0.488,
+      "observed": 1.0,
+      "gone": 0.2113,
+      "appearance": 0.8972,
+      "shift_rel": 0.0046,
+      "n_points": 10557,
+      "null_gone": 0.0004,
+      "null_appearance": 0.7569,
+      "displacement": [
+        -0.04596313405966018,
+        0.07033016574054002,
+        -0.13123685276991914
+      ],
+      "distance": 0.15582699840089187,
+      "distance_ci": [
+        0.15538001152583775,
+        0.15627463059881616
+      ],
+      "match_similarity": 0.911,
+      "paired_by_identity": true
+    }
+  },
+  {
+    "id": "A18",
+    "recording": "A",
+    "label": "skirting board",
+    "label_prob": 0.744,
+    "label_top3": [
+      [
+        "skirting board",
+        0.744
+      ],
+      [
+        "shelf",
+        0.048
+      ],
+      [
+        "door frame",
+        0.043
+      ]
+    ],
+    "status": "removed",
+    "structure": false,
+    "size_cm": [
+      33.3,
+      7.2,
+      2.5
+    ],
+    "height_m": 0.6,
+    "views": 3,
+    "complete": false,
+    "partner": null,
+    "description": "The skirting board (74% sure of the name, clip) was removed: the after video looked at that spot in 55 frames and saw straight through where it stood. 30% sure (real object 40%, spot covered 100%, see-through 73%). Measured on its SAM 2 masks in 3 views. Its centre is known to within about 1 cm (90%, from 3 views; one view alone: 0 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        2.38,
+        0.19,
+        0.06
+      ],
+      "radius90_cm": 0.77,
+      "radius90_cm_views": null,
+      "n_views": 3,
+      "n_independent_views": 3,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -197.86088093533286,
+          298.5467053592935
+        ],
+        "a": 5.100144877974003,
+        "b": 0.21675639225504462,
+        "angle": 128.48198668967237
+      },
+      "single_view_radius90_cm": 0.42,
+      "depth_sd_cm": 4.12,
+      "side_sd_cm": 0.03,
+      "pose_sd_cm": 0.02,
+      "wobble_views": 3,
+      "nis_mean": 33974.05,
+      "trace_cm": [
+        0.42,
+        0.12,
+        0.12
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {
+      "door": 0.316
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 2,
+      "frames_seen": 3,
+      "frames_total": 44,
+      "span_share": 0.273
+    },
+    "affordance": null,
+    "context": {
+      "on_top_of": null,
+      "next_to": [],
+      "supports": []
+    },
+    "change": {
+      "p": {
+        "real": 0.405,
+        "name": 0.744,
+        "other_video_covered": 1.0,
+        "see_through": 0.728
+      },
+      "coverage": {
+        "views": 55,
+        "share_seen_twice": 1.0
+      },
+      "context": "",
+      "pose": "tilted about 39 deg",
+      "p_change": 0.295,
+      "p_change_means": "removed"
+    },
+    "change_sentence": "The skirting board (74% sure of the name, clip) was removed: the after video looked at that spot in 55 frames and saw straight through where it stood. 30% sure (real object 40%, spot covered 100%, see-through 73%). Measured on its SAM 2 masks in 3 views.",
+    "pose": "tilted about 39 deg",
+    "coverage": {
+      "views": 55,
+      "share_seen_twice": 1.0
+    },
+    "rigidity": 0.822,
+    "tracks": [
+      68
+    ],
+    "pose_copy_removed": null,
+    "name_size_warning": null,
+    "stats": {
+      "counterpart": null,
+      "counterpart_iou": 0.0,
+      "counterpart_sim": null,
+      "observed": 0.9059,
+      "gone": 0.3837,
+      "appearance": 0.6475,
+      "shift_rel": 0.1046,
+      "n_points": 489,
+      "null_gone": 0.7221,
+      "null_appearance": 0.2698
+    }
+  },
+  {
+    "id": "B10",
+    "recording": "B",
+    "label": "guitar",
+    "label_prob": 0.7,
+    "label_top3": [
+      [
+        "guitar",
+        0.7
+      ],
+      [
+        "phone",
+        0.108
+      ],
+      [
+        "shoe",
+        0.07
+      ]
+    ],
+    "status": "shifted",
+    "structure": false,
+    "size_cm": [
+      89.9,
+      28.3,
+      5.9
+    ],
+    "height_m": 0.09,
+    "views": 14,
+    "complete": true,
+    "partner": null,
+    "description": "The guitar's surface moved by about 23 cm (squashed, pushed or deformed). Its centre is known to within about 5 cm (90%, from 12 views; one view alone: 1 cm). It is next to the guitar case, the rug, the large surface.",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        5.08,
+        1.5,
+        1.07
+      ],
+      "radius90_cm": 5.03,
+      "radius90_cm_views": 4.25,
+      "n_views": 12,
+      "n_independent_views": 5,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          77.85724999478006,
+          171.17024805010618
+        ],
+        "a": 4.140520716219351,
+        "b": 3.020696191436205,
+        "angle": -157.97171769701615
+      },
+      "single_view_radius90_cm": 1.38,
+      "depth_sd_cm": 4.56,
+      "side_sd_cm": 0.16,
+      "pose_sd_cm": 0.09,
+      "wobble_views": 12,
+      "nis_mean": 40738.18,
+      "trace_cm": [
+        1.26,
+        0.72,
+        0.51,
+        0.48,
+        0.3,
+        0.27,
+        0.09,
+        0.08,
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "guitar": 3.534,
+      "chair": 0.275,
+      "shoe": 0.353,
+      "phone": 0.544,
+      "book": 0.343
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 3,
+      "frames_seen": 12,
+      "frames_total": 44,
+      "span_share": 0.324
+    },
+    "affordance": {
+      "grasp": 0.0,
+      "push": 0.263,
+      "place_on": 0.017,
+      "grasp_raw": 0.0,
+      "push_raw": 0.1186,
+      "place_on_raw": 0.007,
+      "points": 1292,
+      "best": "push"
+    },
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "guitar case B6",
+          "gap_cm": 0.2
+        },
+        {
+          "object": "rug B3",
+          "gap_cm": 0.2
+        },
+        {
+          "object": "large surface B4",
+          "gap_cm": 0.3
+        }
+      ],
+      "supports": []
+    },
+    "change": {
+      "p": {
+        "real": 0.912,
+        "name": 0.75,
+        "other_video_covered": 1.0,
+        "see_through": 0.331
+      },
+      "coverage": {
+        "views": 103,
+        "share_seen_twice": 1.0
+      },
+      "context": "next to the guitar case and the rug",
+      "pose": "standing upright"
+    },
+    "change_sentence": "",
+    "pose": "standing upright",
+    "coverage": {
+      "views": 103,
+      "share_seen_twice": 1.0
+    },
+    "rigidity": 0.77,
+    "tracks": [
+      100028,
+      100038
+    ],
+    "pose_copy_removed": {
+      "groups": 5,
+      "copies_dropped": 2,
+      "frames_dropped": 5,
+      "shift": 0.19821,
+      "link_distance": 0.05423
+    },
+    "name_size_warning": null,
+    "stats": {
+      "counterpart": 4,
+      "counterpart_iou": 0.027,
+      "counterpart_sim": 0.526,
+      "observed": 1.0,
+      "gone": 0.2992,
+      "appearance": 0.747,
+      "shift_rel": 0.1011,
+      "n_points": 25071,
+      "null_gone": 0.009,
+      "null_appearance": 0.5021
+    }
+  },
+  {
+    "id": "B12",
+    "recording": "B",
+    "label": "neck pillow",
+    "label_prob": 0.965,
+    "label_top3": [
+      [
+        "neck pillow",
+        0.965
+      ],
+      [
+        "pillow",
+        0.007
+      ],
+      [
+        "seat cushion",
+        0.005
+      ]
+    ],
+    "status": "deformed",
+    "structure": false,
+    "size_cm": [
+      53.9,
+      18.0,
+      10.2
+    ],
+    "height_m": 1.19,
+    "views": 11,
+    "complete": true,
+    "partner": "A15",
+    "description": "The neck pillow (100% sure of the name, clip) deformed but did not move away: same object in the same place (moved 14 cm, within its position noise), but its shape differs by 4.2 cm where unchanged objects in this pair differ by up to 3.0 cm. The Rigidity Copilot reads it as soft foam or stuffing, rubber (rigidity 0.27), so a change of shape is plausible. 66% sure it deformed. Also: tipped 31 deg; was tilted about 26 deg, now tilted about 35 deg. Measured on its SAM 2 masks in 12 views. Its centre is known to within about 8 cm (90%, from 11 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        9.67,
+        3.26,
+        1.18
+      ],
+      "radius90_cm": 8.34,
+      "radius90_cm_views": 5.9,
+      "n_views": 11,
+      "n_independent_views": 4,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -20.787250905718842,
+          174.7997613738761
+        ],
+        "a": 17.574246832436803,
+        "b": 6.98891292922502,
+        "angle": 100.75938688523313
+      },
+      "single_view_radius90_cm": 0.95,
+      "depth_sd_cm": 3.86,
+      "side_sd_cm": 0.03,
+      "pose_sd_cm": 0.09,
+      "wobble_views": 11,
+      "nis_mean": 35957.76,
+      "trace_cm": [
+        0.47,
+        0.26,
+        0.13,
+        0.13,
+        0.13,
+        0.12,
+        0.12,
+        0.1,
+        0.09,
+        0.09,
+        0.09
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {
+      "baseball cap": 2.045,
+      "neck pillow": 1.61
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 4,
+      "frames_seen": 11,
+      "frames_total": 44,
+      "span_share": 0.393
+    },
+    "affordance": {
+      "grasp": 0.059,
+      "push": 0.0,
+      "place_on": 0.002,
+      "grasp_raw": 0.0186,
+      "push_raw": 0.0,
+      "place_on_raw": 0.001,
+      "points": 630,
+      "best": "none"
+    },
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "hat B19",
+          "gap_cm": 4.4
+        },
+        {
+          "object": "sofa B7",
+          "gap_cm": 8.9
+        },
+        {
+          "object": "large surface B4",
+          "gap_cm": 9.9
+        }
+      ],
+      "supports": []
+    },
+    "change": {
+      "other": "A15",
+      "distance_cm": 13.5,
+      "distance_range_cm": [
+        6.8,
+        20.1
+      ],
+      "direction": "down and to the right",
+      "height_change_cm": -12.2,
+      "pose_before": "tilted about 26 deg",
+      "pose_after": "tilted about 35 deg",
+      "context_before": "next to the coffee table and the sofa",
+      "context_after": "next to the hat and the sofa",
+      "p": {
+        "real_before": 0.875,
+        "real_after": 0.851,
+        "name": 0.997,
+        "same_object": 0.99,
+        "beyond_position_noise": 0.969,
+        "shape_differs": 0.825,
+        "deformed": 0.897
+      },
+      "turn_deg": null,
+      "turn_sd_deg": 2.3,
+      "turn_measurable": true,
+      "tilt_deg": 31.1,
+      "shape_diff_cm": 4.16,
+      "shape_noise_cm": 3.0,
+      "extent_ratio": [
+        1.086,
+        0.663,
+        0.861
+      ],
+      "rigidity": 0.267,
+      "materials": [
+        [
+          "soft foam or stuffing",
+          0.869
+        ],
+        [
+          "rubber",
+          0.093
+        ],
+        [
+          "fabric or cloth",
+          0.015
+        ]
+      ],
+      "p_change": 0.661,
+      "p_change_means": "deformed"
+    },
+    "change_sentence": "The neck pillow (100% sure of the name, clip) deformed but did not move away: same object in the same place (moved 14 cm, within its position noise), but its shape differs by 4.2 cm where unchanged objects in this pair differ by up to 3.0 cm. The Rigidity Copilot reads it as soft foam or stuffing, rubber (rigidity 0.27), so a change of shape is plausible. 66% sure it deformed. Also: tipped 31 deg; was tilted about 26 deg, now tilted about 35 deg. Measured on its SAM 2 masks in 12 views.",
+    "pose": "tilted about 35 deg",
+    "coverage": {
+      "views": 108,
+      "share_seen_twice": 1.0
+    },
+    "rigidity": 0.414,
+    "tracks": [
+      100002
+    ],
+    "pose_copy_removed": null,
+    "name_size_warning": null,
+    "stats": {
+      "counterpart": 15,
+      "counterpart_iou": 0.302,
+      "counterpart_sim": 0.941,
+      "observed": 1.0,
+      "gone": 0.1203,
+      "appearance": 0.6526,
+      "shift_rel": -0.0136,
+      "n_points": 10527,
+      "null_gone": 0.1379,
+      "null_appearance": 0.5707
+    }
+  },
+  {
+    "id": "B15",
+    "recording": "B",
+    "label": "book",
+    "label_prob": 1.0,
+    "label_top3": [
+      [
+        "book",
+        1.0
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      25.8,
+      18.3,
+      7.0
+    ],
+    "height_m": 0.61,
+    "views": 11,
+    "complete": true,
+    "partner": null,
+    "description": "The book (98% sure of the name, detector), on top of the sofa, next to the cushion and the sofa was added: the before video looked at that spot in 109 frames and it was empty. 1% sure (real object 85%, spot covered 100%, see-through 2%). Measured on its SAM 2 masks in 11 views. Its centre is known to within about 4 cm (90%, from 11 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        2.71,
+        2.02,
+        0.87
+      ],
+      "radius90_cm": 4.21,
+      "radius90_cm_views": 4.55,
+      "n_views": 11,
+      "n_independent_views": 7,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          31.01902579969055,
+          177.12594572504747
+        ],
+        "a": 4.828094155891061,
+        "b": 3.030277800660091,
+        "angle": 177.54909735390476
+      },
+      "single_view_radius90_cm": 1.12,
+      "depth_sd_cm": 4.39,
+      "side_sd_cm": 0.0,
+      "pose_sd_cm": 0.14,
+      "wobble_views": 11,
+      "nis_mean": 6683.21,
+      "trace_cm": [
+        0.75,
+        0.43,
+        0.33,
+        0.26,
+        0.15,
+        0.14,
+        0.14,
+        0.14,
+        0.13,
+        0.13,
+        0.13
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "book": 2.543
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 5,
+      "frames_seen": 11,
+      "frames_total": 44,
+      "span_share": 0.306
+    },
+    "affordance": {
+      "grasp": 0.258,
+      "push": 0.0,
+      "place_on": 0.0,
+      "grasp_raw": 0.0818,
+      "push_raw": 0.0,
+      "place_on_raw": 0.0,
+      "points": 369,
+      "best": "grasp"
+    },
+    "context": {
+      "on_top_of": {
+        "object": "sofa B0",
+        "share": 0.97
+      },
+      "next_to": [
+        {
+          "object": "cushion B8",
+          "gap_cm": 0.1
+        },
+        {
+          "object": "sofa B5",
+          "gap_cm": 3.6
+        },
+        {
+          "object": "large surface B4",
+          "gap_cm": 7.2
+        }
+      ],
+      "supports": []
+    },
+    "change": {
+      "p": {
+        "real": 0.851,
+        "name": 0.98,
+        "other_video_covered": 1.0,
+        "see_through": 0.017
+      },
+      "coverage": {
+        "views": 109,
+        "share_seen_twice": 1.0
+      },
+      "context": "on top of the sofa, next to the cushion and the sofa",
+      "pose": "tilted about 17 deg",
+      "p_change": 0.014,
+      "p_change_means": "added"
+    },
+    "change_sentence": "The book (98% sure of the name, detector), on top of the sofa, next to the cushion and the sofa was added: the before video looked at that spot in 109 frames and it was empty. 1% sure (real object 85%, spot covered 100%, see-through 2%). Measured on its SAM 2 masks in 11 views.",
+    "pose": "tilted about 17 deg",
+    "coverage": {
+      "views": 109,
+      "share_seen_twice": 1.0
+    },
+    "rigidity": 0.879,
+    "tracks": [
+      100009
+    ],
+    "pose_copy_removed": null,
+    "name_size_warning": null,
+    "stats": {
+      "counterpart": 0,
+      "counterpart_iou": 0.028,
+      "counterpart_sim": 0.581,
+      "observed": 1.0,
+      "gone": 0.1302,
+      "appearance": 0.8348,
+      "shift_rel": 0.0663,
+      "n_points": 7925,
+      "null_gone": 0.0834,
+      "null_appearance": 0.7248
+    }
+  },
+  {
+    "id": "B17",
+    "recording": "B",
+    "label": "table tennis bat",
+    "label_prob": 0.999,
+    "label_top3": [
+      [
+        "table tennis bat",
+        0.999
+      ],
+      [
+        "table tennis ball",
+        0.0
+      ],
+      [
+        "throw",
+        0.0
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      17.3,
+      13.0,
+      8.9
+    ],
+    "height_m": 0.82,
+    "views": 12,
+    "complete": true,
+    "partner": null,
+    "description": "The table tennis bat (100% sure of the name, clip), on top of the large surface, next to the sofa and the skirting board was added: the before video looked at that spot in 128 frames and it was empty. 0% sure (real object 88%, spot covered 100%, see-through 0%). Measured on its SAM 2 masks in 12 views. Its centre is known to within about 3 cm (90%, from 12 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        2.63,
+        1.94,
+        0.2
+      ],
+      "radius90_cm": 2.51,
+      "radius90_cm_views": 2.51,
+      "n_views": 12,
+      "n_independent_views": 5,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          -27.519408990180786,
+          190.41465700034868
+        ],
+        "a": 5.407093967214225,
+        "b": 3.319790794663614,
+        "angle": 98.00285775597848
+      },
+      "single_view_radius90_cm": 0.91,
+      "depth_sd_cm": 3.79,
+      "side_sd_cm": 0.03,
+      "pose_sd_cm": 0.09,
+      "wobble_views": 12,
+      "nis_mean": 37018.83,
+      "trace_cm": [
+        0.5,
+        0.27,
+        0.14,
+        0.14,
+        0.13,
+        0.13,
+        0.06,
+        0.06,
+        0.06,
+        0.06,
+        0.06,
+        0.05
+      ]
+    },
+    "label_source": "clip",
+    "detector_votes": {
+      "toy": 0.601,
+      "plate": 0.544
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 7,
+      "frames_seen": 12,
+      "frames_total": 44,
+      "span_share": 0.324
+    },
+    "affordance": {
+      "grasp": 0.435,
+      "push": 0.0,
+      "place_on": 0.0,
+      "grasp_raw": 0.1379,
+      "push_raw": 0.0,
+      "place_on_raw": 0.0,
+      "points": 278,
+      "best": "grasp"
+    },
+    "context": {
+      "on_top_of": {
+        "object": "large surface B4",
+        "share": 0.36
+      },
+      "next_to": [
+        {
+          "object": "sofa B5",
+          "gap_cm": 1.6
+        },
+        {
+          "object": "skirting board B13",
+          "gap_cm": 3.5
+        },
+        {
+          "object": "sofa B0",
+          "gap_cm": 6.7
+        }
+      ],
+      "supports": []
+    },
+    "change": {
+      "p": {
+        "real": 0.875,
+        "name": 0.999,
+        "other_video_covered": 1.0,
+        "see_through": 0.001
+      },
+      "coverage": {
+        "views": 128,
+        "share_seen_twice": 1.0
+      },
+      "context": "on top of the large surface, next to the sofa and the skirting board",
+      "pose": "tilted about 40 deg",
+      "p_change": 0.001,
+      "p_change_means": "added"
+    },
+    "change_sentence": "The table tennis bat (100% sure of the name, clip), on top of the large surface, next to the sofa and the skirting board was added: the before video looked at that spot in 128 frames and it was empty. 0% sure (real object 88%, spot covered 100%, see-through 0%). Measured on its SAM 2 masks in 12 views.",
+    "pose": "tilted about 40 deg",
+    "coverage": {
+      "views": 128,
+      "share_seen_twice": 1.0
+    },
+    "rigidity": 0.724,
+    "tracks": [
+      100017
+    ],
+    "pose_copy_removed": null,
+    "name_size_warning": null,
+    "stats": {
+      "counterpart": 0,
+      "counterpart_iou": 0.02,
+      "counterpart_sim": 0.56,
+      "observed": 1.0,
+      "gone": 0.0088,
+      "appearance": 0.7986,
+      "shift_rel": 0.0009,
+      "n_points": 9674,
+      "null_gone": 0.0306,
+      "null_appearance": 0.7858
+    }
+  },
+  {
+    "id": "B21",
+    "recording": "B",
+    "label": "baseball cap",
+    "label_prob": 0.911,
+    "label_top3": [
+      [
+        "baseball cap",
+        0.911
+      ],
+      [
+        "towel",
+        0.089
+      ]
+    ],
+    "status": "moved",
+    "structure": false,
+    "size_cm": [
+      44.5,
+      26.1,
+      6.0
+    ],
+    "height_m": 1.13,
+    "views": 7,
+    "complete": true,
+    "partner": "A16",
+    "description": "The baseball cap (98% sure of the name, detector) moved 73 cm (90%: 67 to 79 cm) to the left and towards the camera and down, from next to the sofa and the cushion to on top of the sofa, next to the sofa and the skirting board, turned about 18 deg (+/- 3) about the vertical, was tilted about 15 deg, now tilted about 10 deg. 55% sure it moved (beyond position noise 100%, same object 99%, real object 70%). Measured on its SAM 2 masks in 9 views. Its centre is known to within about 9 cm (90%, from 7 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        8.11,
+        5.72,
+        0.94
+      ],
+      "radius90_cm": 8.8,
+      "radius90_cm_views": 7.87,
+      "n_views": 7,
+      "n_independent_views": 4,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          22.125901252394378,
+          213.17927516352668
+        ],
+        "a": 17.053989985743062,
+        "b": 9.233060024058801,
+        "angle": 178.3613506057939
+      },
+      "single_view_radius90_cm": 0.78,
+      "depth_sd_cm": 4.1,
+      "side_sd_cm": 0.01,
+      "pose_sd_cm": 0.1,
+      "wobble_views": 7,
+      "nis_mean": 15252.0,
+      "trace_cm": [
+        0.78,
+        0.43,
+        0.04,
+        0.04,
+        0.04,
+        0.03,
+        0.03
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "baseball cap": 7.235,
+      "towel": 0.71
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 3,
+      "frames_seen": 7,
+      "frames_total": 44,
+      "span_share": 0.304
+    },
+    "affordance": {
+      "grasp": 0.135,
+      "push": 0.0,
+      "place_on": 0.01,
+      "grasp_raw": 0.0429,
+      "push_raw": 0.0,
+      "place_on_raw": 0.004,
+      "points": 187,
+      "best": "none"
+    },
+    "context": {
+      "on_top_of": {
+        "object": "sofa B0",
+        "share": 0.35
+      },
+      "next_to": [
+        {
+          "object": "sofa B7",
+          "gap_cm": 4.7
+        },
+        {
+          "object": "skirting board B13",
+          "gap_cm": 7.5
+        },
+        {
+          "object": "neck pillow B12",
+          "gap_cm": 11.0
+        }
+      ],
+      "supports": []
+    },
+    "change": {
+      "other": "A16",
+      "distance_cm": 73.2,
+      "distance_range_cm": [
+        67.0,
+        79.4
+      ],
+      "direction": "to the left and towards the camera and down",
+      "height_change_cm": -24.3,
+      "pose_before": "tilted about 15 deg",
+      "pose_after": "tilted about 10 deg",
+      "context_before": "next to the sofa and the cushion",
+      "context_after": "on top of the sofa, next to the sofa and the skirting board",
+      "p": {
+        "real_before": 0.79,
+        "real_after": 0.703,
+        "name": 0.98,
+        "same_object": 0.99,
+        "beyond_position_noise": 1.0,
+        "shape_differs": 0.392,
+        "deformed": 0.325
+      },
+      "turn_deg": 17.6,
+      "turn_sd_deg": 2.9,
+      "turn_measurable": true,
+      "tilt_deg": null,
+      "shape_diff_cm": 2.67,
+      "shape_noise_cm": 3.0,
+      "extent_ratio": [
+        1.489,
+        1.807,
+        1.125
+      ],
+      "rigidity": 0.594,
+      "materials": [
+        [
+          "fabric or cloth",
+          0.517
+        ],
+        [
+          "soft foam or stuffing",
+          0.33
+        ],
+        [
+          "wood",
+          0.06
+        ]
+      ],
+      "p_change": 0.55,
+      "p_change_means": "moved"
+    },
+    "change_sentence": "The baseball cap (98% sure of the name, detector) moved 73 cm (90%: 67 to 79 cm) to the left and towards the camera and down, from next to the sofa and the cushion to on top of the sofa, next to the sofa and the skirting board, turned about 18 deg (+/- 3) about the vertical, was tilted about 15 deg, now tilted about 10 deg. 55% sure it moved (beyond position noise 100%, same object 99%, real object 70%). Measured on its SAM 2 masks in 9 views.",
+    "pose": "tilted about 10 deg",
+    "coverage": {
+      "views": 80,
+      "share_seen_twice": 1.0
+    },
+    "rigidity": 0.659,
+    "tracks": [
+      100003
+    ],
+    "pose_copy_removed": {
+      "groups": 5,
+      "copies_dropped": 1,
+      "frames_dropped": 2,
+      "shift": 0.15035,
+      "link_distance": 0.05423
+    },
+    "name_size_warning": null,
+    "stats": {
+      "counterpart": 8,
+      "counterpart_iou": 0.01,
+      "counterpart_sim": 0.571,
+      "observed": 1.0,
+      "gone": 0.1122,
+      "appearance": 0.8287,
+      "shift_rel": 0.0286,
+      "n_points": 2207,
+      "null_gone": 0.1428,
+      "null_appearance": 0.7281,
+      "displacement": [
+        -0.20945820987277838,
+        0.13086624492243265,
+        -0.1970963478099752
+      ],
+      "distance": 0.3159836800583817,
+      "distance_ci": [
+        0.3101488594088178,
+        0.31851412292576897
+      ],
+      "match_similarity": 0.905,
+      "paired_by_identity": true
+    }
+  },
+  {
+    "id": "B22",
+    "recording": "B",
+    "label": "cup",
+    "label_prob": 0.612,
+    "label_top3": [
+      [
+        "cup",
+        0.612
+      ],
+      [
+        "paper bag",
+        0.253
+      ],
+      [
+        "cabinet",
+        0.134
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      13.7,
+      8.7,
+      1.1
+    ],
+    "height_m": 0.96,
+    "views": 5,
+    "complete": true,
+    "partner": null,
+    "description": "The cup (75% sure of the name, detector), next to the cushion and the sofa was added: the before video looked at that spot in 135 frames and it was empty. 0% sure (real object 58%, spot covered 100%, see-through 0%). Measured on its SAM 2 masks in 5 views. Its centre is known to within about 2 cm (90%, from 5 views; one view alone: 0 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        2.84,
+        0.52,
+        0.31
+      ],
+      "radius90_cm": 1.94,
+      "radius90_cm_views": null,
+      "n_views": 5,
+      "n_independent_views": 2,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          100.36738077571172,
+          174.10127984754536
+        ],
+        "a": 6.007355139226745,
+        "b": 0.6698941459501961,
+        "angle": 108.63857140708316
+      },
+      "single_view_radius90_cm": 0.43,
+      "depth_sd_cm": 4.22,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.01,
+      "wobble_views": 5,
+      "nis_mean": 47390.42,
+      "trace_cm": [
+        0.43,
+        0.2,
+        0.19,
+        0.06,
+        0.04
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "cabinet": 0.216,
+      "cup": 0.986,
+      "paper bag": 0.408
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 3,
+      "frames_seen": 5,
+      "frames_total": 44,
+      "span_share": 0.714
+    },
+    "affordance": {
+      "grasp": 0.895,
+      "push": 0.0,
+      "place_on": 0.0,
+      "grasp_raw": 0.2842,
+      "push_raw": 0.0,
+      "place_on_raw": 0.0,
+      "points": 111,
+      "best": "grasp"
+    },
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "cushion B8",
+          "gap_cm": 7.8
+        },
+        {
+          "object": "sofa B0",
+          "gap_cm": 7.8
+        },
+        {
+          "object": "skirting board B13",
+          "gap_cm": 12.9
+        }
+      ],
+      "supports": []
+    },
+    "change": {
+      "p": {
+        "real": 0.58,
+        "name": 0.75,
+        "other_video_covered": 1.0,
+        "see_through": 0.001
+      },
+      "coverage": {
+        "views": 135,
+        "share_seen_twice": 1.0
+      },
+      "context": "next to the cushion and the sofa",
+      "pose": "tilted about 42 deg",
+      "p_change": 0.001,
+      "p_change_means": "added"
+    },
+    "change_sentence": "The cup (75% sure of the name, detector), next to the cushion and the sofa was added: the before video looked at that spot in 135 frames and it was empty. 0% sure (real object 58%, spot covered 100%, see-through 0%). Measured on its SAM 2 masks in 5 views.",
+    "pose": "tilted about 42 deg",
+    "coverage": {
+      "views": 135,
+      "share_seen_twice": 1.0
+    },
+    "rigidity": 0.89,
+    "tracks": [
+      100039
+    ],
+    "pose_copy_removed": null,
+    "name_size_warning": null,
+    "stats": {
+      "counterpart": 12,
+      "counterpart_iou": 0.064,
+      "counterpart_sim": 0.535,
+      "observed": 1.0,
+      "gone": 0.0006,
+      "appearance": 0.8065,
+      "shift_rel": -0.0343,
+      "n_points": 5038,
+      "null_gone": 0.0,
+      "null_appearance": 0.6306
+    }
+  },
+  {
+    "id": "B23",
+    "recording": "B",
+    "label": "cup",
+    "label_prob": 1.0,
+    "label_top3": [
+      [
+        "cup",
+        1.0
+      ]
+    ],
+    "status": "moved",
+    "structure": false,
+    "size_cm": [
+      25.1,
+      7.1,
+      3.2
+    ],
+    "height_m": 0.53,
+    "views": 9,
+    "complete": true,
+    "partner": "A17",
+    "description": "The cup (98% sure of the name, detector) moved 36 cm (90%: 34 to 38 cm) towards the camera and down and to the left, from next to the chair and the side table to next to the guitar case and the sofa, turned about 40 deg (+/- 2) about the vertical, was tilted about 17 deg, now lying flat. 67% sure it moved (beyond position noise 100%, same object 99%, real object 79%). Measured on its SAM 2 masks in 11 views. Its centre is known to within about 2 cm (90%, from 9 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        1.9,
+        0.62,
+        0.37
+      ],
+      "radius90_cm": 1.9,
+      "radius90_cm_views": null,
+      "n_views": 9,
+      "n_independent_views": 5,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          95.42973653069711,
+          178.9241348985191
+        ],
+        "a": 4.0565677313849,
+        "b": 1.2732009643583515,
+        "angle": 94.45721001605729
+      },
+      "single_view_radius90_cm": 0.76,
+      "depth_sd_cm": 4.25,
+      "side_sd_cm": 0.02,
+      "pose_sd_cm": 0.08,
+      "wobble_views": 9,
+      "nis_mean": 52483.5,
+      "trace_cm": [
+        1.57,
+        0.35,
+        0.15,
+        0.13,
+        0.12,
+        0.07,
+        0.05,
+        0.05,
+        0.03
+      ]
+    },
+    "label_source": "detector",
+    "detector_votes": {
+      "cup": 8.401
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 4,
+      "frames_seen": 9,
+      "frames_total": 44,
+      "span_share": 0.25
+    },
+    "affordance": {
+      "grasp": 0.136,
+      "push": 0.0,
+      "place_on": 0.0,
+      "grasp_raw": 0.0432,
+      "push_raw": 0.0,
+      "place_on_raw": 0.0,
+      "points": 32,
+      "best": "none"
+    },
+    "context": {
+      "on_top_of": null,
+      "next_to": [
+        {
+          "object": "guitar case B6",
+          "gap_cm": 0.8
+        },
+        {
+          "object": "sofa B0",
+          "gap_cm": 2.2
+        },
+        {
+          "object": "large surface B4",
+          "gap_cm": 10.9
+        }
+      ],
+      "supports": []
+    },
+    "change": {
+      "other": "A17",
+      "distance_cm": 36.1,
+      "distance_range_cm": [
+        34.0,
+        38.2
+      ],
+      "direction": "towards the camera and down and to the left",
+      "height_change_cm": -15.7,
+      "pose_before": "tilted about 17 deg",
+      "pose_after": "lying flat",
+      "context_before": "next to the chair and the side table",
+      "context_after": "next to the guitar case and the sofa",
+      "p": {
+        "real_before": 0.851,
+        "real_after": 0.79,
+        "name": 0.98,
+        "same_object": 0.99,
+        "beyond_position_noise": 1.0,
+        "shape_differs": 0.042,
+        "deformed": 0.013
+      },
+      "turn_deg": 39.9,
+      "turn_sd_deg": 2.2,
+      "turn_measurable": true,
+      "tilt_deg": null,
+      "shape_diff_cm": 0.65,
+      "shape_noise_cm": 3.0,
+      "extent_ratio": [
+        1.587,
+        0.992,
+        1.085
+      ],
+      "rigidity": 0.919,
+      "materials": [
+        [
+          "metal",
+          0.478
+        ],
+        [
+          "ceramic or porcelain",
+          0.292
+        ],
+        [
+          "glass",
+          0.06
+        ]
+      ],
+      "p_change": 0.666,
+      "p_change_means": "moved"
+    },
+    "change_sentence": "The cup (98% sure of the name, detector) moved 36 cm (90%: 34 to 38 cm) towards the camera and down and to the left, from next to the chair and the side table to next to the guitar case and the sofa, turned about 40 deg (+/- 2) about the vertical, was tilted about 17 deg, now lying flat. 67% sure it moved (beyond position noise 100%, same object 99%, real object 79%). Measured on its SAM 2 masks in 11 views.",
+    "pose": "lying flat",
+    "coverage": {
+      "views": 92,
+      "share_seen_twice": 1.0
+    },
+    "rigidity": 0.897,
+    "tracks": [
+      100029
+    ],
+    "pose_copy_removed": null,
+    "name_size_warning": null,
+    "stats": {
+      "counterpart": 9,
+      "counterpart_iou": 0.014,
+      "counterpart_sim": 0.523,
+      "observed": 1.0,
+      "gone": 0.3071,
+      "appearance": 0.829,
+      "shift_rel": 0.0651,
+      "n_points": 2277,
+      "null_gone": 0.356,
+      "null_appearance": 0.6387,
+      "displacement": [
+        -0.04596313405966018,
+        0.07033016574054002,
+        -0.13123685276991914
+      ],
+      "distance": 0.15582699840089187,
+      "distance_ci": [
+        0.15538001152583775,
+        0.15627463059881616
+      ],
+      "match_similarity": 0.911,
+      "paired_by_identity": true
+    }
+  },
+  {
+    "id": "B24",
+    "recording": "B",
+    "label": "box",
+    "label_prob": 0.081,
+    "label_top3": [
+      [
+        "book",
+        1.0
+      ]
+    ],
+    "status": "added",
+    "structure": false,
+    "size_cm": [
+      45.2,
+      9.5,
+      6.2
+    ],
+    "height_m": 0.82,
+    "views": 4,
+    "complete": false,
+    "partner": null,
+    "description": "The box (8% sure of the name, size + names), on top of the cabinet was added: the before video looked at that spot in 115 frames and it was empty. 50% sure (real object 50%, spot covered 100%, see-through 100%). Measured on its SAM 2 masks in 4 views. Its centre is known to within about 3 cm (90%, from 4 views; one view alone: 1 cm).",
+    "position_cm": {
+      "method": "model (VGGT confidence + SAM 2 wobble, fused)",
+      "sd_axes_cm": [
+        2.79,
+        0.8,
+        0.51
+      ],
+      "radius90_cm": 2.61,
+      "radius90_cm_views": null,
+      "n_views": 4,
+      "n_independent_views": 2,
+      "too_few_views": false,
+      "floor": {
+        "xy": [
+          146.48725606614357,
+          230.3487243408741
+        ],
+        "a": 5.8629024002949786,
+        "b": 1.6480026617947814,
+        "angle": 68.81194534836168
+      },
+      "single_view_radius90_cm": 1.36,
+      "depth_sd_cm": 4.15,
+      "side_sd_cm": 0.03,
+      "pose_sd_cm": 0.06,
+      "wobble_views": 4,
+      "nis_mean": 2386.3,
+      "trace_cm": [
+        1.81,
+        0.51,
+        0.18,
+        0.18
+      ]
+    },
+    "label_source": "size + names",
+    "detector_votes": {
+      "book": 0.835
+    },
+    "continuity": {
+      "tracks": 1,
+      "runs": 3,
+      "frames_seen": 4,
+      "frames_total": 44,
+      "span_share": 0.174
+    },
+    "affordance": {
+      "grasp": 0.131,
+      "push": 0.0,
+      "place_on": 0.042,
+      "grasp_raw": 0.0414,
+      "push_raw": 0.0,
+      "place_on_raw": 0.0175,
+      "points": 32,
+      "best": "none"
+    },
+    "context": {
+      "on_top_of": {
+        "object": "cabinet B9",
+        "share": 0.59
+      },
+      "next_to": [],
+      "supports": []
+    },
+    "change": {
+      "p": {
+        "real": 0.5,
+        "name": 0.081,
+        "other_video_covered": 1.0,
+        "see_through": 1.0
+      },
+      "coverage": {
+        "views": 115,
+        "share_seen_twice": 1.0
+      },
+      "context": "on top of the cabinet",
+      "pose": "lying flat",
+      "p_change": 0.5,
+      "p_change_means": "added"
+    },
+    "change_sentence": "The box (8% sure of the name, size + names), on top of the cabinet was added: the before video looked at that spot in 115 frames and it was empty. 50% sure (real object 50%, spot covered 100%, see-through 100%). Measured on its SAM 2 masks in 4 views.",
+    "pose": "lying flat",
+    "coverage": {
+      "views": 115,
+      "share_seen_twice": 1.0
+    },
+    "rigidity": 0.841,
+    "tracks": [
+      100035
+    ],
+    "pose_copy_removed": null,
+    "name_size_warning": null,
+    "stats": {
+      "counterpart": null,
+      "counterpart_iou": 0.0,
+      "counterpart_sim": null,
+      "observed": 1.0,
+      "gone": 0.7421,
+      "appearance": 0.6829,
+      "shift_rel": 0.1977,
+      "n_points": 1290,
+      "null_gone": 0.0525,
+      "null_appearance": 0.3933
+    }
+  }
+]

@@ -117,11 +117,11 @@
       "account": "colab-becc",
       "attempts": 3,
       "commit": "57cc092",
-      "expires": 1792193509.9180663,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-16 19:01:51 UTC",
+      "note": "change: 9 changed objects of 16 (56%); labels: cushion, neck pillow, baseball cap, cup, skirting board; scale 2.317 m/unit; 2756s",
       "started": "2026-10-16 18:15:19 UTC",
-      "status": "running"
+      "status": "done"
     },
     "2-position_3-clips_no-change_dark-before-a-b-c": {
       "account": "colab-5f93",
