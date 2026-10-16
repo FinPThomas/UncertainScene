@@ -251,7 +251,7 @@ Runs are grouped by phase (what they try to find out). Folder names say what the
 
 ## Run `2026-10-11_scene01-objects-fixed` (version 2: SAM 2 objects, every frame)
 
-6 finished runs. Folder: [2026-10-11_scene01-objects-fixed](2026-10-11_scene01-objects-fixed/).
+7 finished runs. Folder: [2026-10-11_scene01-objects-fixed](2026-10-11_scene01-objects-fixed/).
 
 ### Headline: does it tell real changes from noise?
 
@@ -300,6 +300,14 @@ Runs are grouped by phase (what they try to find out). Folder names say what the
 |---|---|---|---|---|---|
 | Objects moved and lighting changed: dark, before, take a vs light, after, take a (whole objects, recordings re-aligned on unchanged objects (clean clouds, one verdict per object)) | cup moved, lamp moved, cup changed in place, cabinet added, book added, cup changed in place | ±7.0 cm | 2.502 | 9.7 | [report](2026-10-11_scene01-objects-fixed/1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a/report.md) · [objects](2026-10-11_scene01-objects-fixed/1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a/objects.png) · [position map](2026-10-11_scene01-objects-fixed/1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a/position_map.png) · [heatmaps](2026-10-11_scene01-objects-fixed/1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a/heatmaps.png) · [object overlays](2026-10-11_scene01-objects-fixed/1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a/object_overlays.png) · [scene report](2026-10-11_scene01-objects-fixed/1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a/scene_report.md) |
 | Nothing moved, same lighting: dark, before, take a vs dark, before, take b (whole objects, recordings re-aligned on unchanged objects (clean clouds, one verdict per object)) | box removed, lamp changed in place, cup changed in place, cup added, table tennis bat changed in place, book added | ±7.3 cm | 2.240 | 8.7 | [report](2026-10-11_scene01-objects-fixed/1d-objects_no-change_dark-before-a_vs_dark-before-b/report.md) · [objects](2026-10-11_scene01-objects-fixed/1d-objects_no-change_dark-before-a_vs_dark-before-b/objects.png) · [position map](2026-10-11_scene01-objects-fixed/1d-objects_no-change_dark-before-a_vs_dark-before-b/position_map.png) · [heatmaps](2026-10-11_scene01-objects-fixed/1d-objects_no-change_dark-before-a_vs_dark-before-b/heatmaps.png) · [object overlays](2026-10-11_scene01-objects-fixed/1d-objects_no-change_dark-before-a_vs_dark-before-b/object_overlays.png) · [scene report](2026-10-11_scene01-objects-fixed/1d-objects_no-change_dark-before-a_vs_dark-before-b/scene_report.md) |
+
+### What changed, in words
+
+*For every object: how far it moved and which way, from next to what to next to what, turned or tipped, deformed (checked with the Rigidity Copilot) and how sure; removed only where the other video looked. The same after recording against the light and the dark before recording.* (1 runs)
+
+| Run | Changes found | Objects located to (90%) | Scale (m/unit) | Surface uncertainty (cm) | Details |
+|---|---|---|---|---|---|
+| Objects moved, same lighting: light, before, take a vs light, after, take a (what changed in words: distance, direction, from/to context, turn, deformation, how sure) | cushion shifted, neck pillow deformed, baseball cap moved, cup moved, skirting board removed, guitar shifted | ±5.0 cm | 2.317 | 8.0 | [report](2026-10-11_scene01-objects-fixed/1e-changes_moved_light-before-a_vs_light-after-a/report.md) · [objects](2026-10-11_scene01-objects-fixed/1e-changes_moved_light-before-a_vs_light-after-a/objects.png) · [position map](2026-10-11_scene01-objects-fixed/1e-changes_moved_light-before-a_vs_light-after-a/position_map.png) · [heatmaps](2026-10-11_scene01-objects-fixed/1e-changes_moved_light-before-a_vs_light-after-a/heatmaps.png) · [object overlays](2026-10-11_scene01-objects-fixed/1e-changes_moved_light-before-a_vs_light-after-a/object_overlays.png) · [scene report](2026-10-11_scene01-objects-fixed/1e-changes_moved_light-before-a_vs_light-after-a/scene_report.md) |
 
 ### Light vs dark (all runs)
 
