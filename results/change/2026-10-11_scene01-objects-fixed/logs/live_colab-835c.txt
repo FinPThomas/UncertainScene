@@ -1,5 +1,5 @@
-session colab-835c, step 1d-objects_no-change_dark-before-a_vs_dark-before-b, running 150 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 9.7/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
+session colab-835c, step 1d-objects_no-change_dark-before-a_vs_dark-before-b, running 161 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 9.0/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
 
 2026-10-15 21:46:24,279 INFO uncertainscene.scene01: step 1d-objects_no-change_dark-before-a_vs_dark-before-b: scene01_dark_before_a vs scene01_dark_before_b, all frames/video, 44 SAM key frames, variant objects2
 2026-10-15 21:46:33,026 INFO dinov2: using MLP layer as FFN
@@ -169,3 +169,13 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 2026-10-16 00:02:09,642 INFO uncertainscene.change.floor: scale: most likely 2.187 m/unit (90% 1.957-2.550) from metric_depth 2.707, objects 1.864; phone height (not used) 3.616
 2026-10-16 00:07:46,206 INFO uncertainscene.change.inventory: object changes: {'A:unchanged': 30, 'A:removed': 3, 'A:not seen in other recording': 4, 'A:changed in place': 2, 'B:unchanged': 29, 'B:changed in place': 3, 'B:added': 3}; thresholds gone 0.300 appearance 0.715 shift 0.1101 (from 74 null objects)
 2026-10-16 00:07:46,713 INFO uncertainscene.poc: [1d-objects_no-change_dark-before-a_vs_dark-before-b] object-level changes done in 337 s | RAM 8.2/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
+2026-10-16 00:23:51,763 INFO uncertainscene.poc: [1d-objects_no-change_dark-before-a_vs_dark-before-b] after recording re-aligned on 13 unchanged objects: shift 1.25 cm, 1.169 deg, scale 1.06%, object surface gap 4.55 -> 3.24 cm; objects rebuilt done in 965 s | RAM 8.2/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
+2026-10-16 00:24:29,583 INFO uncertainscene.change.segment: recording A: 927 masks on 44 frames -> 841 fragments -> 64 objects (27 structures), median 10.0 views per object, merge grid 0.1176 units
+2026-10-16 00:25:13,733 INFO uncertainscene.change.segment: recording B: 1063 masks on 44 frames -> 940 fragments -> 59 objects (25 structures), median 13.0 views per object, merge grid 0.1176 units
+2026-10-16 00:25:14,513 INFO uncertainscene.poc: [1d-objects_no-change_dark-before-a_vs_dark-before-b] SAM 2 objects (64 in A, 59 in B) done in 83 s | RAM 8.3/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
+2026-10-16 00:25:45,783 INFO uncertainscene.poc: [1d-objects_no-change_dark-before-a_vs_dark-before-b] labels for every object (detector votes, CLIP as fallback) done in 31 s | RAM 8.3/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
+2026-10-16 00:25:46,272 INFO uncertainscene.poc: [1d-objects_no-change_dark-before-a_vs_dark-before-b] names that cannot fit the object's size replaced: 28 done in 0 s | RAM 8.3/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
+2026-10-16 00:25:48,552 INFO uncertainscene.poc: [1d-objects_no-change_dark-before-a_vs_dark-before-b] pieces joined to the touching object of the same name: 6 (62 objects in A, 55 in B) done in 2 s | RAM 8.3/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
+2026-10-16 00:25:49,073 INFO uncertainscene.poc: [1d-objects_no-change_dark-before-a_vs_dark-before-b] unsure objects dropped: 42 (A16 wooden crate (clip 0.28, 6 views); A23 glass vase (size check 0.20, 9 views); A31 neck pillow (clip 0.08, 10 views); A32 skirting board (size check 0.15, 2 views); A36 jumper (clip 0.17, 15 views); A38 skirting board (clip 0.17, 3 views); A39 skirting board (clip 0.16, 19 views); A40 chair (size check 0.05, 3 views) ...) done in 1 s | RAM 8.3/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
+2026-10-16 00:25:49,624 INFO uncertainscene.poc: [1d-objects_no-change_dark-before-a_vs_dark-before-b] Rigidity Copilot: expected stiffness of 75 objects done in 1 s | RAM 8.3/12.7 GB, disk free 54.5 GB, GPU 7.0/15.0 GB
+2026-10-16 00:25:49,636 INFO uncertainscene.change.floor: scale: most likely 2.240 m/unit (90% 1.999-2.732) from metric_depth 2.707, objects 1.909; phone height (not used) 3.616
