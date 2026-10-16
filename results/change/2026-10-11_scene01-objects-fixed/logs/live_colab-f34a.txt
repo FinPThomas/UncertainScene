@@ -1,0 +1,31 @@
+session colab-f34a, step 2-position_2-clips-each_moved_light-before-a-b_vs_light-after-a-b, running 10 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 8.6/12.7 GB, disk free 54.3 GB, GPU 6.9/15.0 GB
+
+2026-10-16 19:41:59,457 INFO uncertainscene.scene01: step 2-position_2-clips-each_moved_light-before-a-b_vs_light-after-a-b: clips scene01_light_before_a, scene01_light_before_b, scene01_light_after_a, scene01_light_after_b, 240 frames/video
+2026-10-16 19:42:12,245 INFO dinov2: using MLP layer as FFN
+2026-10-16 19:42:47,253 INFO uncertainscene.recon.vggt: loaded facebook/VGGT-1B on cuda in 35 s
+2026-10-16 19:43:30,981 INFO uncertainscene.recon.chunked: chunk 2/27: 48 frames, scale 0.999, anchor residual 0.004 (relative to depth)
+2026-10-16 19:43:52,749 INFO uncertainscene.recon.chunked: chunk 3/27: 48 frames, scale 0.991, anchor residual 0.005 (relative to depth)
+2026-10-16 19:44:13,656 INFO uncertainscene.recon.chunked: chunk 4/27: 47 frames, scale 0.994, anchor residual 0.005 (relative to depth)
+2026-10-16 19:44:34,599 INFO uncertainscene.recon.chunked: chunk 5/27: 47 frames, scale 0.986, anchor residual 0.006 (relative to depth)
+2026-10-16 19:44:55,621 INFO uncertainscene.recon.chunked: chunk 6/27: 47 frames, scale 0.984, anchor residual 0.006 (relative to depth)
+2026-10-16 19:45:16,688 INFO uncertainscene.recon.chunked: chunk 7/27: 47 frames, scale 0.979, anchor residual 0.006 (relative to depth)
+2026-10-16 19:45:37,618 INFO uncertainscene.recon.chunked: chunk 8/27: 47 frames, scale 0.984, anchor residual 0.008 (relative to depth)
+2026-10-16 19:45:58,581 INFO uncertainscene.recon.chunked: chunk 9/27: 47 frames, scale 0.982, anchor residual 0.008 (relative to depth)
+2026-10-16 19:46:19,568 INFO uncertainscene.recon.chunked: chunk 10/27: 47 frames, scale 0.978, anchor residual 0.009 (relative to depth)
+2026-10-16 19:46:40,557 INFO uncertainscene.recon.chunked: chunk 11/27: 47 frames, scale 0.983, anchor residual 0.009 (relative to depth)
+2026-10-16 19:47:01,525 INFO uncertainscene.recon.chunked: chunk 12/27: 47 frames, scale 0.972, anchor residual 0.008 (relative to depth)
+2026-10-16 19:47:22,559 INFO uncertainscene.recon.chunked: chunk 13/27: 47 frames, scale 0.975, anchor residual 0.008 (relative to depth)
+2026-10-16 19:47:43,707 INFO uncertainscene.recon.chunked: chunk 14/27: 47 frames, scale 0.974, anchor residual 0.008 (relative to depth)
+2026-10-16 19:48:04,704 INFO uncertainscene.recon.chunked: chunk 15/27: 47 frames, scale 0.975, anchor residual 0.009 (relative to depth)
+2026-10-16 19:48:25,666 INFO uncertainscene.recon.chunked: chunk 16/27: 47 frames, scale 0.967, anchor residual 0.010 (relative to depth)
+2026-10-16 19:48:46,582 INFO uncertainscene.recon.chunked: chunk 17/27: 47 frames, scale 0.965, anchor residual 0.009 (relative to depth)
+2026-10-16 19:49:07,613 INFO uncertainscene.recon.chunked: chunk 18/27: 47 frames, scale 0.959, anchor residual 0.009 (relative to depth)
+2026-10-16 19:49:28,608 INFO uncertainscene.recon.chunked: chunk 19/27: 47 frames, scale 0.975, anchor residual 0.009 (relative to depth)
+2026-10-16 19:49:49,579 INFO uncertainscene.recon.chunked: chunk 20/27: 47 frames, scale 0.972, anchor residual 0.008 (relative to depth)
+2026-10-16 19:50:10,559 INFO uncertainscene.recon.chunked: chunk 21/27: 47 frames, scale 0.972, anchor residual 0.008 (relative to depth)
+2026-10-16 19:50:31,519 INFO uncertainscene.recon.chunked: chunk 22/27: 47 frames, scale 0.983, anchor residual 0.007 (relative to depth)
+2026-10-16 19:50:52,489 INFO uncertainscene.recon.chunked: chunk 23/27: 47 frames, scale 0.982, anchor residual 0.007 (relative to depth)
+2026-10-16 19:51:13,620 INFO uncertainscene.recon.chunked: chunk 24/27: 47 frames, scale 0.979, anchor residual 0.007 (relative to depth)
+2026-10-16 19:51:34,661 INFO uncertainscene.recon.chunked: chunk 25/27: 47 frames, scale 0.983, anchor residual 0.007 (relative to depth)
+2026-10-16 19:51:55,704 INFO uncertainscene.recon.chunked: chunk 26/27: 47 frames, scale 0.987, anchor residual 0.005 (relative to depth)
