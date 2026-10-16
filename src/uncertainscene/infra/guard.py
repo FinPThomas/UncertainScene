@@ -156,6 +156,21 @@ class Guard:
     def stop(self) -> None:
         self._stop.set()
 
+    def recover_after_memory_pressure(self) -> bool:
+        """Restart monitoring after an adaptive stage freed enough RAM to continue."""
+        if not (self.tripped or "").startswith("RAM at"):
+            return False
+        thread = self._thread
+        if thread and thread.is_alive() and thread is not threading.current_thread():
+            thread.join(timeout=1)
+        if thread and thread.is_alive():
+            return False
+        if self.read().ram_frac >= self.budget.ram_hard_frac:
+            return False
+        self.tripped = None
+        self.start()
+        return True
+
     def _loop(self) -> None:
         while not self._stop.wait(self.budget.monitor_interval_s):
             try:

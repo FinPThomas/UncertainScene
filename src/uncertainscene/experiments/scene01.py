@@ -267,13 +267,13 @@ def _feats(rec, spec: Spec, cache: Path):
     f = cache / f"dino2_{_key(spec)}.npy"
     if f.exists():
         try:
-            return np.load(f)
+            return np.load(f, mmap_mode="r")
         except Exception:  # noqa: BLE001
             pass
-    feats = dino_features(rec.images)
-    np.save(f.with_name(f.stem + "_tmp.npy"), feats)
-    f.with_name(f.stem + "_tmp.npy").replace(f)
-    return feats
+    tmp = f.with_name(f.stem + "_tmp.npy")
+    dino_features(rec.images, output_path=tmp)
+    tmp.replace(f)
+    return np.load(f, mmap_mode="r")
 
 
 MASK_TAG = "cache-scene01-sam2"           # release holding each recording's SAM 2 tracks
@@ -487,6 +487,8 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     if spec.outputs == "light":
         cfg = replace(cfg, stride=max(cfg.stride, 3))
     res = detect(rec, feats, cfg)
+    # Object analysis samples from the shared feature map; these per-point copies are redundant.
+    res.A.feat = res.B.feat = None
     stage(f"point-level change detection ({len(res.A.X) + len(res.B.X)} points, tau {res.thresholds['tau_rel_depth']:.3f})")
 
     robot = replace(RobotModel(), **spec.robot)
@@ -535,7 +537,7 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
             # objects of the before recording only: most objects appear in both, and voting twice
             # would make the scale look twice as certain as it is
             floor = combine_scale(floor, object_scale(size_votes(objs_a, abs_err_units=0.03 / floor.scale_m_per_unit)))
-            obj_thr = inv.classify(objs_a, objs_b, rec, feats, res, cfg)
+            obj_thr = inv.classify(objs_a, objs_b, rec, feats, res, cfg, check=check)
             stage("object-level changes")
             # objects both recordings agree did not move line B up with A; then everything is
             # rebuilt on the corrected poses (Fin: matched objects should make the poses better)
@@ -870,12 +872,54 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         except Exception:  # noqa: BLE001
             log.exception("light vs dark comparison failed")
     write_report(spec, m, rows, out)
+    _publish_pointclouds(spec, out, cache, store)
     enforce_size(out)
     if sam_error:   # everything else is saved; mark the step failed so RETRY_FAILED reruns it
         raise RuntimeError(f"objects failed ({sam_error}); the rest of the step was saved")
     return (f"{ptype}: {m.get('obj_changed', 0)} changed objects of {m.get('obj_total', 0)} "
             f"({m.get('obj_changed_frac', 0):.0%}); labels: {', '.join(c['label'] or '?' for c in changes[:5])}; "
             f"scale {s:.3f} m/unit; {m['step_seconds']:.0f}s")
+
+
+def _publish_pointclouds(spec: Spec, out: Path, cache: Path, store) -> dict | None:
+    """Upload full cloud and object assets for light comparisons as one release archive."""
+    if store is None or spec.outputs != "full" or _stream_of(spec) != "light":
+        return None
+    files = [p for p in (out / "cloud.ply", out / "fields.ply") if p.is_file()]
+    assets_dir = out / "assets"
+    if assets_dir.is_dir():
+        files.extend(p for p in assets_dir.rglob("*") if p.is_file())
+    files = sorted(set(files))
+    if not files:
+        return None
+
+    import zipfile
+
+    cache.mkdir(parents=True, exist_ok=True)
+    archive = cache / f"{spec.name}_pointclouds.zip"
+    with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=1) as zf:
+        for path in files:
+            zf.write(path, path.relative_to(out).as_posix())
+
+    tag = f"run-{out.parent.name}"
+    name = f"{spec.name}_pointclouds.zip"
+    entry = None
+    error = None
+    for attempt in range(3):
+        try:
+            entry = store.put(archive, tag, name=name, overwrite=True)
+            break
+        except Exception as e:  # noqa: BLE001 - artifact upload must not fail the analysis
+            error = f"{type(e).__name__}: {e}"[:300]
+            if attempt < 2:
+                time.sleep(3 * (attempt + 1))
+    manifest = {"status": "uploaded" if entry else "failed", "step": spec.name,
+                "tag": tag, "archive": entry, "files": [p.relative_to(out).as_posix() for p in files]}
+    if error:
+        manifest["error"] = error
+        log.error("point-cloud upload failed for %s: %s", spec.name, error)
+    (out / "pointclouds.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    return manifest
 
 
 def _write_scene3d(res, objs_a, objs_b, f, out: Path, labels, max_mb: float = 13.0, motion=None) -> None:

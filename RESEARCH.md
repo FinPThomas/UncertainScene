@@ -5,7 +5,7 @@ This is the single living document for the project. Update the **Progress log** 
 (see [docs/COMMITS.md](docs/COMMITS.md)). Decisions with lasting consequences also get a short
 entry in [docs/decisions/](docs/decisions/).
 
-Last updated: 2026-10-15
+Last updated: 2026-10-16
 
 ## 1. Goal
 
@@ -181,6 +181,7 @@ Newest first. One line per meaningful step: date, path, what was done, link to t
 
 | Date | Path | What happened | Result |
 |---|---|---|---|
+| 2026-10-16 | infra | Light 1e analysis streams DINO features to disk, releases duplicate point features, and retries object visibility with a RAM-sized sample after memory pressure; full light steps upload cloud and object assets to the run release with a committed manifest | [src/uncertainscene/experiments/scene01.py](src/uncertainscene/experiments/scene01.py) |
 | 2026-10-15 | infra | Colab push preflight now syncs and retries when the branch advances; a regression test covers stale checkouts | [src/uncertainscene/infra/publish.py](src/uncertainscene/infra/publish.py) |
 | 2026-10-10 | change | v2 first attempt (run 2026-10-10_scene01-objects, 11 steps, Colab disconnected 19:07): object stage failed in every step (CLIP labelling crash on transformers 5), so 0 changes everywhere; views almost never merged (1107/1122 objects single-view, depth error >> 1.2 cm grid); clips steps never started (RAM estimate). Splats: 17.7 dB held-out PSNR, same-view 2.0% changed vs 1% noise. Fixed all three; splats now 20k steps, compared only where the other recording saw; rerun as 2026-10-11_scene01-objects-fixed | [results/change/RESULTS.md](results/change/RESULTS.md) |
 | 2026-10-11 | recon | Splat fixes after Fin found run 2's splats blurry with floaters (not yet run): camera poses refined by SIFT tracks + bundle adjustment from the VGGT poses, both recordings together (`recon/poses.py`; synthetic test 0.72 -> <0.2 deg); splats start from the adjusted points plus VGGT depth lined up to them, VGGT depth guide, opacity resets (gsplat 1.5.3 never resets), floater pruning at 55% and 80% of training; real-splat web viewer `splat_viewer/` per step (`viz/splat_site.py`) | [src/uncertainscene/recon/poses.py](src/uncertainscene/recon/poses.py) |

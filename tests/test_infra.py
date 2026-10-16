@@ -87,6 +87,15 @@ def test_check_runs_soft_callbacks_and_raises_on_hard():
     assert "RAM" in g.tripped
 
 
+def test_guard_restarts_after_recoverable_memory_pressure():
+    g = Guard(Budget(), reader=fake_usage())
+    g.tripped = "RAM at 93% (hard limit 92%)"
+
+    assert g.recover_after_memory_pressure()
+    assert g.tripped is None
+    g.stop()
+
+
 def test_ensure_room_refuses_steps_that_do_not_fit():
     g = Guard(Budget(), reader=fake_usage(disk_free=20))
     g.ensure_room(disk_gb=10, ram_gb=5, minutes=60)

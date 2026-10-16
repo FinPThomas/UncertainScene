@@ -38,7 +38,8 @@ def _device():
     return "cuda" if torch.cuda.is_available() else "cpu"
 
 
-def dino_features(images: np.ndarray, model_name: str = "facebook/dinov2-small", batch: int = 8) -> np.ndarray:
+def dino_features(images: np.ndarray, model_name: str = "facebook/dinov2-small", batch: int = 8,
+                  output_path=None) -> np.ndarray:
     """[S, h, w, C] float16 L2-normalised patch features for uint8 images [S, H, W, 3]."""
     import torch
     from transformers import AutoModel
@@ -51,14 +52,26 @@ def dino_features(images: np.ndarray, model_name: str = "facebook/dinov2-small",
     mean = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1)
     std = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
     out = []
+    mapped = None
+    if output_path is not None:
+        mapped = np.lib.format.open_memmap(output_path, mode="w+", dtype=np.float16,
+                                           shape=(S, h, w, int(model.config.hidden_size)))
     for i in range(0, S, batch):
         x = torch.from_numpy(images[i:i + batch, : h * 14, : w * 14]).permute(0, 3, 1, 2).float() / 255
         x = ((x - mean) / std).to(_device())
         with torch.no_grad():
             tok = model(pixel_values=x).last_hidden_state[:, 1:]       # drop CLS
         f = torch.nn.functional.normalize(tok.float(), dim=-1).reshape(len(x), h, w, -1)
-        out.append(f.half().cpu().numpy())
-    return np.concatenate(out)
+        batch_features = f.half().cpu().numpy()
+        if mapped is None:
+            out.append(batch_features)
+        else:
+            mapped[i:i + len(batch_features)] = batch_features
+    if mapped is None:
+        return np.concatenate(out)
+    mapped.flush()
+    del mapped
+    return np.load(output_path, mmap_mode="r")
 
 
 def _embeds(out):

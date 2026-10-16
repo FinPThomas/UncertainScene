@@ -35,20 +35,29 @@ STATUS_COLOR = {"unchanged": (150, 150, 150), "removed": (214, 39, 40), "added":
                 "not seen in other recording": (90, 90, 200), "unknown": (90, 90, 90)}
 
 
-def _pool(objs: list[SceneObject], rec: Recon, feats, targets_of, tau: float, conf_thr: np.ndarray,
-          cfg: DetectConfig) -> list[dict]:
-    """Run the visibility test for all objects at once, then pool per object."""
-    if not objs:
-        return []
-    X = np.concatenate([o.X for o in objs])
-    fr = np.concatenate([o.frame for o in objs])
-    pix = np.concatenate([o.pix for o in objs])
-    oid = np.concatenate([np.full(len(o.X), i) for i, o in enumerate(objs)])
+def _pool_once(objs: list[SceneObject], rec: Recon, feats, targets_of, tau: float, conf_thr: np.ndarray,
+               cfg: DetectConfig, points_per_object: int) -> list[dict]:
+    Xs, frames, pixels, object_ids, totals = [], [], [], [], []
+    rng = np.random.default_rng(0)
+    for i, obj in enumerate(objs):
+        count = len(obj.X)
+        totals.append(count)
+        keep = (np.sort(rng.choice(count, points_per_object, replace=False))
+                if count > points_per_object else np.arange(count))
+        Xs.append(obj.X[keep])
+        frames.append(obj.frame[keep])
+        pixels.append(obj.pix[keep])
+        object_ids.append(np.full(len(keep), i, dtype=np.int32))
+
+    X = np.concatenate(Xs)
+    fr = np.concatenate(frames)
+    pix = np.concatenate(pixels)
+    oid = np.concatenate(object_ids)
     H, W = rec.depth.shape[1:]
     sf = _sample_feat(feats, fr, pix[:, 0], pix[:, 1], H, W).astype(np.float32) if feats is not None else None
     ns, ng, app, _, ex = _test(rec, X, fr, sf, targets_of, feats, cfg, tau, conf_thr, return_extra=True)
     out = []
-    for i, o in enumerate(objs):
+    for i, total in enumerate(totals):
         m = oid == i
         n_obs = ns[m] + ng[m]
         observed = n_obs >= cfg.min_obs
@@ -57,9 +66,58 @@ def _pool(objs: list[SceneObject], rec: Recon, feats, targets_of, tau: float, co
         out.append({"observed": float(observed.mean()),
                     "gone": float(ng[m][observed].sum() / max(n_obs[observed].sum(), 1)),
                     "appearance": float(a.mean()) if len(a) else float("nan"),
-                    "shift_rel": float(np.median(d)) if len(d) else float("nan"),   # scene units
-                    "n_points": int(m.sum())})
+                    "shift_rel": float(np.median(d)) if len(d) else float("nan"),
+                    "n_points": total, "n_sampled": int(m.sum())})
     return out
+
+
+def _pool(objs: list[SceneObject], rec: Recon, feats, targets_of, tau: float, conf_thr: np.ndarray,
+          cfg: DetectConfig, check=None) -> list[dict]:
+    """Pool object visibility using a RAM-sized sample, retrying smaller on allocation failure."""
+    if not objs:
+        return []
+    import gc
+    import psutil
+
+    feat_dim = int(feats.shape[-1]) if feats is not None else 0
+    available = int(psutil.virtual_memory().available)
+    budget_bytes = min(512 * 1024**2, max(4 * 1024**2, available // 5))
+    bytes_per_point = max(512, feat_dim * 4 + 512)
+    point_budget = budget_bytes // bytes_per_point
+    points_per_object = max(64, min(8000, point_budget // len(objs)))
+    total_points = sum(len(o.X) for o in objs)
+    attempts = 0
+    while True:
+        try:
+            out = _pool_once(objs, rec, feats, targets_of, tau, conf_thr, cfg, points_per_object)
+            sampled = sum(o["n_sampled"] for o in out)
+            if sampled < total_points or attempts:
+                log.info("object visibility sampled %d/%d points across %d objects (max %d per object, %d retries%s)",
+                         sampled, total_points, len(objs), points_per_object, attempts,
+                         ", appearance disabled" if feats is None else "")
+            return out
+        except MemoryError:
+            attempts += 1
+            gc.collect()
+            if points_per_object > 64:
+                points_per_object = max(64, points_per_object // 2)
+            elif feats is not None:
+                feats = None
+            else:
+                raise
+        except KeyboardInterrupt:
+            guard = getattr(check, "__self__", None)
+            recover = getattr(guard, "recover_after_memory_pressure", None)
+            if recover is None or not recover():
+                raise
+            attempts += 1
+            gc.collect()
+            if points_per_object > 64:
+                points_per_object = max(64, points_per_object // 2)
+            elif feats is not None:
+                feats = None
+            else:
+                raise
 
 
 def descriptors(objs: list[SceneObject], rec: Recon, feats) -> None:
@@ -207,7 +265,7 @@ def pair_by_identity(objs_a: list[SceneObject], objs_b: list[SceneObject], min_p
 
 def classify(objs_a: list[SceneObject], objs_b: list[SceneObject], rec: Recon, feats, res: ChangeResult,
              cfg: DetectConfig | None = None, null_q: float = 0.975, min_observed: float = 0.25,
-             same_sim: float = 0.8, move_sim: float = 0.75) -> dict:
+             same_sim: float = 0.8, move_sim: float = 0.75, check=None) -> dict:
     cfg = cfg or DetectConfig()
     tau = res.thresholds["tau_rel_depth"]
     conf_thr = np.array([np.quantile(c, cfg.conf_quantile) for c in rec.conf])
@@ -217,8 +275,8 @@ def classify(objs_a: list[SceneObject], objs_b: list[SceneObject], rec: Recon, f
     own = {0: np.nonzero(rec.video == 0)[0], 1: np.nonzero(rec.video == 1)[0]}
     cross, null = {}, {}
     for vid, objs in ((0, objs_a), (1, objs_b)):
-        cross[vid] = _pool(objs, rec, feats, own[1 - vid], tau, conf_thr, cfg)
-        null[vid] = _pool(objs, rec, feats, own[vid], tau, conf_thr, cfg)   # own frames: nothing changed
+        cross[vid] = _pool(objs, rec, feats, own[1 - vid], tau, conf_thr, cfg, check=check)
+        null[vid] = _pool(objs, rec, feats, own[vid], tau, conf_thr, cfg, check=check)   # own frames: nothing changed
     nl = [s for v in (0, 1) for s in null[v] if s["observed"] >= min_observed]
 
     def q(key, lo):

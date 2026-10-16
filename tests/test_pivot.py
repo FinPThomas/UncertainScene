@@ -4,6 +4,7 @@ synthetic scene from test_change (numpy only)."""
 from __future__ import annotations
 
 import json
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -178,9 +179,146 @@ def test_sam_objects_static_pair(tmp_path, monkeypatch):
         [(o.label, o.status, o.stats) for o in oa + ob]
 
 
+def test_object_pool_retries_with_smaller_samples(monkeypatch):
+    from uncertainscene.change import inventory
+    from uncertainscene.change.detect import DetectConfig
+
+    monkeypatch.setattr("psutil.virtual_memory", lambda: SimpleNamespace(available=8 * 1024**3))
+    sizes = []
+
+    def fake_test(rec, X, src_frame, src_feat, targets, feats, cfg, tau, conf_thr, return_extra=False):
+        sizes.append(len(X))
+        if len(X) > 5000:
+            raise MemoryError
+        zeros = np.zeros(len(X))
+        return np.ones(len(X)), zeros, zeros, zeros, {"disp": zeros}
+
+    monkeypatch.setattr(inventory, "_test", fake_test)
+    objs = [SimpleNamespace(id=i, X=np.zeros((10000, 3)), frame=np.zeros(10000, dtype=int),
+                            pix=np.zeros((10000, 2), dtype=int)) for i in range(2)]
+    rec = SimpleNamespace(depth=np.zeros((2, 2, 2)))
+    feats = np.zeros((2, 1, 1, 384), dtype=np.float16)
+
+    pooled = inventory._pool(objs, rec, feats, np.array([1]), 0.1, np.zeros(2), DetectConfig(min_obs=1))
+
+    assert sizes == [16000, 8000, 4000]
+    assert [item["n_points"] for item in pooled] == [10000, 10000]
+    assert [item["n_sampled"] for item in pooled] == [2000, 2000]
+
+
+def test_object_pool_recovers_from_guard_interrupt(monkeypatch):
+    from uncertainscene.change import inventory
+    from uncertainscene.change.detect import DetectConfig
+
+    monkeypatch.setattr("psutil.virtual_memory", lambda: SimpleNamespace(available=8 * 1024**3))
+    sizes = []
+
+    def fake_test(rec, X, src_frame, src_feat, targets, feats, cfg, tau, conf_thr, return_extra=False):
+        sizes.append(len(X))
+        if len(sizes) == 1:
+            raise KeyboardInterrupt
+        zeros = np.zeros(len(X))
+        return np.ones(len(X)), zeros, zeros, zeros, {"disp": zeros}
+
+    class FakeGuard:
+        def recover_after_memory_pressure(self):
+            return True
+
+    monkeypatch.setattr(inventory, "_test", fake_test)
+    objs = [SimpleNamespace(id=i, X=np.zeros((10000, 3)), frame=np.zeros(10000, dtype=int),
+                            pix=np.zeros((10000, 2), dtype=int)) for i in range(2)]
+    rec = SimpleNamespace(depth=np.zeros((2, 2, 2)))
+    feats = np.zeros((2, 1, 1, 384), dtype=np.float16)
+    guard = FakeGuard()
+
+    pooled = inventory._pool(objs, rec, feats, np.array([1]), 0.1, np.zeros(2),
+                             DetectConfig(min_obs=1), check=guard.recover_after_memory_pressure)
+
+    assert sizes == [16000, 8000]
+    assert len(pooled) == 2
+
+
+def test_dino_feature_cache_is_memory_mapped(tmp_path):
+    from uncertainscene.experiments import scene01
+
+    spec = scene01.Spec("mmap", "scene01_light_before_a", "scene01_light_after_a")
+    cache = tmp_path / "cache"
+    cache.mkdir()
+    expected = np.ones((2, 1, 1, 3), dtype=np.float16)
+    np.save(cache / f"dino2_{scene01._key(spec)}.npy", expected)
+
+    feats = scene01._feats(None, spec, cache)
+
+    assert isinstance(feats, np.memmap)
+    assert np.array_equal(feats, expected)
+
+
+def test_dino_features_write_batches_to_disk(tmp_path, monkeypatch):
+    from uncertainscene.change import features
+    from uncertainscene.experiments import scene01
+
+    expected = np.full((2, 1, 1, 3), 0.5, dtype=np.float16)
+    calls = []
+
+    def write_features(images, output_path):
+        calls.append(images.shape[0])
+        mapped = np.lib.format.open_memmap(output_path, mode="w+", dtype=np.float16, shape=expected.shape)
+        mapped[:] = expected
+        mapped.flush()
+        return mapped
+
+    monkeypatch.setattr(features, "dino_features", write_features)
+    spec = scene01.Spec("cold-mmap", "scene01_light_before_a", "scene01_light_after_a")
+    rec = SimpleNamespace(images=np.zeros((2, 2, 2, 3), dtype=np.uint8))
+    cache = tmp_path / "cache"
+    cache.mkdir()
+
+    result = scene01._feats(rec, spec, cache)
+
+    assert calls == [2]
+    assert isinstance(result, np.memmap)
+    assert np.array_equal(result, expected)
+
+
+def test_light_full_step_uploads_cloud_and_object_assets(tmp_path):
+    import zipfile
+    from uncertainscene.experiments import scene01
+
+    class FakeStore:
+        def __init__(self):
+            self.calls = []
+
+        def put(self, path, tag, name, overwrite):
+            with zipfile.ZipFile(path) as archive:
+                members = archive.namelist()
+            self.calls.append((tag, name, overwrite, members))
+            return {"name": name, "tag": tag, "bytes": path.stat().st_size}
+
+    store = FakeStore()
+    spec = scene01.Spec("light-demo", "scene01_light_before_a", "scene01_light_after_a")
+    out, cache = tmp_path / "results" / "demo" / spec.name, tmp_path / "cache"
+    (out / "assets").mkdir(parents=True)
+    (out / "cloud.ply").write_bytes(b"cloud")
+    (out / "fields.ply").write_bytes(b"fields")
+    (out / "assets" / "A001_ball.ply").write_bytes(b"object")
+    (out / "assets" / "A001_ball.json").write_text("{}")
+
+    manifest = scene01._publish_pointclouds(spec, out, cache, store)
+
+    assert manifest["status"] == "uploaded"
+    assert store.calls[0][0] == "run-demo" and store.calls[0][2] is True
+    assert set(store.calls[0][3]) == {"cloud.ply", "fields.ply", "assets/A001_ball.ply", "assets/A001_ball.json"}
+    assert (out / "pointclouds.json").is_file()
+
+    dark = scene01.Spec("dark-demo", "scene01_dark_before_a", "scene01_light_after_a")
+    assert scene01._publish_pointclouds(dark, out, cache, store) is None
+    assert len(store.calls) == 1
+
+
 def test_full_step_end_to_end(tmp_path, monkeypatch):
     """analyse() with the GPU stages replaced by the synthetic scene: every output is written."""
     from test_change import colour_feats
+    from uncertainscene.change import inventory
     from uncertainscene.change.segment import key_frames
     from uncertainscene.experiments import scene01
 
@@ -196,6 +334,13 @@ def test_full_step_end_to_end(tmp_path, monkeypatch):
 
     monkeypatch.setattr(poses, "refine_recon", lambda rec_, cache, key, cfg=None: (rec_, None, {
         "vggt": {"median_px": 8.0}, "final": {"median_px": 0.7, "points": 10}, "rotation_change_deg_median": 0.4}))
+
+    classify = inventory.classify
+    def check_released_features(*args, **kwargs):
+        assert args[4].A.feat is None and args[4].B.feat is None
+        return classify(*args, **kwargs)
+
+    monkeypatch.setattr(inventory, "classify", check_released_features)
 
     def fake_measure(rec_, objs, scale, cfg=None):     # one object moved 5 cm, its corner bent 3 cm
         o = [x for x in objs if not x.structure][0]
