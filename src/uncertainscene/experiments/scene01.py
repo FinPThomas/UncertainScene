@@ -571,11 +571,27 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         if realigned:
             import psutil
 
-            res = None                         # the old points go first, then the memory is read
+            import pickle
+
+            # run 12's light stream died here: the objects' own per-frame masks (~1.5 GB) were
+            # still held while the 1.2M points were re-detected. They wait on disk instead, so
+            # detection runs with the same memory as the first, successful one.
+            spill = cache / "objects_spill.pkl"
+            with open(spill, "wb") as f:
+                pickle.dump((objs_a, objs_b), f, protocol=pickle.HIGHEST_PROTOCOL)
+            res = objs_a = objs_b = None       # the old points and the objects go first, then the memory is read
             gc.collect()
             # full density unless memory is short (run 11 light stood at 70% with the old points held)
-            cfg_final = cfg if psutil.virtual_memory().percent < 78 else replace(cfg, stride=max(cfg.stride, 2))
-            res = detect(rec, feats, cfg_final)
+            cfg_final = cfg if psutil.virtual_memory().percent < 70 else replace(cfg, stride=max(cfg.stride, 2))
+            stage(f"objects set aside on disk before re-detection (RAM at {psutil.virtual_memory().percent:.0f}%)")
+            try:
+                res = detect(rec, feats, cfg_final)
+            finally:                           # the objects come back even if detection fails
+                feats = None
+                gc.collect()
+                with open(spill, "rb") as f:
+                    objs_a, objs_b = pickle.load(f)
+                spill.unlink()
             stage(f"point-level change detection on the re-aligned recordings ({len(res.A.X) + len(res.B.X)} points"
                   f"{', every 2nd pixel to save memory' if cfg_final is not cfg else ''})")
     except Exception as e:  # noqa: BLE001 - SAM 2 missing or failing must not lose the rest
