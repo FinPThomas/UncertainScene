@@ -157,11 +157,11 @@
       "account": "colab-becc",
       "attempts": 1,
       "commit": "4580032",
-      "expires": 1792180764.5306458,
-      "finished": null,
-      "note": null,
+      "expires": null,
+      "finished": "2026-10-16 19:26:36 UTC",
+      "note": "summary of 6 runs; RESULTS.md and viewer.html refreshed",
       "started": "2026-10-16 19:26:24 UTC",
-      "status": "running"
+      "status": "done"
     },
     "summary_session_colab-fa00": {
       "account": "colab-fa00",
