@@ -1,4 +1,4 @@
-session colab-034a, step 1e-changes_no-change_light-before-a_vs_light-before-b, running 50 min (live log, pushed every 10 min; the step's own results follow when it ends)
+session colab-034a, step 1e-changes_no-change_light-before-a_vs_light-before-b, running 60 min (live log, pushed every 10 min; the step's own results follow when it ends)
 machine: RAM 9.5/12.7 GB, disk free 56.8 GB, GPU 10.3/15.0 GB
 
 2026-10-16 21:45:19,746 INFO uncertainscene.scene01: step 1e-changes_no-change_light-before-a_vs_light-before-b: scene01_light_before_a vs scene01_light_before_b, all frames/video, 44 SAM key frames, variant objects3
@@ -70,3 +70,11 @@ machine: RAM 9.5/12.7 GB, disk free 56.8 GB, GPU 10.3/15.0 GB
 2026-10-16 22:34:54,602 INFO root: For numpy array image, we assume (HxWxC) format
 2026-10-16 22:34:54,642 INFO root: Computing image embeddings for the provided image...
 2026-10-16 22:34:54,669 INFO root: Image embeddings computed.
+2026-10-16 22:37:06,715 INFO uncertainscene.change.segment: SAM 2 tracking: frame 41/88: 4 new objects (45 tracked so far)
+2026-10-16 22:37:06,725 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-16 22:37:06,764 INFO root: Computing image embeddings for the provided image...
+2026-10-16 22:37:06,790 INFO root: Image embeddings computed.
+2026-10-16 22:39:19,273 INFO uncertainscene.change.segment: SAM 2 tracking: frame 49/88: 4 new objects (49 tracked so far)
+2026-10-16 22:39:19,282 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-16 22:39:19,309 INFO root: Computing image embeddings for the provided image...
+2026-10-16 22:39:19,346 INFO root: Image embeddings computed.
