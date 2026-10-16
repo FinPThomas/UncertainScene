@@ -499,7 +499,14 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
     obj_thr, sam_error, alignments, pruned = {}, None, [], []
     realigned, coverage_withdrawn, names_changed, move_summary, scale_chk = False, [], [], {}, {}
     try:
+        # run 12's dark stream was stopped at 93% RAM while SAM 2 tracked the dark recording with
+        # the DINOv2 features held; they are cached on disk, so they wait there during tracking
+        import gc
+
+        feats = None
+        gc.collect()
         masks = _masks(rec, spec, cache, store)
+        feats = _feats(rec, spec, cache)
         voxel = effective_voxel(rec, masks, 0.012 / floor.scale_m_per_unit)   # one grid for both recordings
         struct = 1.2 / floor.scale_m_per_unit
         A = {s: m for s, m in masks.items() if rec.video[s] == 0}
