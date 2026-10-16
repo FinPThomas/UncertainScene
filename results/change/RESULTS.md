@@ -251,24 +251,55 @@ Runs are grouped by phase (what they try to find out). Folder names say what the
 
 ## Run `2026-10-11_scene01-objects-fixed` (version 2: SAM 2 objects, every frame)
 
-1 finished runs. Folder: [2026-10-11_scene01-objects-fixed](2026-10-11_scene01-objects-fixed/).
+6 finished runs. Folder: [2026-10-11_scene01-objects-fixed](2026-10-11_scene01-objects-fixed/).
 
 ### Headline: does it tell real changes from noise?
 
 | Kind of run | Runs | Changed objects, median (range) | Share of compared objects |
 |---|---|---|---|
+| Nothing moved, same lighting | 1 | 13 (13-13) | 33% |
 | Objects moved, same lighting | 1 | 12 (12-12) | 39% |
+
+**Separation of runs with real changes from runs without: AUROC 0.00** (0.5 = chance, 1 = perfect).
+
 | Kind of run | Runs | Share of the surface flagged as changed, median (range) |
 |---|---|---|
+| Nothing moved, same lighting | 1 | 5.01% (5.01% to 5.01%) |
 | Objects moved, same lighting | 1 | 5.72% (5.72% to 5.72%) |
 
 ### Main comparisons
 
-*One or two pairs of every kind, with every output (objects, heat maps, 3D, scene report).* (1 runs)
+*One or two pairs of every kind, with every output (objects, heat maps, 3D, scene report).* (2 runs)
 
 | Run | Changes found | Objects located to (90%) | Scale (m/unit) | Surface uncertainty (cm) | Details |
 |---|---|---|---|---|---|
 | Objects moved, same lighting: light, before, take a vs light, after, take a | wooden crate shifted, skirting board shifted, neck pillow removed, baseball cap moved, skirting board shifted, cup shifted | ±0.1 cm | 2.048 | 7.5 | [report](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/report.md) · [motion map](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/motion_map.png) · [objects](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/objects.png) · [position map](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/position_map.png) · [heatmaps](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/heatmaps.png) · [object overlays](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/object_overlays.png) · [scene report](2026-10-11_scene01-objects-fixed/1-main_moved_light-before-a_vs_light-after-a/scene_report.md) |
+| Nothing moved, same lighting: light, before, take a vs light, before, take b | ball removed, table tennis bat removed, table tennis bat added, glass vase added, skirting board added, table tennis bat added | ±0.1 cm | 1.900 | 8.0 | [report](2026-10-11_scene01-objects-fixed/1-main_no-change_light-before-a_vs_light-before-b/report.md) · [motion map](2026-10-11_scene01-objects-fixed/1-main_no-change_light-before-a_vs_light-before-b/motion_map.png) · [objects](2026-10-11_scene01-objects-fixed/1-main_no-change_light-before-a_vs_light-before-b/objects.png) · [position map](2026-10-11_scene01-objects-fixed/1-main_no-change_light-before-a_vs_light-before-b/position_map.png) · [heatmaps](2026-10-11_scene01-objects-fixed/1-main_no-change_light-before-a_vs_light-before-b/heatmaps.png) · [object overlays](2026-10-11_scene01-objects-fixed/1-main_no-change_light-before-a_vs_light-before-b/object_overlays.png) · [scene report](2026-10-11_scene01-objects-fixed/1-main_no-change_light-before-a_vs_light-before-b/scene_report.md) |
+
+### Gaussian splats
+
+*Do splats of each recording render well, and does comparing before and after from the exact same camera separate real changes from noise?* (1 runs)
+
+| Run | Render quality, held-out frames (PSNR before / after) | Changed pixels, same camera (1% = no change) | Depth differs > 5 cm | Details |
+|---|---|---|---|---|
+| Gaussian splats: light, before, take a vs light, after, take a | 18.25 / 18.86 dB | 1.5% | 89.5% | [report](2026-10-11_scene01-objects-fixed/1b-splat_moved_light-before-a_vs_light-after-a/report.md) · [splat compare](2026-10-11_scene01-objects-fixed/1b-splat_moved_light-before-a_vs_light-after-a/splat_compare.png) · [splat orbit](2026-10-11_scene01-objects-fixed/1b-splat_moved_light-before-a_vs_light-after-a/splat_orbit.gif) |
+
+### Whole objects
+
+*With a detector that finds whole objects and names them, is every object one piece in the point cloud, correctly labelled, and matched as the same object across recordings?* (1 runs)
+
+| Run | Changes found | Objects located to (90%) | Scale (m/unit) | Surface uncertainty (cm) | Details |
+|---|---|---|---|---|---|
+| Objects moved, same lighting: light, before, take a vs light, after, take a (whole objects found by a detector, then tracked) | skirting board shifted, neck pillow removed, baseball cap moved, skirting board shifted, ball removed, paper bag removed | ±0.1 cm | 1.921 | 7.0 | [report](2026-10-11_scene01-objects-fixed/1c-objects_moved_light-before-a_vs_light-after-a/report.md) · [motion map](2026-10-11_scene01-objects-fixed/1c-objects_moved_light-before-a_vs_light-after-a/motion_map.png) · [objects](2026-10-11_scene01-objects-fixed/1c-objects_moved_light-before-a_vs_light-after-a/objects.png) · [position map](2026-10-11_scene01-objects-fixed/1c-objects_moved_light-before-a_vs_light-after-a/position_map.png) · [heatmaps](2026-10-11_scene01-objects-fixed/1c-objects_moved_light-before-a_vs_light-after-a/heatmaps.png) · [object overlays](2026-10-11_scene01-objects-fixed/1c-objects_moved_light-before-a_vs_light-after-a/object_overlays.png) · [scene report](2026-10-11_scene01-objects-fixed/1c-objects_moved_light-before-a_vs_light-after-a/scene_report.md) |
+
+### Whole objects, recordings re-aligned
+
+*After run 10: once the after recording is lined up on the objects that did not move, does each object get one verdict, are pieces one object, and are the object clouds clean? (light and dark streams)* (2 runs)
+
+| Run | Changes found | Objects located to (90%) | Scale (m/unit) | Surface uncertainty (cm) | Details |
+|---|---|---|---|---|---|
+| Objects moved and lighting changed: dark, before, take a vs light, after, take a (whole objects, recordings re-aligned on unchanged objects (clean clouds, one verdict per object)) | cup moved, lamp moved, cup changed in place, cabinet added, book added, cup changed in place | ±7.0 cm | 2.502 | 9.7 | [report](2026-10-11_scene01-objects-fixed/1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a/report.md) · [objects](2026-10-11_scene01-objects-fixed/1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a/objects.png) · [position map](2026-10-11_scene01-objects-fixed/1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a/position_map.png) · [heatmaps](2026-10-11_scene01-objects-fixed/1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a/heatmaps.png) · [object overlays](2026-10-11_scene01-objects-fixed/1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a/object_overlays.png) · [scene report](2026-10-11_scene01-objects-fixed/1d-objects_moved-and-light-changed_dark-before-a_vs_light-after-a/scene_report.md) |
+| Nothing moved, same lighting: dark, before, take a vs dark, before, take b (whole objects, recordings re-aligned on unchanged objects (clean clouds, one verdict per object)) | box removed, lamp changed in place, cup changed in place, cup added, table tennis bat changed in place, book added | ±7.3 cm | 2.240 | 8.7 | [report](2026-10-11_scene01-objects-fixed/1d-objects_no-change_dark-before-a_vs_dark-before-b/report.md) · [objects](2026-10-11_scene01-objects-fixed/1d-objects_no-change_dark-before-a_vs_dark-before-b/objects.png) · [position map](2026-10-11_scene01-objects-fixed/1d-objects_no-change_dark-before-a_vs_dark-before-b/position_map.png) · [heatmaps](2026-10-11_scene01-objects-fixed/1d-objects_no-change_dark-before-a_vs_dark-before-b/heatmaps.png) · [object overlays](2026-10-11_scene01-objects-fixed/1d-objects_no-change_dark-before-a_vs_dark-before-b/object_overlays.png) · [scene report](2026-10-11_scene01-objects-fixed/1d-objects_no-change_dark-before-a_vs_dark-before-b/scene_report.md) |
 
 ### Light vs dark (all runs)
 
