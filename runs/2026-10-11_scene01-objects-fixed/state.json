@@ -114,14 +114,14 @@
       "status": "interrupted"
     },
     "1e-changes_moved_light-before-a_vs_light-after-a": {
-      "account": "colab-98b0",
-      "attempts": 2,
-      "commit": "fb5fed5",
-      "expires": null,
-      "finished": "2026-10-16 17:22:54 UTC",
-      "note": "stopped: RAM at 92% (hard limit 92%)",
-      "started": "2026-10-16 16:46:48 UTC",
-      "status": "interrupted"
+      "account": "colab-becc",
+      "attempts": 3,
+      "commit": "57cc092",
+      "expires": 1792193509.9180663,
+      "finished": null,
+      "note": null,
+      "started": "2026-10-16 18:15:19 UTC",
+      "status": "running"
     },
     "2-position_3-clips_no-change_dark-before-a-b-c": {
       "account": "colab-5f93",
