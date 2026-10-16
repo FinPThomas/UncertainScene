@@ -1,0 +1,369 @@
+{
+ "objects": [
+  {
+   "name": "A011_cushion",
+   "label": "cushion",
+   "status": "moved",
+   "nodes": 96,
+   "edges": 353,
+   "behaviour": null,
+   "rigidity": 0.577,
+   "material": "fabric or cloth",
+   "youngs_modulus_pa": 4350000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A018_baseball_cap",
+   "label": "baseball cap",
+   "status": "removed",
+   "nodes": 96,
+   "edges": 336,
+   "behaviour": null,
+   "rigidity": 0.594,
+   "material": "fabric or cloth",
+   "youngs_modulus_pa": 1430000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A021_cup",
+   "label": "cup",
+   "status": "moved",
+   "nodes": 96,
+   "edges": 337,
+   "behaviour": null,
+   "rigidity": 0.932,
+   "material": "metal",
+   "youngs_modulus_pa": 57900000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A022_skirting_board",
+   "label": "skirting board",
+   "status": "moved",
+   "nodes": 96,
+   "edges": 333,
+   "behaviour": null,
+   "rigidity": 0.81,
+   "material": "rubber",
+   "youngs_modulus_pa": 1230000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B007_cushion",
+   "label": "cushion",
+   "status": "changed in place",
+   "nodes": 96,
+   "edges": 353,
+   "behaviour": null,
+   "rigidity": 0.428,
+   "material": "fabric or cloth",
+   "youngs_modulus_pa": 7100000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B009_cushion",
+   "label": "cushion",
+   "status": "moved",
+   "nodes": 96,
+   "edges": 344,
+   "behaviour": null,
+   "rigidity": 0.438,
+   "material": "soft foam or stuffing",
+   "youngs_modulus_pa": 473000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B012_baseball_cap",
+   "label": "baseball cap",
+   "status": "added",
+   "nodes": 96,
+   "edges": 339,
+   "behaviour": null,
+   "rigidity": 0.444,
+   "material": "soft foam or stuffing",
+   "youngs_modulus_pa": 172000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B019_cup",
+   "label": "cup",
+   "status": "moved",
+   "nodes": 96,
+   "edges": 336,
+   "behaviour": null,
+   "rigidity": 0.915,
+   "material": "metal",
+   "youngs_modulus_pa": 34000000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B020_skirting_board",
+   "label": "skirting board",
+   "status": "moved",
+   "nodes": 96,
+   "edges": 339,
+   "behaviour": null,
+   "rigidity": 0.781,
+   "material": "rubber",
+   "youngs_modulus_pa": 555000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B021_book",
+   "label": "book",
+   "status": "added",
+   "nodes": 96,
+   "edges": 331,
+   "behaviour": null,
+   "rigidity": 0.86,
+   "material": "ceramic or porcelain",
+   "youngs_modulus_pa": 8880000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B000_sofa",
+   "label": "sofa",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 347,
+   "behaviour": null,
+   "rigidity": 0.593,
+   "material": "leather",
+   "youngs_modulus_pa": 69100000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B010_guitar",
+   "label": "guitar",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 338,
+   "behaviour": null,
+   "rigidity": 0.808,
+   "material": "wood",
+   "youngs_modulus_pa": 3050000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A000_sofa",
+   "label": "sofa",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 342,
+   "behaviour": null,
+   "rigidity": 0.493,
+   "material": "leather",
+   "youngs_modulus_pa": 26300000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A010_cushion",
+   "label": "cushion",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 352,
+   "behaviour": null,
+   "rigidity": 0.453,
+   "material": "soft foam or stuffing",
+   "youngs_modulus_pa": 19800000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A012_book",
+   "label": "book",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 350,
+   "behaviour": null,
+   "rigidity": 0.815,
+   "material": "paper or cardboard",
+   "youngs_modulus_pa": 610000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B005_shelf",
+   "label": "shelf",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 339,
+   "behaviour": null,
+   "rigidity": 0.575,
+   "material": "rubber",
+   "youngs_modulus_pa": 84000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B011_book",
+   "label": "book",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 348,
+   "behaviour": null,
+   "rigidity": 0.832,
+   "material": "paper or cardboard",
+   "youngs_modulus_pa": 1140000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "A019_neck_pillow",
+   "label": "neck pillow",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 342,
+   "behaviour": null,
+   "rigidity": 0.478,
+   "material": "rubber",
+   "youngs_modulus_pa": 1920000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B013_neck_pillow",
+   "label": "neck pillow",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 340,
+   "behaviour": null,
+   "rigidity": 0.302,
+   "material": "soft foam or stuffing",
+   "youngs_modulus_pa": 709000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B008_rug",
+   "label": "rug",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 339,
+   "behaviour": null,
+   "rigidity": 0.751,
+   "material": "wood",
+   "youngs_modulus_pa": 1520000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  },
+  {
+   "name": "B018_cup",
+   "label": "cup",
+   "status": "unchanged",
+   "nodes": 96,
+   "edges": 324,
+   "behaviour": null,
+   "rigidity": 0.883,
+   "material": "glass",
+   "youngs_modulus_pa": 6430000000.0,
+   "copilot_check": null,
+   "edges_strained": 0
+  }
+ ],
+ "contacts": [
+  {
+   "a": "B007_cushion",
+   "b": "B000_sofa",
+   "point_pairs": 1530,
+   "relation": "touching"
+  },
+  {
+   "a": "B007_cushion",
+   "b": "B011_book",
+   "point_pairs": 3,
+   "relation": "touching"
+  },
+  {
+   "a": "B009_cushion",
+   "b": "B010_guitar",
+   "point_pairs": 7,
+   "relation": "touching"
+  },
+  {
+   "a": "B012_baseball_cap",
+   "b": "B005_shelf",
+   "point_pairs": 105,
+   "relation": "touching"
+  },
+  {
+   "a": "B012_baseball_cap",
+   "b": "B013_neck_pillow",
+   "point_pairs": 15705,
+   "relation": "touching"
+  },
+  {
+   "a": "B019_cup",
+   "b": "B010_guitar",
+   "point_pairs": 26,
+   "relation": "touching"
+  },
+  {
+   "a": "B000_sofa",
+   "b": "B005_shelf",
+   "point_pairs": 69,
+   "relation": "touching"
+  },
+  {
+   "a": "B000_sofa",
+   "b": "B011_book",
+   "point_pairs": 54,
+   "relation": "touching"
+  },
+  {
+   "a": "B000_sofa",
+   "b": "B013_neck_pillow",
+   "point_pairs": 5,
+   "relation": "B013_neck_pillow rests on B000_sofa"
+  },
+  {
+   "a": "B000_sofa",
+   "b": "B018_cup",
+   "point_pairs": 3755,
+   "relation": "touching"
+  },
+  {
+   "a": "A000_sofa",
+   "b": "A010_cushion",
+   "point_pairs": 103,
+   "relation": "touching"
+  },
+  {
+   "a": "A000_sofa",
+   "b": "A012_book",
+   "point_pairs": 24,
+   "relation": "touching"
+  },
+  {
+   "a": "A010_cushion",
+   "b": "A012_book",
+   "point_pairs": 53,
+   "relation": "touching"
+  },
+  {
+   "a": "B005_shelf",
+   "b": "B013_neck_pillow",
+   "point_pairs": 236,
+   "relation": "touching"
+  }
+ ],
+ "scale_m_per_unit": 2.4036539149217746,
+ "up": [
+  -0.1215,
+  -0.9907,
+  -0.0617
+ ]
+}

@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-10-11_scene01-objects-fixed",
+  "step": "1e-changes_no-change_light-before-a_vs_light-before-b",
+  "status": "done",
+  "account": "colab-034a",
+  "commit": "90672c9",
+  "minutes": 95.1,
+  "usage_at_end": "RAM 4.6/12.7 GB, disk free 55.1 GB, GPU 0.3/15.0 GB",
+  "note": "static: 7 changed objects of 14 (50%); labels: cushion, baseball cap, cup, skirting board, cushion; scale 2.404 m/unit; 5676s"
+}
