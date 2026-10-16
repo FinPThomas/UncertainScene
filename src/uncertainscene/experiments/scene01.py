@@ -571,12 +571,13 @@ def analyse(spec: Spec, out: Path, cache: Path, store=None, check=None) -> str:
         if realigned:
             import psutil
 
-            cfg_final = cfg if psutil.virtual_memory().percent < 70 else replace(cfg, stride=max(cfg.stride, 3))
-            res = None
+            res = None                         # the old points go first, then the memory is read
             gc.collect()
+            # full density unless memory is short (run 11 light stood at 70% with the old points held)
+            cfg_final = cfg if psutil.virtual_memory().percent < 78 else replace(cfg, stride=max(cfg.stride, 2))
             res = detect(rec, feats, cfg_final)
             stage(f"point-level change detection on the re-aligned recordings ({len(res.A.X) + len(res.B.X)} points"
-                  f"{', every 3rd pixel to save memory' if cfg_final is not cfg else ''})")
+                  f"{', every 2nd pixel to save memory' if cfg_final is not cfg else ''})")
     except Exception as e:  # noqa: BLE001 - SAM 2 missing or failing must not lose the rest
         if type(e).__name__ == "ResourceLimit":
             raise

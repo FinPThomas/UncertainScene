@@ -477,7 +477,7 @@ def view_measurement(rec: Recon, s: int, X: np.ndarray, v: np.ndarray, u: np.nda
     return {"c": c, "ray": ray, "sd_depth": sd_depth, "sd_side": sd_side, "sd_pose": sd_pose, "pixel": z / f}
 
 
-def lift(rec: Recon, masks: dict, voxel: float, conf_quantile: float = 0.3, max_points: int = 4000,
+def lift(rec: Recon, masks: dict, voxel: float, conf_quantile: float = 0.3, max_points: int = 6000,
          seed: int = 0, merge_vox: float | None = None) -> list[dict]:
     rng = np.random.default_rng(seed)
     frags = []
@@ -818,7 +818,7 @@ def merge_voxel(rec: Recon, masks: dict, voxel: float, k: float = 1.5) -> float:
 
 
 def build_objects(rec: Recon, masks: dict, recording: str, voxel: float, structure_units: float,
-                  max_points: int = 15000, min_frames: int = 1, min_voxels: int = 6, seed: int = 0,
+                  max_points: int = 25000, min_frames: int = 1, min_voxels: int = 6, seed: int = 0,
                   adapt_voxel: bool = True, merge_vox: float | None = None) -> list[SceneObject]:
     """`merge_vox`: grid for merging views and for matching across recordings (pass the same
     value for every recording of a reconstruction; default from merge_voxel)."""
