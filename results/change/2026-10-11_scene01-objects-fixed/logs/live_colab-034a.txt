@@ -1,5 +1,5 @@
-session colab-034a, step 1e-changes_no-change_light-before-a_vs_light-before-b, running 70 min (live log, pushed every 10 min; the step's own results follow when it ends)
-machine: RAM 9.5/12.7 GB, disk free 56.8 GB, GPU 10.3/15.0 GB
+session colab-034a, step 1e-changes_no-change_light-before-a_vs_light-before-b, running 80 min (live log, pushed every 10 min; the step's own results follow when it ends)
+machine: RAM 7.4/12.7 GB, disk free 55.2 GB, GPU 0.3/15.0 GB
 
 2026-10-16 21:45:19,746 INFO uncertainscene.scene01: step 1e-changes_no-change_light-before-a_vs_light-before-b: scene01_light_before_a vs scene01_light_before_b, all frames/video, 44 SAM key frames, variant objects3
 2026-10-16 21:45:34,062 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -86,3 +86,22 @@ machine: RAM 9.5/12.7 GB, disk free 56.8 GB, GPU 10.3/15.0 GB
 2026-10-16 22:47:22,083 INFO root: For numpy array image, we assume (HxWxC) format
 2026-10-16 22:47:22,123 INFO root: Computing image embeddings for the provided image...
 2026-10-16 22:47:22,148 INFO root: Image embeddings computed.
+2026-10-16 22:58:30,062 INFO uncertainscene.change.segment: SAM 2 tracking: frame 73/88: 23 new objects (88 tracked so far)
+2026-10-16 22:58:30,071 INFO root: For numpy array image, we assume (HxWxC) format
+2026-10-16 22:58:30,116 INFO root: Computing image embeddings for the provided image...
+2026-10-16 22:58:30,144 INFO root: Image embeddings computed.
+2026-10-16 23:00:14,751 INFO uncertainscene.change.segment: SAM 2 tracking: frame 81/88: 3 new objects (91 tracked so far)
+2026-10-16 23:00:24,979 INFO uncertainscene.change.segment: SAM 2 tracking + detector: 26 part masks not seeded, 4 tracks joined to the object they lie in, 49 of 91 tracks labelled by the detector
+2026-10-16 23:00:26,511 INFO uncertainscene.scene01: SAM 2 masks sam2rec_scene01_light_before_b_372f_3c89723155_k44_p32_det.npz saved to release cache-scene01-sam2 (1 MB)
+2026-10-16 23:00:26,880 INFO uncertainscene.scene01: SAM 2 (tracked through each recording, with YOLOE whole objects): 2110 masks on 88 frames, 150 objects tracked, in 2829 s
+2026-10-16 23:01:25,799 INFO uncertainscene.change.segment: recording A: 1025 masks on 44 frames -> 857 fragments -> 44 objects (18 structures), median 12.5 views per object, merge grid 0.0280 units
+2026-10-16 23:02:18,316 INFO uncertainscene.change.segment: recording B: 1085 masks on 44 frames -> 860 fragments -> 46 objects (11 structures), median 9.5 views per object, merge grid 0.0280 units
+2026-10-16 23:02:18,855 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] SAM 2 objects (44 in A, 46 in B) done in 2941 s | RAM 8.7/12.7 GB, disk free 56.8 GB, GPU 4.7/15.0 GB
+2026-10-16 23:04:19,120 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] labels for every object (detector votes, CLIP as fallback) done in 120 s | RAM 8.3/12.7 GB, disk free 55.2 GB, GPU 6.9/15.0 GB
+2026-10-16 23:04:19,548 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] names that cannot fit the object's size replaced: 13 done in 0 s | RAM 8.3/12.7 GB, disk free 55.2 GB, GPU 6.9/15.0 GB
+2026-10-16 23:04:23,980 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] pieces joined to the touching object of the same name: 11 (42 objects in A, 37 in B) done in 4 s | RAM 8.3/12.7 GB, disk free 55.2 GB, GPU 6.9/15.0 GB
+2026-10-16 23:04:24,426 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] unsure objects dropped: 27 (A12 sofa (clip 0.26, 19 views); A22 wooden crate (clip 0.19, 9 views); A25 skirting board (clip 0.30, 5 views); A28 skirting board (clip 0.48, 18 views); A30 tissue box (size check 0.04, 5 views); A31 plate (clip 0.13, 11 views); A32 plate (size check 0.15, 13 views); A33 skirting board (clip 0.29, 5 views) ...) done in 0 s | RAM 8.3/12.7 GB, disk free 55.2 GB, GPU 6.9/15.0 GB
+2026-10-16 23:04:24,921 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] Rigidity Copilot: expected stiffness of 52 objects done in 0 s | RAM 8.3/12.7 GB, disk free 55.2 GB, GPU 6.9/15.0 GB
+2026-10-16 23:04:24,968 INFO uncertainscene.change.floor: scale: most likely 2.397 m/unit (90% 2.096-2.719) from metric_depth 2.649, objects 2.048; phone height (not used) 3.218
+2026-10-16 23:04:26,215 INFO uncertainscene.poc: [1e-changes_no-change_light-before-a_vs_light-before-b] networks released before the object tests: {'ram_used_gb': 6.7} done in 1 s | RAM 6.3/12.7 GB, disk free 55.2 GB, GPU 0.3/15.0 GB
+2026-10-16 23:05:13,173 INFO uncertainscene.change.inventory: object visibility sampled 213262/590539 points across 29 objects (max 8000 per object, 0 retries)
